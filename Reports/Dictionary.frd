@@ -1,0 +1,868 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Dictionary>
+  <BusinessObjectDataSource Name="Account" ReferenceName="Account" DataType="null" Enabled="true">
+    <Column Name="ID" DataType="System.Int64"/>
+    <Column Name="OrderID" DataType="System.Int64"/>
+    <Column Name="AccountNumber" DataType="System.String"/>
+    <Column Name="AccountDate" DataType="null"/>
+    <Column Name="ContractorID" DataType="null"/>
+    <Column Name="Footing" DataType="System.String"/>
+    <Column Name="IsManual" DataType="System.Boolean" BindableControl="CheckBox"/>
+    <Column Name="Details" DataType="System.String"/>
+    <Column Name="PayBeforeDate" DataType="null"/>
+    <Column Name="Order" DataType="null">
+      <Column Name="ID" DataType="System.Int64"/>
+      <Column Name="Number" DataType="System.String"/>
+      <Column Name="ClientID" DataType="System.Int64"/>
+      <Column Name="Note" DataType="System.String"/>
+      <Column Name="DateAdmission" DataType="null"/>
+      <Column Name="DateCompletion" DataType="null"/>
+      <Column Name="DateProductionLayout" DataType="null"/>
+      <Column Name="OrderEnteredID" DataType="System.Int64"/>
+      <Column Name="ManagerID" DataType="null"/>
+      <Column Name="DesignerID" DataType="null"/>
+      <Column Name="Client" DataType="null">
+        <Column Name="ID" DataType="System.Int64"/>
+        <Column Name="Name" DataType="System.String"/>
+        <Column Name="Profile" DataType="System.String"/>
+        <Column Name="IsIndividual" DataType="System.Boolean" BindableControl="CheckBox"/>
+        <Column Name="DirectorName" DataType="System.String"/>
+        <Column Name="ContactPersonName" DataType="System.String"/>
+        <Column Name="PostalAddress" DataType="System.String"/>
+        <Column Name="BusinessAddress" DataType="System.String"/>
+        <Column Name="ActualAddress" DataType="System.String"/>
+        <Column Name="Consignee" DataType="System.String"/>
+        <Column Name="INN" DataType="System.String"/>
+        <Column Name="KPP" DataType="System.String"/>
+        <Column Name="BankAccount" DataType="System.String"/>
+        <Column Name="BankID" DataType="null"/>
+        <Column Name="IsActive" DataType="System.Boolean" BindableControl="CheckBox"/>
+        <Column Name="Note" DataType="System.Byte[]" BindableControl="Picture"/>
+        <Column Name="UserID" DataType="System.Int64"/>
+        <Column Name="MobilePhone" DataType="System.String"/>
+        <Column Name="WorkPhone" DataType="System.String"/>
+        <Column Name="Email" DataType="System.String"/>
+        <Column Name="Bank" DataType="null">
+          <Column Name="ID" DataType="System.Int64"/>
+          <Column Name="Name" DataType="System.String"/>
+          <Column Name="LocalitiesID" DataType="System.Int64"/>
+          <Column Name="CorrAccount" DataType="System.String"/>
+          <Column Name="BIK" DataType="System.String"/>
+          <Column Name="OKPO" DataType="System.String"/>
+          <Column Name="OKONX" DataType="System.String"/>
+          <Column Name="Localities" DataType="null"/>
+          <BusinessObjectDataSource Name="Clients" Enabled="false" DataType="null"/>
+          <BusinessObjectDataSource Name="Contractors" Enabled="false" DataType="null"/>
+        </Column>
+        <Column Name="User" DataType="null">
+          <Column Name="ID" DataType="System.Int64"/>
+          <Column Name="FirstName" DataType="System.String"/>
+          <Column Name="LastName" DataType="System.String"/>
+          <Column Name="MiddleName" DataType="System.String"/>
+          <Column Name="LoginName" DataType="System.String"/>
+          <Column Name="RoleID" DataType="System.Int64"/>
+          <Column Name="Disabled" DataType="System.Boolean" BindableControl="CheckBox"/>
+          <Column Name="CategoryWork" DataType="System.Int16"/>
+          <Column Name="IsAdmin" DataType="System.Boolean" BindableControl="CheckBox"/>
+          <Column Name="IsExternal" DataType="System.Boolean" BindableControl="CheckBox"/>
+          <Column Name="Phone" DataType="System.String"/>
+          <Column Name="Email" DataType="System.String"/>
+          <Column Name="CardNumber" DataType="System.String"/>
+          <Column Name="Role" DataType="null"/>
+          <BusinessObjectDataSource Name="Clients1" Alias="Clients" Enabled="false" DataType="null" PropName="Clients"/>
+          <BusinessObjectDataSource Name="OrderDesigners" Enabled="false" DataType="null"/>
+          <BusinessObjectDataSource Name="OrderManagers" Enabled="false" DataType="null"/>
+          <BusinessObjectDataSource Name="OrderOrderEntereds" Enabled="false" DataType="null"/>
+          <Column Name="FullUserName" DataType="System.String"/>
+          <Column Name="ShortUserName" DataType="System.String"/>
+        </Column>
+        <BusinessObjectDataSource Name="Orders" DataType="null" Enabled="true">
+          <Column Name="ID" DataType="System.Int64"/>
+          <Column Name="Number" DataType="System.String"/>
+          <Column Name="ClientID" DataType="System.Int64"/>
+          <Column Name="Note" DataType="System.String"/>
+          <Column Name="DateAdmission" DataType="null"/>
+          <Column Name="DateCompletion" DataType="null"/>
+          <Column Name="DateProductionLayout" DataType="null"/>
+          <Column Name="OrderEnteredID" DataType="System.Int64"/>
+          <Column Name="ManagerID" DataType="null"/>
+          <Column Name="DesignerID" DataType="null"/>
+          <Column Name="Client" DataType="null"/>
+          <Column Name="Designer" DataType="null"/>
+          <Column Name="Manager" DataType="null"/>
+          <Column Name="OrderEntered" DataType="null"/>
+          <BusinessObjectDataSource Name="Products" Enabled="false" DataType="null"/>
+          <BusinessObjectDataSource Name="Payments" Enabled="false" DataType="null"/>
+          <BusinessObjectDataSource Name="Accounts" Enabled="false" DataType="null"/>
+          <Column Name="OrderCost" DataType="System.Decimal"/>
+          <Column Name="OrderPayments" DataType="System.Decimal"/>
+          <Column Name="CountProduct" DataType="System.Int16"/>
+          <Column Name="State" DataType="System.String"/>
+        </BusinessObjectDataSource>
+        <Column Name="ClientInfoForPAD" DataType="System.String"/>
+      </Column>
+      <Column Name="Designer" DataType="null">
+        <Column Name="ID" DataType="System.Int64"/>
+        <Column Name="FirstName" DataType="System.String"/>
+        <Column Name="LastName" DataType="System.String"/>
+        <Column Name="MiddleName" DataType="System.String"/>
+        <Column Name="LoginName" DataType="System.String"/>
+        <Column Name="RoleID" DataType="System.Int64"/>
+        <Column Name="Disabled" DataType="System.Boolean" BindableControl="CheckBox"/>
+        <Column Name="CategoryWork" DataType="System.Int16"/>
+        <Column Name="IsAdmin" DataType="System.Boolean" BindableControl="CheckBox"/>
+        <Column Name="IsExternal" DataType="System.Boolean" BindableControl="CheckBox"/>
+        <Column Name="Phone" DataType="System.String"/>
+        <Column Name="Email" DataType="System.String"/>
+        <Column Name="CardNumber" DataType="System.String"/>
+        <Column Name="Role" DataType="null">
+          <Column Name="ID" DataType="System.Int64"/>
+          <Column Name="RoleName" DataType="System.String"/>
+          <BusinessObjectDataSource Name="Users" Enabled="false" DataType="null"/>
+        </Column>
+        <BusinessObjectDataSource Name="Clients2" Alias="Clients" DataType="null" PropName="Clients" Enabled="true">
+          <Column Name="ID" DataType="System.Int64"/>
+          <Column Name="Name" DataType="System.String"/>
+          <Column Name="Profile" DataType="System.String"/>
+          <Column Name="IsIndividual" DataType="System.Boolean" BindableControl="CheckBox"/>
+          <Column Name="DirectorName" DataType="System.String"/>
+          <Column Name="ContactPersonName" DataType="System.String"/>
+          <Column Name="PostalAddress" DataType="System.String"/>
+          <Column Name="BusinessAddress" DataType="System.String"/>
+          <Column Name="ActualAddress" DataType="System.String"/>
+          <Column Name="Consignee" DataType="System.String"/>
+          <Column Name="INN" DataType="System.String"/>
+          <Column Name="KPP" DataType="System.String"/>
+          <Column Name="BankAccount" DataType="System.String"/>
+          <Column Name="BankID" DataType="null"/>
+          <Column Name="IsActive" DataType="System.Boolean" BindableControl="CheckBox"/>
+          <Column Name="Note" DataType="System.Byte[]" BindableControl="Picture"/>
+          <Column Name="UserID" DataType="System.Int64"/>
+          <Column Name="MobilePhone" DataType="System.String"/>
+          <Column Name="WorkPhone" DataType="System.String"/>
+          <Column Name="Email" DataType="System.String"/>
+          <Column Name="Bank" DataType="null"/>
+          <Column Name="User" DataType="null"/>
+          <BusinessObjectDataSource Name="Orders1" Alias="Orders" Enabled="false" DataType="null" PropName="Orders"/>
+          <Column Name="ClientInfoForPAD" DataType="System.String"/>
+        </BusinessObjectDataSource>
+        <BusinessObjectDataSource Name="OrderDesigners1" Alias="OrderDesigners" DataType="null" PropName="OrderDesigners" Enabled="true">
+          <Column Name="ID" DataType="System.Int64"/>
+          <Column Name="Number" DataType="System.String"/>
+          <Column Name="ClientID" DataType="System.Int64"/>
+          <Column Name="Note" DataType="System.String"/>
+          <Column Name="DateAdmission" DataType="null"/>
+          <Column Name="DateCompletion" DataType="null"/>
+          <Column Name="DateProductionLayout" DataType="null"/>
+          <Column Name="OrderEnteredID" DataType="System.Int64"/>
+          <Column Name="ManagerID" DataType="null"/>
+          <Column Name="DesignerID" DataType="null"/>
+          <Column Name="Client" DataType="null"/>
+          <Column Name="Designer" DataType="null"/>
+          <Column Name="Manager" DataType="null"/>
+          <Column Name="OrderEntered" DataType="null"/>
+          <BusinessObjectDataSource Name="Products1" Alias="Products" Enabled="false" DataType="null" PropName="Products"/>
+          <BusinessObjectDataSource Name="Payments1" Alias="Payments" Enabled="false" DataType="null" PropName="Payments"/>
+          <BusinessObjectDataSource Name="Accounts1" Alias="Accounts" Enabled="false" DataType="null" PropName="Accounts"/>
+          <Column Name="OrderCost" DataType="System.Decimal"/>
+          <Column Name="OrderPayments" DataType="System.Decimal"/>
+          <Column Name="CountProduct" DataType="System.Int16"/>
+          <Column Name="State" DataType="System.String"/>
+        </BusinessObjectDataSource>
+        <BusinessObjectDataSource Name="OrderManagers1" Alias="OrderManagers" DataType="null" PropName="OrderManagers" Enabled="true">
+          <Column Name="ID" DataType="System.Int64"/>
+          <Column Name="Number" DataType="System.String"/>
+          <Column Name="ClientID" DataType="System.Int64"/>
+          <Column Name="Note" DataType="System.String"/>
+          <Column Name="DateAdmission" DataType="null"/>
+          <Column Name="DateCompletion" DataType="null"/>
+          <Column Name="DateProductionLayout" DataType="null"/>
+          <Column Name="OrderEnteredID" DataType="System.Int64"/>
+          <Column Name="ManagerID" DataType="null"/>
+          <Column Name="DesignerID" DataType="null"/>
+          <Column Name="Client" DataType="null"/>
+          <Column Name="Designer" DataType="null"/>
+          <Column Name="Manager" DataType="null"/>
+          <Column Name="OrderEntered" DataType="null"/>
+          <BusinessObjectDataSource Name="Products2" Alias="Products" Enabled="false" DataType="null" PropName="Products"/>
+          <BusinessObjectDataSource Name="Payments2" Alias="Payments" Enabled="false" DataType="null" PropName="Payments"/>
+          <BusinessObjectDataSource Name="Accounts2" Alias="Accounts" Enabled="false" DataType="null" PropName="Accounts"/>
+          <Column Name="OrderCost" DataType="System.Decimal"/>
+          <Column Name="OrderPayments" DataType="System.Decimal"/>
+          <Column Name="CountProduct" DataType="System.Int16"/>
+          <Column Name="State" DataType="System.String"/>
+        </BusinessObjectDataSource>
+        <BusinessObjectDataSource Name="OrderOrderEntereds1" Alias="OrderOrderEntereds" DataType="null" PropName="OrderOrderEntereds" Enabled="true">
+          <Column Name="ID" DataType="System.Int64"/>
+          <Column Name="Number" DataType="System.String"/>
+          <Column Name="ClientID" DataType="System.Int64"/>
+          <Column Name="Note" DataType="System.String"/>
+          <Column Name="DateAdmission" DataType="null"/>
+          <Column Name="DateCompletion" DataType="null"/>
+          <Column Name="DateProductionLayout" DataType="null"/>
+          <Column Name="OrderEnteredID" DataType="System.Int64"/>
+          <Column Name="ManagerID" DataType="null"/>
+          <Column Name="DesignerID" DataType="null"/>
+          <Column Name="Client" DataType="null"/>
+          <Column Name="Designer" DataType="null"/>
+          <Column Name="Manager" DataType="null"/>
+          <Column Name="OrderEntered" DataType="null"/>
+          <BusinessObjectDataSource Name="Products3" Alias="Products" Enabled="false" DataType="null" PropName="Products"/>
+          <BusinessObjectDataSource Name="Payments3" Alias="Payments" Enabled="false" DataType="null" PropName="Payments"/>
+          <BusinessObjectDataSource Name="Accounts3" Alias="Accounts" Enabled="false" DataType="null" PropName="Accounts"/>
+          <Column Name="OrderCost" DataType="System.Decimal"/>
+          <Column Name="OrderPayments" DataType="System.Decimal"/>
+          <Column Name="CountProduct" DataType="System.Int16"/>
+          <Column Name="State" DataType="System.String"/>
+        </BusinessObjectDataSource>
+        <Column Name="FullUserName" DataType="System.String"/>
+        <Column Name="ShortUserName" DataType="System.String"/>
+      </Column>
+      <Column Name="Manager" DataType="null">
+        <Column Name="ID" DataType="System.Int64"/>
+        <Column Name="FirstName" DataType="System.String"/>
+        <Column Name="LastName" DataType="System.String"/>
+        <Column Name="MiddleName" DataType="System.String"/>
+        <Column Name="LoginName" DataType="System.String"/>
+        <Column Name="RoleID" DataType="System.Int64"/>
+        <Column Name="Disabled" DataType="System.Boolean" BindableControl="CheckBox"/>
+        <Column Name="CategoryWork" DataType="System.Int16"/>
+        <Column Name="IsAdmin" DataType="System.Boolean" BindableControl="CheckBox"/>
+        <Column Name="IsExternal" DataType="System.Boolean" BindableControl="CheckBox"/>
+        <Column Name="Phone" DataType="System.String"/>
+        <Column Name="Email" DataType="System.String"/>
+        <Column Name="CardNumber" DataType="System.String"/>
+        <Column Name="Role" DataType="null">
+          <Column Name="ID" DataType="System.Int64"/>
+          <Column Name="RoleName" DataType="System.String"/>
+          <BusinessObjectDataSource Name="Users1" Alias="Users" Enabled="false" DataType="null" PropName="Users"/>
+        </Column>
+        <BusinessObjectDataSource Name="Clients3" Alias="Clients" DataType="null" PropName="Clients" Enabled="true">
+          <Column Name="ID" DataType="System.Int64"/>
+          <Column Name="Name" DataType="System.String"/>
+          <Column Name="Profile" DataType="System.String"/>
+          <Column Name="IsIndividual" DataType="System.Boolean" BindableControl="CheckBox"/>
+          <Column Name="DirectorName" DataType="System.String"/>
+          <Column Name="ContactPersonName" DataType="System.String"/>
+          <Column Name="PostalAddress" DataType="System.String"/>
+          <Column Name="BusinessAddress" DataType="System.String"/>
+          <Column Name="ActualAddress" DataType="System.String"/>
+          <Column Name="Consignee" DataType="System.String"/>
+          <Column Name="INN" DataType="System.String"/>
+          <Column Name="KPP" DataType="System.String"/>
+          <Column Name="BankAccount" DataType="System.String"/>
+          <Column Name="BankID" DataType="null"/>
+          <Column Name="IsActive" DataType="System.Boolean" BindableControl="CheckBox"/>
+          <Column Name="Note" DataType="System.Byte[]" BindableControl="Picture"/>
+          <Column Name="UserID" DataType="System.Int64"/>
+          <Column Name="MobilePhone" DataType="System.String"/>
+          <Column Name="WorkPhone" DataType="System.String"/>
+          <Column Name="Email" DataType="System.String"/>
+          <Column Name="Bank" DataType="null"/>
+          <Column Name="User" DataType="null"/>
+          <BusinessObjectDataSource Name="Orders2" Alias="Orders" Enabled="false" DataType="null" PropName="Orders"/>
+          <Column Name="ClientInfoForPAD" DataType="System.String"/>
+        </BusinessObjectDataSource>
+        <BusinessObjectDataSource Name="OrderDesigners2" Alias="OrderDesigners" DataType="null" PropName="OrderDesigners" Enabled="true">
+          <Column Name="ID" DataType="System.Int64"/>
+          <Column Name="Number" DataType="System.String"/>
+          <Column Name="ClientID" DataType="System.Int64"/>
+          <Column Name="Note" DataType="System.String"/>
+          <Column Name="DateAdmission" DataType="null"/>
+          <Column Name="DateCompletion" DataType="null"/>
+          <Column Name="DateProductionLayout" DataType="null"/>
+          <Column Name="OrderEnteredID" DataType="System.Int64"/>
+          <Column Name="ManagerID" DataType="null"/>
+          <Column Name="DesignerID" DataType="null"/>
+          <Column Name="Client" DataType="null"/>
+          <Column Name="Designer" DataType="null"/>
+          <Column Name="Manager" DataType="null"/>
+          <Column Name="OrderEntered" DataType="null"/>
+          <BusinessObjectDataSource Name="Products4" Alias="Products" Enabled="false" DataType="null" PropName="Products"/>
+          <BusinessObjectDataSource Name="Payments4" Alias="Payments" Enabled="false" DataType="null" PropName="Payments"/>
+          <BusinessObjectDataSource Name="Accounts4" Alias="Accounts" Enabled="false" DataType="null" PropName="Accounts"/>
+          <Column Name="OrderCost" DataType="System.Decimal"/>
+          <Column Name="OrderPayments" DataType="System.Decimal"/>
+          <Column Name="CountProduct" DataType="System.Int16"/>
+          <Column Name="State" DataType="System.String"/>
+        </BusinessObjectDataSource>
+        <BusinessObjectDataSource Name="OrderManagers2" Alias="OrderManagers" DataType="null" PropName="OrderManagers" Enabled="true">
+          <Column Name="ID" DataType="System.Int64"/>
+          <Column Name="Number" DataType="System.String"/>
+          <Column Name="ClientID" DataType="System.Int64"/>
+          <Column Name="Note" DataType="System.String"/>
+          <Column Name="DateAdmission" DataType="null"/>
+          <Column Name="DateCompletion" DataType="null"/>
+          <Column Name="DateProductionLayout" DataType="null"/>
+          <Column Name="OrderEnteredID" DataType="System.Int64"/>
+          <Column Name="ManagerID" DataType="null"/>
+          <Column Name="DesignerID" DataType="null"/>
+          <Column Name="Client" DataType="null"/>
+          <Column Name="Designer" DataType="null"/>
+          <Column Name="Manager" DataType="null"/>
+          <Column Name="OrderEntered" DataType="null"/>
+          <BusinessObjectDataSource Name="Products5" Alias="Products" Enabled="false" DataType="null" PropName="Products"/>
+          <BusinessObjectDataSource Name="Payments5" Alias="Payments" Enabled="false" DataType="null" PropName="Payments"/>
+          <BusinessObjectDataSource Name="Accounts5" Alias="Accounts" Enabled="false" DataType="null" PropName="Accounts"/>
+          <Column Name="OrderCost" DataType="System.Decimal"/>
+          <Column Name="OrderPayments" DataType="System.Decimal"/>
+          <Column Name="CountProduct" DataType="System.Int16"/>
+          <Column Name="State" DataType="System.String"/>
+        </BusinessObjectDataSource>
+        <BusinessObjectDataSource Name="OrderOrderEntereds2" Alias="OrderOrderEntereds" DataType="null" PropName="OrderOrderEntereds" Enabled="true">
+          <Column Name="ID" DataType="System.Int64"/>
+          <Column Name="Number" DataType="System.String"/>
+          <Column Name="ClientID" DataType="System.Int64"/>
+          <Column Name="Note" DataType="System.String"/>
+          <Column Name="DateAdmission" DataType="null"/>
+          <Column Name="DateCompletion" DataType="null"/>
+          <Column Name="DateProductionLayout" DataType="null"/>
+          <Column Name="OrderEnteredID" DataType="System.Int64"/>
+          <Column Name="ManagerID" DataType="null"/>
+          <Column Name="DesignerID" DataType="null"/>
+          <Column Name="Client" DataType="null"/>
+          <Column Name="Designer" DataType="null"/>
+          <Column Name="Manager" DataType="null"/>
+          <Column Name="OrderEntered" DataType="null"/>
+          <BusinessObjectDataSource Name="Products6" Alias="Products" Enabled="false" DataType="null" PropName="Products"/>
+          <BusinessObjectDataSource Name="Payments6" Alias="Payments" Enabled="false" DataType="null" PropName="Payments"/>
+          <BusinessObjectDataSource Name="Accounts6" Alias="Accounts" Enabled="false" DataType="null" PropName="Accounts"/>
+          <Column Name="OrderCost" DataType="System.Decimal"/>
+          <Column Name="OrderPayments" DataType="System.Decimal"/>
+          <Column Name="CountProduct" DataType="System.Int16"/>
+          <Column Name="State" DataType="System.String"/>
+        </BusinessObjectDataSource>
+        <Column Name="FullUserName" DataType="System.String"/>
+        <Column Name="ShortUserName" DataType="System.String"/>
+      </Column>
+      <Column Name="OrderEntered" DataType="null">
+        <Column Name="ID" DataType="System.Int64"/>
+        <Column Name="FirstName" DataType="System.String"/>
+        <Column Name="LastName" DataType="System.String"/>
+        <Column Name="MiddleName" DataType="System.String"/>
+        <Column Name="LoginName" DataType="System.String"/>
+        <Column Name="RoleID" DataType="System.Int64"/>
+        <Column Name="Disabled" DataType="System.Boolean" BindableControl="CheckBox"/>
+        <Column Name="CategoryWork" DataType="System.Int16"/>
+        <Column Name="IsAdmin" DataType="System.Boolean" BindableControl="CheckBox"/>
+        <Column Name="IsExternal" DataType="System.Boolean" BindableControl="CheckBox"/>
+        <Column Name="Phone" DataType="System.String"/>
+        <Column Name="Email" DataType="System.String"/>
+        <Column Name="CardNumber" DataType="System.String"/>
+        <Column Name="Role" DataType="null">
+          <Column Name="ID" DataType="System.Int64"/>
+          <Column Name="RoleName" DataType="System.String"/>
+          <BusinessObjectDataSource Name="Users2" Alias="Users" Enabled="false" DataType="null" PropName="Users"/>
+        </Column>
+        <BusinessObjectDataSource Name="Clients4" Alias="Clients" DataType="null" PropName="Clients" Enabled="true">
+          <Column Name="ID" DataType="System.Int64"/>
+          <Column Name="Name" DataType="System.String"/>
+          <Column Name="Profile" DataType="System.String"/>
+          <Column Name="IsIndividual" DataType="System.Boolean" BindableControl="CheckBox"/>
+          <Column Name="DirectorName" DataType="System.String"/>
+          <Column Name="ContactPersonName" DataType="System.String"/>
+          <Column Name="PostalAddress" DataType="System.String"/>
+          <Column Name="BusinessAddress" DataType="System.String"/>
+          <Column Name="ActualAddress" DataType="System.String"/>
+          <Column Name="Consignee" DataType="System.String"/>
+          <Column Name="INN" DataType="System.String"/>
+          <Column Name="KPP" DataType="System.String"/>
+          <Column Name="BankAccount" DataType="System.String"/>
+          <Column Name="BankID" DataType="null"/>
+          <Column Name="IsActive" DataType="System.Boolean" BindableControl="CheckBox"/>
+          <Column Name="Note" DataType="System.Byte[]" BindableControl="Picture"/>
+          <Column Name="UserID" DataType="System.Int64"/>
+          <Column Name="MobilePhone" DataType="System.String"/>
+          <Column Name="WorkPhone" DataType="System.String"/>
+          <Column Name="Email" DataType="System.String"/>
+          <Column Name="Bank" DataType="null"/>
+          <Column Name="User" DataType="null"/>
+          <BusinessObjectDataSource Name="Orders3" Alias="Orders" Enabled="false" DataType="null" PropName="Orders"/>
+          <Column Name="ClientInfoForPAD" DataType="System.String"/>
+        </BusinessObjectDataSource>
+        <BusinessObjectDataSource Name="OrderDesigners3" Alias="OrderDesigners" DataType="null" PropName="OrderDesigners" Enabled="true">
+          <Column Name="ID" DataType="System.Int64"/>
+          <Column Name="Number" DataType="System.String"/>
+          <Column Name="ClientID" DataType="System.Int64"/>
+          <Column Name="Note" DataType="System.String"/>
+          <Column Name="DateAdmission" DataType="null"/>
+          <Column Name="DateCompletion" DataType="null"/>
+          <Column Name="DateProductionLayout" DataType="null"/>
+          <Column Name="OrderEnteredID" DataType="System.Int64"/>
+          <Column Name="ManagerID" DataType="null"/>
+          <Column Name="DesignerID" DataType="null"/>
+          <Column Name="Client" DataType="null"/>
+          <Column Name="Designer" DataType="null"/>
+          <Column Name="Manager" DataType="null"/>
+          <Column Name="OrderEntered" DataType="null"/>
+          <BusinessObjectDataSource Name="Products7" Alias="Products" Enabled="false" DataType="null" PropName="Products"/>
+          <BusinessObjectDataSource Name="Payments7" Alias="Payments" Enabled="false" DataType="null" PropName="Payments"/>
+          <BusinessObjectDataSource Name="Accounts7" Alias="Accounts" Enabled="false" DataType="null" PropName="Accounts"/>
+          <Column Name="OrderCost" DataType="System.Decimal"/>
+          <Column Name="OrderPayments" DataType="System.Decimal"/>
+          <Column Name="CountProduct" DataType="System.Int16"/>
+          <Column Name="State" DataType="System.String"/>
+        </BusinessObjectDataSource>
+        <BusinessObjectDataSource Name="OrderManagers3" Alias="OrderManagers" DataType="null" PropName="OrderManagers" Enabled="true">
+          <Column Name="ID" DataType="System.Int64"/>
+          <Column Name="Number" DataType="System.String"/>
+          <Column Name="ClientID" DataType="System.Int64"/>
+          <Column Name="Note" DataType="System.String"/>
+          <Column Name="DateAdmission" DataType="null"/>
+          <Column Name="DateCompletion" DataType="null"/>
+          <Column Name="DateProductionLayout" DataType="null"/>
+          <Column Name="OrderEnteredID" DataType="System.Int64"/>
+          <Column Name="ManagerID" DataType="null"/>
+          <Column Name="DesignerID" DataType="null"/>
+          <Column Name="Client" DataType="null"/>
+          <Column Name="Designer" DataType="null"/>
+          <Column Name="Manager" DataType="null"/>
+          <Column Name="OrderEntered" DataType="null"/>
+          <BusinessObjectDataSource Name="Products8" Alias="Products" Enabled="false" DataType="null" PropName="Products"/>
+          <BusinessObjectDataSource Name="Payments8" Alias="Payments" Enabled="false" DataType="null" PropName="Payments"/>
+          <BusinessObjectDataSource Name="Accounts8" Alias="Accounts" Enabled="false" DataType="null" PropName="Accounts"/>
+          <Column Name="OrderCost" DataType="System.Decimal"/>
+          <Column Name="OrderPayments" DataType="System.Decimal"/>
+          <Column Name="CountProduct" DataType="System.Int16"/>
+          <Column Name="State" DataType="System.String"/>
+        </BusinessObjectDataSource>
+        <BusinessObjectDataSource Name="OrderOrderEntereds3" Alias="OrderOrderEntereds" DataType="null" PropName="OrderOrderEntereds" Enabled="true">
+          <Column Name="ID" DataType="System.Int64"/>
+          <Column Name="Number" DataType="System.String"/>
+          <Column Name="ClientID" DataType="System.Int64"/>
+          <Column Name="Note" DataType="System.String"/>
+          <Column Name="DateAdmission" DataType="null"/>
+          <Column Name="DateCompletion" DataType="null"/>
+          <Column Name="DateProductionLayout" DataType="null"/>
+          <Column Name="OrderEnteredID" DataType="System.Int64"/>
+          <Column Name="ManagerID" DataType="null"/>
+          <Column Name="DesignerID" DataType="null"/>
+          <Column Name="Client" DataType="null"/>
+          <Column Name="Designer" DataType="null"/>
+          <Column Name="Manager" DataType="null"/>
+          <Column Name="OrderEntered" DataType="null"/>
+          <BusinessObjectDataSource Name="Products9" Alias="Products" Enabled="false" DataType="null" PropName="Products"/>
+          <BusinessObjectDataSource Name="Payments9" Alias="Payments" Enabled="false" DataType="null" PropName="Payments"/>
+          <BusinessObjectDataSource Name="Accounts9" Alias="Accounts" Enabled="false" DataType="null" PropName="Accounts"/>
+          <Column Name="OrderCost" DataType="System.Decimal"/>
+          <Column Name="OrderPayments" DataType="System.Decimal"/>
+          <Column Name="CountProduct" DataType="System.Int16"/>
+          <Column Name="State" DataType="System.String"/>
+        </BusinessObjectDataSource>
+        <Column Name="FullUserName" DataType="System.String"/>
+        <Column Name="ShortUserName" DataType="System.String"/>
+      </Column>
+      <BusinessObjectDataSource Name="Products10" Alias="Products" DataType="null" PropName="Products" Enabled="true">
+        <Column Name="ID" DataType="System.Int64"/>
+        <Column Name="OrderID" DataType="System.Int64"/>
+        <Column Name="ProductTypeID" DataType="System.Int64"/>
+        <Column Name="Parameters" DataType="System.String"/>
+        <Column Name="Cost" DataType="System.Decimal"/>
+        <Column Name="DateTransferDesigner" DataType="null"/>
+        <Column Name="DateTransferApproval" DataType="null"/>
+        <Column Name="DateApproval" DataType="null"/>
+        <Column Name="DateTransferProduction" DataType="null"/>
+        <Column Name="DateManufacture" DataType="null"/>
+        <Column Name="DateShipment" DataType="null"/>
+        <Column Name="Note" DataType="System.String"/>
+        <Column Name="Files" DataType="System.String"/>
+        <Column Name="Quantity" DataType="System.Int16"/>
+        <Column Name="Order" DataType="null">
+          <Column Name="ID" DataType="System.Int64"/>
+          <Column Name="Number" DataType="System.String"/>
+          <Column Name="ClientID" DataType="System.Int64"/>
+          <Column Name="Note" DataType="System.String"/>
+          <Column Name="DateAdmission" DataType="null"/>
+          <Column Name="DateCompletion" DataType="null"/>
+          <Column Name="DateProductionLayout" DataType="null"/>
+          <Column Name="OrderEnteredID" DataType="System.Int64"/>
+          <Column Name="ManagerID" DataType="null"/>
+          <Column Name="DesignerID" DataType="null"/>
+          <Column Name="Client" DataType="null"/>
+          <Column Name="Designer" DataType="null"/>
+          <Column Name="Manager" DataType="null"/>
+          <Column Name="OrderEntered" DataType="null"/>
+          <BusinessObjectDataSource Name="Products11" Alias="Products" Enabled="false" DataType="null" PropName="Products"/>
+          <BusinessObjectDataSource Name="Payments10" Alias="Payments" Enabled="false" DataType="null" PropName="Payments"/>
+          <BusinessObjectDataSource Name="Accounts10" Alias="Accounts" Enabled="false" DataType="null" PropName="Accounts"/>
+          <Column Name="OrderCost" DataType="System.Decimal"/>
+          <Column Name="OrderPayments" DataType="System.Decimal"/>
+          <Column Name="CountProduct" DataType="System.Int16"/>
+          <Column Name="State" DataType="System.String"/>
+        </Column>
+        <Column Name="ProductType" DataType="null">
+          <Column Name="ID" DataType="System.Int64"/>
+          <Column Name="Name" DataType="System.String"/>
+          <Column Name="CategoryOfProductID" DataType="null"/>
+          <Column Name="CategoryOfProduct" DataType="null"/>
+          <BusinessObjectDataSource Name="ParametersInProductType" Enabled="false" DataType="null"/>
+          <BusinessObjectDataSource Name="TypeOfActivitysInProduct" Enabled="false" DataType="null"/>
+        </Column>
+        <Column Name="ProductTypeName" DataType="System.String"/>
+        <BusinessObjectDataSource Name="Costs" DataType="null" Enabled="true">
+          <Column Name="ID" DataType="System.Int64"/>
+          <Column Name="ProductID" DataType="System.Int64"/>
+          <Column Name="TypeOfActivityID" DataType="System.Int64"/>
+          <Column Name="Cost" DataType="System.Decimal"/>
+          <Column Name="Product" DataType="null"/>
+          <Column Name="TypeOfActivity" DataType="null"/>
+          <Column Name="Code" DataType="System.String"/>
+          <Column Name="Name" DataType="System.String"/>
+        </BusinessObjectDataSource>
+        <BusinessObjectDataSource Name="FilesList" DataType="null" Enabled="true">
+          <Column Name="Length" DataType="System.Int32"/>
+        </BusinessObjectDataSource>
+        <BusinessObjectDataSource Name="ProductParameter" DataType="null" Enabled="true">
+          <Column Name="ID" DataType="System.Int64"/>
+          <Column Name="Name" DataType="System.String"/>
+          <Column Name="ParameterValue" DataType="System.String"/>
+          <Column Name="UnitName" DataType="System.String"/>
+          <Column Name="ReferencebookID" DataType="null"/>
+          <Column Name="ParameterID" DataType="null"/>
+          <BusinessObjectDataSource Name="ReferencebookParametersList" Enabled="false" DataType="null"/>
+          <BusinessObjectDataSource Name="ReferencebookList" Enabled="false" DataType="null"/>
+          <Column Name="IsRefbookOnRequest" DataType="System.Boolean" BindableControl="CheckBox"/>
+          <Column Name="IsRequired" DataType="System.Boolean" BindableControl="CheckBox"/>
+        </BusinessObjectDataSource>
+        <Column Name="State" DataType="System.String"/>
+        <Column Name="ProductInfoForAccount" DataType="System.String"/>
+      </BusinessObjectDataSource>
+      <BusinessObjectDataSource Name="Payments11" Alias="Payments" DataType="null" PropName="Payments" Enabled="true"/>
+      <BusinessObjectDataSource Name="Accounts11" Alias="Accounts" DataType="null" PropName="Accounts" Enabled="true">
+        <Column Name="ID" DataType="System.Int64"/>
+        <Column Name="OrderID" DataType="System.Int64"/>
+        <Column Name="AccountNumber" DataType="System.String"/>
+        <Column Name="AccountDate" DataType="null"/>
+        <Column Name="ContractorID" DataType="null"/>
+        <Column Name="Footing" DataType="System.String"/>
+        <Column Name="IsManual" DataType="System.Boolean" BindableControl="CheckBox"/>
+        <Column Name="Details" DataType="System.String"/>
+        <Column Name="PayBeforeDate" DataType="null"/>
+        <Column Name="Order" DataType="null">
+          <Column Name="ID" DataType="System.Int64"/>
+          <Column Name="Number" DataType="System.String"/>
+          <Column Name="ClientID" DataType="System.Int64"/>
+          <Column Name="Note" DataType="System.String"/>
+          <Column Name="DateAdmission" DataType="null"/>
+          <Column Name="DateCompletion" DataType="null"/>
+          <Column Name="DateProductionLayout" DataType="null"/>
+          <Column Name="OrderEnteredID" DataType="System.Int64"/>
+          <Column Name="ManagerID" DataType="null"/>
+          <Column Name="DesignerID" DataType="null"/>
+          <Column Name="Client" DataType="null"/>
+          <Column Name="Designer" DataType="null"/>
+          <Column Name="Manager" DataType="null"/>
+          <Column Name="OrderEntered" DataType="null"/>
+          <BusinessObjectDataSource Name="Products12" Alias="Products" Enabled="false" DataType="null" PropName="Products"/>
+          <BusinessObjectDataSource Name="Payments12" Alias="Payments" Enabled="false" DataType="null" PropName="Payments"/>
+          <BusinessObjectDataSource Name="Accounts12" Alias="Accounts" Enabled="false" DataType="null" PropName="Accounts"/>
+          <Column Name="OrderCost" DataType="System.Decimal"/>
+          <Column Name="OrderPayments" DataType="System.Decimal"/>
+          <Column Name="CountProduct" DataType="System.Int16"/>
+          <Column Name="State" DataType="System.String"/>
+        </Column>
+        <Column Name="Contractor" DataType="null">
+          <Column Name="ID" DataType="System.Int64"/>
+          <Column Name="Name" DataType="System.String"/>
+          <Column Name="DirectorName" DataType="System.String"/>
+          <Column Name="DirectorPostName" DataType="System.String"/>
+          <Column Name="DirectorAttorneyNumber" DataType="System.String"/>
+          <Column Name="DirectorAttorneyDate" DataType="null"/>
+          <Column Name="ChiefAccountant" DataType="System.String"/>
+          <Column Name="ChiefAccountantPostName" DataType="System.String"/>
+          <Column Name="ChiefAccountantAttorneyNumber" DataType="System.String"/>
+          <Column Name="ChiefAccountantAttorneyDate" DataType="null"/>
+          <Column Name="BusinessAddress" DataType="System.String"/>
+          <Column Name="INN" DataType="System.String"/>
+          <Column Name="KPP" DataType="System.String"/>
+          <Column Name="OKPO" DataType="System.String"/>
+          <Column Name="OGRN" DataType="System.String"/>
+          <Column Name="BankAccount" DataType="System.String"/>
+          <Column Name="BankID" DataType="null"/>
+          <Column Name="Bank" DataType="null"/>
+          <BusinessObjectDataSource Name="Accounts13" Alias="Accounts" Enabled="false" DataType="null" PropName="Accounts"/>
+          <Column Name="ContractorInfoForPAD" DataType="System.String"/>
+        </Column>
+        <BusinessObjectDataSource Name="Acts" DataType="null" Enabled="true">
+          <Column Name="ID" DataType="System.Int64"/>
+          <Column Name="AccountID" DataType="System.Int64"/>
+          <Column Name="ActNumber" DataType="System.String"/>
+          <Column Name="ActDate" DataType="null"/>
+          <Column Name="ProductInAct" DataType="System.String"/>
+          <Column Name="Account" DataType="null"/>
+          <BusinessObjectDataSource Name="ListProductInAct" Enabled="false" DataType="null"/>
+          <BusinessObjectDataSource Name="DetailsList" Enabled="false" DataType="null"/>
+        </BusinessObjectDataSource>
+        <BusinessObjectDataSource Name="DetailsList1" Alias="DetailsList" DataType="null" PropName="DetailsList" Enabled="true">
+          <Column Name="ProductInfoForAccount" DataType="System.String"/>
+          <Column Name="Quantity" DataType="System.Int16"/>
+          <Column Name="UnitName" DataType="System.String"/>
+          <Column Name="PricePerUnit" DataType="System.Decimal"/>
+          <Column Name="Cost" DataType="System.Decimal"/>
+        </BusinessObjectDataSource>
+        <Column Name="ContractorName" DataType="System.String"/>
+        <Column Name="ContractorInfoForPAD" DataType="System.String"/>
+      </BusinessObjectDataSource>
+      <Column Name="OrderCost" DataType="System.Decimal"/>
+      <Column Name="OrderPayments" DataType="System.Decimal"/>
+      <Column Name="CountProduct" DataType="System.Int16"/>
+      <Column Name="State" DataType="System.String"/>
+    </Column>
+    <Column Name="Contractor" DataType="null">
+      <Column Name="ID" DataType="System.Int64"/>
+      <Column Name="Name" DataType="System.String"/>
+      <Column Name="DirectorName" DataType="System.String"/>
+      <Column Name="DirectorPostName" DataType="System.String"/>
+      <Column Name="DirectorAttorneyNumber" DataType="System.String"/>
+      <Column Name="DirectorAttorneyDate" DataType="null"/>
+      <Column Name="ChiefAccountant" DataType="System.String"/>
+      <Column Name="ChiefAccountantPostName" DataType="System.String"/>
+      <Column Name="ChiefAccountantAttorneyNumber" DataType="System.String"/>
+      <Column Name="ChiefAccountantAttorneyDate" DataType="null"/>
+      <Column Name="BusinessAddress" DataType="System.String"/>
+      <Column Name="INN" DataType="System.String"/>
+      <Column Name="KPP" DataType="System.String"/>
+      <Column Name="OKPO" DataType="System.String"/>
+      <Column Name="OGRN" DataType="System.String"/>
+      <Column Name="BankAccount" DataType="System.String"/>
+      <Column Name="BankID" DataType="null"/>
+      <Column Name="Bank" DataType="null">
+        <Column Name="ID" DataType="System.Int64"/>
+        <Column Name="Name" DataType="System.String"/>
+        <Column Name="LocalitiesID" DataType="System.Int64"/>
+        <Column Name="CorrAccount" DataType="System.String"/>
+        <Column Name="BIK" DataType="System.String"/>
+        <Column Name="OKPO" DataType="System.String"/>
+        <Column Name="OKONX" DataType="System.String"/>
+        <Column Name="Localities" DataType="null">
+          <Column Name="ID" DataType="System.Int64"/>
+          <Column Name="Name" DataType="System.String"/>
+          <BusinessObjectDataSource Name="Banks" Enabled="false" DataType="null"/>
+        </Column>
+        <BusinessObjectDataSource Name="Clients5" Alias="Clients" DataType="null" PropName="Clients" Enabled="true">
+          <Column Name="ID" DataType="System.Int64"/>
+          <Column Name="Name" DataType="System.String"/>
+          <Column Name="Profile" DataType="System.String"/>
+          <Column Name="IsIndividual" DataType="System.Boolean" BindableControl="CheckBox"/>
+          <Column Name="DirectorName" DataType="System.String"/>
+          <Column Name="ContactPersonName" DataType="System.String"/>
+          <Column Name="PostalAddress" DataType="System.String"/>
+          <Column Name="BusinessAddress" DataType="System.String"/>
+          <Column Name="ActualAddress" DataType="System.String"/>
+          <Column Name="Consignee" DataType="System.String"/>
+          <Column Name="INN" DataType="System.String"/>
+          <Column Name="KPP" DataType="System.String"/>
+          <Column Name="BankAccount" DataType="System.String"/>
+          <Column Name="BankID" DataType="null"/>
+          <Column Name="IsActive" DataType="System.Boolean" BindableControl="CheckBox"/>
+          <Column Name="Note" DataType="System.Byte[]" BindableControl="Picture"/>
+          <Column Name="UserID" DataType="System.Int64"/>
+          <Column Name="MobilePhone" DataType="System.String"/>
+          <Column Name="WorkPhone" DataType="System.String"/>
+          <Column Name="Email" DataType="System.String"/>
+          <Column Name="Bank" DataType="null"/>
+          <Column Name="User" DataType="null"/>
+          <BusinessObjectDataSource Name="Orders4" Alias="Orders" Enabled="false" DataType="null" PropName="Orders"/>
+          <Column Name="ClientInfoForPAD" DataType="System.String"/>
+        </BusinessObjectDataSource>
+        <BusinessObjectDataSource Name="Contractors1" Alias="Contractors" DataType="null" PropName="Contractors" Enabled="true">
+          <Column Name="ID" DataType="System.Int64"/>
+          <Column Name="Name" DataType="System.String"/>
+          <Column Name="DirectorName" DataType="System.String"/>
+          <Column Name="DirectorPostName" DataType="System.String"/>
+          <Column Name="DirectorAttorneyNumber" DataType="System.String"/>
+          <Column Name="DirectorAttorneyDate" DataType="null"/>
+          <Column Name="ChiefAccountant" DataType="System.String"/>
+          <Column Name="ChiefAccountantPostName" DataType="System.String"/>
+          <Column Name="ChiefAccountantAttorneyNumber" DataType="System.String"/>
+          <Column Name="ChiefAccountantAttorneyDate" DataType="null"/>
+          <Column Name="BusinessAddress" DataType="System.String"/>
+          <Column Name="INN" DataType="System.String"/>
+          <Column Name="KPP" DataType="System.String"/>
+          <Column Name="OKPO" DataType="System.String"/>
+          <Column Name="OGRN" DataType="System.String"/>
+          <Column Name="BankAccount" DataType="System.String"/>
+          <Column Name="BankID" DataType="null"/>
+          <Column Name="Bank" DataType="null"/>
+          <BusinessObjectDataSource Name="Accounts14" Alias="Accounts" Enabled="false" DataType="null" PropName="Accounts"/>
+          <Column Name="ContractorInfoForPAD" DataType="System.String"/>
+        </BusinessObjectDataSource>
+      </Column>
+      <BusinessObjectDataSource Name="Accounts15" Alias="Accounts" DataType="null" PropName="Accounts" Enabled="true">
+        <Column Name="ID" DataType="System.Int64"/>
+        <Column Name="OrderID" DataType="System.Int64"/>
+        <Column Name="AccountNumber" DataType="System.String"/>
+        <Column Name="AccountDate" DataType="null"/>
+        <Column Name="ContractorID" DataType="null"/>
+        <Column Name="Footing" DataType="System.String"/>
+        <Column Name="IsManual" DataType="System.Boolean" BindableControl="CheckBox"/>
+        <Column Name="Details" DataType="System.String"/>
+        <Column Name="PayBeforeDate" DataType="null"/>
+        <Column Name="Order" DataType="null">
+          <Column Name="ID" DataType="System.Int64"/>
+          <Column Name="Number" DataType="System.String"/>
+          <Column Name="ClientID" DataType="System.Int64"/>
+          <Column Name="Note" DataType="System.String"/>
+          <Column Name="DateAdmission" DataType="null"/>
+          <Column Name="DateCompletion" DataType="null"/>
+          <Column Name="DateProductionLayout" DataType="null"/>
+          <Column Name="OrderEnteredID" DataType="System.Int64"/>
+          <Column Name="ManagerID" DataType="null"/>
+          <Column Name="DesignerID" DataType="null"/>
+          <Column Name="Client" DataType="null"/>
+          <Column Name="Designer" DataType="null"/>
+          <Column Name="Manager" DataType="null"/>
+          <Column Name="OrderEntered" DataType="null"/>
+          <BusinessObjectDataSource Name="Products13" Alias="Products" Enabled="false" DataType="null" PropName="Products"/>
+          <BusinessObjectDataSource Name="Payments13" Alias="Payments" Enabled="false" DataType="null" PropName="Payments"/>
+          <BusinessObjectDataSource Name="Accounts16" Alias="Accounts" Enabled="false" DataType="null" PropName="Accounts"/>
+          <Column Name="OrderCost" DataType="System.Decimal"/>
+          <Column Name="OrderPayments" DataType="System.Decimal"/>
+          <Column Name="CountProduct" DataType="System.Int16"/>
+          <Column Name="State" DataType="System.String"/>
+        </Column>
+        <Column Name="Contractor" DataType="null">
+          <Column Name="ID" DataType="System.Int64"/>
+          <Column Name="Name" DataType="System.String"/>
+          <Column Name="DirectorName" DataType="System.String"/>
+          <Column Name="DirectorPostName" DataType="System.String"/>
+          <Column Name="DirectorAttorneyNumber" DataType="System.String"/>
+          <Column Name="DirectorAttorneyDate" DataType="null"/>
+          <Column Name="ChiefAccountant" DataType="System.String"/>
+          <Column Name="ChiefAccountantPostName" DataType="System.String"/>
+          <Column Name="ChiefAccountantAttorneyNumber" DataType="System.String"/>
+          <Column Name="ChiefAccountantAttorneyDate" DataType="null"/>
+          <Column Name="BusinessAddress" DataType="System.String"/>
+          <Column Name="INN" DataType="System.String"/>
+          <Column Name="KPP" DataType="System.String"/>
+          <Column Name="OKPO" DataType="System.String"/>
+          <Column Name="OGRN" DataType="System.String"/>
+          <Column Name="BankAccount" DataType="System.String"/>
+          <Column Name="BankID" DataType="null"/>
+          <Column Name="Bank" DataType="null"/>
+          <BusinessObjectDataSource Name="Accounts17" Alias="Accounts" Enabled="false" DataType="null" PropName="Accounts"/>
+          <Column Name="ContractorInfoForPAD" DataType="System.String"/>
+        </Column>
+        <BusinessObjectDataSource Name="Acts1" Alias="Acts" DataType="null" PropName="Acts" Enabled="true">
+          <Column Name="ID" DataType="System.Int64"/>
+          <Column Name="AccountID" DataType="System.Int64"/>
+          <Column Name="ActNumber" DataType="System.String"/>
+          <Column Name="ActDate" DataType="null"/>
+          <Column Name="ProductInAct" DataType="System.String"/>
+          <Column Name="Account" DataType="null"/>
+          <BusinessObjectDataSource Name="ListProductInAct1" Alias="ListProductInAct" Enabled="false" DataType="null" PropName="ListProductInAct"/>
+          <BusinessObjectDataSource Name="DetailsList2" Alias="DetailsList" Enabled="false" DataType="null" PropName="DetailsList"/>
+        </BusinessObjectDataSource>
+        <BusinessObjectDataSource Name="DetailsList3" Alias="DetailsList" DataType="null" PropName="DetailsList" Enabled="true">
+          <Column Name="ProductInfoForAccount" DataType="System.String"/>
+          <Column Name="Quantity" DataType="System.Int16"/>
+          <Column Name="UnitName" DataType="System.String"/>
+          <Column Name="PricePerUnit" DataType="System.Decimal"/>
+          <Column Name="Cost" DataType="System.Decimal"/>
+        </BusinessObjectDataSource>
+        <Column Name="ContractorName" DataType="System.String"/>
+        <Column Name="ContractorInfoForPAD" DataType="System.String"/>
+      </BusinessObjectDataSource>
+      <Column Name="ContractorInfoForPAD" DataType="System.String"/>
+    </Column>
+    <BusinessObjectDataSource Name="Acts2" Alias="Acts" DataType="null" PropName="Acts" Enabled="true">
+      <Column Name="ID" DataType="System.Int64"/>
+      <Column Name="AccountID" DataType="System.Int64"/>
+      <Column Name="ActNumber" DataType="System.String"/>
+      <Column Name="ActDate" DataType="null"/>
+      <Column Name="ProductInAct" DataType="System.String"/>
+      <Column Name="Account" DataType="null">
+        <Column Name="ID" DataType="System.Int64"/>
+        <Column Name="OrderID" DataType="System.Int64"/>
+        <Column Name="AccountNumber" DataType="System.String"/>
+        <Column Name="AccountDate" DataType="null"/>
+        <Column Name="ContractorID" DataType="null"/>
+        <Column Name="Footing" DataType="System.String"/>
+        <Column Name="IsManual" DataType="System.Boolean" BindableControl="CheckBox"/>
+        <Column Name="Details" DataType="System.String"/>
+        <Column Name="PayBeforeDate" DataType="null"/>
+        <Column Name="Order" DataType="null">
+          <Column Name="ID" DataType="System.Int64"/>
+          <Column Name="Number" DataType="System.String"/>
+          <Column Name="ClientID" DataType="System.Int64"/>
+          <Column Name="Note" DataType="System.String"/>
+          <Column Name="DateAdmission" DataType="null"/>
+          <Column Name="DateCompletion" DataType="null"/>
+          <Column Name="DateProductionLayout" DataType="null"/>
+          <Column Name="OrderEnteredID" DataType="System.Int64"/>
+          <Column Name="ManagerID" DataType="null"/>
+          <Column Name="DesignerID" DataType="null"/>
+          <Column Name="Client" DataType="null"/>
+          <Column Name="Designer" DataType="null"/>
+          <Column Name="Manager" DataType="null"/>
+          <Column Name="OrderEntered" DataType="null"/>
+          <BusinessObjectDataSource Name="Products14" Alias="Products" Enabled="false" DataType="null" PropName="Products"/>
+          <BusinessObjectDataSource Name="Payments14" Alias="Payments" Enabled="false" DataType="null" PropName="Payments"/>
+          <BusinessObjectDataSource Name="Accounts18" Alias="Accounts" Enabled="false" DataType="null" PropName="Accounts"/>
+          <Column Name="OrderCost" DataType="System.Decimal"/>
+          <Column Name="OrderPayments" DataType="System.Decimal"/>
+          <Column Name="CountProduct" DataType="System.Int16"/>
+          <Column Name="State" DataType="System.String"/>
+        </Column>
+        <Column Name="Contractor" DataType="null">
+          <Column Name="ID" DataType="System.Int64"/>
+          <Column Name="Name" DataType="System.String"/>
+          <Column Name="DirectorName" DataType="System.String"/>
+          <Column Name="DirectorPostName" DataType="System.String"/>
+          <Column Name="DirectorAttorneyNumber" DataType="System.String"/>
+          <Column Name="DirectorAttorneyDate" DataType="null"/>
+          <Column Name="ChiefAccountant" DataType="System.String"/>
+          <Column Name="ChiefAccountantPostName" DataType="System.String"/>
+          <Column Name="ChiefAccountantAttorneyNumber" DataType="System.String"/>
+          <Column Name="ChiefAccountantAttorneyDate" DataType="null"/>
+          <Column Name="BusinessAddress" DataType="System.String"/>
+          <Column Name="INN" DataType="System.String"/>
+          <Column Name="KPP" DataType="System.String"/>
+          <Column Name="OKPO" DataType="System.String"/>
+          <Column Name="OGRN" DataType="System.String"/>
+          <Column Name="BankAccount" DataType="System.String"/>
+          <Column Name="BankID" DataType="null"/>
+          <Column Name="Bank" DataType="null"/>
+          <BusinessObjectDataSource Name="Accounts19" Alias="Accounts" Enabled="false" DataType="null" PropName="Accounts"/>
+          <Column Name="ContractorInfoForPAD" DataType="System.String"/>
+        </Column>
+        <BusinessObjectDataSource Name="Acts3" Alias="Acts" DataType="null" PropName="Acts" Enabled="true">
+          <Column Name="ID" DataType="System.Int64"/>
+          <Column Name="AccountID" DataType="System.Int64"/>
+          <Column Name="ActNumber" DataType="System.String"/>
+          <Column Name="ActDate" DataType="null"/>
+          <Column Name="ProductInAct" DataType="System.String"/>
+          <Column Name="Account" DataType="null"/>
+          <BusinessObjectDataSource Name="ListProductInAct2" Alias="ListProductInAct" Enabled="false" DataType="null" PropName="ListProductInAct"/>
+          <BusinessObjectDataSource Name="DetailsList4" Alias="DetailsList" Enabled="false" DataType="null" PropName="DetailsList"/>
+        </BusinessObjectDataSource>
+        <BusinessObjectDataSource Name="DetailsList5" Alias="DetailsList" DataType="null" PropName="DetailsList" Enabled="true">
+          <Column Name="ProductInfoForAccount" DataType="System.String"/>
+          <Column Name="Quantity" DataType="System.Int16"/>
+          <Column Name="UnitName" DataType="System.String"/>
+          <Column Name="PricePerUnit" DataType="System.Decimal"/>
+          <Column Name="Cost" DataType="System.Decimal"/>
+        </BusinessObjectDataSource>
+        <Column Name="ContractorName" DataType="System.String"/>
+        <Column Name="ContractorInfoForPAD" DataType="System.String"/>
+      </Column>
+      <BusinessObjectDataSource Name="ListProductInAct3" Alias="ListProductInAct" DataType="null" PropName="ListProductInAct" Enabled="true"/>
+      <BusinessObjectDataSource Name="DetailsList6" Alias="DetailsList" DataType="null" PropName="DetailsList" Enabled="true">
+        <Column Name="ProductInfoForAccount" DataType="System.String"/>
+        <Column Name="Quantity" DataType="System.Int16"/>
+        <Column Name="UnitName" DataType="System.String"/>
+        <Column Name="PricePerUnit" DataType="System.Decimal"/>
+        <Column Name="Cost" DataType="System.Decimal"/>
+      </BusinessObjectDataSource>
+    </BusinessObjectDataSource>
+    <BusinessObjectDataSource Name="DetailsList7" Alias="DetailsList" DataType="null" PropName="DetailsList" Enabled="true">
+      <Column Name="ProductInfoForAccount" DataType="System.String"/>
+      <Column Name="Quantity" DataType="System.Int16"/>
+      <Column Name="UnitName" DataType="System.String"/>
+      <Column Name="PricePerUnit" DataType="System.Decimal"/>
+      <Column Name="Cost" DataType="System.Decimal"/>
+    </BusinessObjectDataSource>
+    <Column Name="ContractorName" DataType="System.String"/>
+    <Column Name="ContractorInfoForPAD" DataType="System.String"/>
+  </BusinessObjectDataSource>
+</Dictionary>

@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Dictionary>
+  <BusinessObjectDataSource Name="dataset" ReferenceName="dataset" DataType="null" Enabled="true">
+    <Column Name="code" DataType="System.String"/>
+    <Column Name="name" DataType="System.String"/>
+    <Column Name="month" DataType="System.Int32"/>
+    <Column Name="year" DataType="System.Int32"/>
+    <Column Name="cost" DataType="System.Decimal"/>
+  </BusinessObjectDataSource>
+</Dictionary>

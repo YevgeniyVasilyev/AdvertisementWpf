@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report ScriptLanguage="CSharp" ReportInfo.Created="10/25/2022 20:21:45" ReportInfo.Modified="10/25/2022 20:21:45" ReportInfo.CreatorVersion="2022.3.10.0">
+  <Dictionary>
+    <BusinessObjectDataSource Name="dataset" ReferenceName="dataset" DataType="System.Collections.Generic.List`1[[System.Object, System.Private.CoreLib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]" Enabled="true">
+      <Column Name="code" DataType="System.String"/>
+      <Column Name="name" DataType="System.String"/>
+      <Column Name="month" DataType="System.Int32"/>
+      <Column Name="year" DataType="System.Int32"/>
+      <Column Name="cost" DataType="System.Decimal"/>
+    </BusinessObjectDataSource>
+  </Dictionary>
+</Report>

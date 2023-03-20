@@ -1,0 +1,235 @@
+﻿<Window x:Class="AdvertisementWpf.ReferencebookWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:AdvertisementWpf"
+        mc:Ignorable="d"
+        Title="Конструктор справочников параметров изделий и операций" MinHeight="500" MinWidth="900" BorderThickness="1" WindowStartupLocation="CenterScreen" 
+        WindowState="Maximized"
+        ResizeMode="CanResizeWithGrip" WindowStyle="SingleBorderWindow" Closed="Window_Closed">
+    <Window.Resources>
+        <CollectionViewSource x:Key="referencebookViewSource"/>
+        <CollectionViewSource x:Key="categoryOfProductViewSource" Filter="CollectionViewSource_Filter"/>
+        <CollectionViewSource x:Key="typeOfActivityViewSource" Filter="CollectionViewSource_Filter"/>
+        <Style TargetType="Button">
+            <Setter Property="Margin" Value="2"/>
+            <Setter Property="Padding" Value="2"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Effect">
+                        <Setter.Value>
+                            <DropShadowEffect BlurRadius="8" ShadowDepth="0.5" Opacity="0.5"/>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+    <Window.CommandBindings>
+        <CommandBinding Command="ApplicationCommands.Save"
+                        Executed="Save_Executed"
+                        CanExecute="Save_CanExecute"/>
+        <!--<CommandBinding Command="ApplicationCommands.Delete"
+                        Executed="Delete_Executed"
+                        CanExecute="Delete_CanExecute"/>-->
+        <CommandBinding Command="ApplicationCommands.New"
+                        Executed="New_Executed"
+                        CanExecute="New_CanExecute"/>
+    </Window.CommandBindings>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Column="0" Grid.Row="0" Text=" Справочники " 
+                   FontWeight="Bold" TextWrapping="Wrap" TextAlignment="Center" 
+                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <TextBlock Grid.Column="1" Grid.Row="0" Text=" Значения параметров " 
+                   FontWeight="Bold" TextWrapping="Wrap" TextAlignment="Center" 
+                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <Grid Grid.Column="2" Grid.Row="0" Margin="3,2,3,2" Grid.ColumnSpan="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" Name="CatProductColumn"/>
+                <ColumnDefinition Width="*" Name="KVDColumn"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Column="0" Grid.ColumnSpan="2" Text=" Применять для " 
+                       FontWeight="Bold" HorizontalAlignment="Center"  VerticalAlignment="Center"/>
+            <TextBlock Grid.Column="0" Grid.Row="1" Text=" категории изделий " 
+                       FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <TextBlock Grid.Column="1" Grid.Row="1" Text="  кодов видов деятельности " FontWeight="Bold" HorizontalAlignment="Center"/>
+        </Grid>
+        <ListBox Grid.Column="0" Grid.Row="1" Name="ReferencebookListBox" IsSynchronizedWithCurrentItem="True" BorderBrush="DeepSkyBlue" BorderThickness="1"
+                 ItemsSource="{Binding Source={StaticResource referencebookViewSource}, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" 
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled" KeyDown="ListBox_KeyDown">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Path=Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                               Width="{Binding ElementName=ReferencebookListBox, Path=ActualWidth}"/>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <ListBox Grid.Column="1" Grid.Row="1" Name="ReferencebookParametersListBox" IsSynchronizedWithCurrentItem="True" BorderBrush="DeepSkyBlue" BorderThickness="1"
+                 ItemsSource="{Binding Source={StaticResource referencebookViewSource}, Path=ReferencebookParameters, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled" KeyDown="ListBox_KeyDown">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Path=Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                               Width="{Binding ElementName=ReferencebookParametersListBox, Path=ActualWidth}"/>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <StackPanel Grid.Column="2" Grid.Row="1" Orientation="Vertical">
+            <ListBox Name="ReferencebookApplicabilitiesCategoryListBox" IsSynchronizedWithCurrentItem="True" BorderBrush="DeepSkyBlue" BorderThickness="1"
+                 ItemsSource="{Binding Source={StaticResource referencebookViewSource}, Path=ReferencebookApplicabilities, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled" KeyDown="ListBox_KeyDown"
+                 Width="{Binding ElementName=CatProductColumn, Path=Width}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Path=CategoryOfProductName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            <ListBox Name="ListCategoryOfProduct" Visibility="Collapsed" BorderThickness="2" BorderBrush="Green" ScrollViewer.VerticalScrollBarVisibility="Auto"
+                     ItemsSource="{Binding Source={StaticResource categoryOfProductViewSource}}" DisplayMemberPath="Name" SelectedValuePath="ID" 
+                     MouseDoubleClick="ListCategoryOfProduct_MouseDoubleClick">
+            </ListBox>
+        </StackPanel>
+        <StackPanel Grid.Column="3" Grid.Row="1" Orientation="Vertical">
+            <ListBox Name="ReferencebookApplicabilitiesTypeOfActivityListBox" IsSynchronizedWithCurrentItem="True" BorderBrush="DeepSkyBlue" BorderThickness="1"
+                 ItemsSource="{Binding Source={StaticResource referencebookViewSource}, Path=ReferencebookApplicabilities, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled" KeyDown="ListBox_KeyDown"
+                 Width="{Binding ElementName=KVDColumn, Path=Width}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Path=TypeOfActivityName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            <ListBox Name="ListTypeOfActyvity" Visibility="Collapsed" BorderThickness="2" BorderBrush="Green" ScrollViewer.VerticalScrollBarVisibility="Auto"
+                         ItemsSource="{Binding Source={StaticResource typeOfActivityViewSource}}" DisplayMemberPath="Name" SelectedValuePath="ID" 
+                         MouseDoubleClick="ListTypeOfActyvity_MouseDoubleClick">
+            </ListBox>
+        </StackPanel>
+        <Grid Grid.Column="0" Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" Name="ReferencebookButton" Background="Transparent" BorderBrush="Transparent"
+                    ToolTip="Добавить справочник" HorizontalAlignment="Center" Command="ApplicationCommands.New">
+                <Image Source="/Images/free-icon-add-button.png" Width="20" Height="20"/>
+            </Button>
+            <!--<Label Grid.Column="1" Content="Наименование справочника: " VerticalAlignment="Center"/>-->
+            <TextBox Grid.Column="2" VerticalAlignment="Center" 
+                     Text="{Binding Source={StaticResource referencebookViewSource}, Path=Name, Mode=TwoWay, 
+                            UpdateSourceTrigger=PropertyChanged}"/>
+        </Grid>
+        <Grid Grid.Column="1" Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" Name="ReferencebookParameterButton" Background="Transparent" BorderBrush="Transparent"
+                    ToolTip="Добавить параметр" HorizontalAlignment="Center" Command="ApplicationCommands.New">
+                <Image Source="/Images/free-icon-add-button.png" Width="20" Height="20"/>
+            </Button>
+            <!--<Label Grid.Column="1" Content="Значение параметра: " VerticalAlignment="Center"/>-->
+            <TextBox Grid.Column="2" VerticalAlignment="Center" 
+                     Text="{Binding ElementName=ReferencebookParametersListBox, Path=SelectedItem.Value, Mode=TwoWay, 
+                            UpdateSourceTrigger=PropertyChanged}"/>
+        </Grid>
+        <StackPanel Grid.Column="2" Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
+            <Button Name="CategoryOfProductApplicabilitiesButton" Background="Transparent" BorderBrush="Transparent"
+                        ToolTip="Добавить категорию изделий" HorizontalAlignment="Right" Command="ApplicationCommands.New">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Image Source="/Images/free-icon-add-button.png" Width="20" Height="20"/>
+                    <Label Content="Добавить категорию" VerticalAlignment="Center"/>
+                </StackPanel>
+                <Button.Style>
+                    <Style TargetType="{x:Type Button}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ElementName=ListCategoryOfProduct, Path=Visibility}" Value="Visible">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+            <Button Name="HideCategoryOfProductApplicabilitiesButton" Background="Transparent" BorderBrush="Transparent"
+                        ToolTip="Свернуть список категорий" HorizontalAlignment="Right" Click="HideCategoryOfProductApplicabilitiesButton_Click" 
+                        Visibility="{Binding ElementName=ListCategoryOfProduct, Path=Visibility}">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Image Source="/Images/free-icon-minus-button.png" Width="20" Height="20"/>
+                    <Label Content="Свернуть список" VerticalAlignment="Center"/>
+                </StackPanel>
+                <Button.Style>
+                    <Style TargetType="{x:Type Button}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ElementName=ListCategoryOfProduct, Path=Visibility}" Value="Visible">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+        </StackPanel>
+        <StackPanel Grid.Column="3" Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
+            <Button Name="TypeOfActyvityApplicabilitiesButton" Background="Transparent" BorderBrush="Transparent"
+                        ToolTip="Добавить код вида деятельности" HorizontalAlignment="Right" Command="ApplicationCommands.New">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Image Source="/Images/free-icon-add-button.png" Width="20" Height="20"/>
+                    <Label Content="Добавить КВД" VerticalAlignment="Center"/>
+                </StackPanel>
+                <Button.Style>
+                    <Style TargetType="{x:Type Button}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ElementName=ListTypeOfActyvity, Path=Visibility}" Value="Visible">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+            <Button Name="HideTypeOfActyvityApplicabilitiesButton" Background="Transparent" BorderBrush="Transparent"
+                        ToolTip="Свернуть список КВД" HorizontalAlignment="Right" Click="HideTypeOfActyvityApplicabilitiesButton_Click" 
+                        Visibility="{Binding ElementName=ListTypeOfActyvity, Path=Visibility}">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Image Source="/Images/free-icon-minus-button.png" Width="20" Height="20"/>
+                    <Label Content="Свернуть список КВД" VerticalAlignment="Center"/>
+                </StackPanel>
+                <Button.Style>
+                    <Style TargetType="{x:Type Button}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ElementName=ListTypeOfActyvity, Path=Visibility}" Value="Visible">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+        </StackPanel>
+        <Button Grid.Row="3" Name="SaveButton" HorizontalAlignment="Left" Command="ApplicationCommands.Save" Margin="2,2,2,2">
+            <StackPanel Orientation="Horizontal">
+                <Image Source="\Images\free-icon-floppy-disk_save.png" Width="20" Height="20"/>
+                <Label Content="Сохранить"/>
+            </StackPanel>
+        </Button>
+    </Grid>
+</Window>

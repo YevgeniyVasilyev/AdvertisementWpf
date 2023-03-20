@@ -1,0 +1,83 @@
+﻿<Window x:Class="AdvertisementWpf.LogonWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:AdvertisementWpf"
+        mc:Ignorable="d"
+        Title="Параметры подключения" SizeToContent="WidthAndHeight" WindowStartupLocation="CenterOwner" ResizeMode="NoResize" 
+        WindowStyle="SingleBorderWindow" BorderThickness="1" KeyDown="Window_KeyDown" >
+    <Window.Resources>
+        <Style x:Key="TextBoxStyle">
+            <Setter Property="Control.Margin" Value="1,1,1,1"/>
+            <Setter Property="Control.Padding" Value="2,2,2,2"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding ElementName=IsWindowsAuth, Path=IsChecked}" Value="True">
+                    <Setter Property="Control.IsEnabled" Value="False"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="DropShadow" TargetType="{x:Type Button}">
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Effect">
+                        <Setter.Value>
+                            <DropShadowEffect BlurRadius="8" ShadowDepth="0.5" Opacity="0.5"/>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+    <Grid Margin="10,10,10,10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"></ColumnDefinition>
+            <ColumnDefinition Width="Auto"></ColumnDefinition>
+            <ColumnDefinition Width="Auto"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+        <TextBlock Text="Имя пользователя: " Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+        <TextBlock Text="Пароль: " Grid.Column="0" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+        <TextBlock Text="Экземпляр БД: " Grid.Column="0" Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+        <TextBox Name="username" Text="{Binding Path=Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" Grid.Row="0" Style="{StaticResource ResourceKey=TextBoxStyle}"/>
+        <PasswordBox Name="userpwd" Grid.Column="1" Grid.Row="1" Margin="1,1,1,1" Padding="2,2,2,2" Style="{StaticResource ResourceKey=TextBoxStyle}"/>
+        <ComboBox Name="InstanceDB" Grid.Column="1" Grid.Row="2" Margin="1,1,1,1" Padding="2,2,2,2" Width="200" ItemsSource="{Binding Path=Basealiases}"/>
+        <CheckBox Name="IsWindowsAuth" Grid.ColumnSpan="2" Grid.Row="3" Margin="0,2,2,2" IsChecked="True" Content="Windows аутентификация (сквозная)"/>
+        <Button Name="OK" Content="Подключиться" Grid.Column="2" Grid.RowSpan="2" IsDefault="True" Margin="2,2,2,2" Width="{Binding ElementName=Cancel, Path=Width}" 
+                Click="OK_Click" Style="{StaticResource DropShadow}"/>
+        <Button Name="Cancel" Content=" Отменить " Grid.Column="2" Grid.Row="2" Grid.RowSpan="2" IsCancel="True" Margin="2,2,2,2" 
+                Click="Cancel_Click" Style="{StaticResource DropShadow}"/>
+        <Grid Name="AppSettingGrid" Grid.Column="0" Grid.Row="4" Grid.ColumnSpan="3" Visibility="Collapsed">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Column="0" Grid.Row="0" Text="Пользователь: "/>
+            <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding ElementName=username, Path=Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            <TextBlock Grid.Column="0" Grid.Row="1" Text="Сервер БД: "/>
+            <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding Path=Servername, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            <TextBlock Grid.Column="0" Grid.Row="2" Text="База данных: "/>
+            <ListBox Name="BasenamesListBox" Grid.Column="1" Grid.Row="2" ItemsSource="{Binding Path=Basenames, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" KeyDown="BasenamesListBox_KeyDown" />
+            <ListBox Name="BasealiasesListBox" Grid.Column="2" Grid.Row="2" ItemsSource="{Binding Path=Basealiases, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" KeyDown="BasealiasesListBox_KeyDown"/>
+            <StackPanel Grid.Column="0" Grid.Row="3" Orientation="Horizontal">
+                <Button Name="NewBDButton" Content=" + " ToolTip="Добавить описание БД" Click="NewBDButton_Click" FontWeight="Bold"/>
+                <Button Name="ApplayNewBDButton" Content="OK" ToolTip="Изменить описании БД" Click="ApplayNewBDButton_Click" FontWeight="Bold"/>
+            </StackPanel>
+            <TextBox Grid.Column="1" Grid.Row="3" Name="NewBasenameTextBox" Text="{Binding ElementName=BasenamesListBox, Path=SelectedValue}" TextChanged="NewBasenameTextBox_TextChanged" />
+            <TextBox Grid.Column="2" Grid.Row="3" Name="NewBasealiaseTextBox"  Text="{Binding ElementName=BasealiasesListBox, Path=SelectedValue}" TextChanged="NewBasealiaseTextBox_TextChanged" />
+        </Grid>
+    </Grid>
+</Window>

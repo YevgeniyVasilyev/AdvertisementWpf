@@ -1,0 +1,313 @@
+﻿<Window x:Class="AdvertisementWpf.OperationConstructorWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:AdvertisementWpf"
+        mc:Ignorable="d"
+        Title="Конструктор операций" MinHeight="500" MinWidth="700" WindowStartupLocation="CenterScreen" 
+        SizeToContent="WidthAndHeight"
+        ResizeMode="CanResizeWithGrip" WindowStyle="SingleBorderWindow" Closed="Window_Closed">
+    <Window.Resources>
+        <CollectionViewSource x:Key="unitsViewSource"/>
+        <CollectionViewSource x:Key="productionAreaViewSource"/>
+        <CollectionViewSource x:Key="typeOfActivityViewSource"/>
+        <CollectionViewSource x:Key="referencebookViewSource"/>
+        <Style x:Key="DataGridStyle" TargetType="DataGrid">
+            <Setter Property="AutoGenerateColumns" Value="False"/>
+            <Setter Property="Focusable" Value="True"/>
+            <Setter Property="Margin" Value="2"/>
+            <Setter Property="Padding" Value="2"/>
+            <Setter Property="BorderThickness" Value="0.5"/>
+            <Setter Property="EnableRowVirtualization" Value="True"/>
+            <Setter Property="RowDetailsVisibilityMode" Value="VisibleWhenSelected"/>
+            <!--<Setter Property="ColumnHeaderStyle" Value="{DynamicResource ColumnHeaderStyle}"/>-->
+        </Style>
+        <Style x:Key="ColumnHeaderStyle" TargetType="DataGridColumnHeader">
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="ContentTemplate">
+                <Setter.Value>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding}" TextWrapping="Wrap"/>
+                    </DataTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style TargetType="{x:Type TextBox}" x:Key="ValidationTemplate">
+            <Setter Property="Validation.ErrorTemplate">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <DockPanel LastChildFill="True">
+                            <Grid Margin="0,-2,0,-2">
+                                <Ellipse StrokeThickness="0" Fill="Red" Width="{TemplateBinding FontSize}" Height="{TemplateBinding FontSize}"/>
+                                <TextBlock Text="!" FontSize="{TemplateBinding FontSize}" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
+                            </Grid>
+                            <Border BorderBrush="Red" BorderThickness="1">
+                                <AdornedElementPlaceholder/>
+                            </Border>
+                        </DockPanel>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="Validation.HasError" Value="True">
+                    <Setter Property="ToolTip"
+                            Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)[0].ErrorContent}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <local:ObservableCollectionConverter x:Key="ObservableCollectionConverter"/>
+    </Window.Resources>
+    <Window.CommandBindings>
+        <CommandBinding Command="ApplicationCommands.Save"
+                        Executed="Save_Executed"
+                        CanExecute="Save_CanExecute"/>
+        <CommandBinding Command="ApplicationCommands.New"
+                        Executed="New_Executed"
+                        CanExecute="New_CanExecute"/>
+    </Window.CommandBindings>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Column="0" Grid.Row="0" Name="KVDTitle" Margin="2" Text=" Коды видов деятельности " FontWeight="Bold" TextWrapping="Wrap" TextAlignment="Center" 
+                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <TextBlock Grid.Column="1" Grid.Row="0" Margin="2" Text=" Операции " FontWeight="Bold" TextWrapping="Wrap" TextAlignment="Center" 
+                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <ListBox Grid.Column="0" Grid.Row="1" Grid.RowSpan="6" Name="ListTypeOfActyvity" Margin="2" Width="{Binding ElementName=KVDTitle, Path=ActualWidth}" 
+                 ScrollViewer.VerticalScrollBarVisibility="Auto" BorderBrush="DimGray" BorderThickness="1"
+                 ItemsSource="{Binding Source={StaticResource typeOfActivityViewSource}}" DisplayMemberPath="CodeName" 
+                 SelectionChanged="ListTypeOfActyvity_SelectionChanged">
+        </ListBox>
+        <ListBox Grid.Column="1" Grid.Row="1" Margin="2" Name="OperationsListBox" IsSynchronizedWithCurrentItem="True" BorderBrush="DimGray" BorderThickness="1"
+                 ItemsSource="{Binding ElementName=ListTypeOfActyvity, Path=SelectedItem.TypeOfActivityInOperations, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" 
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled" KeyDown="ListBox_KeyDown">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Path=Operation.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <Grid Grid.Column="1" Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" Name="NewOperationButton" Background="Transparent" BorderBrush="Transparent"
+                    ToolTip="Добавить операцию" HorizontalAlignment="Center" Command="ApplicationCommands.New">
+                <Image Source="/Images/free-icon-add-button.png" Width="20" Height="20"/>
+            </Button>
+            <TextBox Grid.Column="2" VerticalAlignment="Center" Text="{Binding ElementName=OperationsListBox, Path=SelectedItem.Operation.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+        </Grid>
+        <Label Grid.Column="1" Grid.Row="3" Content=" параметры операции " HorizontalContentAlignment="Center"/>
+        <Grid Grid.Column="1" Grid.Row="4" Margin="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Label Grid.Column="0" Content=" Производственный участок: "/>
+            <ComboBox Grid.Column="2" ItemsSource="{Binding Source={StaticResource productionAreaViewSource}}" 
+                      DisplayMemberPath="Name" SelectedValuePath="ID"
+                      SelectedValue="{Binding ElementName=OperationsListBox, Path=SelectedItem.Operation.ProductionAreaID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+            </ComboBox>
+        </Grid>
+        <DataGrid Grid.Column="1" Grid.Row="5" Name="ParametersInOperationGrid" Margin="2" BorderThickness="1" BorderBrush="DimGray"
+                      Style="{StaticResource DataGridStyle}" GridLinesVisibility="None" MinRowHeight="20"
+                      CanUserAddRows="False" CanUserDeleteRows="True" 
+                      ItemsSource="{Binding ElementName=OperationsListBox, 
+                                    Path=SelectedItem.Operation.ParameterInOperations, Converter={StaticResource ObservableCollectionConverter}, 
+                                    Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                      PreviewKeyDown="ParametersInOperationGrid_PreviewKeyDown">
+            <DataGrid.ContextMenu>
+                <ContextMenu x:Name="ClearReferencebook">
+                    <MenuItem Header="Очистить столбец 'Справочник'" Click="MenuItem_Click"/>
+                </ContextMenu>
+            </DataGrid.ContextMenu>
+            <DataGrid.Resources>
+                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="LightSkyBlue"/>
+            </DataGrid.Resources>
+            <DataGrid.Columns>
+                <DataGridTextColumn Header=" наименование " IsReadOnly="True" Binding="{Binding Path=Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <DataGridComboBoxColumn Header=" ед. изм. " ItemsSource="{Binding Source={StaticResource unitsViewSource}}" 
+                                            DisplayMemberPath="Name" SelectedValueBinding="{Binding UnitID}" SelectedValuePath="ID">
+                </DataGridComboBoxColumn>
+                <DataGridComboBoxColumn Header=" справочник " ItemsSource="{Binding Source={StaticResource referencebookViewSource}}" 
+                                            DisplayMemberPath="Name" SelectedValueBinding="{Binding ReferencebookID}" SelectedValuePath="ID">
+                </DataGridComboBoxColumn>
+                <DataGridCheckBoxColumn Header=" спрПоВыбору " Binding="{Binding Path=IsRefbookOnRequest,ValidatesOnExceptions=True, ValidatesOnNotifyDataErrors=True, Mode=TwoWay}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+        <Grid Grid.Column="1" Grid.Row="6" Margin="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" Name="NewParameterButton" Background="Transparent" BorderBrush="Transparent"
+                    ToolTip="Добавить параметр" HorizontalAlignment="Center" Command="ApplicationCommands.New">
+                <Image Source="/Images/free-icon-add-button.png" Width="20" Height="20"/>
+            </Button>
+            <TextBox Grid.Column="2" VerticalAlignment="Center" Text="{Binding ElementName=ParametersInOperationGrid, Path=SelectedItem.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+        </Grid>
+        <Button Grid.Column="0" Grid.Row="7" Grid.ColumnSpan="2" Name="SaveButton" HorizontalAlignment="Left" Command="ApplicationCommands.Save" Margin="2,2,2,2">
+            <StackPanel Orientation="Horizontal">
+                <Image Source="\Images\free-icon-floppy-disk_save.png" Width="20" Height="20"/>
+                <Label Content="Сохранить"/>
+            </StackPanel>
+        </Button>
+        <!--<TextBlock Grid.Column="0" Grid.Row="0" Text=" Наименование операции " FontWeight="Bold" TextWrapping="Wrap" TextAlignment="Center" 
+                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <TextBlock Grid.Column="1" Grid.Row="0" Text=" Конфигурация операции " FontWeight="Bold" TextWrapping="Wrap" TextAlignment="Center" 
+                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <ListBox Grid.Column="0" Grid.Row="1" Name="OperationsListBox" IsSynchronizedWithCurrentItem="True" BorderBrush="DimGray" BorderThickness="1"
+                 ItemsSource="{Binding Source={StaticResource operationsViewSource}, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" 
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled" KeyDown="ListBox_KeyDown">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Path=Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <Grid Grid.Column="1" Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Label Grid.Column="0" Grid.Row="0" Content=" Производственный участок: "/>
+            <ComboBox Grid.Column="1" Grid.Row="0" Margin="0,0,5,0" ItemsSource="{Binding Source={StaticResource productionAreaViewSource}}" 
+                      DisplayMemberPath="Name" SelectedValuePath="ID"
+                      SelectedValue="{Binding Source={StaticResource operationsViewSource}, Path=ProductionAreaID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+            </ComboBox>
+            <StackPanel Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2" Orientation="Vertical">
+                <ListBox Name="TypeOfActivityInOperationListBox" IsSynchronizedWithCurrentItem="True" BorderBrush="DimGray" BorderThickness="1"
+                         ItemsSource="{Binding Source={StaticResource operationsViewSource}, Path=TypeOfActivityInOperations, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled" KeyDown="ListBox_KeyDown">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Path=TypeOfActivityCodeName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+                <ListBox Name="ListTypeOfActyvity" Visibility="Collapsed" BorderThickness="2" BorderBrush="Green" ScrollViewer.VerticalScrollBarVisibility="Auto"
+                         ItemsSource="{Binding Source={StaticResource typeOfActivityViewSource}}" DisplayMemberPath="Name" SelectedValuePath="ID" 
+                         MouseDoubleClick="ListTypeOfActyvity_MouseDoubleClick">
+                </ListBox>
+            </StackPanel>
+            <StackPanel Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button Name="TypeOfActivityInOperationButton" Background="Transparent" BorderBrush="Transparent"
+                        ToolTip="Добавить код вида деятельности" HorizontalAlignment="Right" Command="ApplicationCommands.New">
+                        <Image Source="/Images/free-icon-add-button.png" Width="20" Height="20"/>
+                    --><!--<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <Label Content="Добавить код вида деятельности" VerticalAlignment="Center"/>
+                    </StackPanel>--><!--
+                    <Button.Style>
+                        <Style TargetType="{x:Type Button}"> 
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ElementName=ListTypeOfActyvity, Path=Visibility}" Value="Visible">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+                <Button Name="HideTypeOfActivityInOperationButton" Background="Transparent" BorderBrush="Transparent"
+                        ToolTip="Свернуть список кодов видов деятельности" HorizontalAlignment="Right" Click="HideTypeOfActivityInOperationButton_Click" 
+                        Visibility="{Binding ElementName=ListTypeOfActyvity, Path=Visibility}">
+                        <Image Source="/Images/free-icon-minus-button.png" Width="20" Height="20"/>
+                    --><!--<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <Label Content="Свернуть список кодов видов деятельности" VerticalAlignment="Center"/>
+                    </StackPanel>--><!--
+                    <Button.Style>
+                        <Style TargetType="{x:Type Button}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ElementName=ListTypeOfActyvity, Path=Visibility}" Value="Visible">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+                <Label Content=" коды видов деятельности " HorizontalContentAlignment="Center"/>
+            </StackPanel>
+            <Label Grid.Column="0" Grid.Row="4" Grid.ColumnSpan="2" Content=" параметры операции " HorizontalContentAlignment="Center"/>
+            <DataGrid Grid.Column="0" Grid.Row="5" Grid.ColumnSpan="2" Name="ParametersInOperationGrid" Margin="2" BorderThickness="0.5" BorderBrush="DimGray"
+                      Style="{StaticResource DataGridStyle}" GridLinesVisibility="None" MinRowHeight="20"
+                      CanUserAddRows="False" CanUserDeleteRows="True" 
+                      ItemsSource="{Binding Source={StaticResource operationsViewSource}, 
+                                    Path=ParameterInOperations, Converter={StaticResource ObservableCollectionConverter},
+                                    Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                      PreviewKeyDown="ParametersInOperationGrid_PreviewKeyDown">
+            <DataGrid.ContextMenu>
+                    <ContextMenu x:Name="ClearReferencebook">
+                        <MenuItem Header="Очистить столбец 'Справочник'" Click="MenuItem_Click"/>
+                    </ContextMenu>
+                </DataGrid.ContextMenu>
+                <DataGrid.Resources>
+                    <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="LightSkyBlue"/>
+                </DataGrid.Resources>
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header=" наименование " IsReadOnly="True" Binding="{Binding Path=Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                    <DataGridComboBoxColumn Header=" ед. изм. " ItemsSource="{Binding Source={StaticResource unitsViewSource}}" 
+                                            DisplayMemberPath="Name" SelectedValueBinding="{Binding UnitID}" SelectedValuePath="ID">
+                    </DataGridComboBoxColumn>
+                    <DataGridComboBoxColumn Header=" справочник " ItemsSource="{Binding Source={StaticResource referencebookViewSource}}" 
+                                            DisplayMemberPath="Name" SelectedValueBinding="{Binding ReferencebookID}" SelectedValuePath="ID">
+                    </DataGridComboBoxColumn>
+                    <DataGridCheckBoxColumn Header=" спрПоВыбору " Binding="{Binding Path=IsRefbookOnRequest,ValidatesOnExceptions=True, ValidatesOnNotifyDataErrors=True, Mode=TwoWay}"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
+        <Grid Grid.Column="0" Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" Name="NewOperationButton" Background="Transparent" BorderBrush="Transparent"
+                    ToolTip="Добавить операцию" HorizontalAlignment="Center" Command="ApplicationCommands.New">
+                <Image Source="/Images/free-icon-add-button.png" Width="20" Height="20"/>
+            </Button>
+            <TextBox Grid.Column="2" VerticalAlignment="Center" Text="{Binding Source={StaticResource operationsViewSource}, Path=Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+        </Grid>
+        <Grid Grid.Column="1" Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" Name="NewParameterButton" Background="Transparent" BorderBrush="Transparent"
+                    ToolTip="Добавить параметр" HorizontalAlignment="Center" Command="ApplicationCommands.New">
+                <Image Source="/Images/free-icon-add-button.png" Width="20" Height="20"/>
+            </Button>
+            <TextBox Grid.Column="2" VerticalAlignment="Center" Text="{Binding ElementName=ParametersInOperationGrid, Path=SelectedItem.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+        </Grid>
+        <Button Grid.Column="0" Grid.Row="3" Name="SaveButton" HorizontalAlignment="Left" Command="ApplicationCommands.Save" Margin="2,2,2,2">
+            <StackPanel Orientation="Horizontal">
+                <Image Source="\Images\free-icon-floppy-disk_save.png" Width="20" Height="20"/>
+                <Label Content="Сохранить"/>
+            </StackPanel>
+        </Button>-->
+    </Grid>
+</Window>

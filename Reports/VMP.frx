@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report ScriptLanguage="CSharp" ReportInfo.Created="10/24/2022 20:25:57" ReportInfo.Modified="10/26/2022 20:14:34" ReportInfo.CreatorVersion="2022.3.11.0">
+  <Dictionary>
+    <BusinessObjectDataSource Name="dataset" ReferenceName="dataset" DataType="null" Enabled="true">
+      <Column Name="code" DataType="System.String"/>
+      <Column Name="name" DataType="System.String"/>
+      <Column Name="month" DataType="System.Int32"/>
+      <Column Name="year" DataType="System.Int32"/>
+      <Column Name="cost" DataType="System.Decimal"/>
+    </BusinessObjectDataSource>
+    <Parameter Name="BeginPeriod" DataType="System.DateTime"/>
+    <Parameter Name="EndPeriod" DataType="System.DateTime"/>
+  </Dictionary>
+  <ReportPage Name="Page1" Landscape="true" PaperWidth="297" PaperHeight="210" RawPaperSize="9" LeftMargin="5" TopMargin="5" RightMargin="5" BottomMargin="5" Watermark.Font="Arial, 60pt" UnlimitedHeight="true">
+    <ReportTitleBand Name="ReportTitle1" Width="1084.86" Height="18.9">
+      <TextObject Name="Text1" Width="1086.75" Height="18.9" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
+    </ReportTitleBand>
+    <DataBand Name="Data1" Top="22.1" Width="1084.86" Height="105.93">
+      <MatrixObject Name="Matrix1" Width="472.37" Height="105.93" FixedRows="2" FixedColumns="2" RepeatHeaders="false" AutoSize="false" DataSource="dataset" ShowTitle="true">
+        <MatrixColumns>
+          <Header Expression="[dataset.date]" Sort="None"/>
+        </MatrixColumns>
+        <MatrixRows>
+          <Header Expression="[dataset.code]"/>
+          <Header Expression="[dataset.name]" Totals="false"/>
+        </MatrixRows>
+        <MatrixCells>
+          <Cell Expression="[dataset.cost]"/>
+        </MatrixCells>
+        <TableColumn Name="Column1" Width="65.75"/>
+        <TableColumn Name="Column2" Width="183.03"/>
+        <TableColumn Name="Column3" Width="121.01"/>
+        <TableColumn Name="Column4" Width="102.58"/>
+        <TableRow Name="Row1" Height="47.25">
+          <TableCell Name="Cell1" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt" ColSpan="2"/>
+          <TableCell Name="Cell2" Font="Arial, 10pt"/>
+          <TableCell Name="Cell7" Text="Объём освоенной продукции за период&#13;&#10;с [FormatDateTime([BeginPeriod], &quot;Short Date&quot;)] по [FormatDateTime([EndPeriod], &quot;Short Date&quot;)]" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt, style=Bold" ColSpan="2"/>
+          <TableCell Name="Cell10" Font="Arial, 10pt"/>
+        </TableRow>
+        <TableRow Name="Row2" Height="19.56">
+          <TableCell Name="Cell3" Border.Lines="All" Border.Width="0.5" Text="Код" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
+          <TableCell Name="Cell4" Border.Lines="All" Border.Width="0.5" Text="Вид деятельности" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
+          <TableCell Name="Cell8" Border.Lines="All" Border.Width="0.5" Text="[dataset.date]" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
+          <TableCell Name="Cell11" Border.Lines="All" Border.Width="0.5" Text="Итого" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
+        </TableRow>
+        <TableRow Name="Row3" Height="19.56">
+          <TableCell Name="Cell5" Border.Lines="All" Border.Width="0.5" Text="[code]" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
+          <TableCell Name="Cell6" Border.Lines="All" Border.Width="0.5" Text="[name]" VertAlign="Center" Font="Arial, 9pt"/>
+          <TableCell Name="Cell9" Border.Lines="All" Border.Width="0.5" Text="[cost]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Right" VertAlign="Center" Font="Arial, 9pt"/>
+          <TableCell Name="Cell12" Border.Lines="All" Border.Width="0.5" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Right" VertAlign="Center" Font="Arial, 9pt"/>
+        </TableRow>
+        <TableRow Name="Row4" Height="19.56">
+          <TableCell Name="Cell13" Border.Lines="All" Border.Width="0.5" Text="Итого" HorzAlign="Right" VertAlign="Center" Font="Arial, 9pt" ColSpan="2"/>
+          <TableCell Name="Cell14" Font="Arial, 10pt"/>
+          <TableCell Name="Cell15" Border.Lines="All" Border.Width="0.5" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Right" VertAlign="Center" Font="Arial, 9pt"/>
+          <TableCell Name="Cell16" Border.Lines="All" Border.Width="0.5" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Right" VertAlign="Center" Font="Arial, 9pt"/>
+        </TableRow>
+      </MatrixObject>
+    </DataBand>
+  </ReportPage>
+</Report>

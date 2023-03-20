@@ -1,0 +1,88 @@
+﻿<Window x:Class="AdvertisementWpf.ProductionAreaWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:AdvertisementWpf"
+        mc:Ignorable="d"
+        Title="Производственные участки" Height="450" Width="800" BorderThickness="1" WindowStartupLocation="CenterScreen" 
+        WindowState="Normal"
+        ResizeMode="CanResizeWithGrip" WindowStyle="SingleBorderWindow" Closed="Window_Closed">
+    <Window.Resources>
+        <CollectionViewSource x:Key="typeOfActivityViewSource"/>
+        <CollectionViewSource x:Key="typeOfActivityInProdAreaViewSource"/>
+        <Style TargetType="Button">
+            <Setter Property="Margin" Value="2"/>
+            <Setter Property="Padding" Value="2"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Effect">
+                        <Setter.Value>
+                            <DropShadowEffect BlurRadius="8" ShadowDepth="0.5" Opacity="0.5"/>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+    <Window.CommandBindings>
+        <CommandBinding Command="ApplicationCommands.Save"
+                        Executed="Save_Executed"
+                        CanExecute="Save_CanExecute"/>
+        <CommandBinding Command="ApplicationCommands.New"
+                        Executed="New_Executed"
+                        CanExecute="New_CanExecute"/>
+    </Window.CommandBindings>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Column="0" Grid.Row="0" Text=" Коды видов деятельности " 
+                   FontWeight="Bold" TextWrapping="Wrap" TextAlignment="Center" 
+                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <TextBlock Grid.Column="1" Grid.Row="0" Text=" Производственные участки для КВД " 
+                   FontWeight="Bold" TextWrapping="Wrap" TextAlignment="Center" 
+                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <ListBox Grid.Column="0" Grid.Row="1" Grid.RowSpan="2" IsSynchronizedWithCurrentItem="True" BorderBrush="DimGray" BorderThickness="1"
+                 ItemsSource="{Binding Source={StaticResource typeOfActivityViewSource}, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                 DisplayMemberPath="CodeName" 
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto">
+        </ListBox>
+        <ListBox Grid.Column="1" Grid.Row="1" IsSynchronizedWithCurrentItem="True" BorderBrush="DimGray" BorderThickness="1"
+                 ItemsSource="{Binding Source={StaticResource typeOfActivityInProdAreaViewSource}}" 
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" KeyDown="ListBox_KeyDown">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Path=ProductionArea.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <Grid Grid.Column="1" Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" Name="ProductionAreaButton" Background="Transparent" BorderBrush="Transparent"
+                    ToolTip="Добавить производственный участок" HorizontalAlignment="Center" Command="ApplicationCommands.New">
+                <Image Source="/Images/free-icon-add-button.png" Width="20" Height="20"/>
+            </Button>
+            <TextBox Grid.Column="2" VerticalAlignment="Center" 
+                     Text="{Binding Source={StaticResource typeOfActivityInProdAreaViewSource}, Path=ProductionArea.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+        </Grid>
+        <Button Grid.Row="3" Name="SaveButton" HorizontalAlignment="Left" Command="ApplicationCommands.Save" Margin="2,2,2,2">
+            <StackPanel Orientation="Horizontal">
+                <Image Source="\Images\free-icon-floppy-disk_save.png" Width="20" Height="20"/>
+                <Label Content="Сохранить"/>
+            </StackPanel>
+        </Button>
+    </Grid>
+</Window>

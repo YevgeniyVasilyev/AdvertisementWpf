@@ -1,0 +1,388 @@
+﻿<Window x:Class="AdvertisementWpf.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:AdvertisementWpf"
+        mc:Ignorable="d"
+        Title='ООО "Рекламные технологии"' MinHeight="450" MinWidth="800"
+        WindowStartupLocation="CenterScreen" WindowStyle="SingleBorderWindow" 
+        ResizeMode="CanResizeWithGrip" WindowState="Maximized"
+        BorderThickness="1" Closed="Window_Closed" Loaded="Window_Loaded">
+    <Window.Resources>
+        <CollectionViewSource x:Key="ordersViewSource"/>
+        <CollectionViewSource x:Key="productsViewSource"/>
+        <Style x:Key="DropShadow" TargetType="{x:Type FrameworkElement}">
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Effect">
+                        <Setter.Value>
+                            <DropShadowEffect BlurRadius="8" ShadowDepth="0.5" Opacity="0.5"/>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="ButtonOnStackPanel" TargetType="{x:Type Button}" BasedOn="{StaticResource DropShadow}">
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Margin" Value="1,1,1,1"/>
+            <Setter Property="Padding" Value="1,1,1,1"/>
+            <Setter Property="Height" Value="{Binding ActualWidth, RelativeSource={RelativeSource Self}}"/>
+            <Setter Property="Content" Value="{Binding}"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+        <Style x:Key="MainMenu" TargetType="{x:Type MenuItem}" BasedOn="{StaticResource DropShadow}">
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="1,1,1,1"/>
+        </Style>
+        <DataTemplate x:Key="ListViewHeaderTemplate">
+            <TextBlock FontWeight="Bold" TextWrapping="Wrap" TextAlignment="Center"
+                       HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                <TextBlock.Text>
+                    <Binding/>
+                </TextBlock.Text>
+            </TextBlock>
+        </DataTemplate>
+    </Window.Resources>
+    <Window.CommandBindings>
+        <CommandBinding Command="ApplicationCommands.NotACommand"
+                        Executed="Handbook_Executed"
+                        CanExecute="Handbook_CanExecute"/>
+        <CommandBinding Command="ApplicationCommands.New"
+                        Executed="Order_Executed"
+                        CanExecute="Order_CanExecute"/>
+        <CommandBinding Command="ApplicationCommands.Delete"
+                        Executed="Delete_Executed"
+                        CanExecute="Delete_CanExecute"/>
+        <CommandBinding Command="ApplicationCommands.Print"
+                        Executed="Print_Executed"
+                        CanExecute="Print_CanExecute"/>
+    </Window.CommandBindings>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <!--buttob-->
+            <ColumnDefinition Width="*"/>
+            <!--основной раздел-->
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <!--меню-->
+            <RowDefinition Height="Auto"/>
+            <!--buttob-->
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <!--основной раздел-->
+            <RowDefinition Height="Auto"/>
+            <!--статус бар-->
+        </Grid.RowDefinitions>
+        <Menu Name="Main_Menu" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="1,1,1,1">
+            <MenuItem Header="Подключение к БД" Name="Connect_Item" Style="{StaticResource MainMenu}" Click="Connect_Item_Click"/>
+            <Separator></Separator>
+            <MenuItem Header="Справочники" Style="{StaticResource MainMenu}" Command="ApplicationCommands.NotACommand">
+                <MenuItem Header="Пользователи и роли" Name="UserAndRoles_Item" Click="UserAndRoles_Item_Click" Command="ApplicationCommands.NotACommand"/>
+                <MenuItem Header="Клиенты и подрядчики" Name="ClientsAndContractors_Item" Click="ClientsAndContractors_Item_Click"/>
+                <MenuItem Header="Банки, населенные пункты, ед. измерения, коды видов деятельности, виды изделий" Name="BankLocalityUnit_Item" Click="BankLocalityUnit_Item_Click"/>
+                <MenuItem Header="Производственные участки" Name="ProductionAreas_Item" Click="ProductionAreas_Item_Click"/>
+            </MenuItem>
+            <Separator></Separator>
+            <MenuItem Header="Отчеты" Name="ReportMenuItem" Style="{StaticResource MainMenu}" Command="ApplicationCommands.NotACommand" Click="ReportMenuItem_Click"/>
+            <Separator></Separator>
+            <MenuItem Header="Конструкторы" Style="{StaticResource MainMenu}" Command="ApplicationCommands.NotACommand">
+                <MenuItem Header="Изделия" Name="ProductDesigner_Item" Click="ProductDesigner_Item_Click"/>
+                <MenuItem Header="Операции" Name="OperationDesigner_Item" Click="OperationDesigner_Item_Click"/>
+                <MenuItem Header="Параметры изделий и операций" Name="ReferencebookDesigner_Item" Click="ReferencebookDesigner_Item_Click"/>
+            </MenuItem>
+            <Separator></Separator>
+            <MenuItem Header="Настройки" Style="{StaticResource MainMenu}">
+                <!--<MenuItem Header="Архивация, отправка почтовых сообщений" Name="Email_Item" Click="Email_Item_Click"/>
+                <Separator></Separator>-->
+                <MenuItem Header="Системные настройки" Name="SystemSetting_Item" 
+                          Command="ApplicationCommands.NotACommand" Click="SystemSetting_Item_Click"/>
+                <Separator></Separator>
+                <MenuItem Header="Матрица доступа" Name="AccessMatrix_Item" 
+                          Command="ApplicationCommands.NotACommand" Click="AccessMatrix_Item_Click"/>
+            </MenuItem>
+        </Menu>
+        <Border Grid.Row="1" Grid.Column="0" Grid.RowSpan="4" BorderThickness="4" Background="GhostWhite" BorderBrush="Gainsboro">
+            <StackPanel Orientation="Vertical" HorizontalAlignment="Left" Margin="1,1,1,1" Width="65">
+                <Button Name="NewOrderButton" Style="{StaticResource ButtonOnStackPanel}" Command="ApplicationCommands.New">
+                    <Button.Content>
+                        <StackPanel>
+                            <Image Source="/Images/premium-icon-new-order.png" Width="25" Height="25"/>
+                            <TextBlock Text="Новый заказ" TextWrapping="Wrap" TextAlignment="Center" 
+                                       VerticalAlignment="Bottom" HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </Button.Content>
+                </Button>
+                <Button Name="AllOrdersButton"  Style="{StaticResource ButtonOnStackPanel}" Command="ApplicationCommands.New">
+                    <Button.Content>
+                        <StackPanel>
+                            <Image Source="/Images/premium-icon-all-order.png" Width="25" Height="25"/>
+                            <TextBlock Text="Все заказы" TextWrapping="Wrap" TextAlignment="Center" 
+                                       VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </Button.Content>
+                </Button>
+                <Button Name="FilterOrdersButton"  Style="{StaticResource ButtonOnStackPanel}" Command="ApplicationCommands.New">
+                    <Button.Content>
+                        <StackPanel>
+                            <Image Source="/Images/free-icon-search.png" Width="25" Height="25"/>
+                            <TextBlock Text="Выбрать заказы ..." TextWrapping="Wrap" TextAlignment="Center" 
+                                       VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </Button.Content>
+                </Button>
+                <Button Name="FilterProductsButton"  Style="{StaticResource ButtonOnStackPanel}" Command="ApplicationCommands.New">
+                    <Button.Content>
+                        <StackPanel>
+                            <Image Source="/Images/free-icon-search.png" Width="25" Height="25"/>
+                            <TextBlock Text="Выбрать изделия ..." TextWrapping="Wrap" TextAlignment="Center" 
+                                       VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </Button.Content>
+                </Button>
+            </StackPanel>
+        </Border>
+        <Border Grid.Row="1" Grid.Column="1" BorderThickness="4" Background="GhostWhite" BorderBrush="Gainsboro">
+            <StackPanel Height="40" Orientation="Horizontal">
+                <Button Name="NewOrderButton1" Background="Transparent" BorderBrush="Transparent" 
+                            Style="{StaticResource ButtonOnStackPanel}" Command="ApplicationCommands.New" 
+                            ToolTip="Новый заказ">
+                    <Image Source="\Images\premium-icon-new-order.png" VerticalAlignment="Center"
+                                   Width="30" Height="{Binding Width, RelativeSource={RelativeSource Self}}"/>
+                </Button>
+                <Separator/>
+                <Button Name="EditOrderButton" Background="Transparent" BorderBrush="Transparent" 
+                            Style="{StaticResource ButtonOnStackPanel}" Command="ApplicationCommands.New" 
+                            ToolTip="Редактировать заказ">
+                    <Image Source="\Images\premium-icon-edit.png" VerticalAlignment="Center"
+                                   Width="30" Height="{Binding Width, RelativeSource={RelativeSource Self}}"/>
+                </Button>
+                <Separator/>
+                <Button Name="ViewOrderButton" Background="Transparent" BorderBrush="Transparent" 
+                            Style="{StaticResource ButtonOnStackPanel}" Command="ApplicationCommands.New" 
+                            ToolTip="Просмотр заказа">
+                    <Image Source="\Images\premium-icon-view.png" VerticalAlignment="Center"
+                               Width="30" Height="{Binding Width, RelativeSource={RelativeSource Self}}"/>
+                </Button>
+                <Separator/>
+                <Button Name="DeleteOrderButton" Background="Transparent" BorderBrush="Transparent" 
+                            Style="{StaticResource ButtonOnStackPanel}" Command="ApplicationCommands.Delete" 
+                            ToolTip="Удалить заказ">
+                    <Image Source="\Images\premium-icon-delete.png" VerticalAlignment="Center"
+                               Width="30" Height="{Binding Width, RelativeSource={RelativeSource Self}}"/>
+                </Button>
+                <Separator/>
+                <Button Name="RefreshOrderButton" Background="Transparent" BorderBrush="Transparent" 
+                            Style="{StaticResource ButtonOnStackPanel}" Command="ApplicationCommands.New" 
+                            ToolTip="Обновить текущее представление данных">
+                    <Image Source="\Images\premium-icon-refresh.png" VerticalAlignment="Center"
+                               Width="30" Height="{Binding Width, RelativeSource={RelativeSource Self}}"/>
+                </Button>
+                <Separator/>
+                <Button Name="PrintOrderListButton" Background="Transparent" BorderBrush="Transparent" 
+                            Style="{StaticResource ButtonOnStackPanel}" Command="ApplicationCommands.Print" 
+                            ToolTip="Печать текущего списка заказов/изделий">
+                    <Image Source="\Images\free-icon-printer1.png" VerticalAlignment="Center"
+                               Width="30" Height="{Binding Width, RelativeSource={RelativeSource Self}}"/>
+                </Button>
+            </StackPanel>
+        </Border>
+        <ListView Grid.Row="2" Grid.Column="1" Name="OrderListView" IsSynchronizedWithCurrentItem="True" Visibility="Collapsed"
+                  ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto"
+                  ItemsSource="{Binding Source={StaticResource ordersViewSource}}" MouseDoubleClick="OrderListView_MouseDoubleClick">
+            <ListView.Resources>
+                <local:OrderBackgroundPaymentSelector x:Key="OrderBackgroundPaymentSelector">
+                </local:OrderBackgroundPaymentSelector>
+                <local:OrderForegroundPaymentSelector x:Key="OrderForegroundPaymentSelector">
+                </local:OrderForegroundPaymentSelector>
+                <SolidColorBrush x:Key="Item.Background" Color="LightGray"/>
+                <SolidColorBrush x:Key="Item.Foreground" Color="Black"/>
+            </ListView.Resources>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="{StaticResource Item.Background}"/>
+                            <Setter Property="Foreground" Value="{StaticResource Item.Foreground}"/>
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Background" Value="{StaticResource Item.Background}"/>
+                            <Setter Property="Foreground" Value="{StaticResource Item.Foreground}"/>
+                        </Trigger>
+                    </Style.Triggers>
+                    <Setter Property="Background">
+                        <Setter.Value>
+                            <!--<LinearGradientBrush StartPoint="0.5,1" EndPoint="0.5,0">-->
+                            <LinearGradientBrush StartPoint="1,1" EndPoint="0,0">
+                                <LinearGradientBrush.GradientStops>
+                                    <GradientStopCollection>
+                                        <GradientStop Color="{Binding RelativeSource={RelativeSource AncestorType=ListBoxItem, AncestorLevel=1}, Path=DataContext, Converter={StaticResource OrderBackgroundPaymentSelector}}" Offset="1.0" />
+                                        <GradientStop Color="White" Offset="1.0" />
+                                    </GradientStopCollection>
+                                </LinearGradientBrush.GradientStops>
+                            </LinearGradientBrush>
+                            <!--<Binding RelativeSource="{RelativeSource Self}" Path="DataContext" Converter="{StaticResource xOrderPaymentSelector}"/>-->
+                        </Setter.Value>
+                    </Setter>
+                    <Setter Property="Foreground">
+                        <Setter.Value>
+                            <Binding RelativeSource="{RelativeSource Self}" Path="DataContext" Converter="{StaticResource OrderForegroundPaymentSelector}" ConverterParameter="Foreground"/>
+                        </Setter.Value>
+                    </Setter>
+                    <Setter Property="FontFamily">
+                        <Setter.Value>
+                            <Binding RelativeSource="{RelativeSource Self}" Path="DataContext" Converter="{StaticResource OrderForegroundPaymentSelector}" ConverterParameter="FontFamily"/>
+                        </Setter.Value>
+                    </Setter>
+                    <Setter Property="FontSize">
+                        <Setter.Value>
+                            <Binding RelativeSource="{RelativeSource Self}" Path="DataContext" Converter="{StaticResource OrderForegroundPaymentSelector}" ConverterParameter="FontSize"/>
+                        </Setter.Value>
+                    </Setter>
+                    <Setter Property="FontStyle">
+                        <Setter.Value>
+                            <Binding RelativeSource="{RelativeSource Self}" Path="DataContext" Converter="{StaticResource OrderForegroundPaymentSelector}" ConverterParameter="FontStyle"/>
+                        </Setter.Value>
+                    </Setter>
+                    <Setter Property="FontWeight">
+                        <Setter.Value>
+                            <Binding RelativeSource="{RelativeSource Self}" Path="DataContext" Converter="{StaticResource OrderForegroundPaymentSelector}" ConverterParameter="FontWeight"/>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ListView.ItemContainerStyle>
+            <ListView.View>
+                <GridView>
+                    <GridView.Columns>
+                        <GridViewColumn Header=" Номер заказа " Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
+                                                    DisplayMemberBinding="{Binding Path=Number}"/>
+                        <GridViewColumn Header=" Дата приема " Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
+                                                    DisplayMemberBinding="{Binding Path=DateAdmission, StringFormat={}{0:d}, ConverterCulture=ru-RU}"/>
+                        <GridViewColumn Header=" Состояние заказа " Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}" 
+                                                    DisplayMemberBinding="{Binding Path=State}"/>
+                        <GridViewColumn Header=" Клиент " Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
+                                                    DisplayMemberBinding="{Binding Path=Client.Name}"/>
+                        <GridViewColumn Header=" Изделия в заказе " Width="300" HeaderTemplate="{StaticResource ListViewHeaderTemplate}">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Expander ToolTip="Показать/скрыть список изделий" Name="OrderDetailList">
+                                        <Expander.Header>
+                                            <TextBlock>
+                                                <TextBlock.Text>
+                                                    <MultiBinding StringFormat="позиций {0:N0}  |  стоимость {1:C}" ConverterCulture="ru-RU">
+                                                        <Binding Path="CountProduct"/>
+                                                        <Binding Path="OrderCost"/>
+                                                    </MultiBinding>
+                                                </TextBlock.Text>
+                                                <TextBlock.Foreground>
+                                                    <Binding RelativeSource="{RelativeSource Self}" Path="DataContext" Converter="{StaticResource OrderForegroundPaymentSelector}" ConverterParameter="Foreground"/>
+                                                </TextBlock.Foreground>
+                                            </TextBlock>
+                                        </Expander.Header>
+                                        <Expander.Content>
+                                            <ListBox ItemsSource="{Binding Path=Products}" IsSynchronizedWithCurrentItem="True" BorderThickness="0">
+                                                <ListBox.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <Grid Margin="0,2">
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="Auto"/>
+                                                                <ColumnDefinition Width="Auto"/>
+                                                                <ColumnDefinition Width="Auto"/>
+                                                                <ColumnDefinition Width="*"/>
+                                                            </Grid.ColumnDefinitions>
+                                                            <TextBlock Grid.Column="0" Width="50" HorizontalAlignment="Left" Text="{Binding Quantity, StringFormat={}{0:N0} шт.}"/>
+                                                            <TextBlock Grid.Column="1" Width="90" HorizontalAlignment="Left" Text="{Binding Cost, StringFormat={}{0:C}, ConverterCulture='ru-RU'}" Language="ru-RU"/>
+                                                            <TextBlock Grid.Column="2" Text="{Binding State}" Margin="0,0,10,0"/>
+                                                            <TextBlock Grid.Column="3" Text="{Binding ProductType.Name}"/>
+                                                        </Grid>
+                                                    </DataTemplate>
+                                                </ListBox.ItemTemplate>
+                                            </ListBox>
+                                        </Expander.Content>
+                                    </Expander>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header=" Оплачено " Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
+                                                    DisplayMemberBinding="{Binding Path=OrderPayments, StringFormat={}{0:C}, ConverterCulture='ru-RU'}"/>
+                        <GridViewColumn Header=" Краткое описание заказа " Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
+                                                    DisplayMemberBinding="{Binding Path=Note}"/>
+                        <GridViewColumn Header=" Менеджер " Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
+                                                    DisplayMemberBinding="{Binding Path=Manager.FullUserName}"/>
+                        <!--ДОБАВЛЯТЬ ИЛИ УДАЛАТЬ СТОЛБЕЦ В ПЕЧАТЬ ИЗ ПЕЧАТИ-->
+                    </GridView.Columns>
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <ListView Grid.Row="3" Grid.Column="1" Name="ProductListView" IsSynchronizedWithCurrentItem="True" 
+                          ItemsSource="{Binding Source={StaticResource productsViewSource}}" Visibility="Collapsed"
+                          MouseDoubleClick="OrderListView_MouseDoubleClick" ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto">
+            <ListView.View>
+                <GridView>
+                    <GridView.Columns>
+                        <GridViewColumn Header=" Номер заказа " Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
+                                                    DisplayMemberBinding="{Binding Path=Order.Number}"/>
+                        <GridViewColumn Header=" Категория " Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
+                                                    DisplayMemberBinding="{Binding Path=ProductType.CategoryOfProduct.Name}"/>
+                        <GridViewColumn Header=" Изделие " Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
+                                                    DisplayMemberBinding="{Binding Path=ProductType.Name}"/>
+                        <GridViewColumn Header=" Состояние " Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}" 
+                                                    DisplayMemberBinding="{Binding Path=State}"/>
+                        <GridViewColumn Header=" Количество " Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
+                                                    DisplayMemberBinding="{Binding Path=Quantity}"/>
+                        <GridViewColumn Header=" Стоимость " Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
+                                                    DisplayMemberBinding="{Binding Cost, StringFormat={}{0:C}, ConverterCulture='ru-RU'}"/>
+                        <GridViewColumn Header=" Дизайнер " Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
+                                                    DisplayMemberBinding="{Binding Path=Designer.FullUserName}"/>
+                        <GridViewColumn Header=" Описание " Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
+                                                    DisplayMemberBinding="{Binding Path=Note}"/>
+                        <!--ДОБАВИТЬ СТОЛБЕЦ В ПЕЧАТЬ-->
+                    </GridView.Columns>
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <DockPanel Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2">
+            <StatusBar BorderThickness="2" DockPanel.Dock="Bottom">
+                <StatusBar.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="200" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                        </Grid>
+                    </ItemsPanelTemplate>
+                </StatusBar.ItemsPanel>
+                <StatusBarItem>
+                    <TextBlock Name="Status" DataContext="{Binding RelativeSource={RelativeSource Self}}" 
+                               Text="{Binding Path=StatusMessage}"/>
+                </StatusBarItem>
+                <Separator Grid.Column="1" />
+                <StatusBarItem Grid.Column="2">
+                    <TextBlock Name="Info"/>
+                </StatusBarItem>
+                <Separator Grid.Column="3" />
+                <StatusBarItem Grid.Column="4">
+                    <TextBlock Name="UsrInfo" DataContext="{Binding RelativeSource={RelativeSource Self}}"
+                               Text="{Binding Path=UserInfo}"/>
+                </StatusBarItem>
+                <Separator Grid.Column="5" />
+                <StatusBarItem Grid.Column="6">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Name="TextNearBar" Visibility="Collapsed" Text=""/>
+                        <ProgressBar Width="200" Height="12" Margin="5,0,0,0" Name="Bar" Visibility="Collapsed" IsIndeterminate="False"/>
+                        <!--<TextBlock Visibility="Collapsed" Text="{Binding ElementName=Bar, Path=Value, StringFormat={}{0:0}%}" HorizontalAlignment="Center" VerticalAlignment="Center" />-->
+                    </StackPanel>
+                </StatusBarItem>
+            </StatusBar>
+        </DockPanel>
+    </Grid>
+</Window>

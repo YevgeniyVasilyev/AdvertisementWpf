@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "AdvertisementWpf": {
+      "commandName": "Project",
+      "sqlDebugging": false
+    }
+  }
+}

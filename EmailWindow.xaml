@@ -1,0 +1,78 @@
+﻿<Window x:Class="AdvertisementWpf.EmailWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:AdvertisementWpf"
+        mc:Ignorable="d"
+        Title="Отправка электронной почты" MinHeight="250" MinWidth="300" BorderThickness="1" WindowStartupLocation="CenterScreen" 
+        ResizeMode="CanResizeWithGrip" SizeToContent="WidthAndHeight" WindowStyle="ThreeDBorderWindow" Closed="Window_Closed">
+    <Window.Resources>
+        <Style x:Key="DropShadow" TargetType="{x:Type FrameworkElement}">
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Effect">
+                        <Setter.Value>
+                            <DropShadowEffect BlurRadius="8" ShadowDepth="0.5" Opacity="0.5"/>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="ButtonStyle" TargetType="{x:Type Button}" BasedOn="{StaticResource DropShadow}">
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Margin" Value="1,1,1,1"/>
+            <Setter Property="Padding" Value="1,1,1,1"/>
+            <!--<Setter Property="Height" Value="{Binding ActualWidth, RelativeSource={RelativeSource Self}}"/>-->
+            <Setter Property="Content" Value="{Binding}"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+        <Style x:Key="TextBoxStyle">
+            <Setter Property="Control.Margin" Value="1,1,1,1"/>
+            <Setter Property="Control.Padding" Value="2,2,2,2"/>
+        </Style>
+    </Window.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <GroupBox Header="Данные получателя" Margin="5" Grid.Column="0" Grid.Row="0" BorderThickness="2">
+            <StackPanel Margin="5" Orientation="Vertical">
+                <TextBlock Margin="0,5,0,0" Text="Адрес получателя: "/>
+                <TextBox Text="" Width="200" Name="EmailRecipientAddress" Style="{StaticResource ResourceKey=TextBoxStyle}" HorizontalAlignment="Left"/>
+            </StackPanel>
+        </GroupBox>
+        <GroupBox Header="Данные отправителя" Margin="5" Grid.Column="0" Grid.Row="1" BorderThickness="2">
+            <StackPanel Margin="5" Orientation="Vertical">
+                <TextBlock Margin="0,5,0,0" Text="Адрес отправителя: "/>
+                <TextBox Text="" Width="200" Name="EmailSenderAddress" TextChanged="EmailSenderAddress_TextChanged" 
+                         Style="{StaticResource ResourceKey=TextBoxStyle}" HorizontalAlignment="Left"/>
+                <TextBlock Margin="0,5,0,0" Text="Имя для подключения к серверу: "/>
+                <TextBox Text="" Width="200" Name="SenderName" Style="{StaticResource ResourceKey=TextBoxStyle}" HorizontalAlignment="Left"/>
+                <TextBlock Margin="0,5,0,0" Text="Пароль для подключения к серверу: "/>
+                <PasswordBox Width="200" Name="SenderPassword" Style="{StaticResource ResourceKey=TextBoxStyle}" HorizontalAlignment="Left"/>
+            </StackPanel>
+        </GroupBox>
+        <GroupBox Header="Текст сообщения" Margin="5" Grid.Column="0" Grid.Row="2" BorderThickness="2">
+            <StackPanel Margin="5" Orientation="Vertical">
+                <TextBox Margin="0,5,0,0" Text="Отправка заказа № " Name="EmailBody" Height="50" Width="200"
+                         Style="{StaticResource ResourceKey=TextBoxStyle}" AcceptsReturn="True" HorizontalAlignment="Left"/>
+            </StackPanel>
+        </GroupBox>
+        <GroupBox Header="Тема сообщения" Margin="5" Grid.Column="0" Grid.Row="3" BorderThickness="2">
+            <StackPanel Margin="5" Orientation="Vertical">
+                <TextBox Margin="0,5,0,0" Text="заказ № " Name="EmailSubject" Style="{StaticResource ResourceKey=TextBoxStyle}" HorizontalAlignment="Left"/>
+            </StackPanel>
+        </GroupBox>
+        <Button Grid.Column="0" Grid.Row="4" Margin="5" Style="{StaticResource ButtonStyle}" 
+                Content="Отправить сообщение" Name="SendEmailButton" Click="SendEmailButton_Click"/>
+    </Grid>
+</Window>

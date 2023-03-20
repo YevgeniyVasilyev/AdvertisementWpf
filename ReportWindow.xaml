@@ -1,0 +1,127 @@
+﻿<Window x:Class="AdvertisementWpf.ReportWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:local="clr-namespace:AdvertisementWpf"
+        mc:Ignorable="d"
+        Title="Отчеты" Height="600" Width="1300" BorderThickness="1" WindowStartupLocation="CenterScreen" 
+        ResizeMode="CanResizeWithGrip" WindowStyle="SingleBorderWindow" Closed="Window_Closed">
+    <Window.Resources>
+        <CollectionViewSource x:Key="reportsViewSource"/>
+        <local:EnableConverter x:Key="EnableConverter"/>
+        <Style x:Key="DropShadow" TargetType="{x:Type FrameworkElement}">
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Effect">
+                        <Setter.Value>
+                            <DropShadowEffect BlurRadius="8" ShadowDepth="0.5" Opacity="0.5"/>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="ButtonWithShadow" TargetType="{x:Type Button}" BasedOn="{StaticResource DropShadow}">
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Margin" Value="1,1,1,1"/>
+            <Setter Property="Padding" Value="1,1,1,1"/>
+            <Setter Property="Content" Value="{Binding}"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+    </Window.Resources>
+    <Window.CommandBindings>
+        <CommandBinding Command="ApplicationCommands.Print"
+                        Executed="Print_Executed"
+                        CanExecute="Print_CanExecute"/>
+    </Window.CommandBindings>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Border Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Margin="2" BorderThickness="1" BorderBrush="DeepSkyBlue"/>
+        <Border Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" Margin="2" BorderThickness="1" BorderBrush="DeepSkyBlue"/>
+        <Label Content="Список отчетов" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"/>
+        <Label Content="Условия формирования отчета" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Center"  VerticalAlignment="Center" FontWeight="Bold"/>
+        <ListBox Grid.Row="1" Grid.Column="0" Margin="2" Name="ReportListBox" IsSynchronizedWithCurrentItem="True" ItemsSource="{Binding Source={StaticResource reportsViewSource}}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Path=ReportDescribe}"/>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <Grid Grid.Row="1" Grid.Column="1" Margin="1,0,1,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <GroupBox Grid.Row="0" Name="PeriodGroupBox" Header="Период" Margin="2" IsEnabled="{Binding Converter={StaticResource EnableConverter}, ConverterParameter=P}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <RadioButton Grid.Column="0" Grid.Row="0" GroupName="Date" Content="Год" Name="YearDate" IsChecked="True" VerticalAlignment="Center"/>
+                    <xctk:IntegerUpDown Grid.Column="1" Grid.Row="0" Margin="22,0,0,0" Name="YearUpDown" HorizontalAlignment="Left" Width="{Binding ElementName=StartDate, Path=ActualWidth}"
+                                                    DefaultValue="2022" DisplayDefaultValueOnEmptyText="True" Minimum="2022" GotFocus="Control_GotFocus"/>
+                    <RadioButton Grid.Column="0" Grid.Row="1" GroupName="Date" Content="Квартал" Name="QuarterDate" VerticalAlignment="Center"/>
+                    <ComboBox Grid.Column="1" Grid.Row="1" Name="QuarterComboBox" Margin="22,0,0,0" HorizontalAlignment="Left" GotFocus="Control_GotFocus" Width="{Binding ElementName=StartDate, Path=ActualWidth}">
+                        <ComboBoxItem Content="I квартал" IsSelected="True"/>
+                        <ComboBoxItem Content="II квартал"/>
+                        <ComboBoxItem Content="III квартал"/>
+                        <ComboBoxItem Content="IV квартал"/>
+                    </ComboBox>
+                    <RadioButton Grid.Column="0" Grid.Row="2" GroupName="Date" Content="Месяц" Name="MonthDate" VerticalAlignment="Center"/>
+                    <ComboBox Grid.Column="1" Grid.Row="2" Name="MonthCheckBox" Margin="22,0,0,0" HorizontalAlignment="Left" GotFocus="Control_GotFocus" Width="{Binding ElementName=StartDate, Path=ActualWidth}">
+                        <ComboBoxItem Content="Январь" IsSelected="True"/>
+                        <ComboBoxItem Content="Февраль"/>
+                        <ComboBoxItem Content="Март"/>
+                        <ComboBoxItem Content="Апрель"/>
+                        <ComboBoxItem Content="Май"/>
+                        <ComboBoxItem Content="Июнь"/>
+                        <ComboBoxItem Content="Июль"/>
+                        <ComboBoxItem Content="Август"/>
+                        <ComboBoxItem Content="Сентябрь"/>
+                        <ComboBoxItem Content="Октябрь"/>
+                        <ComboBoxItem Content="Ноябрь"/>
+                        <ComboBoxItem Content="Декабрь"/>
+                    </ComboBox>
+                    <RadioButton Grid.Column="0" Grid.Row="3" GroupName="Date" Content="День" Name="DayDate" VerticalAlignment="Center"/>
+                    <DatePicker Grid.Column="1" Grid.Row="3" Margin="22,0,0,0" Name="DayDateTime" IsTodayHighlighted="True" HorizontalAlignment="Left" GotFocus="Control_GotFocus"/>
+                    <RadioButton Grid.Column="0" Grid.Row="4" GroupName="Date" Content="Произвольный интервал" Name="PeriodDate" VerticalAlignment="Center"/>
+                    <StackPanel Grid.Column="1" Grid.Row="4" Orientation="Horizontal">
+                        <Label Content=" с "/>
+                        <DatePicker Name="StartDate" IsTodayHighlighted="True" GotFocus="Control_GotFocus"/>
+                        <Label Content=" по "/>
+                        <DatePicker Name="EndDate" IsTodayHighlighted="True" GotFocus="Control_GotFocus"/>
+                    </StackPanel>
+                </Grid>
+            </GroupBox>
+        </Grid>
+        <Border Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="2" BorderThickness="1" BorderBrush="DeepSkyBlue">
+            <Button Name="MakeReportButton" Background="Transparent" BorderBrush="Transparent" 
+                Style="{StaticResource ButtonWithShadow}" Command="ApplicationCommands.Print" 
+                ToolTip="Сформировать выбранный отчет" HorizontalAlignment="Left">
+                <Button.Content>
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="/Images/free-icon-printer1.png" Width="30" Height="30"/>
+                        <TextBlock Text="Сформировать отчет" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button.Content>
+            </Button>
+        </Border>
+    </Grid>
+</Window>

@@ -1,0 +1,14 @@
+{
+  "DataBase": {
+    "UserName": "yevgeniy",
+    "ServerName": "YEVGENIY",
+    "BaseAliases": [
+        "Рекламные технологии_1",
+        "Рекламные технологии_2"
+    ],
+    "BaseNames": [
+      "AdvertisementNF",
+      "Advertisement2"
+    ]
+  }
+}

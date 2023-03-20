@@ -1,0 +1,213 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <StartupObject>AdvertisementWpf.App</StartupObject>
+    <ApplicationIcon>free-icon-device-2844994.ico</ApplicationIcon>
+    <Platforms>AnyCPU;x64;x86</Platforms>
+    <NoWin32Manifest>true</NoWin32Manifest>
+    <UseWindowsForms>true</UseWindowsForms>
+    <SignAssembly>false</SignAssembly>
+    <DelaySign>false</DelaySign>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="FastReport\**" />
+    <Compile Remove="OnDeploy\**" />
+    <Compile Remove="_Models\**" />
+    <EmbeddedResource Remove="FastReport\**" />
+    <EmbeddedResource Remove="OnDeploy\**" />
+    <EmbeddedResource Remove="_Models\**" />
+    <None Remove="FastReport\**" />
+    <None Remove="OnDeploy\**" />
+    <None Remove="_Models\**" />
+    <Page Remove="FastReport\**" />
+    <Page Remove="OnDeploy\**" />
+    <Page Remove="_Models\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Models\_СategoryOfProduct.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="AdvertisementWpf_TemporaryKey.pfx" />
+    <None Remove="appsetting.json" />
+    <None Remove="free-icon-device-2844994.ico" />
+    <None Remove="Images\BlueUI-новый-заказ-40.png" />
+    <None Remove="Images\BlueUI-обновить-40.png" />
+    <None Remove="Images\BlueUI-сохранить-40.png" />
+    <None Remove="Images\BlurUI-удалить-40.png" />
+    <None Remove="Images\downward-arrow.png" />
+    <None Remove="Images\free-icon-account.png" />
+    <None Remove="Images\free-icon-act.png" />
+    <None Remove="Images\free-icon-add-button.png" />
+    <None Remove="Images\free-icon-bin-Recycler.png" />
+    <None Remove="Images\free-icon-cross.png" />
+    <None Remove="Images\free-icon-delete-button.png" />
+    <None Remove="Images\free-icon-device-2844994.ico" />
+    <None Remove="Images\free-icon-factory.png" />
+    <None Remove="Images\free-icon-filter.png" />
+    <None Remove="Images\free-icon-floppy-disk_save.png" />
+    <None Remove="Images\free-icon-folder_open.png" />
+    <None Remove="Images\free-icon-minus-button.png" />
+    <None Remove="Images\free-icon-printer-techcard.png" />
+    <None Remove="Images\free-icon-printer.png" />
+    <None Remove="Images\free-icon-printer1.png" />
+    <None Remove="Images\free-icon-search.png" />
+    <None Remove="Images\free-icon-techcard.png" />
+    <None Remove="Images\free-icon-techcard_operation.png" />
+    <None Remove="Images\free-icon-techcard_work.png" />
+    <None Remove="Images\premium-icon-all-order.png" />
+    <None Remove="Images\premium-icon-arrow-right.png" />
+    <None Remove="Images\premium-icon-correct.png" />
+    <None Remove="Images\premium-icon-delete.png" />
+    <None Remove="Images\premium-icon-down-arrow.png" />
+    <None Remove="Images\premium-icon-download.png" />
+    <None Remove="Images\premium-icon-edit.png" />
+    <None Remove="Images\premium-icon-email-e-mail.png" />
+    <None Remove="Images\premium-icon-new-order.png" />
+    <None Remove="Images\premium-icon-payment.png" />
+    <None Remove="Images\premium-icon-refresh.png" />
+    <None Remove="Images\premium-icon-view.png" />
+    <None Remove="OnDeploy.txt" />
+    <None Remove="Reports\Act — копия.frx" />
+    <None Remove="Reports\Act_data.frx" />
+    <None Remove="Reports\Dictionary.frd" />
+    <None Remove="Reports\Dictionary_Act.frd" />
+    <None Remove="Reports\Dictionary_Order.frd" />
+    <None Remove="Reports\Dictionary_VMP_dataset.frd" />
+    <None Remove="Reports\OrderListView.frx" />
+    <None Remove="Reports\OrderListView_data.frx" />
+    <None Remove="Reports\ProductListView.frx" />
+    <None Remove="Reports\ProductListView_data.frx" />
+    <None Remove="Reports\VMP_data.frx" />
+    <None Remove="Reports\_Account.frx" />
+    <None Remove="SignRT.png" />
+    <None Remove="StampRT.gif" />
+    <None Remove="StampRT.jpg" />
+    <None Remove="StampRT.png" />
+    <None Remove="TO DO.txt" />
+    <None Remove="WhatsApp Image 2021-11-02 at 10.06.21.jpeg" />
+    <None Remove="WhatsApp Image 2022-01-28 at 15.34.21.jpeg" />
+    <None Remove="WhatsApp Image 2022-02-01 at 17.20.12.jpeg" />
+    <None Remove="~%24хгалтерия_правки1.doc" />
+    <None Remove="~WRL0001.tmp" />
+    <None Remove="Акт об оказании услуг по РТ.xls" />
+    <None Remove="Бланк-заказ.pdf" />
+    <None Remove="Бланки ПУД.zip" />
+    <None Remove="Бухгалтерия.doc" />
+    <None Remove="Бухгалтерия_правки1.doc" />
+    <None Remove="Конструктор изделий.docx" />
+    <None Remove="Освоенные за период.doc" />
+    <None Remove="Отбор данных.doc" />
+    <None Remove="Отбор данных.docx" />
+    <None Remove="Счет на оплату от РТ.xls" />
+    <None Remove="счет фактура бланк.xls" />
+    <None Remove="ТЗ электронный бланк заказа.xlsx" />
+    <None Remove="ТК эскиз.pdf" />
+    <None Remove="ТК.pdf" />
+    <None Remove="Товарная накладная бланк.xls" />
+    <None Remove="УПД бланк.pdf" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="appsetting.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Extended.Wpf.Toolkit" Version="4.5.0" />
+    <PackageReference Include="FastReport.Localization" Version="2023.2.2" />
+    <PackageReference Include="FastReport.OpenSource" Version="2023.2.2" />
+    <PackageReference Include="FastReport.OpenSource.Data.MsSql" Version="2021.4.0" />
+    <PackageReference Include="FastReport.OpenSource.Export.PdfSimple" Version="2023.2.2" />
+    <PackageReference Include="MailKit" Version="3.6.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.17" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.17">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="5.0.17" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.17" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.17">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0" />
+    <PackageReference Include="Microsoft.WindowsAPICodePack-Core" Version="1.1.0.2" />
+    <PackageReference Include="Microsoft.WindowsAPICodePack-Shell" Version="1.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="free-icon-device-2844994.ico">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <Resource Include="Images\BlueUI-новый-заказ-40.png" />
+    <Resource Include="Images\BlueUI-обновить-40.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\BlueUI-сохранить-40.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\BlurUI-удалить-40.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\downward-arrow.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\free-icon-account.png" />
+    <Resource Include="Images\free-icon-act.png" />
+    <Resource Include="Images\free-icon-add-button.png" />
+    <Resource Include="Images\free-icon-bin-Recycler.png" />
+    <Resource Include="Images\free-icon-cross.png" />
+    <Resource Include="Images\free-icon-delete-button.png" />
+    <Resource Include="Images\free-icon-device-2844994.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\free-icon-factory.png" />
+    <Resource Include="Images\free-icon-filter.png" />
+    <Resource Include="Images\free-icon-floppy-disk_save.png" />
+    <Resource Include="Images\free-icon-folder_open.png" />
+    <Resource Include="Images\free-icon-minus-button.png" />
+    <Resource Include="Images\free-icon-printer-techcard.png" />
+    <Resource Include="Images\free-icon-printer.png" />
+    <Resource Include="Images\free-icon-printer1.png" />
+    <Resource Include="Images\free-icon-search.png" />
+    <Resource Include="Images\free-icon-techcard.png" />
+    <Resource Include="Images\free-icon-techcard_work.png" />
+    <Resource Include="Images\free-icon-techcard_operation.png" />
+    <Resource Include="Images\premium-icon-all-order.png" />
+    <Resource Include="Images\premium-icon-arrow-right.png" />
+    <Resource Include="Images\premium-icon-correct.png" />
+    <Resource Include="Images\premium-icon-delete.png" />
+    <Resource Include="Images\premium-icon-down-arrow.png" />
+    <Resource Include="Images\premium-icon-download.png" />
+    <Resource Include="Images\premium-icon-edit.png" />
+    <Resource Include="Images\premium-icon-email-e-mail.png" />
+    <Resource Include="Images\premium-icon-new-order.png" />
+    <Resource Include="Images\premium-icon-payment.png" />
+    <Resource Include="Images\premium-icon-refresh.png" />
+    <Resource Include="Images\premium-icon-view.png" />
+    <Content Include="Reports\OrderListView.frx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\ProductListView.frx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+</Project>

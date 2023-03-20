@@ -1,0 +1,550 @@
+﻿<Window x:Class="AdvertisementWpf.ClientsAndContractorsHandbook"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:AdvertisementWpf"
+        mc:Ignorable="d"
+        Title="Клиенты и подрядчики" MinHeight="800" MinWidth="1200" WindowStartupLocation="CenterOwner" 
+        ResizeMode="CanResizeWithGrip" SizeToContent="WidthAndHeight" WindowStyle="ThreeDBorderWindow" Closed="Window_Closed">
+    <Window.Resources>
+        <CollectionViewSource x:Key="clientsViewSource" Filter="ClientsCollectionViewSourceFilter"/>
+        <CollectionViewSource x:Key="contractorsViewSource"/>
+        <CollectionViewSource x:Key="usersViewSource"/>
+        <CollectionViewSource x:Key="banksViewSource"/>
+        <Style x:Key="TextBlockStyle">
+            <Setter Property="Control.VerticalAlignment" Value="Center"/>
+            <Setter Property="Control.FontWeight" Value="Bold"/>
+            <Setter Property="Control.Margin" Value="2,0,2,0"/>
+            <Setter Property="Control.Padding" Value="2,2,2,2"/>
+            <Setter Property="Control.FontSize" Value="16"/>
+        </Style>
+        <Style x:Key="DataGridStyle" TargetType="DataGrid">
+            <Setter Property="AutoGenerateColumns" Value="False"/>
+            <Setter Property="Focusable" Value="True"/>
+            <Setter Property="Margin" Value="2"/>
+            <Setter Property="Padding" Value="2"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="EnableRowVirtualization" Value="True"/>
+            <Setter Property="RowDetailsVisibilityMode" Value="VisibleWhenSelected"/>
+            <Setter Property="ColumnHeaderStyle" Value="{DynamicResource ColumnHeaderStyle}"/>
+        </Style>
+        <Style x:Key="ColumnHeaderStyle" TargetType="DataGridColumnHeader">
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="ContentTemplate">
+                <Setter.Value>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding}" TextWrapping="Wrap"/>
+                    </DataTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="ToolTip" Value="Нажмите для сортировки"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style TargetType="Button">
+            <Setter Property="Margin" Value="2"/>
+            <Setter Property="Padding" Value="2"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Effect">
+                        <Setter.Value>
+                            <DropShadowEffect BlurRadius="8" ShadowDepth="0.5" Opacity="0.5"/>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style TargetType="{x:Type TextBox}" x:Key="ValidationTemplate">
+            <Setter Property="Validation.ErrorTemplate">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <DockPanel LastChildFill="True">
+                            <Grid Margin="0,-2,0,-2">
+                                <Ellipse StrokeThickness="0" Fill="Red" Width="{TemplateBinding FontSize}" Height="{TemplateBinding FontSize}"/>
+                                <TextBlock Text="!" FontSize="{TemplateBinding FontSize}" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
+                            </Grid>
+                            <Border BorderBrush="Red" BorderThickness="1">
+                                <AdornedElementPlaceholder/>
+                            </Border>
+                        </DockPanel>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="Validation.HasError" Value="True">
+                    <Setter Property="ToolTip"
+                            Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)[0].ErrorContent}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+    <Window.CommandBindings>
+        <CommandBinding Command="ApplicationCommands.Save"
+                        Executed="SaveClientsAndContractors"
+                        CanExecute="CanExecuteClientsAndContractors"/>
+        <CommandBinding Command="ApplicationCommands.Delete"
+                        Executed="DeleteClientsAndContractors"
+                        CanExecute="CanExecuteDeleteClientsAndContractors"/>
+        <CommandBinding Command="Refresh"
+                        Executed="RefreshClientsAndContractors"
+                        CanExecute="CanExecuteRefreshClientsAndContractors"/>
+    </Window.CommandBindings>
+    <Grid>
+        <TabControl>
+            <TabItem Name="Clients_Tab">
+                <TabItem.Header>
+                    <Label Content="Клиенты" FontSize="16" FontWeight="Bold"/>
+                </TabItem.Header>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="32*"/>
+                        <ColumnDefinition Width="97*"/>
+                        <!--грид клиентов-->
+                        <ColumnDefinition Width="550"/>
+                        <!--правка одного-->
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <!--грид клиентов и правка одного-->
+                        <RowDefinition Height="Auto"/>
+                        <!--строка поиска клиента-->
+                    </Grid.RowDefinitions>
+                    <DataGrid Name="ClientsGrid" Grid.Row="0" Grid.Column="0" Margin="10,10,10,10"
+                              Style="{StaticResource DataGridStyle}" 
+                              ItemsSource="{Binding Source={StaticResource clientsViewSource}, UpdateSourceTrigger=PropertyChanged}" Grid.ColumnSpan="2" InitializingNewItem="ClientsGrid_InitializingNewItem">
+                        <DataGrid.RowValidationRules>
+                            <local:NotNullAndEmptyValidationGroupRule ValidationStep="CommittedValue"/>
+                        </DataGrid.RowValidationRules>
+                        <DataGrid.RowValidationErrorTemplate>
+                            <ControlTemplate>
+                                <Grid Margin="0,-2,0,-2" ToolTip="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGridRow}}, Path=(Validation.Errors)[0].ErrorContent}">
+                                    <Ellipse StrokeThickness="0" Fill="Red" Width="{TemplateBinding FontSize}" Height="{TemplateBinding FontSize}"/>
+                                    <TextBlock Text="!" FontSize="{TemplateBinding FontSize}" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
+                                </Grid>
+                            </ControlTemplate>
+                        </DataGrid.RowValidationErrorTemplate>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Наименование клиента" Binding="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Width="Auto"/>
+                            <DataGridTextColumn Header="ИНН" Binding="{Binding INN, UpdateSourceTrigger=PropertyChanged}" Width="Auto"/>
+                            <DataGridTextColumn Header="Руководитель" Binding="{Binding DirectorName, UpdateSourceTrigger=PropertyChanged}" Width="Auto"/>
+                            <DataGridComboBoxColumn Header="Менеджер" ItemsSource="{Binding Source={StaticResource usersViewSource}, UpdateSourceTrigger=PropertyChanged}" 
+                                        SelectedValueBinding="{Binding UserID}"
+                                        SelectedValuePath="ID" DisplayMemberPath="FullUserName"
+                                        Width="Auto"/>
+                            <!--<DataGridTextColumn Header="Руководитель" Binding="{Binding DirectorName}" Width="Auto"/>-->
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <DockPanel Grid.Row="1" Grid.Column="0" Margin="10,10,10,10" Grid.ColumnSpan="2">
+                        <TextBlock Text="Фильтр по клиенту(поиск): " DockPanel.Dock="Left"/>
+                        <TextBox Name="TextToFilter" BorderThickness="2" Text="" DockPanel.Dock="Right" TextChanged="TextToFilter_TextChanged"/>
+                    </DockPanel>
+                    <Grid Name="Client" Grid.Row="0" Grid.Column="2" Margin="10,10,10,10">
+                        <!--основные параметры клиента-->
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>  <!--наименование клиента-->
+                            <RowDefinition Height="Auto"/>  <!--контактное лицо-->
+                            <RowDefinition Height="Auto"/>  <!--описание-->
+                            <RowDefinition Height="Auto"/>
+                            <!--ИНН КПП-->
+                            <RowDefinition Height="Auto"/>
+                            <!--руководитель-->
+                            <RowDefinition Height="Auto"/>
+                            <!--телефоны-->
+                            <RowDefinition Height="Auto"/>
+                            <!--Email-->
+                            <RowDefinition Height="Auto"/>
+                            <!--почтовы адрес-->
+                            <RowDefinition Height="Auto"/>
+                            <!--юр. адрес-->
+                            <RowDefinition Height="Auto"/>
+                            <!--фактический адрес-->
+                            <RowDefinition Height="Auto"/>
+                            <!--грузополучатель-->
+                            <RowDefinition Height="Auto"/>
+                            <!--расчетный счет-->
+                            <RowDefinition Height="Auto"/>
+                            <!--в банке-->
+                            <RowDefinition Height="Auto"/>
+                            <!--менеджер-->
+                            <RowDefinition Height="*"/>
+                            <!--пусто-->
+                            <RowDefinition Height="Auto"/>
+                            <!--кнопки-->
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Content="Наименование клиента: " Grid.Row="0" Grid.Column="0" VerticalAlignment="Top"/>
+                        <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Vertical">
+                            <TextBlock  
+                                       Text="{Binding ElementName=ClientsGrid, Path=SelectedItem.Name}">
+                            </TextBlock>
+                            <!--<TextBox  VerticalAlignment="Top" Style="{StaticResource ValidationTemplate}">
+                                <TextBox.Text>
+                                    <Binding Path="SelectedItem.Name" ElementName="ClientsGrid"
+                                             Mode="TwoWay" ValidatesOnNotifyDataErrors="True"  ValidatesOnExceptions="True"
+                                             UpdateSourceTrigger="PropertyChanged">
+                                        <Binding.ValidationRules>
+                                            <local:NotNullAndEmptyValidationRule/>
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </TextBox.Text>
+                            </TextBox>-->
+                            <CheckBox Content="физическое лицо" 
+                                      IsChecked="{Binding ElementName=ClientsGrid, Path=SelectedItem.IsIndividual, 
+                                Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=true, ValidatesOnExceptions=true}" VerticalAlignment="Bottom"/>
+                        </StackPanel>
+                        <Label Content="Контактное лицо: " Grid.Row="1" Grid.Column="0"/>
+                        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding ElementName=ClientsGrid, 
+                                Path=SelectedItem.ContactPersonName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, 
+                                NotifyOnValidationError=true, ValidatesOnExceptions=true}" 
+                                 VerticalAlignment="Center"/>
+                        <Label Content="Описание (профиль): " Grid.Row="2" Grid.Column="0"/>
+                        <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding ElementName=ClientsGrid, 
+                                Path=SelectedItem.Profile, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, 
+                                NotifyOnValidationError=true, ValidatesOnExceptions=true}" 
+                                TextWrapping="Wrap"/>
+                        <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="0">
+                            <Label Content="ИНН: "/>
+                            <TextBox Width="150"  VerticalAlignment="Center" Style="{StaticResource ValidationTemplate}">
+                                <TextBox.Text>
+                                    <Binding Path="SelectedItem.INN" ElementName="ClientsGrid"
+                                             Mode="TwoWay" ValidatesOnNotifyDataErrors="True"  ValidatesOnExceptions="True"
+                                             UpdateSourceTrigger="PropertyChanged">
+                                        <Binding.ValidationRules>
+                                            <local:NotNullAndEmptyValidationRule/>
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </TextBox.Text>
+                            </TextBox>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="1">
+                            <Label Content="КПП: "/>
+                            <TextBox Width="150" Text="{Binding ElementName=ClientsGrid, 
+                                Path=SelectedItem.KPP, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged,
+                                NotifyOnValidationError=true, ValidatesOnExceptions=true}" 
+                                VerticalAlignment="Center"/>
+                        </StackPanel>
+                        <Label Content="Руководитель: " Grid.Row="4" Grid.Column="0"/>
+                        <TextBlock Grid.Row="4" Grid.Column="1" VerticalAlignment="Center" 
+                                   Text="{Binding ElementName=ClientsGrid, Path=SelectedItem.DirectorName}">
+                        </TextBlock>
+                        <!--<TextBox Grid.Row="4" Grid.Column="1" Text="{Binding ElementName=ClientsGrid, 
+                                Path=SelectedItem.DirectorName, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged, 
+                                NotifyOnValidationError=true, ValidatesOnExceptions=true}" 
+                                VerticalAlignment="Center"/>-->
+                        <Label Content="Телефоны: " Grid.Row="5" Grid.Column="0" VerticalAlignment="Center"/>
+                        <StackPanel Grid.Row="5" Grid.Column="1" Orientation="Vertical">
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="рабочий: "/>
+                                <TextBox Width="150" Text="{Binding ElementName=ClientsGrid, 
+                                        Path=SelectedItem.WorkPhone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged,
+                                        NotifyOnValidationError=true, ValidatesOnExceptions=true}"
+                                        VerticalAlignment="Center"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="мобильный.: "/>
+                                <TextBox Width="150" Text="{Binding ElementName=ClientsGrid, 
+                                        Path=SelectedItem.MobilePhone, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged,
+                                        NotifyOnValidationError=true, ValidatesOnExceptions=true}" 
+                                        VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </StackPanel>
+                        <Label Content="E-mail: " Grid.Row="6" Grid.Column="0"/>
+                        <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding ElementName=ClientsGrid, 
+                                Path=SelectedItem.Email, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged,
+                                NotifyOnValidationError=true, ValidatesOnExceptions=true}" 
+                                VerticalAlignment="Center"/>
+                        <Label Content="Почтовый адрес: " Grid.Row="7" Grid.Column="0"/>
+                        <TextBox Grid.Row="7" Grid.Column="1" Text="{Binding ElementName=ClientsGrid, 
+                                Path=SelectedItem.PostalAddress, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged,
+                                NotifyOnValidationError=true, ValidatesOnExceptions=true}"
+                                VerticalAlignment="Center"/>
+                        <Label Content="Юридический адрес: " Grid.Row="8" Grid.Column="0"/>
+                        <TextBox Grid.Row="8" Grid.Column="1" Text="{Binding ElementName=ClientsGrid, 
+                                Path=SelectedItem.BusinessAddress, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged,
+                                NotifyOnValidationError=true, ValidatesOnExceptions=true}"
+                                VerticalAlignment="Center"/>
+                        <Label Content="Фактический адрес: " Grid.Row="9" Grid.Column="0"/>
+                        <TextBox Grid.Row="9" Grid.Column="1" Text="{Binding ElementName=ClientsGrid, 
+                                Path=SelectedItem.ActualAddress, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged,
+                                NotifyOnValidationError=true, ValidatesOnExceptions=true}"
+                                VerticalAlignment="Center"/>
+                        <Label Content="Грузополучатель: " Grid.Row="10" Grid.Column="0"/>
+                        <TextBox Grid.Row="10" Grid.Column="1" Text="{Binding ElementName=ClientsGrid, 
+                                Path=SelectedItem.Consignee, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, 
+                                NotifyOnValidationError=true, ValidatesOnExceptions=true}"
+                                VerticalAlignment="Center"/>
+                        <Label Content="Расчетный счет: " Grid.Row="11" Grid.Column="0"/>
+                        <TextBox Grid.Row="11" Grid.Column="1" Text="{Binding ElementName=ClientsGrid, 
+                                Path=SelectedItem.BankAccount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged,
+                                NotifyOnValidationError=true, ValidatesOnExceptions=true}" 
+                                VerticalAlignment="Center"/>
+                        <Label Content="Банк: " Grid.Row="12" Grid.Column="0"/>
+                        <ComboBox Grid.Row="12" Grid.Column="1" ItemsSource="{Binding Source={StaticResource banksViewSource}}" 
+                                  SelectedValue="{Binding ElementName=ClientsGrid, Path=SelectedItem.BankID, Mode=TwoWay, 
+                                  UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=true, ValidatesOnExceptions=true}" 
+                                  SelectedValuePath="ID" DisplayMemberPath="Name"
+                                  VerticalAlignment="Center"/>
+                        <Label Content="Менеджер: " Grid.Row="13" Grid.Column="0"/>
+                        <ComboBox Grid.Row="13" Grid.Column="1" ItemsSource="{Binding Source={StaticResource usersViewSource}}" 
+                                  SelectedValue="{Binding ElementName=ClientsGrid, Path=SelectedItem.UserID, Mode=TwoWay, 
+                                  UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=true, ValidatesOnExceptions=true}" 
+                                  SelectedValuePath="ID" DisplayMemberPath="FullUserName" 
+                                  VerticalAlignment="Center"/>
+                        <Grid Grid.Row="15" Grid.ColumnSpan="2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Button Name="SaveClients_Button" Grid.Column="0" Grid.Row="0" Command="ApplicationCommands.Save" ToolTip="Сохранить изменения в базе данных">
+                                <StackPanel>
+                                    <Image Source="/Images/BlueUI-сохранить-40.png" Width="30" Height="30"/>
+                                    <TextBlock Text="Сохранить"/>
+                                </StackPanel>
+                            </Button>
+                            <Button Name="DeleteClients_Button" Grid.Column="1" Grid.Row="0" Command="ApplicationCommands.Delete" ToolTip="Удалить строку из таблицы без сохранения в базе данных">
+                                <StackPanel>
+                                    <Image Source="/Images/BlurUI-удалить-40.png" Width="30" Height="30"/>
+                                    <TextBlock Text="Удалить" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+                            <Button Name="RefreshClients_Button" Grid.Column="2" Grid.Row="0" Command="Refresh" ToolTip="Обновить таблицу">
+                                <StackPanel>
+                                    <Image Source="/Images/BlueUI-обновить-40.png" Width="30" Height="30"/>
+                                    <TextBlock Text="Обновить"/>
+                                </StackPanel>
+                            </Button>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </TabItem>
+            <TabItem>
+                <TabItem.Header>
+                    <Label Content="Подрядчики" FontSize="16" FontWeight="Bold"/>
+                </TabItem.Header>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <!--грид подрядчиков-->
+                        <ColumnDefinition Width="550"/>
+                        <!--правка одного-->
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <!--грид подрядчиков и правка одного-->
+                    </Grid.RowDefinitions>
+                    <DataGrid Name="ContractorsGrid" Grid.Row="0" Grid.Column="0" Margin="10"
+                              Style="{StaticResource DataGridStyle}" 
+                              ItemsSource="{Binding Source={StaticResource contractorsViewSource}, UpdateSourceTrigger=PropertyChanged}">
+                        <DataGrid.RowValidationRules>
+                            <local:NotNullAndEmptyValidationGroupRule ValidationStep="CommittedValue"/>
+                        </DataGrid.RowValidationRules>
+                        <DataGrid.RowValidationErrorTemplate>
+                            <ControlTemplate>
+                                <Grid Margin="0,-2,0,-2" ToolTip="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGridRow}}, Path=(Validation.Errors)[0].ErrorContent}">
+                                    <Ellipse StrokeThickness="0" Fill="Red" Width="{TemplateBinding FontSize}" Height="{TemplateBinding FontSize}"/>
+                                    <TextBlock Text="!" FontSize="{TemplateBinding FontSize}" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
+                                </Grid>
+                            </ControlTemplate>
+                        </DataGrid.RowValidationErrorTemplate>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Наименование подрядчика" Binding="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Width="Auto"/>
+                            <DataGridTextColumn Header="ИНН" Binding="{Binding INN, UpdateSourceTrigger=PropertyChanged}" Width="Auto"/>
+                            <DataGridTextColumn Header="Руководитель" Binding="{Binding DirectorName, UpdateSourceTrigger=PropertyChanged}" Width="Auto"/>
+                            <DataGridTextColumn Header="Главный бухгалтер" Binding="{Binding ChiefAccountant, UpdateSourceTrigger=PropertyChanged}" Width="Auto"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <Grid Name="Contractor" Grid.Row="0" Grid.Column="1" Margin="10">
+                        <!--основные параметры подрядчика-->
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <!--наименование подрядчика-->
+                            <RowDefinition Height="Auto"/>
+                            <!--руководитель-->
+                            <RowDefinition Height="Auto"/>
+                            <!--руководитель должность-->
+                            <RowDefinition Height="Auto"/>
+                            <!--руководитель номер доверенности-->
+                            <RowDefinition Height="Auto"/>
+                            <!--руководитель дата доверенности-->
+                            <RowDefinition Height="Auto"/>
+                            <!--гл. бухгалтер-->
+                            <RowDefinition Height="Auto"/>
+                            <!--гл. бухгалтер должность-->
+                            <RowDefinition Height="Auto"/>
+                            <!--гл. бухгалтер номер доверенности-->
+                            <RowDefinition Height="Auto"/>
+                            <!--гл. бухгалтер дата доверенности-->
+                            <RowDefinition Height="Auto"/>
+                            <!--ИНН КПП-->
+                            <RowDefinition Height="Auto"/>
+                            <!--ОКПО ОГРН-->
+                            <RowDefinition Height="Auto"/>
+                            <!--юр. адрес-->
+                            <RowDefinition Height="Auto"/>
+                            <!--расчетный счет-->
+                            <RowDefinition Height="Auto"/>
+                            <!--в банке-->
+                            <RowDefinition Height="Auto"/>
+                            <!--бланк счета на оплату-->
+                            <RowDefinition Height="*"/>
+                            <!--пусто-->
+                            <RowDefinition Height="Auto"/>
+                            <!--кнопки-->
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Content="Наименование подрядчика: " Grid.Row="0" Grid.Column="0"/>
+                        <TextBlock Grid.Row="0" Grid.Column="1" VerticalAlignment="Center"
+                                   Text="{Binding Path=SelectedItem.Name, ElementName=ContractorsGrid}">
+                        </TextBlock>
+                        <!--<TextBox  Grid.Row="0" Grid.Column="1" VerticalAlignment="Top" Style="{StaticResource ValidationTemplate}">
+                            <TextBox.Text>
+                                <Binding Path="SelectedItem.Name" ElementName="ContractorsGrid"
+                                             Mode="TwoWay" ValidatesOnNotifyDataErrors="True"  ValidatesOnExceptions="True"
+                                             UpdateSourceTrigger="PropertyChanged">
+                                    <Binding.ValidationRules>
+                                        <local:NotNullAndEmptyValidationRule/>
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>-->
+                        <Label Content="Руководитель: " Grid.Row="1" Grid.Column="0"/>
+                        <TextBlock Grid.Row="1" Grid.Column="1" VerticalAlignment="Center"
+                                   Text="{Binding Path=SelectedItem.DirectorName, ElementName=ContractorsGrid}"> 
+                        </TextBlock>
+                        <Label Content="должность: " Grid.Row="2" Grid.Column="0" HorizontalContentAlignment="Right"/>
+                        <TextBox Grid.Row="2" Grid.Column="1" VerticalAlignment="Center"
+                                 Text="{Binding Path=SelectedItem.DirectorPostName, ElementName=ContractorsGrid, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                        </TextBox>
+                        <Label Content="доверенность №: " Grid.Row="3" Grid.Column="0" HorizontalContentAlignment="Right"/>
+                        <TextBox Grid.Row="3" Grid.Column="1" VerticalAlignment="Center"
+                                   Text="{Binding Path=SelectedItem.DirectorAttorneyNumber, ElementName=ContractorsGrid, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                        </TextBox>
+                        <Label Content="доверенность дата: " Grid.Row="4" Grid.Column="0" HorizontalContentAlignment="Right"/>
+                        <DatePicker Grid.Row="4" Grid.Column="1" VerticalAlignment="Center" IsTodayHighlighted="True"
+                                   SelectedDate="{Binding Path=SelectedItem.DirectorAttorneyDate, ElementName=ContractorsGrid, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                        </DatePicker>
+                        <!--<TextBox Grid.Row="1" Grid.Column="1" Text="{Binding ElementName=ContractorsGrid, 
+                                Path=SelectedItem.DirectorName, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged, 
+                                NotifyOnValidationError=true, ValidatesOnExceptions=true}" 
+                                VerticalAlignment="Center"/>-->
+                        <Label Content="Главный бухгалтер: " Grid.Row="5" Grid.Column="0"/>
+                        <TextBlock Grid.Row="5" Grid.Column="1" VerticalAlignment="Center"
+                                   Text="{Binding Path=SelectedItem.ChiefAccountant, ElementName=ContractorsGrid}">
+                        </TextBlock>
+                        <Label Content="должность: " Grid.Row="6" Grid.Column="0" HorizontalContentAlignment="Right"/>
+                        <TextBox Grid.Row="6" Grid.Column="1" VerticalAlignment="Center"
+                                 Text="{Binding Path=SelectedItem.ChiefAccountantPostName, ElementName=ContractorsGrid, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                        </TextBox>
+                        <Label Content="доверенность №: " Grid.Row="7" Grid.Column="0" HorizontalContentAlignment="Right"/>
+                        <TextBox Grid.Row="7" Grid.Column="1" VerticalAlignment="Center"
+                                   Text="{Binding Path=SelectedItem.ChiefAccountantAttorneyNumber, ElementName=ContractorsGrid, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                        </TextBox>
+                        <Label Content="доверенность дата: " Grid.Row="8" Grid.Column="0" HorizontalContentAlignment="Right"/>
+                        <DatePicker Grid.Row="8" Grid.Column="1" VerticalAlignment="Center" IsTodayHighlighted="True"
+                                   SelectedDate="{Binding Path=SelectedItem.ChiefAccountantAttorneyDate, ElementName=ContractorsGrid, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                        </DatePicker>
+                        <!--<TextBox Grid.Row="2" Grid.Column="1" Text="{Binding ElementName=ContractorsGrid, 
+                                Path=SelectedItem.ChiefAccountant, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, 
+                                NotifyOnValidationError=true, ValidatesOnExceptions=true}" 
+                                 VerticalAlignment="Center"/>-->
+                        <StackPanel Orientation="Horizontal" Grid.Row="9" Grid.Column="0">
+                            <Label Content="ИНН: "/>
+                            <TextBox  VerticalAlignment="Center" Style="{StaticResource ValidationTemplate}" Width="110">
+                                <TextBox.Text>
+                                    <Binding Path="SelectedItem.INN" ElementName="ContractorsGrid"
+                                             Mode="TwoWay" ValidatesOnNotifyDataErrors="True"  ValidatesOnExceptions="True"
+                                             UpdateSourceTrigger="PropertyChanged">
+                                        <Binding.ValidationRules>
+                                            <local:NotNullAndEmptyValidationRule/>
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </TextBox.Text>
+                            </TextBox>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Grid.Row="9" Grid.Column="1">
+                            <Label Content="КПП: "/>
+                            <TextBox Text="{Binding ElementName=ContractorsGrid, 
+                                Path=SelectedItem.KPP, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged,
+                                NotifyOnValidationError=true, ValidatesOnExceptions=true}" 
+                                VerticalAlignment="Center"  Width="110"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Grid.Row="10" Grid.Column="0">
+                            <Label Content="ОКПО: "/>
+                            <TextBox Text="{Binding ElementName=ContractorsGrid, 
+                                Path=SelectedItem.OKPO, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged,
+                                NotifyOnValidationError=true, ValidatesOnExceptions=true}" 
+                                VerticalAlignment="Center"  Width="110"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Grid.Row="10" Grid.Column="1">
+                            <Label Content="ОГРН: "/>
+                            <TextBox Text="{Binding ElementName=ContractorsGrid, 
+                                Path=SelectedItem.OGRN, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged,
+                                NotifyOnValidationError=true, ValidatesOnExceptions=true}" 
+                                VerticalAlignment="Center"  Width="110"/>
+                        </StackPanel>
+                        <Label Content="Юридический адрес: " Grid.Row="11" Grid.Column="0"/>
+                        <TextBox Grid.Row="11" Grid.Column="1" Text="{Binding ElementName=ContractorsGrid, 
+                                Path=SelectedItem.BusinessAddress, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged,
+                                NotifyOnValidationError=true, ValidatesOnExceptions=true}"
+                                VerticalAlignment="Center"/>
+                        <Label Content="Расчетный счет: " Grid.Row="12" Grid.Column="0"/>
+                        <TextBox Grid.Row="12" Grid.Column="1" Text="{Binding ElementName=ContractorsGrid, 
+                                Path=SelectedItem.BankAccount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged,
+                                NotifyOnValidationError=true, ValidatesOnExceptions=true}" 
+                                VerticalAlignment="Center"/>
+                        <Label Content="Банк: " Grid.Row="13" Grid.Column="0"/>
+                        <ComboBox Grid.Row="13" Grid.Column="1" ItemsSource="{Binding Source={StaticResource banksViewSource}}" 
+                                  SelectedValue="{Binding ElementName=ContractorsGrid, Path=SelectedItem.BankID, Mode=TwoWay, 
+                                  UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=true, ValidatesOnExceptions=true}" 
+                                  SelectedValuePath="ID" DisplayMemberPath="Name"
+                                  VerticalAlignment="Center"/>
+                        <Label Content="Шаблон счета на оплату: " Grid.Row="14" Grid.Column="0"/>
+                        <StackPanel Grid.Row="14" Grid.Column="1" Orientation="Horizontal">
+                            <TextBlock Name="AccountFileTemplateTextBlock" Text="{Binding Source={StaticResource contractorsViewSource}, Path=AccountFileTemplate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+                            <Button Name="OpenDialogButton" Background="Transparent" BorderBrush="Transparent" 
+                                Click="OpenDialogButton_Click" ToolTip="Открыть диалог для выбора файла">
+                                <Image Source="\Images\free-icon-folder_open.png" Width="20" Height="20"/>
+                            </Button>
+                        </StackPanel>
+                        <Grid Grid.Row="16" Grid.ColumnSpan="2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Button Name="SaveContractors_Button" Grid.Column="0" Grid.Row="0" Command="ApplicationCommands.Save" ToolTip="Сохранить изменения в базе данных">
+                                <StackPanel>
+                                    <Image Source="/Images/BlueUI-сохранить-40.png" Width="30" Height="30"/>
+                                    <TextBlock Text="Сохранить"/>
+                                </StackPanel>
+                            </Button>
+                            <Button Name="DeleteContractors_Button" Grid.Column="1" Grid.Row="0" Command="ApplicationCommands.Delete" ToolTip="Удалить строку из таблицы без сохранения в базе данных">
+                                <StackPanel>
+                                    <Image Source="/Images/BlurUI-удалить-40.png" Width="30" Height="30"/>
+                                    <TextBlock Text="Удалить" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+                            <Button Name="RefreshContractors_Button" Grid.Column="2" Grid.Row="0" Command="Refresh" ToolTip="Обновить таблицу">
+                                <StackPanel>
+                                    <Image Source="/Images/BlueUI-обновить-40.png" Width="30" Height="30"/>
+                                    <TextBlock Text="Обновить"/>
+                                </StackPanel>
+                            </Button>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Window>

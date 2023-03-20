@@ -1,0 +1,207 @@
+﻿<Window x:Class="AdvertisementWpf.SmallHandBookWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:AdvertisementWpf"
+        mc:Ignorable="d"
+        Title="Справочники" MinHeight="400" MinWidth="750" WindowStartupLocation="CenterOwner" 
+        ResizeMode="CanResizeWithGrip" SizeToContent="WidthAndHeight" WindowStyle="ThreeDBorderWindow" Closed="Window_Closed">
+    <Window.Resources>
+        <CollectionViewSource x:Key="banksViewSource"/>
+        <CollectionViewSource x:Key="unitsViewSource"/>
+        <CollectionViewSource x:Key="typeOfActivitysDataSource"/>
+        <CollectionViewSource x:Key="localitysDataSource"/>
+        <CollectionViewSource x:Key="categoryOfProductssDataSource"/>        
+        <Style x:Key="TextBlockStyle">
+            <Setter Property="Control.VerticalAlignment" Value="Center"/>
+            <Setter Property="Control.FontWeight" Value="Bold"/>
+            <Setter Property="Control.Margin" Value="2,0,2,0"/>
+            <Setter Property="Control.Padding" Value="2,2,2,2"/>
+            <Setter Property="Control.FontSize" Value="16"/>
+        </Style>
+        <Style x:Key="DataGridStyle" TargetType="DataGrid">
+            <Setter Property="AutoGenerateColumns" Value="False"/>
+            <Setter Property="Focusable" Value="True"/>
+            <Setter Property="Margin" Value="2"/>
+            <Setter Property="Padding" Value="2"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="EnableRowVirtualization" Value="True"/>
+            <Setter Property="RowDetailsVisibilityMode" Value="VisibleWhenSelected"/>
+            <Setter Property="ColumnHeaderStyle" Value="{DynamicResource ColumnHeaderStyle}"/>
+        </Style>
+        <Style x:Key="ColumnHeaderStyle" TargetType="DataGridColumnHeader">
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="ContentTemplate">
+                <Setter.Value>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding}" TextWrapping="Wrap"/>
+                    </DataTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="ToolTip" Value="Нажмите для сортировки"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+    <Window.CommandBindings>
+        <CommandBinding Command="ApplicationCommands.Save"
+                        Executed="SaveHandbooks"
+                        CanExecute="CanExecuteSaveHandbooks"/>
+    </Window.CommandBindings>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>  <!--текст Банки-->
+            <RowDefinition Height="Auto"/>  <!--кнопки-->
+            <RowDefinition Height="*"/>     <!--грид Банки-->
+            <RowDefinition Height="Auto"/>  <!--тексты Виды ..., Пункты ... Ед.изм-->
+            <RowDefinition Height="Auto"/>  <!--кнопки-->
+            <RowDefinition Height="*"/>     <!--гриды-->
+            <RowDefinition Height="Auto"/>  <!--кнопки-->
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <!--<Border Name="ButtonBorder" Tag="Bank" Grid.Row="1" Grid.Column="1" CornerRadius="5" BorderThickness="3" BorderBrush="LightBlue" HorizontalAlignment="Center">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                --><!--<Button Name="Save_Button" ToolTip="Сохранить все изменения в БД" Command="ApplicationCommands.Save">
+                    <Image Source="/Images/BlueUI-сохранить-40.png" Width="20" Height="20"/>
+                </Button>--><!--
+                <Button Name="Refresh_Button" Command="Refresh"
+                        ToolTip="Обновить таблицы">
+                    <Image Source="/Images/BlueUI-обновить-40.png" Width="20" Height="20"/>
+                </Button>
+                <Button x:Name="Delete_Button" Command="ApplicationCommands.Delete"
+                        ToolTip="Отметить для удаления">
+                    <Image Source="/Images/BlurUI-удалить-40.png" Width="20" Height="20"/>
+                </Button>
+            </StackPanel>
+        </Border>-->
+        <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4" Text="Банки">
+            <TextBlock.Style>
+                <Style TargetType="TextBlock" BasedOn="{StaticResource ResourceKey=TextBlockStyle}">
+                    <Setter Property="TextAlignment" Value="Center"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding ElementName=BanksGrid, Path=IsKeyboardFocusWithin}" Value="True">
+                            <Setter Property="Background" Value="LightSkyBlue" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </TextBlock.Style>
+        </TextBlock>
+        <TextBlock Grid.Row="3" Grid.Column="0" Text="Коды видов деятельности" TextWrapping="Wrap">
+            <TextBlock.Style>
+                <Style TargetType="TextBlock" BasedOn="{StaticResource ResourceKey=TextBlockStyle}">
+                    <Setter Property="TextAlignment" Value="Center"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding ElementName=TypeOfActivitysGrid, Path=IsKeyboardFocusWithin}" Value="True">
+                            <Setter Property="Background" Value="LightSkyBlue" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </TextBlock.Style>
+        </TextBlock>
+        <TextBlock Grid.Row="3" Grid.Column="1" Text="Категории изделий" TextWrapping="Wrap">
+            <TextBlock.Style>
+                <Style TargetType="TextBlock" BasedOn="{StaticResource ResourceKey=TextBlockStyle}">
+                    <Setter Property="TextAlignment" Value="Center"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding ElementName=CategoryOfProductsGrid, Path=IsKeyboardFocusWithin}" Value="True">
+                            <Setter Property="Background" Value="LightSkyBlue" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </TextBlock.Style>
+        </TextBlock>
+        <TextBlock Grid.Row="3" Grid.Column="2" Text="Населенные пункты" TextWrapping="Wrap">
+            <TextBlock.Style>
+                <Style TargetType="TextBlock" BasedOn="{StaticResource ResourceKey=TextBlockStyle}">
+                    <Setter Property="TextAlignment" Value="Center"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding ElementName=LocalitysGrid, Path=IsKeyboardFocusWithin}" Value="True">
+                            <Setter Property="Background" Value="LightSkyBlue" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </TextBlock.Style>
+        </TextBlock>
+        <TextBlock Grid.Row="3" Grid.Column="3" Text="Ед. измерения">
+            <TextBlock.Style>
+                <Style TargetType="TextBlock" BasedOn="{StaticResource ResourceKey=TextBlockStyle}">
+                    <Setter Property="TextAlignment" Value="Center"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding ElementName=UnitsGrid, Path=IsKeyboardFocusWithin}" Value="True">
+                            <Setter Property="Background" Value="LightSkyBlue" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </TextBlock.Style>
+        </TextBlock>
+        <DataGrid Name="BanksGrid" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" MinWidth="500" 
+                  Style="{StaticResource DataGridStyle}"
+                  ItemsSource="{Binding Source={StaticResource banksViewSource}, UpdateSourceTrigger=PropertyChanged}">
+            <DataGrid.RowValidationRules>
+                <local:NotNullAndEmptyValidationCheckRule ValidationStep="CommittedValue"/>
+            </DataGrid.RowValidationRules>
+            <DataGrid.RowValidationErrorTemplate>
+                <ControlTemplate>
+                    <Grid Margin="0,-2,0,-2" ToolTip="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGridRow}}, Path=(Validation.Errors)[0].ErrorContent}">
+                        <Ellipse StrokeThickness="0" Fill="OrangeRed" Width="{TemplateBinding FontSize}" Height="{TemplateBinding FontSize}"/>
+                        <TextBlock Text="!" FontSize="{TemplateBinding FontSize}" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
+                    </Grid>
+                </ControlTemplate>
+            </DataGrid.RowValidationErrorTemplate>
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Наименование банка" Width="Auto" Binding="{Binding Name, ValidatesOnExceptions=True, ValidatesOnNotifyDataErrors=True}"/>
+                <DataGridComboBoxColumn Header="Населенный пункт" ItemsSource="{Binding Source={StaticResource localitysDataSource}}" 
+                                        SelectedValueBinding="{Binding LocalitiesID}" SelectedValuePath="ID" DisplayMemberPath="Name" Width="Auto"/>
+                <DataGridTextColumn Header="Корреспондентский счет" Width="Auto" Binding="{Binding CorrAccount, ValidatesOnExceptions=True, ValidatesOnNotifyDataErrors=True}"/>
+                <DataGridTextColumn Header="БИК" Width="Auto" Binding="{Binding BIK, ValidatesOnExceptions=True, ValidatesOnNotifyDataErrors=True}"/>
+                <DataGridTextColumn Header="ОКПО" Width="Auto" Binding="{Binding OKPO}"/>
+                <DataGridTextColumn Header="ОКОНХ" Width="Auto" Binding="{Binding OKONX}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+        <DataGrid Name="TypeOfActivitysGrid" Grid.Row="5" Grid.Column="0" MinWidth="100"
+                  Style="{StaticResource DataGridStyle}"  
+                  ItemsSource="{Binding Source={StaticResource typeOfActivitysDataSource}}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Наименование" Binding="{Binding Name}" Width="Auto"/>
+                <DataGridTextColumn Header="Код" Binding="{Binding Code}" Width="Auto"/>
+            </DataGrid.Columns>
+        </DataGrid>
+        <DataGrid Name="CategoryOfProductsGrid" Grid.Row="5" Grid.Column="1" MinWidth="100"
+                  Style="{StaticResource DataGridStyle}"  
+                  ItemsSource="{Binding Source={StaticResource categoryOfProductssDataSource}}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Наименование " Binding="{Binding Name}" Width="Auto"/>
+            </DataGrid.Columns>
+        </DataGrid>
+        <DataGrid Name="LocalitysGrid" Grid.Row="5" Grid.Column="2" MinWidth="100"
+                  Style="{StaticResource DataGridStyle}"  
+                  ItemsSource="{Binding Source={StaticResource localitysDataSource}}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Наименование населенного пункта" Binding="{Binding Name}" Width="Auto"/>
+            </DataGrid.Columns>
+        </DataGrid>
+        <DataGrid Name="UnitsGrid" Grid.Row="5" Grid.Column="3" MinWidth="100"
+                  Style="{StaticResource DataGridStyle}"  
+                  ItemsSource="{Binding Source={StaticResource unitsViewSource}}"> 
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Наименование" Binding="{Binding Name}" Width="Auto"/>
+            </DataGrid.Columns>
+        </DataGrid>
+        <Button Name="Save_Button" Grid.Column="0" Grid.Row="6" Margin="3"
+                ToolTip="Сохранить все изменения в БД" Command="ApplicationCommands.Save" 
+                Width="100" HorizontalAlignment="Left">
+            <StackPanel Orientation="Horizontal">
+                <Image Source="/Images/BlueUI-сохранить-40.png" Width="20" Height="20"/>
+                <Label Content=" Сохранить "/>
+            </StackPanel>
+        </Button>
+    </Grid>
+</Window>

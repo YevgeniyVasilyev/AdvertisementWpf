@@ -1,0 +1,145 @@
+﻿<Window x:Class="AdvertisementWpf.SettingWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:AdvertisementWpf"
+        mc:Ignorable="d"
+        Title="Системные настройки" MinHeight="100" MinWidth="600" BorderThickness="1" WindowStartupLocation="CenterScreen" 
+        ResizeMode="CanResizeWithGrip" SizeToContent="WidthAndHeight" WindowStyle="SingleBorderWindow" Closed="Window_Closed">
+    <Window.Resources>
+        <CollectionViewSource x:Key="settingViewSource"/>
+        <Style x:Key="DropShadow" TargetType="{x:Type FrameworkElement}">
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Effect">
+                        <Setter.Value>
+                            <DropShadowEffect BlurRadius="8" ShadowDepth="0.5" Opacity="0.5"/>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="ButtonOfOrder" TargetType="{x:Type Button}" BasedOn="{StaticResource DropShadow}">
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Margin" Value="1,1,1,1"/>
+            <Setter Property="Padding" Value="1,1,1,1"/>
+            <!--<Setter Property="Height" Value="{Binding ActualWidth, RelativeSource={RelativeSource Self}}"/>-->
+            <Setter Property="Content" Value="{Binding}"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+        <DataTemplate x:Key="ListViewHeaderTemplate">
+            <TextBlock FontWeight="Bold" TextWrapping="Wrap" TextAlignment="Center"
+                       HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                <TextBlock.Text>
+                    <Binding/>
+                </TextBlock.Text>
+            </TextBlock>
+        </DataTemplate>
+    </Window.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <ListView Grid.Row="0" Margin="5" Padding="2" IsSynchronizedWithCurrentItem="True" 
+                  ItemsSource="{Binding Source={StaticResource settingViewSource}}">
+            <ListView.Resources>
+                <local:OrderLegendColorSelector x:Key="OrderLegendColorSelector">
+                </local:OrderLegendColorSelector>
+                <DataTemplate x:Key="CommonTextBox">
+                    <TextBox Name="ValueTextBox" HorizontalContentAlignment="Right" Width="400"
+                             Text="{Binding Path=SettingParameterValue, Mode=TwoWay, 
+                             UpdateSourceTrigger=PropertyChanged, 
+                             ValidatesOnExceptions=True, ValidatesOnNotifyDataErrors=True}" 
+                             GotFocus="ValueTextBox_GotFocus">
+                    </TextBox>
+                </DataTemplate>
+                <DataTemplate x:Key="CommonTextBlock">
+                    <TextBlock Text="{Binding Path=SettingParameterValue, UpdateSourceTrigger=PropertyChanged}" Width="400" 
+                               Background="{Binding Converter={StaticResource OrderLegendColorSelector}, ConverterParameter=Background}"
+                               Foreground="{Binding Converter={StaticResource OrderLegendColorSelector}, ConverterParameter=Foreground}"
+                               FontFamily="{Binding Converter={StaticResource OrderLegendColorSelector}, ConverterParameter=FontFamily}"
+                               FontSize="{Binding Converter={StaticResource OrderLegendColorSelector}, ConverterParameter=FontSize}"
+                               FontStyle="{Binding Converter={StaticResource OrderLegendColorSelector}, ConverterParameter=FontStyle}"
+                               FontWeight="{Binding Converter={StaticResource OrderLegendColorSelector}, ConverterParameter=FontWeight}"/>
+                </DataTemplate>
+                <DataTemplate x:Key="EmptyTextBlock">
+                    <TextBlock Text="" Width="50"/>
+                </DataTemplate>
+                <DataTemplate x:Key="ButtonTextBlock">
+                    <StackPanel Margin="5,5,5,5" Orientation="Horizontal">
+                        <Button Name="OpenDialogButton" Background="Transparent" BorderBrush="Transparent" Style="{StaticResource ButtonOfOrder}" 
+                                Click="OpenDialogButton_Click" ToolTip="Открыть диалог для выбора">
+                            <Image Source="\Images\free-icon-folder_open.png" Width="20" Height="20" GotFocus="ValueTextBox_GotFocus"/>
+                        </Button>
+                        <Button Name="ClearPathButton" Background="Transparent" BorderBrush="Transparent" Style="{StaticResource ButtonOfOrder}" 
+                                Click="ClearPathButton_Click" ToolTip="Очистить">
+                            <Image Source="/Images/free-icon-bin-Recycler.png" Width="20" Height="20" GotFocus="ValueTextBox_GotFocus"/>
+                        </Button>
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.Resources>
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header=" Наименование параметра " Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
+                                    DisplayMemberBinding="{Binding Path=SettingParameterDescription}"/>
+                    <GridViewColumn Header=" Значение параметра " Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}">
+                        <GridViewColumn.CellTemplateSelector>
+                            <local:SettingEditingTemplateSelector
+                                CommonTextBox="{StaticResource CommonTextBox}" 
+                                CommonTextBlock="{StaticResource CommonTextBlock}"/>
+                        </GridViewColumn.CellTemplateSelector>
+                    </GridViewColumn>
+                    <GridViewColumn>
+                        <GridViewColumn.CellTemplateSelector>
+                            <local:SettingButtonTemplateSelector
+                                EmptyTextBlock="{StaticResource EmptyTextBlock}" 
+                                ButtonTextBlock="{StaticResource ButtonTextBlock}"/>
+                        </GridViewColumn.CellTemplateSelector>
+                    </GridViewColumn>
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <Button Grid.Row="1" Margin="5,5,5,5" Name="SaveSettingButton" HorizontalAlignment="Left"
+                Style="{StaticResource ButtonOfOrder}" Click="SaveSettingButton_Click">
+            <StackPanel Orientation="Horizontal">
+                <Image Source="\Images\free-icon-floppy-disk_save.png" Width="20" Height="20"/>
+                <Label Content="Сохранить"/>
+            </StackPanel>
+        </Button>
+    </Grid>
+    <!--<Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Column="0" Grid.Row="0" Margin="5,5,5,5" Text="Папка для хранения файлов заказа: " VerticalAlignment="Center"/>
+        <TextBlock Grid.Column="1" Grid.Row="0" x:Name="PathToFile" Margin="5,5,5,5" Text="{Binding Source={StaticResource settingViewSource}, Path=SettingParameterValue, Mode=TwoWay}" 
+                       VerticalAlignment="Center"/>
+        <StackPanel Grid.Column="2" Grid.Row="0" Margin="5,5,5,5" Orientation="Horizontal">
+            <Button Name="OpenDialogButton" Background="Transparent" BorderBrush="Transparent" Style="{StaticResource ButtonOfOrder}" Click="OpenDialogButton_Click" ToolTip="Открыть диалог выбора папки">
+                <Image Source="\Images\free-icon-folder_open.png" Width="20" Height="20"/>
+            </Button>
+            <Button Name="ClearPathButton" Background="Transparent" BorderBrush="Transparent" Style="{StaticResource ButtonOfOrder}" Click="ClearPathButton_Click" ToolTip="Очистить">
+                <Image Source="/Images/free-icon-bin-Recycler.png" Width="20" Height="20"/>
+            </Button>
+        </StackPanel>
+        <Button Grid.Column="0" Grid.Row="1" Margin="5,5,5,5" Name="SaveSettingButton" HorizontalAlignment="Left"
+                Style="{StaticResource ButtonOfOrder}" Click="SaveSettingButton_Click">
+            <StackPanel Orientation="Horizontal">
+                <Image Source="\Images\free-icon-floppy-disk_save.png" Width="20" Height="20"/>
+                <Label Content="Сохранить"/>
+            </StackPanel>
+        </Button>
+    </Grid>-->
+</Window>

@@ -1,0 +1,799 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report ScriptLanguage="CSharp" ReportInfo.Created="09/09/2022 20:49:00" ReportInfo.Modified="10/20/2022 21:30:38" ReportInfo.CreatorVersion="2022.3.0.0">
+  <ScriptText>using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Windows.Forms;
+using System.Drawing;
+using System.Data;
+using FastReport;
+using FastReport.Data;
+using FastReport.Dialog;
+using FastReport.Barcode;
+using FastReport.Table;
+using FastReport.Utils;
+
+namespace FastReport
+{
+  public class ReportScript
+  {
+    public string Cop(decimal n)
+    {
+      return $&quot;{n * 100 % 100:00}&quot;;
+    }
+  }
+}
+</ScriptText>
+  <Dictionary>
+    <BusinessObjectDataSource Name="Act" ReferenceName="Act" DataType="null" Enabled="true">
+      <Column Name="ID" DataType="System.Int64"/>
+      <Column Name="AccountID" DataType="System.Int64"/>
+      <Column Name="ActNumber" DataType="System.String"/>
+      <Column Name="ActDate" DataType="null"/>
+      <Column Name="ProductInAct" DataType="System.String"/>
+      <Column Name="Account" DataType="null">
+        <Column Name="ID" DataType="System.Int64"/>
+        <Column Name="OrderID" DataType="System.Int64"/>
+        <Column Name="AccountNumber" DataType="System.String"/>
+        <Column Name="AccountDate" DataType="null"/>
+        <Column Name="ContractorID" DataType="null"/>
+        <Column Name="Footing" DataType="System.String"/>
+        <Column Name="IsManual" DataType="System.Boolean" BindableControl="CheckBox"/>
+        <Column Name="Details" DataType="System.String"/>
+        <Column Name="PayBeforeDate" DataType="null"/>
+        <Column Name="Order" DataType="null">
+          <Column Name="ID" DataType="System.Int64"/>
+          <Column Name="Number" DataType="System.String"/>
+          <Column Name="ClientID" DataType="System.Int64"/>
+          <Column Name="Note" DataType="System.String"/>
+          <Column Name="DateAdmission" DataType="null"/>
+          <Column Name="DateCompletion" DataType="null"/>
+          <Column Name="DateProductionLayout" DataType="null"/>
+          <Column Name="OrderEnteredID" DataType="System.Int64"/>
+          <Column Name="ManagerID" DataType="null"/>
+          <Column Name="DesignerID" DataType="null"/>
+          <Column Name="Client" DataType="null">
+            <Column Name="ID" DataType="System.Int64"/>
+            <Column Name="Name" DataType="System.String"/>
+            <Column Name="Profile" DataType="System.String"/>
+            <Column Name="IsIndividual" DataType="System.Boolean" BindableControl="CheckBox"/>
+            <Column Name="DirectorName" DataType="System.String"/>
+            <Column Name="ContactPersonName" DataType="System.String"/>
+            <Column Name="PostalAddress" DataType="System.String"/>
+            <Column Name="BusinessAddress" DataType="System.String"/>
+            <Column Name="ActualAddress" DataType="System.String"/>
+            <Column Name="Consignee" DataType="System.String"/>
+            <Column Name="INN" DataType="System.String"/>
+            <Column Name="KPP" DataType="System.String"/>
+            <Column Name="BankAccount" DataType="System.String"/>
+            <Column Name="BankID" DataType="null"/>
+            <Column Name="IsActive" DataType="System.Boolean" BindableControl="CheckBox"/>
+            <Column Name="Note" DataType="System.Byte[]" BindableControl="Picture"/>
+            <Column Name="UserID" DataType="System.Int64"/>
+            <Column Name="MobilePhone" DataType="System.String"/>
+            <Column Name="WorkPhone" DataType="System.String"/>
+            <Column Name="Email" DataType="System.String"/>
+            <Column Name="Bank" DataType="null"/>
+            <Column Name="User" DataType="null"/>
+            <BusinessObjectDataSource Name="Orders" Enabled="false" DataType="null"/>
+            <Column Name="ClientInfoForAccount" DataType="System.String"/>
+            <Column Name="ClientInfoForAct" DataType="System.String"/>
+          </Column>
+          <Column Name="Designer" DataType="null">
+            <Column Name="ID" DataType="System.Int64"/>
+            <Column Name="FirstName" DataType="System.String"/>
+            <Column Name="LastName" DataType="System.String"/>
+            <Column Name="MiddleName" DataType="System.String"/>
+            <Column Name="LoginName" DataType="System.String"/>
+            <Column Name="RoleID" DataType="System.Int64"/>
+            <Column Name="Disabled" DataType="System.Boolean" BindableControl="CheckBox"/>
+            <Column Name="CategoryWork" DataType="System.Int16"/>
+            <Column Name="IsAdmin" DataType="System.Boolean" BindableControl="CheckBox"/>
+            <Column Name="IsExternal" DataType="System.Boolean" BindableControl="CheckBox"/>
+            <Column Name="Phone" DataType="System.String"/>
+            <Column Name="Email" DataType="System.String"/>
+            <Column Name="CardNumber" DataType="System.String"/>
+            <Column Name="Role" DataType="null"/>
+            <BusinessObjectDataSource Name="Clients" Enabled="false" DataType="null"/>
+            <BusinessObjectDataSource Name="OrderDesigners" Enabled="false" DataType="null"/>
+            <BusinessObjectDataSource Name="OrderManagers" Enabled="false" DataType="null"/>
+            <BusinessObjectDataSource Name="OrderOrderEntereds" Enabled="false" DataType="null"/>
+            <Column Name="FullUserName" DataType="System.String"/>
+            <Column Name="ShortUserName" DataType="System.String"/>
+          </Column>
+          <Column Name="Manager" DataType="null">
+            <Column Name="ID" DataType="System.Int64"/>
+            <Column Name="FirstName" DataType="System.String"/>
+            <Column Name="LastName" DataType="System.String"/>
+            <Column Name="MiddleName" DataType="System.String"/>
+            <Column Name="LoginName" DataType="System.String"/>
+            <Column Name="RoleID" DataType="System.Int64"/>
+            <Column Name="Disabled" DataType="System.Boolean" BindableControl="CheckBox"/>
+            <Column Name="CategoryWork" DataType="System.Int16"/>
+            <Column Name="IsAdmin" DataType="System.Boolean" BindableControl="CheckBox"/>
+            <Column Name="IsExternal" DataType="System.Boolean" BindableControl="CheckBox"/>
+            <Column Name="Phone" DataType="System.String"/>
+            <Column Name="Email" DataType="System.String"/>
+            <Column Name="CardNumber" DataType="System.String"/>
+            <Column Name="Role" DataType="null"/>
+            <BusinessObjectDataSource Name="Clients1" Alias="Clients" Enabled="false" DataType="null" PropName="Clients"/>
+            <BusinessObjectDataSource Name="OrderDesigners1" Alias="OrderDesigners" Enabled="false" DataType="null" PropName="OrderDesigners"/>
+            <BusinessObjectDataSource Name="OrderManagers1" Alias="OrderManagers" Enabled="false" DataType="null" PropName="OrderManagers"/>
+            <BusinessObjectDataSource Name="OrderOrderEntereds1" Alias="OrderOrderEntereds" Enabled="false" DataType="null" PropName="OrderOrderEntereds"/>
+            <Column Name="FullUserName" DataType="System.String"/>
+            <Column Name="ShortUserName" DataType="System.String"/>
+          </Column>
+          <Column Name="OrderEntered" DataType="null">
+            <Column Name="ID" DataType="System.Int64"/>
+            <Column Name="FirstName" DataType="System.String"/>
+            <Column Name="LastName" DataType="System.String"/>
+            <Column Name="MiddleName" DataType="System.String"/>
+            <Column Name="LoginName" DataType="System.String"/>
+            <Column Name="RoleID" DataType="System.Int64"/>
+            <Column Name="Disabled" DataType="System.Boolean" BindableControl="CheckBox"/>
+            <Column Name="CategoryWork" DataType="System.Int16"/>
+            <Column Name="IsAdmin" DataType="System.Boolean" BindableControl="CheckBox"/>
+            <Column Name="IsExternal" DataType="System.Boolean" BindableControl="CheckBox"/>
+            <Column Name="Phone" DataType="System.String"/>
+            <Column Name="Email" DataType="System.String"/>
+            <Column Name="CardNumber" DataType="System.String"/>
+            <Column Name="Role" DataType="null"/>
+            <BusinessObjectDataSource Name="Clients2" Alias="Clients" Enabled="false" DataType="null" PropName="Clients"/>
+            <BusinessObjectDataSource Name="OrderDesigners2" Alias="OrderDesigners" Enabled="false" DataType="null" PropName="OrderDesigners"/>
+            <BusinessObjectDataSource Name="OrderManagers2" Alias="OrderManagers" Enabled="false" DataType="null" PropName="OrderManagers"/>
+            <BusinessObjectDataSource Name="OrderOrderEntereds2" Alias="OrderOrderEntereds" Enabled="false" DataType="null" PropName="OrderOrderEntereds"/>
+            <Column Name="FullUserName" DataType="System.String"/>
+            <Column Name="ShortUserName" DataType="System.String"/>
+          </Column>
+          <BusinessObjectDataSource Name="Products" DataType="null" Enabled="true">
+            <Column Name="ID" DataType="System.Int64"/>
+            <Column Name="OrderID" DataType="System.Int64"/>
+            <Column Name="ProductTypeID" DataType="System.Int64"/>
+            <Column Name="Parameters" DataType="System.String"/>
+            <Column Name="Cost" DataType="System.Decimal"/>
+            <Column Name="DateTransferDesigner" DataType="null"/>
+            <Column Name="DateTransferApproval" DataType="null"/>
+            <Column Name="DateApproval" DataType="null"/>
+            <Column Name="DateTransferProduction" DataType="null"/>
+            <Column Name="DateManufacture" DataType="null"/>
+            <Column Name="DateShipment" DataType="null"/>
+            <Column Name="Note" DataType="System.String"/>
+            <Column Name="Files" DataType="System.String"/>
+            <Column Name="Quantity" DataType="System.Int16"/>
+            <Column Name="Order" DataType="null"/>
+            <Column Name="ProductType" DataType="null"/>
+            <Column Name="ProductTypeName" DataType="System.String"/>
+            <BusinessObjectDataSource Name="Costs" Enabled="false" DataType="null"/>
+            <BusinessObjectDataSource Name="FilesList" Enabled="false" DataType="null"/>
+            <BusinessObjectDataSource Name="ProductParameter" Enabled="false" DataType="null"/>
+            <Column Name="State" DataType="System.String"/>
+            <Column Name="ProductInfoForAccount" DataType="System.String"/>
+          </BusinessObjectDataSource>
+          <BusinessObjectDataSource Name="Payments" DataType="null" Enabled="true">
+            <Column Name="Value" Enabled="false" DataType="System.RuntimeType"/>
+          </BusinessObjectDataSource>
+          <BusinessObjectDataSource Name="Accounts" DataType="null" Enabled="true">
+            <Column Name="ID" DataType="System.Int64"/>
+            <Column Name="OrderID" DataType="System.Int64"/>
+            <Column Name="AccountNumber" DataType="System.String"/>
+            <Column Name="AccountDate" DataType="null"/>
+            <Column Name="ContractorID" DataType="null"/>
+            <Column Name="Footing" DataType="System.String"/>
+            <Column Name="IsManual" DataType="System.Boolean" BindableControl="CheckBox"/>
+            <Column Name="Details" DataType="System.String"/>
+            <Column Name="PayBeforeDate" DataType="null"/>
+            <Column Name="Order" DataType="null"/>
+            <Column Name="Contractor" DataType="null"/>
+            <BusinessObjectDataSource Name="Acts" Enabled="false" DataType="null"/>
+            <BusinessObjectDataSource Name="DetailsList" Enabled="false" DataType="null"/>
+            <Column Name="ContractorName" DataType="System.String"/>
+            <Column Name="ContractorInfoForAccount" DataType="System.String"/>
+            <Column Name="ContractorInfoForAct" DataType="System.String"/>
+          </BusinessObjectDataSource>
+          <Column Name="OrderCost" DataType="System.Decimal"/>
+          <Column Name="OrderPayments" DataType="System.Decimal"/>
+          <Column Name="CountProduct" DataType="System.Int16"/>
+          <Column Name="State" DataType="System.String"/>
+        </Column>
+        <Column Name="Contractor" DataType="null">
+          <Column Name="ID" DataType="System.Int64"/>
+          <Column Name="Name" DataType="System.String"/>
+          <Column Name="DirectorName" DataType="System.String"/>
+          <Column Name="DirectorPostName" DataType="System.String"/>
+          <Column Name="DirectorAttorneyNumber" DataType="System.String"/>
+          <Column Name="DirectorAttorneyDate" DataType="null"/>
+          <Column Name="ChiefAccountant" DataType="System.String"/>
+          <Column Name="ChiefAccountantPostName" DataType="System.String"/>
+          <Column Name="ChiefAccountantAttorneyNumber" DataType="System.String"/>
+          <Column Name="ChiefAccountantAttorneyDate" DataType="null"/>
+          <Column Name="BusinessAddress" DataType="System.String"/>
+          <Column Name="INN" DataType="System.String"/>
+          <Column Name="KPP" DataType="System.String"/>
+          <Column Name="OKPO" DataType="System.String"/>
+          <Column Name="OGRN" DataType="System.String"/>
+          <Column Name="BankAccount" DataType="System.String"/>
+          <Column Name="BankID" DataType="null"/>
+          <Column Name="AccountFileTemplate" DataType="System.String"/>
+          <Column Name="Bank" DataType="null">
+            <Column Name="ID" DataType="System.Int64"/>
+            <Column Name="Name" DataType="System.String"/>
+            <Column Name="LocalitiesID" DataType="System.Int64"/>
+            <Column Name="CorrAccount" DataType="System.String"/>
+            <Column Name="BIK" DataType="System.String"/>
+            <Column Name="OKPO" DataType="System.String"/>
+            <Column Name="OKONX" DataType="System.String"/>
+            <Column Name="Localities" DataType="null"/>
+            <BusinessObjectDataSource Name="Clients3" Alias="Clients" Enabled="false" DataType="null" PropName="Clients"/>
+            <BusinessObjectDataSource Name="Contractors" Enabled="false" DataType="null"/>
+          </Column>
+          <BusinessObjectDataSource Name="Accounts1" Alias="Accounts" DataType="null" PropName="Accounts" Enabled="true">
+            <Column Name="ID" DataType="System.Int64"/>
+            <Column Name="OrderID" DataType="System.Int64"/>
+            <Column Name="AccountNumber" DataType="System.String"/>
+            <Column Name="AccountDate" DataType="null"/>
+            <Column Name="ContractorID" DataType="null"/>
+            <Column Name="Footing" DataType="System.String"/>
+            <Column Name="IsManual" DataType="System.Boolean" BindableControl="CheckBox"/>
+            <Column Name="Details" DataType="System.String"/>
+            <Column Name="PayBeforeDate" DataType="null"/>
+            <Column Name="Order" DataType="null"/>
+            <Column Name="Contractor" DataType="null"/>
+            <BusinessObjectDataSource Name="Acts1" Alias="Acts" Enabled="false" DataType="null" PropName="Acts"/>
+            <BusinessObjectDataSource Name="DetailsList1" Alias="DetailsList" Enabled="false" DataType="null" PropName="DetailsList"/>
+            <Column Name="ContractorName" DataType="System.String"/>
+            <Column Name="ContractorInfoForAccount" DataType="System.String"/>
+            <Column Name="ContractorInfoForAct" DataType="System.String"/>
+          </BusinessObjectDataSource>
+          <Column Name="ContractorInfoForAccount" DataType="System.String"/>
+          <Column Name="ContractorInfoForAct" DataType="System.String"/>
+          <Column Name="DirectorShortName" DataType="System.String"/>
+          <Column Name="ChiefAccountantShortName" DataType="System.String"/>
+        </Column>
+        <BusinessObjectDataSource Name="Acts2" Alias="Acts" DataType="null" PropName="Acts" Enabled="true">
+          <Column Name="ID" DataType="System.Int64"/>
+          <Column Name="AccountID" DataType="System.Int64"/>
+          <Column Name="ActNumber" DataType="System.String"/>
+          <Column Name="ActDate" DataType="null"/>
+          <Column Name="ProductInAct" DataType="System.String"/>
+          <Column Name="Account" DataType="null">
+            <Column Name="ID" DataType="System.Int64"/>
+            <Column Name="OrderID" DataType="System.Int64"/>
+            <Column Name="AccountNumber" DataType="System.String"/>
+            <Column Name="AccountDate" DataType="null"/>
+            <Column Name="ContractorID" DataType="null"/>
+            <Column Name="Footing" DataType="System.String"/>
+            <Column Name="IsManual" DataType="System.Boolean" BindableControl="CheckBox"/>
+            <Column Name="Details" DataType="System.String"/>
+            <Column Name="PayBeforeDate" DataType="null"/>
+            <Column Name="Order" DataType="null"/>
+            <Column Name="Contractor" DataType="null"/>
+            <BusinessObjectDataSource Name="Acts3" Alias="Acts" Enabled="false" DataType="null" PropName="Acts"/>
+            <BusinessObjectDataSource Name="DetailsList2" Alias="DetailsList" Enabled="false" DataType="null" PropName="DetailsList"/>
+            <Column Name="ContractorName" DataType="System.String"/>
+            <Column Name="ContractorInfoForAccount" DataType="System.String"/>
+            <Column Name="ContractorInfoForAct" DataType="System.String"/>
+          </Column>
+          <BusinessObjectDataSource Name="ListProductInAct" DataType="null" Enabled="true">
+            <Column Name="Value" Enabled="false" DataType="System.RuntimeType"/>
+          </BusinessObjectDataSource>
+          <BusinessObjectDataSource Name="DetailsList3" Alias="DetailsList" DataType="null" PropName="DetailsList" Enabled="true">
+            <Column Name="ProductInfoForAccount" DataType="System.String"/>
+            <Column Name="Quantity" DataType="System.Int16"/>
+            <Column Name="UnitName" DataType="System.String"/>
+            <Column Name="PricePerUnit" DataType="System.Decimal"/>
+            <Column Name="Cost" DataType="System.Decimal"/>
+          </BusinessObjectDataSource>
+        </BusinessObjectDataSource>
+        <BusinessObjectDataSource Name="DetailsList4" Alias="DetailsList" DataType="null" PropName="DetailsList" Enabled="true">
+          <Column Name="ProductInfoForAccount" DataType="System.String"/>
+          <Column Name="Quantity" DataType="System.Int16"/>
+          <Column Name="UnitName" DataType="System.String"/>
+          <Column Name="PricePerUnit" DataType="System.Decimal"/>
+          <Column Name="Cost" DataType="System.Decimal"/>
+        </BusinessObjectDataSource>
+        <Column Name="ContractorName" DataType="System.String"/>
+        <Column Name="ContractorInfoForAccount" DataType="System.String"/>
+        <Column Name="ContractorInfoForAct" DataType="System.String"/>
+      </Column>
+      <BusinessObjectDataSource Name="ListProductInAct1" Alias="ListProductInAct" DataType="null" PropName="ListProductInAct" Enabled="true">
+        <Column Name="Value" Enabled="false" DataType="System.RuntimeType"/>
+      </BusinessObjectDataSource>
+      <BusinessObjectDataSource Name="DetailsList5" Alias="DetailsList" DataType="null" PropName="DetailsList" Enabled="true">
+        <Column Name="ProductInfoForAccount" DataType="System.String"/>
+        <Column Name="Quantity" DataType="System.Int16"/>
+        <Column Name="UnitName" DataType="System.String"/>
+        <Column Name="PricePerUnit" DataType="System.Decimal"/>
+        <Column Name="Cost" DataType="System.Decimal"/>
+      </BusinessObjectDataSource>
+    </BusinessObjectDataSource>
+    <Total Name="TotalCost" Expression="[Act.DetailsList.Cost]" Evaluator="Data1" PrintOn="DataFooter1" ResetOnReprint="true"/>
+    <Total Name="FullTotalCost" Expression="[Act.DetailsList.Cost]" Evaluator="Data1" PrintOn="ReportSummary1"/>
+  </Dictionary>
+  <ReportPage Name="Page1" Landscape="true" PaperWidth="297" PaperHeight="210" RawPaperSize="9" Guides="9.45,1030.05,132.3,718.2,888.3,963.9,897.75,292.95,510.3,642.6,774.9,727.65,1032.95,46.62,301.39,263.97,406.1,358.47,452.72,564.86,508.79,611.48,677.0001,751.97,836.39,948.53,901.91,765.45,47.25,264.6,302.4,359.1,406.35,452.97,453.6,509.67,509.3,565.37,565,611.62,611.25,677.4,752.37,752,837.05,902.57,902.75,949.37,949.45,1033.87,387.45,124.74,343.98,487.62,754.11,756.11,1033.94,752.22,122.85,340.2,85.05,84.95,755.9,289.17,451.71,370.44,514.08,652.05,756,812.7,935.55" Watermark.Font="Arial, 60pt">
+    <ReportTitleBand Name="ReportTitle1" Width="1047.06" Height="477.55" Guides="37.8,56.7,55.7,85.05,124.74,154.98,434.7,453.6,406.35,9.45,28.35">
+      <TableObject Name="Table1" Left="9.45" Top="37.8" Width="1020.6" Height="379.89" GrowToBottom="true">
+        <TableColumn Name="Column1" Width="122.85"/>
+        <TableColumn Name="Column2" Width="585.9"/>
+        <TableColumn Name="Column3" Width="170.1"/>
+        <TableColumn Name="Column4" Width="75.6"/>
+        <TableColumn Name="Column5"/>
+        <TableRow Name="Row1">
+          <TableCell Name="Cell1" Font="Arial, 10pt"/>
+          <TableCell Name="Cell2" Font="Arial, 10pt"/>
+          <TableCell Name="Cell3" Font="Arial, 10pt"/>
+          <TableCell Name="Cell4" Font="Arial, 10pt"/>
+          <TableCell Name="Cell5" Border.Lines="All" Border.Width="0.5" Text="Код" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt">
+            <ShapeObject Name="Shape1" Top="17.9" Width="66.15" Height="365.15" Border.Width="2"/>
+          </TableCell>
+        </TableRow>
+        <TableRow Name="Row2" Height="28.35">
+          <TableCell Name="Cell6" Font="Arial, 10pt"/>
+          <TableCell Name="Cell7" Font="Arial, 10pt"/>
+          <TableCell Name="Cell8" Text="Форма по ОКУД" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt" ColSpan="2"/>
+          <TableCell Name="Cell9" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt"/>
+          <TableCell Name="Cell10" Border.Lines="All" Text="0330212" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt"/>
+        </TableRow>
+        <TableRow Name="Row3" Height="37.8">
+          <TableCell Name="Cell11" Text="[Act.Account.Contractor.ContractorInfoForAct]" Font="Arial, 10pt" ColSpan="3"/>
+          <TableCell Name="Cell12" HorzAlign="Center" Font="Arial, 10pt"/>
+          <TableCell Name="Cell13" Font="Arial, 10pt"/>
+          <TableCell Name="Cell14" Text="по ОКПО" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt"/>
+          <TableCell Name="Cell15" Border.Lines="All" Font="Arial, 10pt"/>
+        </TableRow>
+        <TableRow Name="Row4" Height="11.34" AutoSize="true">
+          <TableCell Name="Cell16" Font="Arial, 10pt">
+            <LineObject Name="Line4" Top="1.1" Width="878.85"/>
+          </TableCell>
+          <TableCell Name="Cell17" Text="(организация-грузоотправитель, адрес, телефон, факс, банковские реквизиты)" HorzAlign="Center" Font="Arial, 6pt"/>
+          <TableCell Name="Cell18" Font="Arial, 10pt"/>
+          <TableCell Name="Cell19" HorzAlign="Right" Font="Arial, 10pt"/>
+          <TableCell Name="Cell20" Border.Lines="All" Font="Arial, 10pt" RowSpan="2"/>
+        </TableRow>
+        <TableRow Name="Row5">
+          <TableCell Name="Cell21" Font="Arial, 10pt" ColSpan="3"/>
+          <TableCell Name="Cell22" Font="Arial, 10pt"/>
+          <TableCell Name="Cell23" Font="Arial, 10pt"/>
+          <TableCell Name="Cell24" VertAlign="Bottom" Font="Arial, 10pt"/>
+          <TableCell Name="Cell25" Font="Arial, 10pt"/>
+        </TableRow>
+        <TableRow Name="Row6" Height="11.34">
+          <TableCell Name="Cell26" Font="Arial, 10pt">
+            <LineObject Name="Line2" Top="0.1" Width="954.45"/>
+          </TableCell>
+          <TableCell Name="Cell27" Text="(структурное подразделение)" HorzAlign="Center" Font="Arial, 6pt"/>
+          <TableCell Name="Cell28" Text="Вид деятельности по ОДКП" HorzAlign="Right" VertAlign="Bottom" Font="Arial, 10pt" ColSpan="2" RowSpan="2"/>
+          <TableCell Name="Cell29" HorzAlign="Right" VertAlign="Bottom" Font="Arial, 10pt"/>
+          <TableCell Name="Cell30" Border.Lines="All" Font="Arial, 10pt" RowSpan="2"/>
+        </TableRow>
+        <TableRow Name="Row7">
+          <TableCell Name="Cell31" Font="Arial, 10pt"/>
+          <TableCell Name="Cell32" Font="Arial, 10pt"/>
+          <TableCell Name="Cell33" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt"/>
+          <TableCell Name="Cell34" HorzAlign="Right" VertAlign="Bottom" Font="Arial, 10pt"/>
+          <TableCell Name="Cell35" Font="Arial, 10pt"/>
+        </TableRow>
+        <TableRow Name="Row8" Height="37.8">
+          <TableCell Name="Cell36" Text="Грузополучатель" VertAlign="Center" Font="Arial, 10pt"/>
+          <TableCell Name="Cell37" Text="[Act.Account.Order.Client.ClientInfoForAct]" Font="Arial, 10pt" ColSpan="2"/>
+          <TableCell Name="Cell38" Font="Arial, 10pt"/>
+          <TableCell Name="Cell39" Text="по ОКПО" HorzAlign="Right" VertAlign="Bottom" Font="Arial, 10pt"/>
+          <TableCell Name="Cell40" Border.Lines="All" Font="Arial, 10pt"/>
+        </TableRow>
+        <TableRow Name="Row9" Height="11.34">
+          <TableCell Name="Cell41" VertAlign="Center" Font="Arial, 10pt"/>
+          <TableCell Name="Cell42" Text="(организация, адрес, телефон, факс, банковские реквизиты)" HorzAlign="Center" Font="Arial, 6pt">
+            <LineObject Name="Line3" Width="756"/>
+          </TableCell>
+          <TableCell Name="Cell43" Font="Arial, 10pt"/>
+          <TableCell Name="Cell44" Text="по ОКПО" HorzAlign="Right" VertAlign="Bottom" Font="Arial, 10pt" RowSpan="2"/>
+          <TableCell Name="Cell45" Border.Lines="All" Font="Arial, 10pt" RowSpan="2"/>
+        </TableRow>
+        <TableRow Name="Row10" Height="28.35">
+          <TableCell Name="Cell46" Text="Поставщик" VertAlign="Center" Font="Arial, 10pt"/>
+          <TableCell Name="Cell47" Text="[Act.Account.Contractor.Name]" Font="Arial, 10pt" ColSpan="2"/>
+          <TableCell Name="Cell48" Font="Arial, 10pt"/>
+          <TableCell Name="Cell49" HorzAlign="Right" VertAlign="Bottom" Font="Arial, 10pt"/>
+          <TableCell Name="Cell50" Font="Arial, 10pt"/>
+        </TableRow>
+        <TableRow Name="Row11" Height="11.34">
+          <TableCell Name="Cell51" VertAlign="Center" Font="Arial, 10pt"/>
+          <TableCell Name="Cell52" Text="(организация, адрес, телефон, факс, банковские реквизиты)" HorzAlign="Center" Font="Arial, 6pt">
+            <LineObject Name="Line5" Width="756"/>
+          </TableCell>
+          <TableCell Name="Cell53" Font="Arial, 10pt"/>
+          <TableCell Name="Cell54" Text="по ОКПО" HorzAlign="Right" VertAlign="Bottom" Font="Arial, 10pt" RowSpan="2"/>
+          <TableCell Name="Cell55" Border.Lines="All" Font="Arial, 10pt" RowSpan="2"/>
+        </TableRow>
+        <TableRow Name="Row12" Height="28.35">
+          <TableCell Name="Cell56" Text="Плательщик" VertAlign="Center" Font="Arial, 10pt"/>
+          <TableCell Name="Cell57" Text="[Act.Account.Order.Client.Name]" Font="Arial, 10pt" ColSpan="2"/>
+          <TableCell Name="Cell58" Font="Arial, 10pt"/>
+          <TableCell Name="Cell59" HorzAlign="Right" VertAlign="Bottom" Font="Arial, 10pt"/>
+          <TableCell Name="Cell60" Font="Arial, 10pt"/>
+        </TableRow>
+        <TableRow Name="Row13" Height="11.34">
+          <TableCell Name="Cell61" VertAlign="Center" Font="Arial, 10pt"/>
+          <TableCell Name="Cell62" Text="(организация, адрес, телефон, факс, банковские реквизиты)" HorzAlign="Center" Font="Arial, 6pt">
+            <LineObject Name="Line6" Width="765.45"/>
+          </TableCell>
+          <TableCell Name="Cell63" Font="Arial, 10pt"/>
+          <TableCell Name="Cell64" Border.Lines="All" Text="номер" HorzAlign="Right" VertAlign="Bottom" Font="Arial, 10pt" RowSpan="2"/>
+          <TableCell Name="Cell65" Border.Lines="All" Font="Arial, 10pt" RowSpan="2"/>
+        </TableRow>
+        <TableRow Name="Row14">
+          <TableCell Name="Cell66" Text="Основание" VertAlign="Center" Font="Arial, 10pt"/>
+          <TableCell Name="Cell67" Text="[Act.Account.Footing]" Font="Arial, 10pt" ColSpan="2"/>
+          <TableCell Name="Cell68" Font="Arial, 10pt"/>
+          <TableCell Name="Cell69" Border.Lines="All" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt"/>
+          <TableCell Name="Cell70" Font="Arial, 10pt"/>
+        </TableRow>
+        <TableRow Name="Row15" Height="11.34">
+          <TableCell Name="Cell71" VertAlign="Center" Font="Arial, 10pt"/>
+          <TableCell Name="Cell72" Text="(договор, заказ-наряд)" HorzAlign="Center" Font="Arial, 6pt">
+            <LineObject Name="Line7" Width="765.45"/>
+          </TableCell>
+          <TableCell Name="Cell73" Font="Arial, 10pt"/>
+          <TableCell Name="Cell74" Border.Lines="All" Text="дата" HorzAlign="Right" VertAlign="Bottom" Font="Arial, 10pt" RowSpan="2"/>
+          <TableCell Name="Cell75" Border.Lines="All" Font="Arial, 10pt" RowSpan="2"/>
+        </TableRow>
+        <TableRow Name="Row16">
+          <TableCell Name="Cell76" Font="Arial, 10pt"/>
+          <TableCell Name="Cell77" Font="Arial, 10pt"/>
+          <TableCell Name="Cell78" Text="Транспортная накладная" Font="Arial, 10pt"/>
+          <TableCell Name="Cell79" Border.Lines="All" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt"/>
+          <TableCell Name="Cell80" Font="Arial, 10pt"/>
+        </TableRow>
+        <TableRow Name="Row17" Height="28.35">
+          <TableCell Name="Cell81" Font="Arial, 10pt"/>
+          <TableCell Name="Cell82" Font="Arial, 10pt"/>
+          <TableCell Name="Cell83" Font="Arial, 10pt"/>
+          <TableCell Name="Cell84" Border.Lines="All" Text="номер" HorzAlign="Right" VertAlign="Bottom" Font="Arial, 10pt"/>
+          <TableCell Name="Cell85" Border.Lines="All" Font="Arial, 10pt"/>
+        </TableRow>
+        <TableRow Name="Row18" Height="28.35">
+          <TableCell Name="Cell86" Font="Arial, 10pt"/>
+          <TableCell Name="Cell87" Font="Arial, 10pt"/>
+          <TableCell Name="Cell88" Font="Arial, 10pt"/>
+          <TableCell Name="Cell89" Border.Lines="All" Text="дата" HorzAlign="Right" VertAlign="Bottom" Font="Arial, 10pt"/>
+          <TableCell Name="Cell90" Border.Lines="All" Font="Arial, 10pt"/>
+        </TableRow>
+      </TableObject>
+      <TextObject Name="Text1" Left="292.95" Top="434.7" Width="217.35" Height="18.9" Text="ТОВАРНАЯ НАКЛАДНАЯ" HorzAlign="Center" VertAlign="Center" Font="Arial, 12pt, style=Bold"/>
+      <TextObject Name="Text2" Left="510.3" Top="434.7" Width="132.3" Height="18.9" Border.Lines="All" Border.Width="1.5" Text="[Act.Account.Acts.ActNumber]" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
+      <TextObject Name="Text3" Left="642.6" Top="434.7" Width="132.3" Height="18.9" Border.Lines="All" Border.Width="1.5" Text="[FormatDateTime([ReportDate],&quot;Short Date&quot;)]" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
+      <TextObject Name="Text4" Left="510.3" Top="406.35" Width="132.3" Height="28.35" Border.Lines="All" Border.Width="0.5" Text="Номер&#13;&#10;документа" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
+      <TextObject Name="Text5" Left="642.6" Top="406.35" Width="132.3" Height="28.35" Border.Lines="All" Border.Width="0.5" Text="Дата&#13;&#10;составления" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
+      <TextObject Name="Text6" Left="727.65" Top="9.45" Width="302.4" Height="18.9" Text="Унифицированная форма № ТОРГ-12" HorzAlign="Right" VertAlign="Bottom" Font="Arial, 9pt"/>
+    </ReportTitleBand>
+    <PageHeaderBand Name="PageHeader2" Top="480.75" Width="1047.06" Height="124.95" Guides="21,124.95,106.05,58.79999,0,18.89999">
+      <TableObject Name="Table2" Left="9.45" Top="21" Width="1023.5" Height="103.95">
+        <TableColumn Name="Column6" Width="37.17"/>
+        <TableColumn Name="Column7" Width="217.35"/>
+        <TableColumn Name="Column8" Width="37.42"/>
+        <TableColumn Name="Column9" Width="57.08"/>
+        <TableColumn Name="Column10" Width="47.63"/>
+        <TableColumn Name="Column11" Width="46.62"/>
+        <TableColumn Name="Column12" Width="56.07"/>
+        <TableColumn Name="Column13" Width="56.07"/>
+        <TableColumn Name="Column14" Width="46.62"/>
+        <TableColumn Name="Column15" Width="65.52"/>
+        <TableColumn Name="Column16" Width="74.97"/>
+        <TableColumn Name="Column17" Width="84.42"/>
+        <TableColumn Name="Column18" Width="65.52"/>
+        <TableColumn Name="Column19" Width="46.62"/>
+        <TableColumn Name="Column20" Width="84.42"/>
+        <TableRow Name="Row19" Height="37.8">
+          <TableCell Name="Cell91" Border.Lines="All" Text="Но- &#13;&#10;мер &#13;&#10;по &#13;&#10;по- &#13;&#10;рядку" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt" RowSpan="2"/>
+          <TableCell Name="Cell92" Border.Lines="All" Text="Товар" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt" ColSpan="2"/>
+          <TableCell Name="Cell93" Border.Lines="All" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt"/>
+          <TableCell Name="Cell94" Border.Lines="All" Text="Единица&#13;&#10;измерения" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt" ColSpan="2"/>
+          <TableCell Name="Cell95" Border.Lines="All" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt"/>
+          <TableCell Name="Cell116" Border.Lines="All" Text="Вид &#13;&#10;упаков- &#13;&#10;ки" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt" RowSpan="2"/>
+          <TableCell Name="Cell121" Border.Lines="All" Text="Количество" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt" ColSpan="2"/>
+          <TableCell Name="Cell126" Border.Lines="All" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt"/>
+          <TableCell Name="Cell131" Border.Lines="All" Text="Масса брутто" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt" RowSpan="2"/>
+          <TableCell Name="Cell136" Border.Lines="All" Text="Количест-&#13;&#10;во&#13;&#10;(масса нетто)" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt" RowSpan="2"/>
+          <TableCell Name="Cell141" Border.Lines="All" Text="Цена,&#13;&#10;руб. коп." HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt" RowSpan="2"/>
+          <TableCell Name="Cell146" Border.Lines="All" Text="Сумма без учета НДС, руб. коп." HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt" RowSpan="2"/>
+          <TableCell Name="Cell151" Border.Lines="All" Text="НДС" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt" ColSpan="2"/>
+          <TableCell Name="Cell156" Border.Lines="All" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt"/>
+          <TableCell Name="Cell161" Border.Lines="All" Text="Сумма с учетом НДС,&#13;&#10;руб. коп." HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt" RowSpan="2"/>
+        </TableRow>
+        <TableRow Name="Row20" Height="47.25">
+          <TableCell Name="Cell96" Border.Lines="All" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt"/>
+          <TableCell Name="Cell97" Border.Lines="All" Text="наименование,&#13;&#10;характеристика, сорт, артикул&#13;&#10;товара" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt"/>
+          <TableCell Name="Cell98" Border.Lines="All" Text="код" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt"/>
+          <TableCell Name="Cell99" Border.Lines="All" Text="наиме- &#13;&#10;нование" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt"/>
+          <TableCell Name="Cell100" Border.Lines="All" Text="код по ОКЕИ" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt"/>
+          <TableCell Name="Cell117" Border.Lines="All" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt"/>
+          <TableCell Name="Cell122" Border.Lines="All" Text="в одном месте" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt"/>
+          <TableCell Name="Cell127" Border.Lines="All" Text="мест, штук" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt"/>
+          <TableCell Name="Cell132" Border.Lines="All" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt"/>
+          <TableCell Name="Cell137" Border.Lines="All" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt"/>
+          <TableCell Name="Cell142" Border.Lines="All" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt"/>
+          <TableCell Name="Cell147" Border.Lines="All" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt"/>
+          <TableCell Name="Cell152" Border.Lines="All" Text="ставка, %" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt"/>
+          <TableCell Name="Cell157" Border.Lines="All" Text="сумма,&#13;&#10;руб. коп." HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt"/>
+          <TableCell Name="Cell162" Border.Lines="All" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt"/>
+        </TableRow>
+        <TableRow Name="Row21">
+          <TableCell Name="Cell101" Border.Lines="All" Text="1" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt"/>
+          <TableCell Name="Cell102" Border.Lines="All" Text="2" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt"/>
+          <TableCell Name="Cell103" Border.Lines="All" Text="3" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt"/>
+          <TableCell Name="Cell104" Border.Lines="All" Text="4" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt"/>
+          <TableCell Name="Cell105" Border.Lines="All" Text="5" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt"/>
+          <TableCell Name="Cell118" Border.Lines="All" Text="6" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt"/>
+          <TableCell Name="Cell123" Border.Lines="All" Text="7" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt"/>
+          <TableCell Name="Cell128" Border.Lines="All" Text="8" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt"/>
+          <TableCell Name="Cell133" Border.Lines="All" Text="9" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt"/>
+          <TableCell Name="Cell138" Border.Lines="All" Text="10" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt"/>
+          <TableCell Name="Cell143" Border.Lines="All" Text="11" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt"/>
+          <TableCell Name="Cell148" Border.Lines="All" Text="12" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt"/>
+          <TableCell Name="Cell153" Border.Lines="All" Text="13" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt"/>
+          <TableCell Name="Cell158" Border.Lines="All" Text="14" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt"/>
+          <TableCell Name="Cell163" Border.Lines="All" Text="15" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt"/>
+        </TableRow>
+      </TableObject>
+      <TextObject Name="Text22" Left="765.45" Width="264.6" Height="18.9" PrintOn="LastPage, OddPages, EvenPages, RepeatedBand, SinglePage" Text="Оборотная сторона формы № ТОРГ-12" HorzAlign="Right" VertAlign="Center" Font="Arial, 9pt"/>
+    </PageHeaderBand>
+    <DataBand Name="Data1" Top="608.9" Width="1047.06" Height="18.9" CanGrow="true" CanShrink="true" Guides="0,18.90002" DataSource="DetailsList5">
+      <TextObject Name="Text7" Left="9.45" Width="37.8" Height="18.9" Border.Lines="All" CanGrow="true" CanShrink="true" GrowToBottom="true" CanBreak="false" Text="[Row#]" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt"/>
+      <TextObject Name="Text8" Left="47.25" Width="217.35" Height="18.9" Border.Lines="All" CanGrow="true" CanShrink="true" GrowToBottom="true" CanBreak="false" Text="[Act.DetailsList.ProductInfoForAccount]" Font="Arial, 8pt"/>
+      <TextObject Name="Text9" Left="264.6" Width="37.8" Height="18.9" Border.Lines="All" CanGrow="true" CanShrink="true" GrowToBottom="true" CanBreak="false" Font="Arial, 8pt, style=Bold"/>
+      <TextObject Name="Text10" Left="302.4" Width="56.7" Height="18.9" Border.Lines="All" CanGrow="true" CanShrink="true" GrowToBottom="true" CanBreak="false" Text="[Act.DetailsList.UnitName]" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt"/>
+      <TextObject Name="Text11" Left="359.1" Width="47.25" Height="18.9" Border.Lines="All" CanGrow="true" CanShrink="true" GrowToBottom="true" CanBreak="false" Font="Arial, 8pt, style=Bold"/>
+      <TextObject Name="Text12" Left="406.35" Width="46.62" Height="18.9" Border.Lines="All" CanGrow="true" CanShrink="true" GrowToBottom="true" CanBreak="false" Font="Arial, 8pt, style=Bold"/>
+      <TextObject Name="Text13" Left="453.6" Width="56.07" Height="18.9" Border.Lines="All" CanGrow="true" CanShrink="true" GrowToBottom="true" CanBreak="false" Text="[Act.DetailsList.Quantity]" HorzAlign="Right" VertAlign="Center" Font="Arial, 8pt"/>
+      <TextObject Name="Text14" Left="509.3" Width="56.07" Height="18.9" Border.Lines="All" CanGrow="true" CanShrink="true" GrowToBottom="true" CanBreak="false" Font="Arial, 9pt, style=Bold"/>
+      <TextObject Name="Text15" Left="565" Width="46.62" Height="18.9" Border.Lines="All" CanGrow="true" CanShrink="true" GrowToBottom="true" CanBreak="false" Font="Arial, 9pt, style=Bold"/>
+      <TextObject Name="Text16" Left="611.25" Width="66.15" Height="18.9" Border.Lines="All" CanGrow="true" CanShrink="true" GrowToBottom="true" CanBreak="false" Format="Number" Format.UseLocale="true" Format.DecimalDigits="0" HorzAlign="Right" Font="Arial, 9pt, style=Bold"/>
+      <TextObject Name="Text17" Left="677.4" Width="74.97" Height="18.9" Border.Lines="All" CanGrow="true" CanShrink="true" GrowToBottom="true" CanBreak="false" Text="[Act.DetailsList.PricePerUnit]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Right" VertAlign="Center" Font="Arial, 8pt"/>
+      <TextObject Name="Text18" Left="752" Width="85.05" Height="18.9" Border.Lines="All" CanGrow="true" CanShrink="true" GrowToBottom="true" CanBreak="false" Text="[Act.DetailsList.Cost]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Right" VertAlign="Center" Font="Arial, 8pt"/>
+      <TextObject Name="Text19" Left="837.05" Width="65.52" Height="18.9" Border.Lines="All" CanGrow="true" CanShrink="true" GrowToBottom="true" CanBreak="false" Text="Без НДС" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt"/>
+      <TextObject Name="Text20" Left="902.75" Width="46.62" Height="18.9" Border.Lines="All" CanGrow="true" CanShrink="true" GrowToBottom="true" CanBreak="false" Text="0,00 р." Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Right" VertAlign="Center" Font="Arial, 8pt"/>
+      <TextObject Name="Text21" Left="949.45" Width="84.42" Height="18.9" Border.Lines="All" CanGrow="true" CanShrink="true" GrowToBottom="true" CanBreak="false" Text="[Act.DetailsList.Cost]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Right" VertAlign="Center" Font="Arial, 8pt"/>
+      <DataFooterBand Name="DataFooter1" Top="631" Width="1047.06" Height="18.9" Guides="0,18.90002,37.80005" KeepWithData="true" RepeatOnEveryPage="true">
+        <TextObject Name="Text26" Left="453.6" Width="56.7" Height="18.9" Text="Итого" HorzAlign="Right" VertAlign="Center" Font="Arial, 8pt"/>
+        <TextObject Name="Text32" Left="677.4" Width="74.97" Height="18.9" Border.Lines="All" Border.Width="0.5" Text="Х" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt"/>
+        <TextObject Name="Text33" Left="837.05" Width="65.52" Height="18.9" Border.Lines="All" Border.Width="0.5" Text="Х" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt"/>
+        <TextObject Name="Text34" Left="902.75" Width="45.78" Height="18.9" Border.Lines="All" Border.Width="0.5" Text="0,00 р." HorzAlign="Right" VertAlign="Center" Font="Arial, 8pt"/>
+        <TextObject Name="Text38" Left="752" Width="85.05" Height="18.9" Text="[TotalCost]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Right" VertAlign="Center" Font="Arial, 8pt"/>
+      </DataFooterBand>
+    </DataBand>
+    <ReportSummaryBand Name="ReportSummary1" Top="653.1" Width="1047.06" Height="404.62" Guides="66.15002,136.08,94.5,126.63,105.84,124.74,124.29,37.79999,0,18.90002,63.60004,151.2,287.28,170.1,181.4401,200.34,211.6801,230.58,249.48,268.3801,0" KeepWithData="true">
+      <TableObject Name="Table3" Left="9.45" Top="83.17" Width="1020.6" Height="69.93">
+        <TableColumn Name="Column21" Width="115.29"/>
+        <TableColumn Name="Column22" Width="219.24"/>
+        <TableColumn Name="Column23" Width="143.64"/>
+        <TableColumn Name="Column24" Width="266.49"/>
+        <TableColumn Name="Column25" Width="275.94"/>
+        <TableRow Name="Row22" Height="28.35">
+          <TableCell Name="Cell164" Font="Arial, 10pt"/>
+          <TableCell Name="Cell165" Font="Arial, 10pt"/>
+          <TableCell Name="Cell166" Text="Масса груза (нетто)" VertAlign="Bottom" Font="Arial, 10pt"/>
+          <TableCell Name="Cell167" Font="Arial, 10pt">
+            <ShapeObject Name="Shape2" Left="263.97" Top="0.65" Width="277.83" Height="60.48"/>
+            <LineObject Name="Line9" Left="0.67" Top="27.79" Width="264.6" Border.Width="0.5"/>
+          </TableCell>
+          <TableCell Name="Cell168" Border.Lines="Bottom" Border.Width="0.5" Font="Arial, 10pt"/>
+        </TableRow>
+        <TableRow Name="Row27" Height="11.34">
+          <TableCell Name="Cell189" Font="Arial, 10pt"/>
+          <TableCell Name="Cell190" Font="Arial, 10pt"/>
+          <TableCell Name="Cell191" Font="Arial, 10pt"/>
+          <TableCell Name="Cell192" Text="(прописью)" HorzAlign="Center" Font="Arial, 6pt"/>
+          <TableCell Name="Cell193" Font="Arial, 10pt" RowSpan="2"/>
+        </TableRow>
+        <TableRow Name="Row23">
+          <TableCell Name="Cell169" Text="Всего мест" Font="Arial, 10pt"/>
+          <TableCell Name="Cell170" Font="Arial, 10pt"/>
+          <TableCell Name="Cell171" Text="Масса груза (брутто)" VertAlign="Bottom" Font="Arial, 10pt"/>
+          <TableCell Name="Cell172" Font="Arial, 10pt"/>
+          <TableCell Name="Cell173" Font="Arial, 10pt"/>
+        </TableRow>
+        <TableRow Name="Row24" Height="11.34">
+          <TableCell Name="Cell174" Font="Arial, 10pt">
+            <LineObject Name="Line10" Left="113.4" Top="0.33" Width="217.35" Border.Width="0.5"/>
+          </TableCell>
+          <TableCell Name="Cell175" Text="(прописью)" HorzAlign="Center" Font="Arial, 6pt"/>
+          <TableCell Name="Cell176" Font="Arial, 10pt"/>
+          <TableCell Name="Cell177" Text="(прописью)" HorzAlign="Center" Font="Arial, 6pt">
+            <LineObject Name="Line8" Top="0.65" Width="264.6" Border.Width="0.5"/>
+          </TableCell>
+          <TableCell Name="Cell178" Font="Arial, 10pt"/>
+        </TableRow>
+      </TableObject>
+      <TextObject Name="Text24" Left="9.45" Top="47.25" Width="75.6" Height="18.9" Text="и содержит" HorzAlign="Justify" VertAlign="Center" Font="Arial, 9pt"/>
+      <TextObject Name="Text23" Left="9.45" Top="22.1" Width="255.15" Height="15.7" Text="Товарная накладная имеет приложение на" HorzAlign="Justify" VertAlign="Center" Font="Arial, 9pt"/>
+      <TableObject Name="Table4" Left="9.45" Top="180.2" Width="1030.05" Height="211.68">
+        <TableColumn Name="Column26" Width="279.25"/>
+        <TableColumn Name="Column27" Width="80.8"/>
+        <TableColumn Name="Column28" Width="80.8"/>
+        <TableColumn Name="Column29" Width="61.9"/>
+        <TableColumn Name="Column34" Width="8.98"/>
+        <TableColumn Name="Column35" Width="11.34"/>
+        <TableColumn Name="Column30" Width="137.5"/>
+        <TableColumn Name="Column31" Width="122.38"/>
+        <TableColumn Name="Column32" Width="112.93"/>
+        <TableColumn Name="Column33" Width="134.17"/>
+        <TableRow Name="Row28">
+          <TableCell Name="Cell194" Text="Приложение (паспорта, сертификаты и т.п.) на" VertAlign="Bottom" Font="Arial, 9pt"/>
+          <TableCell Name="Cell195" Border.Lines="Bottom" Border.Width="0.5" Font="Arial, 10pt" ColSpan="2"/>
+          <TableCell Name="Cell196" Font="Arial, 10pt"/>
+          <TableCell Name="Cell197" Text="листах" Font="Arial, 9pt"/>
+          <TableCell Name="Cell306" Font="Arial, 10pt"/>
+          <TableCell Name="Cell319" Border.Lines="Left" Border.Width="0.5" Font="Arial, 10pt"/>
+          <TableCell Name="Cell198" Text="  По доверенности № " VertAlign="Bottom" Font="Arial, 9pt"/>
+          <TableCell Name="Cell219" Text="____________________" VertAlign="Bottom" Font="Arial, 10pt"/>
+          <TableCell Name="Cell224" Text="от &quot;____&quot;  ______________  _______ года" VertAlign="Bottom" Font="Arial, 9pt" ColSpan="2"/>
+          <TableCell Name="Cell229" Font="Arial, 10pt"/>
+        </TableRow>
+        <TableRow Name="Row29" Height="11.34">
+          <TableCell Name="Cell199" Font="Arial, 10pt"/>
+          <TableCell Name="Cell200" Text="(прописью)" HorzAlign="Center" Font="Arial, 7pt" ColSpan="2"/>
+          <TableCell Name="Cell201" HorzAlign="Center" Font="Arial, 7pt"/>
+          <TableCell Name="Cell202" Font="Arial, 10pt"/>
+          <TableCell Name="Cell307" Font="Arial, 10pt"/>
+          <TableCell Name="Cell320" Border.Lines="Left" Border.Width="0.5" Font="Arial, 10pt"/>
+          <TableCell Name="Cell203" Font="Arial, 10pt"/>
+          <TableCell Name="Cell220" Font="Arial, 10pt"/>
+          <TableCell Name="Cell225" Font="Arial, 10pt"/>
+          <TableCell Name="Cell230" Font="Arial, 10pt"/>
+        </TableRow>
+        <TableRow Name="Row30" Height="22.68">
+          <TableCell Name="Cell204" Text="Всего отпущено на сумму" VertAlign="Bottom" Font="Arial, 9pt">
+            <TextObject Name="Text40" Left="157.25" Top="3.78" Width="330.37" Height="18.9" Border.Lines="Bottom" Border.Width="0.5" Text="[AmountInWords]" Font="Arial, 9pt"/>
+          </TableCell>
+          <TableCell Name="Cell205" Font="Arial, 8pt" ColSpan="3"/>
+          <TableCell Name="Cell206" Font="Arial, 10pt"/>
+          <TableCell Name="Cell207" Font="Arial, 10pt"/>
+          <TableCell Name="Cell308" Font="Arial, 10pt"/>
+          <TableCell Name="Cell321" Border.Lines="Left" Border.Width="0.5" Font="Arial, 10pt"/>
+          <TableCell Name="Cell208" Text="  выданной" VertAlign="Bottom" Font="Arial, 9pt"/>
+          <TableCell Name="Cell221" Border.Lines="Bottom" Border.Width="0.5" Font="Arial, 10pt" ColSpan="3"/>
+          <TableCell Name="Cell226" Border.Lines="Bottom" Border.Width="0.5" Font="Arial, 10pt"/>
+          <TableCell Name="Cell231" Border.Lines="Bottom" Border.Width="0.5" Font="Arial, 10pt"/>
+        </TableRow>
+        <TableRow Name="Row31" Height="11.34">
+          <TableCell Name="Cell209" Font="Arial, 10pt"/>
+          <TableCell Name="Cell210" Text="(прописью)" Font="Arial, 7pt" ColSpan="3"/>
+          <TableCell Name="Cell211" Font="Arial, 10pt"/>
+          <TableCell Name="Cell212" Font="Arial, 10pt"/>
+          <TableCell Name="Cell309" Font="Arial, 10pt"/>
+          <TableCell Name="Cell322" Border.Lines="Left" Border.Width="0.5" Font="Arial, 10pt"/>
+          <TableCell Name="Cell213" Font="Arial, 10pt"/>
+          <TableCell Name="Cell222" Text="(кем, кому (организация, должность, фамилия, и., о.))" HorzAlign="Center" VertAlign="Center" Font="Arial, 7pt" ColSpan="3"/>
+          <TableCell Name="Cell227" Font="Arial, 10pt"/>
+          <TableCell Name="Cell232" Font="Arial, 10pt"/>
+        </TableRow>
+        <TableRow Name="Row32">
+          <TableCell Name="Cell214" Border.Lines="Bottom" Border.Width="0.5" Text="[FormatNumber([FullTotalCost], 0)]" HorzAlign="Right" VertAlign="Bottom" Font="Arial, 9pt"/>
+          <TableCell Name="Cell215" Text="руб." VertAlign="Bottom" Font="Arial, 9pt"/>
+          <TableCell Name="Cell216" Border.Lines="Bottom" Border.Width="0.5" Text="[Cop([FullTotalCost])]" HorzAlign="Right" VertAlign="Bottom" Font="Arial, 9pt"/>
+          <TableCell Name="Cell217" Text="коп." VertAlign="Bottom" Font="Arial, 9pt"/>
+          <TableCell Name="Cell310" Font="Arial, 10pt"/>
+          <TableCell Name="Cell323" Border.Lines="Left" Border.Width="0.5" Font="Arial, 10pt"/>
+          <TableCell Name="Cell218" Border.Lines="Bottom" Border.Width="0.5" Font="Arial, 10pt" ColSpan="4"/>
+          <TableCell Name="Cell223" Font="Arial, 10pt"/>
+          <TableCell Name="Cell228" Font="Arial, 10pt"/>
+          <TableCell Name="Cell233" Font="Arial, 10pt"/>
+        </TableRow>
+        <TableRow Name="Row33">
+          <TableCell Name="Cell234" Text="Отпуск груза разрешил" VertAlign="Bottom" Font="Arial, 9pt">
+            <LineObject Name="Line11" Left="147.3" Top="18.68" Width="131.67" Border.Width="0.5"/>
+          </TableCell>
+          <TableCell Name="Cell235" Border.Lines="Bottom" Border.Width="0.5" Font="Arial, 10pt"/>
+          <TableCell Name="Cell236" Border.Lines="Bottom" Border.Width="0.5" Font="Arial, 10pt" ColSpan="2"/>
+          <TableCell Name="Cell237" Border.Lines="Bottom" Border.Width="0.5" Font="Arial, 10pt"/>
+          <TableCell Name="Cell311" Font="Arial, 10pt"/>
+          <TableCell Name="Cell324" Border.Lines="Left" Border.Width="0.5" Font="Arial, 10pt"/>
+          <TableCell Name="Cell238" Border.Lines="Bottom" Border.Width="0.5" VertAlign="Bottom" Font="Arial, 9pt" ColSpan="4"/>
+          <TableCell Name="Cell239" Border.Lines="Bottom" Border.Width="0.5" Font="Arial, 10pt"/>
+          <TableCell Name="Cell240" Border.Lines="Bottom" Border.Width="0.5" Font="Arial, 10pt"/>
+          <TableCell Name="Cell241" Border.Lines="Bottom" Border.Width="0.5" Font="Arial, 10pt"/>
+        </TableRow>
+        <TableRow Name="Row36" Height="11.34">
+          <TableCell Name="Cell258" Text="			(должность)" Font="Arial, 7pt"/>
+          <TableCell Name="Cell259" Text="(подпись)" HorzAlign="Center" Font="Arial, 7pt"/>
+          <TableCell Name="Cell260" Text="(расшифровка подписи)" HorzAlign="Center" VertAlign="Center" Font="Arial, 7pt" ColSpan="2"/>
+          <TableCell Name="Cell261" HorzAlign="Center" VertAlign="Center" Font="Arial, 7pt"/>
+          <TableCell Name="Cell312" Font="Arial, 10pt"/>
+          <TableCell Name="Cell325" Border.Lines="Left" Border.Width="0.5" Font="Arial, 10pt"/>
+          <TableCell Name="Cell262" Font="Arial, 7pt" ColSpan="2"/>
+          <TableCell Name="Cell263" Font="Arial, 7pt"/>
+          <TableCell Name="Cell264" HorzAlign="Center" Font="Arial, 7pt"/>
+          <TableCell Name="Cell265" Font="Arial, 7pt"/>
+        </TableRow>
+        <TableRow Name="Row35">
+          <TableCell Name="Cell250" Text="Главный (старший) бухгалтер" VertAlign="Bottom" Font="Arial, 9pt"/>
+          <TableCell Name="Cell251" Border.Lines="Bottom" Border.Width="0.5" Font="Arial, 10pt"/>
+          <TableCell Name="Cell252" Border.Lines="Bottom" Border.Width="0.5" Text="[Act.Account.Contractor.ChiefAccountantShortName]" HorzAlign="Right" VertAlign="Bottom" Font="Arial, 9pt" ColSpan="2"/>
+          <TableCell Name="Cell253" Border.Lines="Bottom" Border.Width="0.5" Font="Arial, 10pt"/>
+          <TableCell Name="Cell313" Font="Arial, 10pt"/>
+          <TableCell Name="Cell326" Border.Lines="Left" Border.Width="0.5" Font="Arial, 10pt"/>
+          <TableCell Name="Cell254" Text="Груз принял" VertAlign="Bottom" Font="Arial, 9pt">
+            <LineObject Name="Line13" Left="78.05" Top="18.43" Width="184.55" Border.Width="0.5"/>
+          </TableCell>
+          <TableCell Name="Cell255" Font="Arial, 10pt"/>
+          <TableCell Name="Cell256" Border.Lines="Bottom" Border.Width="0.5" Font="Arial, 10pt"/>
+          <TableCell Name="Cell257" Border.Lines="Bottom" Border.Width="0.5" Font="Arial, 10pt"/>
+        </TableRow>
+        <TableRow Name="Row37" Height="11.34">
+          <TableCell Name="Cell266" Font="Arial, 10pt"/>
+          <TableCell Name="Cell267" Text="(подпись)" HorzAlign="Center" Font="Arial, 7pt"/>
+          <TableCell Name="Cell268" Text="(расшифровка подписи)" HorzAlign="Center" Font="Arial, 7pt" ColSpan="2"/>
+          <TableCell Name="Cell269" HorzAlign="Center" Font="Arial, 7pt"/>
+          <TableCell Name="Cell314" Font="Arial, 10pt"/>
+          <TableCell Name="Cell327" Border.Lines="Left" Border.Width="0.5" Font="Arial, 10pt"/>
+          <TableCell Name="Cell270" Text="		(должность)" HorzAlign="Center" Font="Arial, 7pt" ColSpan="2"/>
+          <TableCell Name="Cell271" HorzAlign="Center" Font="Arial, 7pt"/>
+          <TableCell Name="Cell272" Text="(подпись)" HorzAlign="Center" Font="Arial, 7pt"/>
+          <TableCell Name="Cell273" Text="(расшифровка подписи)" HorzAlign="Center" Font="Arial, 7pt"/>
+        </TableRow>
+        <TableRow Name="Row38">
+          <TableCell Name="Cell274" Text="Отпуск груза произвел" VertAlign="Bottom" Font="Arial, 9pt">
+            <LineObject Name="Line12" Left="148.5" Top="18.68" Width="131.67" Border.Width="0.5"/>
+          </TableCell>
+          <TableCell Name="Cell275" Border.Lines="Bottom" Border.Width="0.5" Font="Arial, 10pt"/>
+          <TableCell Name="Cell276" Border.Lines="Bottom" Border.Width="0.5" Font="Arial, 10pt" ColSpan="2"/>
+          <TableCell Name="Cell277" Font="Arial, 10pt"/>
+          <TableCell Name="Cell315" Font="Arial, 10pt"/>
+          <TableCell Name="Cell328" Border.Lines="Left" Border.Width="0.5" Font="Arial, 10pt"/>
+          <TableCell Name="Cell278" Text="Груз получил грузополучатель" VertAlign="Bottom" Font="Arial, 9pt" ColSpan="2"/>
+          <TableCell Name="Cell279" Font="Arial, 10pt"/>
+          <TableCell Name="Cell280" Border.Lines="Bottom" Border.Width="0.5" Font="Arial, 10pt"/>
+          <TableCell Name="Cell281" Border.Lines="Bottom" Border.Width="0.5" Font="Arial, 10pt"/>
+        </TableRow>
+        <TableRow Name="Row39" Height="11.34">
+          <TableCell Name="Cell282" Text="			(должность)" Font="Arial, 7pt"/>
+          <TableCell Name="Cell283" Text="(подпись)" HorzAlign="Center" Font="Arial, 7pt"/>
+          <TableCell Name="Cell284" Text="(расшифровка подписи)" HorzAlign="Center" Font="Arial, 7pt" ColSpan="2"/>
+          <TableCell Name="Cell285" Font="Arial, 10pt"/>
+          <TableCell Name="Cell316" Font="Arial, 10pt"/>
+          <TableCell Name="Cell329" Border.Lines="Left" Border.Width="0.5" Font="Arial, 10pt"/>
+          <TableCell Name="Cell286" Font="Arial, 10pt"/>
+          <TableCell Name="Cell287" Text="	(должность)" HorzAlign="Center" Font="Arial, 7pt">
+            <LineObject Name="Line14" Left="32.17" Top="0.08" Width="90.68" Border.Width="0.5"/>
+          </TableCell>
+          <TableCell Name="Cell288" Text="(подпись)" HorzAlign="Center" Font="Arial, 7pt"/>
+          <TableCell Name="Cell289" Text="(расшифровка подписи)" HorzAlign="Center" Font="Arial, 7pt"/>
+        </TableRow>
+        <TableRow Name="Row40">
+          <TableCell Name="Cell290" Font="Arial, 10pt"/>
+          <TableCell Name="Cell291" Font="Arial, 10pt"/>
+          <TableCell Name="Cell292" Font="Arial, 10pt"/>
+          <TableCell Name="Cell293" Font="Arial, 10pt"/>
+          <TableCell Name="Cell317" Font="Arial, 10pt"/>
+          <TableCell Name="Cell330" Border.Lines="Left" Border.Width="0.5" Font="Arial, 10pt"/>
+          <TableCell Name="Cell294" Font="Arial, 10pt"/>
+          <TableCell Name="Cell295" Font="Arial, 10pt"/>
+          <TableCell Name="Cell296" Font="Arial, 10pt"/>
+          <TableCell Name="Cell297" Font="Arial, 10pt"/>
+        </TableRow>
+        <TableRow Name="Row41">
+          <TableCell Name="Cell298" Text="	М.П.	&quot;_____&quot; ____________ _______ года" Font="Arial, 9pt" ColSpan="4"/>
+          <TableCell Name="Cell299" Font="Arial, 9pt"/>
+          <TableCell Name="Cell300" Font="Arial, 9pt"/>
+          <TableCell Name="Cell301" Font="Arial, 9pt"/>
+          <TableCell Name="Cell318" Font="Arial, 10pt"/>
+          <TableCell Name="Cell331" Border.Lines="Left" Border.Width="0.5" Font="Arial, 10pt"/>
+          <TableCell Name="Cell302" Text="	М.П.	&quot;_____&quot; ____________ _______ года" Font="Arial, 9pt" ColSpan="4"/>
+          <TableCell Name="Cell303" Font="Arial, 10pt"/>
+          <TableCell Name="Cell304" Font="Arial, 10pt"/>
+          <TableCell Name="Cell305" Font="Arial, 10pt"/>
+        </TableRow>
+      </TableObject>
+      <TextObject Name="Text27" Left="264.6" Top="22.1" Width="491.4" Height="15.7" Border.Lines="Bottom" Border.Width="0.5" Text="[TotalPages#]" HorzAlign="Center" VertAlign="Bottom" Font="Arial, 7pt"/>
+      <TextObject Name="Text28" Left="756" Top="22.1" Width="56.7" Height="15.7" Text="листах" VertAlign="Center" Font="Arial, 9pt"/>
+      <TextObject Name="Text29" Left="85.05" Top="47.25" Width="670.95" Height="18.9" Border.Lines="Bottom" Border.Width="0.5" Text="[NumberInWords]" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
+      <TextObject Name="Text30" Left="756" Top="47.25" Width="179.55" Height="18.9" Text="порядковых номеров записей" VertAlign="Center" Font="Arial, 9pt"/>
+      <TextObject Name="Text31" Left="387.45" Width="122.85" Height="18.9" Text="Всего по накладной" HorzAlign="Right" VertAlign="Center" Font="Arial, 9pt"/>
+      <TextObject Name="Text35" Left="677.4" Width="74.97" Height="18.9" Border.Lines="All" Border.Width="0.5" Text="Х" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
+      <TextObject Name="Text36" Left="837.05" Width="65.52" Height="18.9" Border.Lines="All" Border.Width="0.5" Text="Х" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
+      <TextObject Name="Text37" Left="902.75" Width="45.78" Height="18.9" Border.Lines="All" Border.Width="0.5" Text="0,00 р." HorzAlign="Right" VertAlign="Center" Font="Arial, 8pt"/>
+      <TextObject Name="Text39" Left="752" Width="85.05" Height="18.9" Text="[FullTotalCost]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Right" VertAlign="Center" Font="Arial, 9pt"/>
+      <TextObject Name="Text25" Left="84.95" Top="68.04" Width="670.95" Height="9.45" Text="(прописью)" HorzAlign="Center" Font="Arial, 6pt"/>
+    </ReportSummaryBand>
+  </ReportPage>
+</Report>
