@@ -1959,9 +1959,9 @@ namespace AdvertisementWpf
                                 return;
                             }
                         }
-                        techCard.Product.DateManufacture = DateTime.Now; //фиксируем дату изготовления по изделию
+                        techCard.Product.DateManufacture = (TechCardTreeView.SelectedItem as WorkInTechCard).DateFactCompletion; //DateTime.Now; //фиксируем дату изготовления по изделию
                         Product product = _context.Products.Local.First(Product => Product.ID == techCard.Product.ID); //найти изделие в контекте Заказа/ Если вдруг не нйдет, то будет ошибка!!!
-                        product.DateManufacture = DateTime.Now;
+                        product.DateManufacture = techCard.Product.DateManufacture; //DateTime.Now;
                     }
                 }
             }
