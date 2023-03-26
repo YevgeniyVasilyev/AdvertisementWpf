@@ -435,8 +435,7 @@ namespace AdvertisementWpf
                 try
                 {
                     MainWindow.statusBar.WriteStatus("Сохранение данных ...", Cursors.Wait);
-                    Button btn = e.OriginalSource as Button;
-                    if (btn.Name == "SaveOrderButton")
+                    if (e.OriginalSource == SaveOrderButton)
                     {
                         _ = __context.SaveChanges(); //сохранить Orders
                         Order order = ordersViewSource.View.CurrentItem as Order;
@@ -466,21 +465,17 @@ namespace AdvertisementWpf
                                 {
                                     ___context.ProductCosts.Add(productCost);
                                 }
-                                //else if (_context.Entry(productCost).State != EntityState.Unchanged)
-                                //{
-                                //    ___context.ProductCosts.Update(productCost); //существующая сумма и ее обновить
-                                //}
                             }
                         }
                         _ = ___context.SaveChanges(); //сохранить ProductCosts
                         MainWindow.RefreshOrderProduct();
                     }
-                    if (btn.Name == "SavePaymentButton")
+                    if (e.OriginalSource == SavePaymentButton)
                     {
                         _ = context_.SaveChanges();
 
                     }
-                    if (btn.Name == "SavePADButton")
+                    if (e.OriginalSource == SavePADButton)
                     {
                         int nSelectedIndex = ListAccount.SelectedIndex;
                         _ = context__.SaveChanges();
@@ -491,13 +486,13 @@ namespace AdvertisementWpf
                         ListAccount.SelectedIndex = -1;
                         ListAccount.SelectedIndex = Math.Min(nSelectedIndex, ListAccount.Items.Count - 1);
                     }
-                    if (btn == SaveTechCardButton)
+                    if (e.OriginalSource == SaveTechCardButton)
                     {   //формируем номера для использования при печати техкарты
                         //«номер заказа».«порядковый номер изделия в заказе».«КВД».«порядковый номер операции»
                         short nTechCard = 1;
                         foreach (TechCard techCard in techCardsViewSource.View)
                         {
-                            techCard.Number = $"{currentOrder.Number}.{nTechCard++}";
+                            techCard.Number = $"{currentOrder.Number.TrimStart('0')}.{nTechCard++}";
                             foreach (WorkInTechCard workInTechCard in techCard.WorkInTechCards)
                             {
                                 workInTechCard.Number = $"{techCard.Number}.{workInTechCard.TypeOfActivity.Code.Trim()}";
@@ -538,7 +533,7 @@ namespace AdvertisementWpf
                     e.CanExecute = true;
                     return;
                 }
-                if (btn == SaveTechCardButton && _context_ != null && currentOrder != null && currentOrder.ID > 0 && techCardsViewSource != null && techCardsViewSource.View != null)
+                if (e.OriginalSource == SaveTechCardButton && _context_ != null && currentOrder != null && currentOrder.ID > 0 && techCardsViewSource?.View != null && TechCardTreeView != null && TechCardTreeView.Items.Count > 0)
                 {
                     e.CanExecute = true;
                     return;
@@ -1227,6 +1222,8 @@ namespace AdvertisementWpf
                 LoadOrderAccounts(false);
             }
             _ = context__.Accounts.Add(account);
+            context__.Entry(account).Reference(account => account.Contractor).Load(); //загрузить через св-во навигации
+            context__.Entry(account).Reference(account => account.Order).Load(); //загрузить через св-во навигации
             _ = accountsViewSource.View.MoveCurrentTo(account);
             account.DetailsList = CreateNewAccountDetails();
             account.ListToDetails();
@@ -1443,10 +1440,11 @@ namespace AdvertisementWpf
         {
             if (sender is ComboBox comboBox && comboBox != null)
             {
-                if (accountsViewSource != null && accountsViewSource.View != null && e.AddedItems.Count > 0 && (accountsViewSource.View.CurrentItem is Account))
+                if (accountsViewSource != null && accountsViewSource.View != null && e.AddedItems.Count > 0 && (accountsViewSource.View.CurrentItem is Account account))
                 {
-                    (accountsViewSource.View.CurrentItem as Account).ContractorInfoForAccount = (e.AddedItems[0] as Contractor).ContractorInfoForAccount;
-                    (accountsViewSource.View.CurrentItem as Account).ContractorName = (e.AddedItems[0] as Contractor).Name;
+                    //(accountsViewSource.View.CurrentItem as Account).ContractorInfoForAccount = (e.AddedItems[0] as Contractor).ContractorInfoForAccount;
+                    //(accountsViewSource.View.CurrentItem as Account).ContractorName = (e.AddedItems[0] as Contractor).Name;
+                    context__.Entry(account).Reference(account => account.Contractor).Load();
                     accountsViewSource.View.Refresh();
                     if (ListAct.Items.Count > 0)
                     {
@@ -1526,15 +1524,17 @@ namespace AdvertisementWpf
         {
             if (e.OriginalSource.GetType().FullName.Contains("Button"))
             {
-                Button btn = e.OriginalSource as Button;
-                Account account = accountsViewSource.View.CurrentItem as Account;
-                if (btn.Name == "PrintAccountButton")
+                if (e.OriginalSource == PrintAccountButton)
                 {
                     AccountPrint();
                 }
-                if (btn.Name == "PrintActButton")
+                if (e.OriginalSource == PrintActButton)
                 {
                     ActPrint();
+                }
+                if (e.OriginalSource == PrintTechCardButton)
+                {
+                    TechCardPrepeareToPrint();
                 }
             }
         }
@@ -1543,17 +1543,20 @@ namespace AdvertisementWpf
         {
             if (e.OriginalSource.GetType().FullName.Contains("Button"))
             {
-                Button btn = e.OriginalSource as Button;
-                if (btn.Name == "PrintAccountButton" && accountsViewSource != null && accountsViewSource.View != null && accountsViewSource.View.CurrentItem is Account a && a.ID != 0)
+                if (e.OriginalSource == PrintAccountButton && accountsViewSource != null && accountsViewSource.View != null && accountsViewSource.View.CurrentItem is Account a && a.ID != 0)
                 {
                     e.CanExecute = true;
                 }
-                if (btn.Name == "PrintActButton" && accountsViewSource != null && accountsViewSource.View != null && accountsViewSource.View.CurrentItem is Account account && account.ID != 0)
+                if (e.OriginalSource == PrintActButton && accountsViewSource != null && accountsViewSource.View != null && accountsViewSource.View.CurrentItem is Account account && account.ID != 0)
                 {
                     if (account.Acts != null && account.Acts.Count > 0)
                     {
                         e.CanExecute = true;
                     }
+                }
+                if (e.OriginalSource == PrintTechCardButton && techCardsViewSource?.View != null && TechCardTreeView?.SelectedItem != null)
+                {
+                    e.CanExecute = true;
                 }
             }
         }
@@ -1690,7 +1693,11 @@ namespace AdvertisementWpf
                 }
                 _context_.TechCards
                     .Include(TechCard => TechCard.Product)
+                    .Include(TechCard => TechCard.Product.Designer)
                     .Include(TechCard => TechCard.Product.ProductType)
+                    .Include(TechCard => TechCard.Product.Order)
+                    .Include(TechCard => TechCard.Product.Order.Client)
+                    .Include(TechCard => TechCard.Product.Order.Manager)
                     .Include(TechCard => TechCard.WorkInTechCards)
                     .ThenInclude(WorkInTechCard => WorkInTechCard.TypeOfActivity)
                     .Include(TechCard => TechCard.WorkInTechCards)
@@ -1748,6 +1755,10 @@ namespace AdvertisementWpf
                         {
                             Product pr = tc.Product;
                             _context_.Entry(pr).Reference(p => p.ProductType).Load(); //загрузить связки по навигационным свойствам
+                            _context_.Entry(pr).Reference(p => p.Designer).Load(); //загрузить связки по навигационным свойствам
+                            _context_.Entry(pr).Reference(p => p.Order).Load();
+                            _context_.Entry(pr.Order).Reference(p => p.Client).Load();
+                            _context_.Entry(pr.Order).Reference(p => p.Manager).Load();
                             pr.IsHasTechcard = true; //установить признак наличия Техкарты
                             Product product = _context.Products.Local.First(Product => Product.ID == tc.Product.ID); //найти изделие в контекте Заказа/ Если вдруг не нйдет, то будет ошибка!!!
                             product.IsHasTechcard = true;
@@ -1818,6 +1829,7 @@ namespace AdvertisementWpf
                         operationInWork.IsSelected = true;
                         _context_.Entry(operationInWork).Reference(o => o.Operation).Load(); //загрузить связки по навигационным свойствам
                         _context_.Entry(operationInWork).Reference(o => o.WorkInTechCard).Load(); //загрузить связки по навигационным свойствам
+                        _context_.Entry(operationInWork.Operation).Reference(o => o.ProductionArea).Load(); //загрузить связки по навигационным свойствам
                         _context_.Entry(workInTechCard).Reference(w => w.TypeOfActivity).Load(); //загрузить связки по навигационным свойствам
                         GetOperationInWorkParameters(operationInWork);
                         operationInWork.FilesToList();
@@ -1878,6 +1890,13 @@ namespace AdvertisementWpf
             if (e.ClickCount >= 2 && (sender as TextBlock).DataContext is WorkInTechCard workInTechCard && workInTechCard.OperationInWorks.Count == 0) //ловим двойной или более клик
             {
                 (sender as TextBlock).Visibility = Visibility.Collapsed; //скрыть самого себя
+            }
+            if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control && TechCardTreeView.SelectedItem != null) //при щелчке мышью нажат Ctrl
+            {
+                if (TechCardTreeView.SelectedItem is WorkInTechCard workInTC)
+                {
+                    workInTC.IsPrinted = !workInTC.IsPrinted;
+                }
             }
         }
 
@@ -2110,6 +2129,132 @@ namespace AdvertisementWpf
             }
         }
 
+        private void TechCardTreeView_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control && TechCardTreeView.SelectedItem != null) //при щелчке мышью нажат Ctrl
+            {
+                if (TechCardTreeView.SelectedItem is TechCard techCard)
+                {
+                    techCard.IsPrinted = !techCard.IsPrinted;
+                }
+            }
+        }
+
+        private void TechCardPrepeareToPrint()
+        {
+            List<long> prodAreaID = new List<long> { };
+            List<TechCard> techCards = new List<TechCard> { }; //список Техкарт для печати
+            if (techCardsViewSource?.View != null && TechCardTreeView?.SelectedItem != null)
+            {
+                if (TechCardTreeView.SelectedItem is TechCard techCard) //печать с уровня Изделие
+                {
+                    techCards = _context_.TechCards.Local.Where(t => t.IsPrinted).ToList(); //отобрать все ТК с отметкой для печати
+                    if (techCards.Count == 0) //если по факту ничего не отобралось, тогда берем только текущую ТК
+                    {
+                        techCards.Add(techCard);
+                    }
+                    TechCardPrint(ref techCards);
+                }
+                else if (TechCardTreeView.SelectedItem is WorkInTechCard workInTechCard) //печать с уровня Работа
+                {
+                    TechCard tc = (TechCard)GetParentTreeViewItem(workInTechCard, 0); //берем ТК родителя
+                    techCards = _context_.TechCards.Local.Where(t => t.Equals(tc) && tc.WorkInTechCards.Any(w => w.IsPrinted)).ToList(); //отобрать эту ТК, если  есть Работы с отметкой для печати
+                    if (techCards.Count == 0) //по факту ничего не отобралось, тогда берем только текущую ТК
+                    {
+                        techCards.Add(tc);
+                    }
+                    TechCardPrint(ref techCards);
+                }
+                else if (TechCardTreeView.SelectedItem is OperationInWork operationInWork) //печать с уровня Операция
+                {
+                    WorkInTechCard workInTC = (WorkInTechCard)GetParentTreeViewItem(operationInWork, 1);
+                    PrintTechCardButton.ContextMenu.Items.Clear();
+                    foreach (OperationInWork operationInW in workInTC.OperationInWorks)
+                    {
+                        if (operationInW.Operation.ProductionAreaID != null && !prodAreaID.Contains((long)operationInW.Operation.ProductionAreaID))
+                        {
+                            MenuItem menuItem = new MenuItem
+                            {
+                                Header = operationInW.Operation.ProductionArea.Name,
+                                Tag = (long)operationInW.Operation.ProductionAreaID,
+                                IsCheckable = true,
+                                StaysOpenOnClick = true
+                            };
+                            _ = PrintTechCardButton.ContextMenu.Items.Add(menuItem); //добавляем все производственные участки, которые есть в ТК
+                            prodAreaID.Add((long)operationInW.Operation.ProductionAreaID);
+                        }
+                    }
+                    _ = PrintTechCardButton.ContextMenu.Items.Add(new Separator()); //добавляем разделитель
+                    MenuItem m = new MenuItem { Header = " На печать " };
+                    m.Click += PrintTechCardMenuItem_Click;
+                    _ = PrintTechCardButton.ContextMenu.Items.Add(m); //добавляем кнопку подтверждения
+                    PrintTechCardButton.ContextMenu.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
+                    PrintTechCardButton.ContextMenu.PlacementTarget = PrintTechCardButton;
+                    PrintTechCardButton.ContextMenu.Visibility = Visibility.Visible;
+                    PrintTechCardButton.ContextMenu.IsOpen = true;
+
+                    void PrintTechCardMenuItem_Click(object sender, RoutedEventArgs e)
+                    {
+                        if (sender is null)
+                        {
+                            return;
+                        }
+                        PrintTechCardButton.ContextMenu.IsOpen = false;
+                        PrintTechCardButton.ContextMenu.Visibility = Visibility.Hidden;
+                        techCards.Add((TechCard)GetParentTreeViewItem(operationInWork, 0)); //берем ТК в печать
+                        if (prodAreaID.Count > 0) //есть отобранные на печать производственные участки
+                        {
+                            foreach (OperationInWork operationInW in workInTC.OperationInWorks)
+                            {
+                                operationInW.IsPrinted = prodAreaID.Contains((long)operationInW.Operation.ProductionAreaID); //берем операцию для печати если производственный участок есть в отобранных
+                            }
+                        }
+                        else
+                        {
+                            operationInWork.IsPrinted = true; //если отобранных участков нет, то берем только текущую операцию
+                        }
+                        TechCardPrint(ref techCards);
+                    }
+                }
+            }
+        }
+
+        private void TechCardPrint(ref List<TechCard> techCards)
+        {
+            if (techCards.Count > 0)
+            {
+                using App.AppDbContext _reportcontext = new App.AppDbContext(MainWindow.Connectiondata.Connectionstring);
+                try
+                {
+                    MainWindow.statusBar.WriteStatus("Получение данных техкарты ...", Cursors.Wait);
+                    string _pathToReportTemplate = _reportcontext.Setting.FirstOrDefault(setting => setting.SettingParameterName == "PathToReportTemplate").SettingParameterValue;
+                    string techCardFileTemplate = "TechCard.frx";
+                    if (File.Exists(Path.Combine(_pathToReportTemplate, techCardFileTemplate)))
+                    {
+                        Reports.TechCardDataSet = techCards;
+                        Reports.ReportFileName = Path.Combine(_pathToReportTemplate, techCardFileTemplate);
+                        Reports.ReportMode = "TechCard";
+                        Reports.RunReport();
+                    }
+                    else
+                    {
+                        _ = MessageBox.Show($"Не найден файл {techCardFileTemplate} !", "Ошибка формирования ТК", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _ = MessageBox.Show(ex.Message + "\n" + ex?.InnerException?.Message ?? "", "Ошибка формирования ТК", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+                finally
+                {
+                    MainWindow.statusBar.ClearStatus();
+                }
+            }
+            else
+            {
+                _ = MessageBox.Show(" Нет данных для печати ТК! ", "Печать техкарты", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+        }
         //private void OperationInWorkComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         //{
         //    if (sender is ComboBox comboBox && comboBox != null && comboBox.GetBindingExpression(System.Windows.Controls.Primitives.Selector.SelectedValueProperty).DataItem is OperationInWork operationInWork)

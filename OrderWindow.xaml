@@ -754,39 +754,49 @@
                                                 </StackPanel>
                                             </Button>
                                             <Separator/>
-                                            <Button Name="PrintTechCardButton" Style="{StaticResource ButtonOfOrder}" ToolTip="Печать техкарты или ее части">
+                                            <Button Name="PrintTechCardButton" Style="{StaticResource ButtonOfOrder}" 
+                                                    ToolTip="Печать техкарты или ее части" Command="ApplicationCommands.Print">
                                                 <StackPanel Orientation="Horizontal">
                                                     <Image Source="\Images\free-icon-printer-techcard.png" Width="25" Height="25"/>
                                                     <Label Content="Печать"/>
                                                 </StackPanel>
+                                                <Button.ContextMenu>
+                                                    <ContextMenu Visibility="Hidden">
+                                                    </ContextMenu>
+                                                </Button.ContextMenu>
                                             </Button>
                                         </WrapPanel>
                                         <TreeView Grid.Column="0" Grid.Row="1" Margin="2" Name="TechCardTreeView" BorderThickness="1" BorderBrush="DodgerBlue" 
                                                   ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto"
                                                   ItemsSource="{Binding Source={StaticResource techCardsViewSource}}" 
-                                                  SelectedItemChanged="TechCardTreeView_SelectedItemChanged" KeyDown="TechCardTreeView_KeyDown">
+                                                  SelectedItemChanged="TechCardTreeView_SelectedItemChanged" 
+                                                  KeyDown="TechCardTreeView_KeyDown">
                                             <TreeView.Resources>
                                                 <HierarchicalDataTemplate DataType="{x:Type model:TechCard}" ItemsSource="{Binding Path=WorkInTechCards_}">
-                                                    <TextBlock Text="{Binding Path=Product.ProductTypeName}" Padding="2"/>
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <TextBlock Text=" + " Visibility="{Binding IsPrinted, Converter={StaticResource BooleanToVisibilityConverter}}" FontWeight="ExtraBold"/>
+                                                        <TextBlock Text="{Binding Path=Product.ProductTypeName}" Padding="2" MouseLeftButtonDown="TechCardTreeView_MouseLeftButtonDown" 
+                                                                   ToolTip="Ctrl+левая кнопка мыши - отметить/снять отметку"/>
+                                                    </StackPanel>
                                                 </HierarchicalDataTemplate>
                                                 <HierarchicalDataTemplate DataType="{x:Type model:WorkInTechCard}" ItemsSource="{Binding Path=OperationInWorks_}">
-                                                    <Grid>
-                                                        <Grid.RowDefinitions>
-                                                            <RowDefinition Height="Auto"/>
-                                                            <RowDefinition Height="Auto"/>
-                                                        </Grid.RowDefinitions>
-                                                        <TextBlock Grid.Row="0" Name="WorkInTechCardTextBlock" Text="{Binding Path=TypeOfActivity.CodeName}" Padding="2" MouseLeftButtonDown="WorkInTechCardTextBlock_MouseLeftButtonDown" 
-                                                                   ToolTip="Двойным rkbrjv vsib изменить, если нет операций"
-                                                                   Visibility="{Binding ElementName=WorkInTechCardComboBox, Path=IsVisible, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                                                        <ComboBox Grid.Row="1" Padding="2" Name="WorkInTechCardComboBox" ItemsSource="{Binding Source={StaticResource ViewModel}, Path=TypeOfActivityList}" 
-                                                                  ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto"
-                                                                  Visibility="{Binding ElementName=WorkInTechCardTextBlock, Path=IsVisible, Converter={StaticResource BoolToVisibilityConverter}}"
-                                                                  SelectedValuePath="ID" DisplayMemberPath="CodeName" 
-                                                                  SelectedValue="{Binding Path=TypeOfActivityID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                                                                  SelectionChanged="WorkTypeOfActivityComboBox_SelectionChanged" 
-                                                                  GotFocus="WorkTypeOfActivityComboBox_GotFocus" 
-                                                                  DropDownClosed="WorkInTechCardComboBox_DropDownClosed"/>
-                                                    </Grid>
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <TextBlock Text=" + " Visibility="{Binding IsPrinted, Converter={StaticResource BooleanToVisibilityConverter}}" FontWeight="ExtraBlack"/>
+                                                        <StackPanel Orientation="Vertical">
+                                                            <TextBlock Name="WorkInTechCardTextBlock" Text="{Binding Path=TypeOfActivity.CodeName}" Padding="2" 
+                                                                       MouseLeftButtonDown="WorkInTechCardTextBlock_MouseLeftButtonDown" 
+                                                                       ToolTip="Двойным щелчок мышью изменить, если нет операций.&#x0a;Ctrl+левая кнопка мыши - отметить/снять отметку"
+                                                                       Visibility="{Binding ElementName=WorkInTechCardComboBox, Path=IsVisible, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                                                            <ComboBox Padding="2" Name="WorkInTechCardComboBox" ItemsSource="{Binding Source={StaticResource ViewModel}, Path=TypeOfActivityList}" 
+                                                                      ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                                                      Visibility="{Binding ElementName=WorkInTechCardTextBlock, Path=IsVisible, Converter={StaticResource BoolToVisibilityConverter}}"
+                                                                      SelectedValuePath="ID" DisplayMemberPath="CodeName" 
+                                                                      SelectedValue="{Binding Path=TypeOfActivityID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                                                      SelectionChanged="WorkTypeOfActivityComboBox_SelectionChanged" 
+                                                                      GotFocus="WorkTypeOfActivityComboBox_GotFocus" 
+                                                                      DropDownClosed="WorkInTechCardComboBox_DropDownClosed"/>
+                                                        </StackPanel>
+                                                    </StackPanel>
                                                     <HierarchicalDataTemplate.ItemTemplate>
                                                         <DataTemplate>
                                                             <TextBlock Text="{Binding Path=Operation.Name}" Name="OperationInWorkTextBlock" Padding="2"/>
@@ -1146,19 +1156,20 @@
                                 <TextBlock Text="СЧЕТА" Margin="2" FontWeight="Bold" HorizontalAlignment="Center"/>
                             </Border>
                             <ListView Grid.Column="0" Grid.Row="2" Name="ListAccount" IsSynchronizedWithCurrentItem="True" 
-                                          ItemsSource="{Binding Source={StaticResource accountsViewSource}}" KeyDown="ListAccount_KeyDown">
+                                      ItemsSource="{Binding Source={StaticResource accountsViewSource}}" 
+                                      KeyDown="ListAccount_KeyDown">
                                 <ListView.View>
                                     <GridView>
                                         <GridViewColumn Header=" Номер счета " DisplayMemberBinding="{Binding Path=AccountNumber}" Width="150"
                                                 HeaderTemplate="{StaticResource ListViewHeaderTemplate}"/>
                                         <GridViewColumn Header=" Дата счета " DisplayMemberBinding="{Binding Path=AccountDate, ConverterCulture=ru-RU, StringFormat=\{0:dd.MM.yyyy\}}"
                                                 HeaderTemplate="{StaticResource ListViewHeaderTemplate}"/>
-                                        <GridViewColumn Header=" Поставщик " HeaderTemplate="{StaticResource ListViewHeaderTemplate}" Width="200" >
-                                            <GridViewColumn.CellTemplate>
+                                        <GridViewColumn Header=" Поставщик " DisplayMemberBinding="{Binding Path=Contractor.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HeaderTemplate="{StaticResource ListViewHeaderTemplate}" Width="200" >
+                                            <!--<GridViewColumn.CellTemplate>
                                                 <DataTemplate>
                                                     <TextBlock Text="{Binding Path=ContractorName}" TextWrapping="Wrap"/>
                                                 </DataTemplate>
-                                            </GridViewColumn.CellTemplate>
+                                            </GridViewColumn.CellTemplate>-->
                                         </GridViewColumn>
                                         <GridViewColumn Header=" Основание " DisplayMemberBinding="{Binding Path=Footing}" Width="200"
                                                 HeaderTemplate="{StaticResource ListViewHeaderTemplate}"/>
@@ -1193,9 +1204,9 @@
                                 <TextBlock Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="3" Text="{Binding Source={StaticResource clientsViewSource}, Path=Name}" TextWrapping="Wrap" VerticalAlignment="Center"/>
                                 <Label Grid.Column="0" Grid.Row="3" Content="Поставщик: "/>
                                 <ComboBox Grid.Column="1" Grid.Row="3" Grid.ColumnSpan="3" Name="ContractorNameComboBox" IsEnabled="True" SelectionChanged="ContractorNameComboBox_SelectionChanged"
-                                              ItemsSource="{Binding Source={StaticResource contractorsViewSource}}" 
-                                              DisplayMemberPath="Name" SelectedValuePath="ID"
-                                              SelectedValue="{Binding Source={StaticResource accountsViewSource}, Path=ContractorID, UpdateSourceTrigger=PropertyChanged}"/>
+                                          ItemsSource="{Binding Source={StaticResource contractorsViewSource}}" 
+                                          DisplayMemberPath="Name" SelectedValuePath="ID"
+                                          SelectedValue="{Binding Source={StaticResource accountsViewSource}, Path=ContractorID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                                 <Label Grid.Column="0" Grid.Row="4" Content="Основание: "/>
                                 <TextBox Grid.Column="1" Grid.Row="4" IsEnabled="True" Text="{Binding Source={StaticResource accountsViewSource}, Path=Footing, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center"/>
                                 <Label Name="PayBeforeDateLabel" Grid.Column="2" Grid.Row="4" Content="Оплатить не позднее: " HorizontalContentAlignment="Right" Style="{StaticResource UnderlineLabel}" MouseLeftButtonDown="Label_MouseLeftButtonDown"/>

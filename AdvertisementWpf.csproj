@@ -115,6 +115,7 @@
     <None Remove="Счет на оплату от РТ.xls" />
     <None Remove="счет фактура бланк.xls" />
     <None Remove="ТЗ электронный бланк заказа.xlsx" />
+    <None Remove="ТК печать.doc" />
     <None Remove="ТК эскиз.pdf" />
     <None Remove="ТК.pdf" />
     <None Remove="Товарная накладная бланк.xls" />

@@ -62,7 +62,7 @@ namespace AdvertisementWpf.Models
                 {
                     return $"{aDn[0]} {aDn[1].Substring(0, 1)}.";
                 }
-                return DirectorName;
+                return string.IsNullOrWhiteSpace(DirectorName) ? "" : DirectorName;
             }
         }
         [NotMapped]
@@ -79,7 +79,8 @@ namespace AdvertisementWpf.Models
                 {
                     return $"{aCa[0]} {aCa[1].Substring(0, 1)}.";
                 }
-                return ChiefAccountant;
+                
+                return string.IsNullOrWhiteSpace(ChiefAccountant) ? "" : ChiefAccountant;
             }
         }
     }

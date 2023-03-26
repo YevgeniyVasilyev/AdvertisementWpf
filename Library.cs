@@ -387,6 +387,7 @@ namespace AdvertisementWpf
         public static List<Act> ActDataSet = null;
         public static List<Product> ProductDataSet = null;
         public static List<object> ObjectDataSet = null;
+        public static List<TechCard> TechCardDataSet = null;
         public static DateTime ReportDate = DateTime.Now;
         public static DateTime BeginPeriod = DateTime.Now;
         public static DateTime EndPeriod = DateTime.Now;
@@ -412,7 +413,7 @@ namespace AdvertisementWpf
                     report.SetParameterValue("DesignerID", designerID);
                     ReadyReportFileName = "Order.pdf";
                 }
-                if (ReportMode == "AccountForm")
+                else if (ReportMode == "AccountForm")
                 {
                     //report.Dictionary.RegisterBusinessObject(AccountDataSet, "Account", 4, true);
                     //report.Save(ReportFileName + "_data");
@@ -423,7 +424,7 @@ namespace AdvertisementWpf
                     report.SetParameterValue("AmountInWords", AmountInWords);
                     ReadyReportFileName = "Account.pdf";
                 }
-                if (ReportMode == "ActForm")
+                else if (ReportMode == "ActForm")
                 {
                     //report.Dictionary.RegisterBusinessObject(ActDataSet, "Act", 4, true);
                     //report.Save(ReportFileName + "_data");
@@ -433,7 +434,7 @@ namespace AdvertisementWpf
                     report.SetParameterValue("AmountInWords", AmountInWords);
                     ReadyReportFileName = "Act.pdf";
                 }
-                if (ReportMode == "SFForm")
+                else if (ReportMode == "SFForm")
                 {
                     report.Load(ReportFileName);
                     report.RegisterData(ActDataSet, "Act", 3);
@@ -441,7 +442,7 @@ namespace AdvertisementWpf
                     report.SetParameterValue("AmountInWords", AmountInWords);
                     ReadyReportFileName = "SF.pdf";
                 }
-                if (ReportMode == "TNForm")
+                else if (ReportMode == "TNForm")
                 {
                     report.Load(ReportFileName);
                     report.RegisterData(ActDataSet, "Act", 3);
@@ -450,7 +451,7 @@ namespace AdvertisementWpf
                     report.SetParameterValue("NumberInWords", NumberInWords);
                     ReadyReportFileName = "TN.pdf";
                 }
-                if (ReportMode == "UPDForm")
+                else if (ReportMode == "UPDForm")
                 {
                     report.Load(ReportFileName);
                     report.RegisterData(ActDataSet, "Act", 3);
@@ -460,13 +461,13 @@ namespace AdvertisementWpf
                     report.SetParameterValue("MonthInWords", MonthInWords);
                     ReadyReportFileName = "UPD.pdf";
                 }
-                if (ReportMode == "OrderListViewForm")
+                else if (ReportMode == "OrderListViewForm")
                 {
                     report.Load(ReportFileName);
                     report.RegisterData(OrderDataSet, "Order", 3);
                     ReadyReportFileName = "OrderListView.pdf";
                 }
-                if (ReportMode == "ProductListViewForm")
+                else if (ReportMode == "ProductListViewForm")
                 {
                     //report.Dictionary.RegisterBusinessObject(ProductDataSet, "Product", 4, true);
                     //report.Save("ProductListView_data.frx");
@@ -475,7 +476,7 @@ namespace AdvertisementWpf
                     report.RegisterData(ProductDataSet, "Product", 3);
                     ReadyReportFileName = "ProductListView.pdf";
                 }
-                if (ReportMode == "VMP")
+                else if (ReportMode == "VMP")
                 {
                     //report.Dictionary.RegisterBusinessObject(ObjectDataSet, "dataset", 4, true);
                     //report.Save($"{Path.GetFileNameWithoutExtension(ReportFileName)}_data.frx");
@@ -486,6 +487,16 @@ namespace AdvertisementWpf
                     report.SetParameterValue("EndPeriod", EndPeriod);
                     ReportMode = "ReportForm";
                 }
+                else if (ReportMode == "TechCard")
+                {
+                    //report.Dictionary.RegisterBusinessObject(TechCardDataSet, "TechCard", 6, true);
+                    //report.Save($"{Path.GetFileNameWithoutExtension(ReportFileName)}_data.frx");
+                    //return;
+                    report.Load(ReportFileName);
+                    report.RegisterData(TechCardDataSet, "TechCard", 3);
+                    ReadyReportFileName = "TechCard.pdf";
+                }
+
                 if (ReportMode == "ReportForm")
                 {
                     ReadyReportFileName = $"{Path.GetFileNameWithoutExtension(ReportFileName)}.pdf";
@@ -822,7 +833,7 @@ namespace AdvertisementWpf
             }
         }
 
-        private bool isExpanded;
+        private bool isExpanded = false;
         [NotMapped]
         public bool IsExpanded
         {
@@ -833,6 +844,21 @@ namespace AdvertisementWpf
                 {
                     isExpanded = value;
                     NotifyPropertyChanged("IsExpanded");
+                }
+            }
+        }
+
+        private bool isPrinted;
+        [NotMapped]
+        public bool IsPrinted
+        {
+            get => isPrinted;
+            set
+            {
+                if (value != isPrinted)
+                {
+                    isPrinted = value;
+                    NotifyPropertyChanged("IsPrinted");
                 }
             }
         }

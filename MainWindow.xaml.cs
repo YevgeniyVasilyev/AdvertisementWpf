@@ -231,7 +231,7 @@ namespace AdvertisementWpf
             {
                 Owner = this
             };
-            ur.ShowDialog();
+            _ = ur.ShowDialog();
         }
 
         private void ClientsAndContractors_Item_Click(object sender, RoutedEventArgs e)
@@ -240,13 +240,13 @@ namespace AdvertisementWpf
             {
                 Owner = this
             };
-            cc.ShowDialog();
+            _ = cc.ShowDialog();
         }
 
         private void SystemSetting_Item_Click(object sender, RoutedEventArgs e)
         {
             SettingWindow ss = new SettingWindow { };
-            ss.Show();
+            _ = ss.ShowDialog();
         }
 
         public class StatusBar : INotifyPropertyChanged
@@ -334,7 +334,7 @@ namespace AdvertisementWpf
                 if (btn.Name == "NewOrderButton" || btn.Name == "NewOrderButton1")
                 {
                     OrderWindow order = new OrderWindow(NewOrder: true) { };
-                    order.Show();
+                    _ = order.ShowDialog();
                 }
                 if (btn.Name == "ViewOrderButton")
                 {
@@ -348,7 +348,7 @@ namespace AdvertisementWpf
                         nOrderID = product.OrderID;
                     }
                     OrderWindow order = new OrderWindow(NewOrder: false, EditMode: false, nOrderID: nOrderID) { };
-                    order.Show();
+                    _ = order.ShowDialog();
                 }
                 if (btn.Name == "EditOrderButton")
                 {
@@ -362,7 +362,7 @@ namespace AdvertisementWpf
                         nOrderID = product.OrderID;
                     }
                     OrderWindow order = new OrderWindow(NewOrder: false, EditMode: true, nOrderID: nOrderID) { };
-                    order.Show();
+                    _ = order.ShowDialog();
                 }
                 if (btn.Name == "AllOrdersButton")
                 {
@@ -391,14 +391,14 @@ namespace AdvertisementWpf
             if (mainWnd.OrderListView.IsVisible)
             {
                 int nCurrentIndex = mainWnd.ordersViewSource.View.CurrentPosition >= 0 ? mainWnd.ordersViewSource.View.CurrentPosition : 0;
-                mainWnd.ShowOrders();
-                mainWnd.ordersViewSource.View.MoveCurrentToPosition(nCurrentIndex);
+                _ = mainWnd.ShowDialog();
+                _ = mainWnd.ordersViewSource.View.MoveCurrentToPosition(nCurrentIndex);
             }
             else if (mainWnd.ProductListView.IsVisible)
             {
                 int nCurrentIndex = mainWnd.productsViewSource.View.CurrentPosition >= 0 ? mainWnd.productsViewSource.View.CurrentPosition : 0;
                 mainWnd.ShowProducts();
-                mainWnd.productsViewSource.View.MoveCurrentToPosition(nCurrentIndex);
+                _ = mainWnd.productsViewSource.View.MoveCurrentToPosition(nCurrentIndex);
             }
         }
 
@@ -492,25 +492,25 @@ namespace AdvertisementWpf
         private void ProductDesigner_Item_Click(object sender, RoutedEventArgs e)
         {
             ProductConstructorWindow productDesigner = new ProductConstructorWindow();
-            productDesigner.Show();
+            _ = productDesigner.ShowDialog();
         }
 
         private void OperationDesigner_Item_Click(object sender, RoutedEventArgs e)
         {
             OperationConstructorWindow operationConstructorWindow = new OperationConstructorWindow();
-            operationConstructorWindow.Show();
+            _ = operationConstructorWindow.ShowDialog();
         }
 
         private void ReferencebookDesigner_Item_Click(object sender, RoutedEventArgs e)
         {
             ReferencebookWindow referencebook = new ReferencebookWindow();
-            referencebook.Show();
+            _ = referencebook.ShowDialog();
         }
 
         private void ProductionAreas_Item_Click(object sender, RoutedEventArgs e)
         {
             ProductionAreaWindow productionAreaWindow = new ProductionAreaWindow();
-            productionAreaWindow.Show();
+            _ = productionAreaWindow.ShowDialog();
         }
 
         private void OrderListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -680,13 +680,13 @@ namespace AdvertisementWpf
         private void AccessMatrix_Item_Click(object sender, RoutedEventArgs e)
         {
             AccessMatrixWindow am = new AccessMatrixWindow();
-            am.Show();
+            _ = am.ShowDialog();
         }
 
         private void ReportMenuItem_Click(object sender, RoutedEventArgs e)
         {
             ReportWindow rw = new ReportWindow();
-            rw.Show();
+            _ = rw.ShowDialog();
         }
     }
 
