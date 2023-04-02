@@ -12,6 +12,7 @@
     <Window.Resources>
         <CollectionViewSource x:Key="ordersViewSource"/>
         <CollectionViewSource x:Key="productsViewSource"/>
+        <CollectionViewSource x:Key="workInTechCardViewSource"/>
         <Style x:Key="DropShadow" TargetType="{x:Type FrameworkElement}">
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
@@ -71,8 +72,9 @@
             <!--меню-->
             <RowDefinition Height="Auto"/>
             <!--buttob-->
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto" Name="OrderList"/>
+            <RowDefinition Height="Auto" Name="ProductList"/>
+            <RowDefinition Height="*" Name="ProductionProductList"/>
             <!--основной раздел-->
             <RowDefinition Height="Auto"/>
             <!--статус бар-->
@@ -139,6 +141,16 @@
                         <StackPanel>
                             <Image Source="/Images/free-icon-search.png" Width="25" Height="25"/>
                             <TextBlock Text="Выбрать изделия ..." TextWrapping="Wrap" TextAlignment="Center" 
+                                       VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </Button.Content>
+                </Button>
+                <Button Name="FilterProductionProductsButton"  Style="{StaticResource ButtonOnStackPanel}" Command="ApplicationCommands.New">
+                    <Button.Content>
+                        <StackPanel>
+                            <!--<Image Source="/Images/free-icon-search.png" Width="25" Height="25"/>-->
+                            <Image Source="\Images\free-icon-factory.png" Width="25" Height="25"/>
+                            <TextBlock Text="Выбрать изделия в производстве..." TextWrapping="Wrap" TextAlignment="Center" 
                                        VerticalAlignment="Center" HorizontalAlignment="Center"/>
                         </StackPanel>
                     </Button.Content>
@@ -258,13 +270,13 @@
                 <GridView>
                     <GridView.Columns>
                         <GridViewColumn Header=" Номер заказа " Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
-                                                    DisplayMemberBinding="{Binding Path=Number}"/>
+                                        DisplayMemberBinding="{Binding Path=Number}"/>
                         <GridViewColumn Header=" Дата приема " Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
-                                                    DisplayMemberBinding="{Binding Path=DateAdmission, StringFormat={}{0:d}, ConverterCulture=ru-RU}"/>
+                                        DisplayMemberBinding="{Binding Path=DateAdmission, StringFormat={}{0:d}, ConverterCulture=ru-RU}"/>
                         <GridViewColumn Header=" Состояние заказа " Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}" 
-                                                    DisplayMemberBinding="{Binding Path=State}"/>
+                                        DisplayMemberBinding="{Binding Path=State}"/>
                         <GridViewColumn Header=" Клиент " Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
-                                                    DisplayMemberBinding="{Binding Path=Client.Name}"/>
+                                        DisplayMemberBinding="{Binding Path=Client.Name}"/>
                         <GridViewColumn Header=" Изделия в заказе " Width="300" HeaderTemplate="{StaticResource ListViewHeaderTemplate}">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
@@ -306,12 +318,14 @@
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
+                        <GridViewColumn Header=" Дата счета " Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
+                                        DisplayMemberBinding="{Binding Path=AccountDate, StringFormat=\{0:dd.MM.yyyy\}, ConverterCulture='ru-RU'}"/>
                         <GridViewColumn Header=" Оплачено " Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
-                                                    DisplayMemberBinding="{Binding Path=OrderPayments, StringFormat={}{0:C}, ConverterCulture='ru-RU'}"/>
+                                        DisplayMemberBinding="{Binding Path=OrderPayments, StringFormat={}{0:C}, ConverterCulture='ru-RU'}"/>
                         <GridViewColumn Header=" Краткое описание заказа " Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
-                                                    DisplayMemberBinding="{Binding Path=Note}"/>
+                                        DisplayMemberBinding="{Binding Path=Note}"/>
                         <GridViewColumn Header=" Менеджер " Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
-                                                    DisplayMemberBinding="{Binding Path=Manager.FullUserName}"/>
+                                        DisplayMemberBinding="{Binding Path=Manager.FullUserName}"/>
                         <!--ДОБАВЛЯТЬ ИЛИ УДАЛАТЬ СТОЛБЕЦ В ПЕЧАТЬ ИЗ ПЕЧАТИ-->
                     </GridView.Columns>
                 </GridView>
@@ -344,7 +358,32 @@
                 </GridView>
             </ListView.View>
         </ListView>
-        <DockPanel Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2">
+        <ListView Grid.Row="4" Grid.Column="1" Name="ProductionProductListView" IsSynchronizedWithCurrentItem="True" 
+                          ItemsSource="{Binding Source={StaticResource workInTechCardViewSource}}" Visibility="Collapsed"
+                          MouseDoubleClick="OrderListView_MouseDoubleClick" ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto">
+            <ListView.View>
+                <GridView>
+                    <GridView.Columns>
+                        <GridViewColumn Header=" Номер заказа " Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
+                                        DisplayMemberBinding="{Binding Path=TechCard.Product.Order.Number}"/>
+                        <GridViewColumn Header=" Дата приема " Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
+                                        DisplayMemberBinding="{Binding Path=TechCard.Product.Order.DateAdmission, StringFormat={}{0:d}, ConverterCulture=ru-RU}"/>
+                        <GridViewColumn Header=" Изделие " Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
+                                        DisplayMemberBinding="{Binding Path=TechCard.Product.ProductType.Name}"/>
+                        <GridViewColumn Header=" Код " Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
+                                        DisplayMemberBinding="{Binding Path=TypeOfActivity.Code}"/>
+                        <GridViewColumn Header=" Расшифровка " Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
+                                        DisplayMemberBinding="{Binding Path=TypeOfActivity.Name}"/>
+                        <GridViewColumn Header=" Дата окончания (план) " Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
+                                        DisplayMemberBinding="{Binding Path=DatePlanCompletion, StringFormat={}{0:d}, ConverterCulture=ru-RU}"/>
+                        <GridViewColumn Header=" Название работы " Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
+                                        DisplayMemberBinding="{Binding Path=Name}"/>
+                        <!--ДОБАВИТЬ СТОЛБЕЦ В ПЕЧАТЬ-->
+                    </GridView.Columns>
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <DockPanel Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2">
             <StatusBar BorderThickness="2" DockPanel.Dock="Bottom">
                 <StatusBar.ItemsPanel>
                     <ItemsPanelTemplate>

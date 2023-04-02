@@ -108,6 +108,7 @@ namespace AdvertisementWpf
                         };
                         order.OrderEnteredID = MainWindow.Userdata.ID;
                         OrderEntered.Text = MainWindow.Userdata.FullUserName;
+                        order.ManagerID = MainWindow.Userdata.ID;
                         _ = __context.Orders.Add(order);
                         _ = ordersViewSource.View.MoveCurrentTo(order);
                     }
@@ -490,13 +491,14 @@ namespace AdvertisementWpf
                     {   //формируем номера для использования при печати техкарты
                         //«номер заказа».«порядковый номер изделия в заказе».«КВД».«порядковый номер операции»
                         short nTechCard = 1;
+                        short nOperationInWork = 1;
                         foreach (TechCard techCard in techCardsViewSource.View)
                         {
                             techCard.Number = $"{currentOrder.Number.TrimStart('0')}.{nTechCard++}";
                             foreach (WorkInTechCard workInTechCard in techCard.WorkInTechCards)
                             {
                                 workInTechCard.Number = $"{techCard.Number}.{workInTechCard.TypeOfActivity.Code.Trim()}";
-                                short nOperationInWork = 1;
+                                nOperationInWork = 1;
                                 foreach (OperationInWork operationInWork in workInTechCard.OperationInWorks)
                                 {
                                     operationInWork.Number = $"{workInTechCard.Number}.{nOperationInWork++}";
@@ -1895,7 +1897,9 @@ namespace AdvertisementWpf
             {
                 if (TechCardTreeView.SelectedItem is WorkInTechCard workInTC)
                 {
-                    workInTC.IsPrinted = !workInTC.IsPrinted;
+                    workInTC.IsChecked = !workInTC.IsChecked;
+                    workInTC.IsPrinted = workInTC.IsChecked; //отмечен, значит печатается
+                    e.Handled = true;
                 }
             }
         }
@@ -1938,49 +1942,81 @@ namespace AdvertisementWpf
         {
             NewOperationListBox.Visibility = Visibility.Collapsed;
             NewOperationListBoxRow.Height = GridLength.Auto;
-            if (sender is TreeView treeView && treeView.SelectedItem != null)
-            {
-                TechCard techCard = (TechCard)GetParentTreeViewItem(treeView.SelectedItem, 0);
-                _ = techCardsViewSource.View.MoveCurrentTo(techCard); //синхронизация с ObservableCollection
-            }
+            //if (sender is TreeView treeView && treeView.SelectedItem != null)
+            //{
+            //    TechCard techCard = (TechCard)GetParentTreeViewItem(treeView.SelectedItem, 0);
+            //    _ = techCardsViewSource.View.MoveCurrentTo(techCard); //синхронизация с ObservableCollection
+            //}
         }
 
         private void SendTechCardToProduction()
         {
-            if (TechCardTreeView != null && TechCardTreeView.SelectedItem != null)
+            if (TechCardTreeView?.SelectedItem != null)
             {
-                TechCard techCard = (TechCard)GetParentTreeViewItem(TechCardTreeView.SelectedItem, 0); //ищем корневого родителя на уровне TechCard
-                if (techCard != null)
+                try
                 {
-                    techCard.Product.DateTransferProduction = DateTime.Now; //фиксируем дату передачи в производство
-                    Product product = _context.Products.Local.First(Product => Product.ID == techCard.Product.ID); //найти изделие в контекте Заказа/ Если вдруг не нйдет, то будет ошибка!!!
-                    product.DateTransferProduction = DateTime.Now;
+                    TechCard techCard = (TechCard)GetParentTreeViewItem(TechCardTreeView.SelectedItem, 0); //ищем корневого родителя на уровне TechCard
+                    if (techCard != null)
+                    {
+                        techCard.Product.DateTransferProduction = DateTime.Now; //фиксируем дату передачи в производство
+                        foreach (Product product in productsViewSource.View) //найти изделие в контекте Заказа
+                        {
+                            if (product.ID == techCard.Product.ID)
+                            {
+                                product.DateTransferProduction = DateTime.Now;
+                                break;
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _ = MessageBox.Show(ex.Message + "\n" + ex?.InnerException?.Message, "Ошибка передачи в производство", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
         }
 
         private void DateFactCompletionDate_SourceUpdated(object sender, DataTransferEventArgs e)
         {
-            if (techCardsViewSource != null && techCardsViewSource.View != null)
+            if (techCardsViewSource?.View != null)
             {
-                if (TechCardTreeView != null && TechCardTreeView.SelectedItem != null)
+                if (TechCardTreeView?.SelectedItem != null)
                 {
-                    TechCard techCard = (TechCard)GetParentTreeViewItem(TechCardTreeView.SelectedItem, 0); //ищем корневого родителя на уровне TechCard
-                    if (techCard != null)
+                    try
                     {
-                        foreach (WorkInTechCard workInTechCard in techCard.WorkInTechCards) //проходим по всем работам текущей техкарты
+                        TechCard techCard = (TechCard)GetParentTreeViewItem(TechCardTreeView.SelectedItem, 0); //ищем корневого родителя на уровне TechCard
+                        if (techCard != null)
                         {
-                            if (!workInTechCard.DateFactCompletion.HasValue) //если нашли хоть одну незаполненную дату, то ничего не делаем
+                            foreach (WorkInTechCard workInTechCard in techCard.WorkInTechCards) //проходим по всем работам текущей техкарты
                             {
-                                techCard.Product.DateManufacture = null; //на всякий случай обнуляем дату
-                                Product prod = _context.Products.Local.First(Product => Product.ID == techCard.Product.ID); //найти изделие в контекте Заказа/ Если вдруг не нйдет, то будет ошибка!!!
-                                prod.DateManufacture = null;
-                                return;
+                                if (!workInTechCard.DateFactCompletion.HasValue) //если нашли хоть одну незаполненную дату, то ничего не делаем
+                                {
+                                    techCard.Product.DateManufacture = null; //на всякий случай обнуляем дату
+                                    foreach (Product product in productsViewSource.View) //найти изделие в контекте Заказа
+                                    {
+                                        if (product.ID == techCard.Product.ID)
+                                        {
+                                            product.DateManufacture = null;
+                                            return;
+                                        }
+                                    }
+                                    return;
+                                }
+                            }
+                            techCard.Product.DateManufacture = (TechCardTreeView.SelectedItem as WorkInTechCard).DateFactCompletion; //DateTime.Now; //фиксируем дату изготовления по изделию
+                            foreach (Product product in productsViewSource.View) //найти изделие в контекте Заказа
+                            {
+                                if (product.ID == techCard.Product.ID)
+                                {
+                                    product.DateManufacture = techCard.Product.DateManufacture;
+                                    break;
+                                }
                             }
                         }
-                        techCard.Product.DateManufacture = (TechCardTreeView.SelectedItem as WorkInTechCard).DateFactCompletion; //DateTime.Now; //фиксируем дату изготовления по изделию
-                        Product product = _context.Products.Local.First(Product => Product.ID == techCard.Product.ID); //найти изделие в контекте Заказа/ Если вдруг не нйдет, то будет ошибка!!!
-                        product.DateManufacture = techCard.Product.DateManufacture; //DateTime.Now;
+                    }
+                    catch (Exception ex)
+                    {
+                        _ = MessageBox.Show(ex.Message + "\n" + ex?.InnerException?.Message, "Ошибка простановки даты изготоления", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                 }
             }
@@ -2135,7 +2171,9 @@ namespace AdvertisementWpf
             {
                 if (TechCardTreeView.SelectedItem is TechCard techCard)
                 {
-                    techCard.IsPrinted = !techCard.IsPrinted;
+                    techCard.IsChecked = !techCard.IsChecked;
+                    techCard.IsPrinted = techCard.IsChecked;
+                    e.Handled = true;
                 }
             }
         }
@@ -2151,7 +2189,19 @@ namespace AdvertisementWpf
                     techCards = _context_.TechCards.Local.Where(t => t.IsPrinted).ToList(); //отобрать все ТК с отметкой для печати
                     if (techCards.Count == 0) //если по факту ничего не отобралось, тогда берем только текущую ТК
                     {
+                        techCard.IsPrinted = true;
                         techCards.Add(techCard);
+                    }
+                    foreach (TechCard tc in techCards)
+                    {
+                        foreach (WorkInTechCard workInTechCard in tc.WorkInTechCards) //ВСЕ дочерние элементы отметить На печать
+                        {
+                            workInTechCard.IsPrinted = true;
+                            foreach (OperationInWork operationInWork in workInTechCard.OperationInWorks)
+                            {
+                                operationInWork.IsPrinted = true;
+                            }
+                        }
                     }
                     TechCardPrint(ref techCards);
                 }
@@ -2161,7 +2211,29 @@ namespace AdvertisementWpf
                     techCards = _context_.TechCards.Local.Where(t => t.Equals(tc) && tc.WorkInTechCards.Any(w => w.IsPrinted)).ToList(); //отобрать эту ТК, если  есть Работы с отметкой для печати
                     if (techCards.Count == 0) //по факту ничего не отобралось, тогда берем только текущую ТК
                     {
+                        tc.IsPrinted = true;
+                        workInTechCard.IsPrinted = true;
                         techCards.Add(tc);
+                        foreach (OperationInWork operationInWork in workInTechCard.OperationInWorks) //для всех операций текущей работы проставить отметку На печать
+                        {
+                            operationInWork.IsPrinted = true;
+                        }
+                    }
+                    else
+                    {
+                        foreach (TechCard t in techCards)
+                        {
+                            foreach (WorkInTechCard workInTech in t.WorkInTechCards) //для отмеченных работ и операций проставить отметку На печать
+                            {
+                                if (workInTech.IsPrinted)
+                                {
+                                    foreach (OperationInWork operationInWork in workInTech.OperationInWorks)
+                                    {
+                                        operationInWork.IsPrinted = true;
+                                    }
+                                }
+                            }
+                        }
                     }
                     TechCardPrint(ref techCards);
                 }
@@ -2171,7 +2243,7 @@ namespace AdvertisementWpf
                     PrintTechCardButton.ContextMenu.Items.Clear();
                     foreach (OperationInWork operationInW in workInTC.OperationInWorks)
                     {
-                        if (operationInW.Operation.ProductionAreaID != null && !prodAreaID.Contains((long)operationInW.Operation.ProductionAreaID))
+                        if (operationInW.Operation.ProductionAreaID != null && !prodAreaID.Contains((long)operationInW.Operation.ProductionAreaID)) //добавление без дубляжа
                         {
                             MenuItem menuItem = new MenuItem
                             {
@@ -2185,7 +2257,7 @@ namespace AdvertisementWpf
                         }
                     }
                     _ = PrintTechCardButton.ContextMenu.Items.Add(new Separator()); //добавляем разделитель
-                    MenuItem m = new MenuItem { Header = " На печать " };
+                    MenuItem m = new MenuItem { Header = " На печать ", Tag = (long)0 };
                     m.Click += PrintTechCardMenuItem_Click;
                     _ = PrintTechCardButton.ContextMenu.Items.Add(m); //добавляем кнопку подтверждения
                     PrintTechCardButton.ContextMenu.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
@@ -2201,7 +2273,22 @@ namespace AdvertisementWpf
                         }
                         PrintTechCardButton.ContextMenu.IsOpen = false;
                         PrintTechCardButton.ContextMenu.Visibility = Visibility.Hidden;
-                        techCards.Add((TechCard)GetParentTreeViewItem(operationInWork, 0)); //берем ТК в печать
+                        prodAreaID.Clear();
+                        for (short i = 0; i < PrintTechCardButton.ContextMenu.Items.Count; i++)
+                        {
+                            if (PrintTechCardButton.ContextMenu.Items[i] is MenuItem menuItem)
+                            {
+                                if (menuItem.IsChecked && (long)menuItem.Tag > 0)
+                                {
+                                    prodAreaID.Add((long)menuItem.Tag); //собираем ID выбранных для печати операций
+                                }
+                            }
+                        }
+                        TechCard tc = (TechCard)GetParentTreeViewItem(operationInWork, 0);
+                        WorkInTechCard work = (WorkInTechCard)GetParentTreeViewItem(operationInWork, 1);
+                        tc.IsPrinted = true; //берем родителя в печать
+                        work.IsPrinted = true; //берем родителя в печать
+                        techCards.Add(tc);
                         if (prodAreaID.Count > 0) //есть отобранные на печать производственные участки
                         {
                             foreach (OperationInWork operationInW in workInTC.OperationInWorks)
@@ -2223,6 +2310,20 @@ namespace AdvertisementWpf
         {
             if (techCards.Count > 0)
             {
+                foreach (TechCard tc in techCards)
+                {
+                    if (tc.WorkInTechCards.Count == 0) //работы не определены
+                    {
+                        tc.WorkInTechCards.Add(new WorkInTechCard { Number = "_Fake_", IsPrinted = false }); //добавить фиктивную
+                    }
+                    foreach (WorkInTechCard workInTechCard in tc.WorkInTechCards)
+                    {
+                        if (workInTechCard.OperationInWorks.Count == 0) //операции не определены
+                        {
+                            workInTechCard.OperationInWorks.Add(new OperationInWork { Number = "_Fake_", IsPrinted = false }); //добавить фиктивную
+                        }
+                    }
+                }
                 using App.AppDbContext _reportcontext = new App.AppDbContext(MainWindow.Connectiondata.Connectionstring);
                 try
                 {
@@ -2235,6 +2336,29 @@ namespace AdvertisementWpf
                         Reports.ReportFileName = Path.Combine(_pathToReportTemplate, techCardFileTemplate);
                         Reports.ReportMode = "TechCard";
                         Reports.RunReport();
+                        foreach (TechCard techCard in techCards) //снять отметки На печать для всех операций и их родителей, добавленных как текущие
+                        {
+                            techCard.IsPrinted = (techCard.IsChecked || !techCard.IsPrinted) && techCard.IsPrinted; //не отмечана, но имеет признака На печать, тогда признак печати снять
+                            foreach (WorkInTechCard workInTechCard in techCard.WorkInTechCards)
+                            {
+                                workInTechCard.IsPrinted = (workInTechCard.IsChecked || !workInTechCard.IsPrinted) && workInTechCard.IsPrinted;
+
+                                foreach (OperationInWork operationInWork in workInTechCard.OperationInWorks)
+                                {
+                                    operationInWork.IsPrinted = false; //для операций снять отметку На печать без условий
+                                }
+                                Array arrayList = workInTechCard.OperationInWorks.Where(o => o.Number == "_Fake_").ToArray();
+                                for (int i = 0; i < arrayList.Length; i++)
+                                {
+                                    _ = workInTechCard.OperationInWorks.Remove((OperationInWork)arrayList.GetValue(i)); //удалить Фейковые
+                                }
+                            }
+                            Array array = techCard.WorkInTechCards.Where(o => o.Number == "_Fake_").ToArray();
+                            for (int i = 0; i < array.Length; i++)
+                            {
+                                _ = techCard.WorkInTechCards.Remove((WorkInTechCard)array.GetValue(i)); //удалить Фейковые
+                            }
+                        }
                     }
                     else
                     {

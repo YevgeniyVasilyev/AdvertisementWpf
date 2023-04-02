@@ -16,6 +16,7 @@
         <CollectionViewSource x:Key="designersDataSource"/>
         <CollectionViewSource x:Key="orderStatesDataSource"/>
         <CollectionViewSource x:Key="productStatesDataSource"/>
+        <CollectionViewSource x:Key="typeOfActivityDataSource"/>
         <Style x:Key="DropShadow" TargetType="{x:Type FrameworkElement}">
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
@@ -299,6 +300,12 @@
                         </ListBox>
                     </TabItem>
                 </TabControl>
+            </TabItem>
+            <TabItem Header="Изделия в произволстве" Name="ProductionProductsTabItem">
+                <ListBox Name="TypeOfActivityListBox" ItemsSource="{Binding Source={StaticResource typeOfActivityDataSource}}" 
+                         ScrollViewer.VerticalScrollBarVisibility="Auto" 
+                         DisplayMemberPath="Name" Style="{StaticResource CheckBoxListStyle}">
+                </ListBox>
             </TabItem>
         </TabControl>
         <Button Name="ApplyButton" Grid.Row="1" Margin="2" Style="{StaticResource ButtonOfFilter}" 

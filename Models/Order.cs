@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 using System.Windows.Data;
 
 //#nullable disable
@@ -46,47 +47,13 @@ namespace AdvertisementWpf.Models
         public virtual ICollection<Account> Accounts { get; set; }
 
         [NotMapped]
-        public decimal OrderCost
-        {
-            get
-            {
-                decimal oc = 0;
-                if (Products != null)
-                {
-                    foreach (Product product in Products)
-                    {
-                        oc += product.Cost;
-                    }
-                }
-                return oc;
-            }
-            //set => _orderCost = value;
-        }
+        public DateTime? AccountDate => Accounts?.FirstOrDefault()?.AccountDate ?? null;
         [NotMapped]
-        public decimal OrderPayments
-        {
-            get
-            {
-                decimal op = 0;
-                if (Payments != null)
-                {
-                    foreach (Payment payment in Payments)
-                    {
-                        op += payment.PaymentAmount;
-                    }
-                }
-                return op;
-            }
-        }
+        public decimal OrderCost => Products?.Sum(p => p.Cost) ?? 0;
         [NotMapped]
-        public short CountProduct
-        {
-            get
-            {
-                return Products != null ? (short)Products.Count : (short)0;
-            }
-            //set => _countProduct = value;
-        }
+        public decimal OrderPayments => Payments?.Sum(p => p.PaymentAmount) ?? 0;
+        [NotMapped]
+        public short CountProduct => (short)(Products?.Count ?? 0);
         public event PropertyChangedEventHandler PropertyChanged;
         protected void NotifyPropertyChanged(string propertyName)
         {
@@ -142,7 +109,7 @@ namespace AdvertisementWpf.Models
 
         private string _OrderState(object products)
         {
-            byte nState = 0, nCountDateTransferDesigner = 0, nCountDateManufacture = 0;
+            byte nState = 0, nCountDateTransferDesigner = 0, nCountDateShipment = 0;
             int nCount = 0;
             if (products != null)
             {
@@ -154,9 +121,9 @@ namespace AdvertisementWpf.Models
                         {
                             nCountDateTransferDesigner++;
                         }
-                        if (product.DateManufacture.HasValue)
+                        if (product.DateShipment.HasValue)
                         {
-                            nCountDateManufacture++;
+                            nCountDateShipment++;
                         }
                         nCount++;
                     }
@@ -169,14 +136,22 @@ namespace AdvertisementWpf.Models
                         {
                             nCountDateTransferDesigner++;
                         }
-                        if (product.DateManufacture.HasValue)
+                        if (product.DateShipment.HasValue)
                         {
-                            nCountDateManufacture++;
+                            nCountDateShipment++;
                         }
                         nCount++;
                     }
                 }
-                if (nCount > 0 && nCountDateManufacture == nCount) //у всех изделий есть Дата изготовления - "Завершен"
+                if (nCountDateShipment == nCount) //Даты отгрузки у всех
+                {
+                    nState = 4;
+                }
+                else if (nCountDateShipment > 0 && nCountDateShipment != nCount) //Даты отгрузки не у всех
+                {
+                    nState = 3;
+                }
+                else if (nCountDateShipment == 0) //нет ни одной Даты отгрузки
                 {
                     nState = 2;
                 }

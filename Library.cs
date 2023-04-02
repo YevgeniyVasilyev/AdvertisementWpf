@@ -289,7 +289,7 @@ namespace AdvertisementWpf
     {
         public static List<string> productStates = new List<string> { "Не определено", "Отгружено", "Запланирована отгрузка", "В производстве", "Подготовка", "Утвержден макет", "Передано на утверждение", "В разработке" };
         //public static List<string> productStates = new List<string> { "Не определено", "Отгружено", "Запланирована отгрузка", "Подготовка", "Утвержден макет", "Передано на утверждение", "В разработке" };
-        public static List<string> orderStates = new List<string> { "Оформление", "Производство", "Завершен" };
+        public static List<string> orderStates = new List<string> { "Оформление", "Производство", "Не отгружен", "Частично отгружен", "Отгружен" };
 
         public static string GetProductState(byte nIndex = 0)
         {
@@ -388,6 +388,7 @@ namespace AdvertisementWpf
         public static List<Product> ProductDataSet = null;
         public static List<object> ObjectDataSet = null;
         public static List<TechCard> TechCardDataSet = null;
+        public static List<WorkInTechCard> WorkInTechCardDataSet = null;
         public static DateTime ReportDate = DateTime.Now;
         public static DateTime BeginPeriod = DateTime.Now;
         public static DateTime EndPeriod = DateTime.Now;
@@ -476,6 +477,15 @@ namespace AdvertisementWpf
                     report.RegisterData(ProductDataSet, "Product", 3);
                     ReadyReportFileName = "ProductListView.pdf";
                 }
+                else if (ReportMode == "ProductionProductListViewForm")
+                {
+                    //report.Dictionary.RegisterBusinessObject(WorkInTechCardDataSet, "WorkInTechCard", 5, true);
+                    //report.Save("ProductionProductListView_data.frx");
+                    //return;
+                    report.Load(ReportFileName);
+                    report.RegisterData(WorkInTechCardDataSet, "WorkInTechCard", 5);
+                    ReadyReportFileName = "ProductionProductListView.pdf";
+                }
                 else if (ReportMode == "VMP")
                 {
                     //report.Dictionary.RegisterBusinessObject(ObjectDataSet, "dataset", 4, true);
@@ -493,7 +503,7 @@ namespace AdvertisementWpf
                     //report.Save($"{Path.GetFileNameWithoutExtension(ReportFileName)}_data.frx");
                     //return;
                     report.Load(ReportFileName);
-                    report.RegisterData(TechCardDataSet, "TechCard", 3);
+                    report.RegisterData(TechCardDataSet, "TechCard");
                     ReadyReportFileName = "TechCard.pdf";
                 }
 
@@ -799,6 +809,33 @@ namespace AdvertisementWpf
                 MainWindow.statusBar.ClearStatus();
             }
         }
+
+        public static void ProductionProductListView(ref ListView listView)
+        {
+            try
+            {
+                MainWindow.statusBar.WriteStatus("Подготовка списка ...", Cursors.Wait);
+                enumerator = listView.ItemsSource.GetEnumerator();
+                List<WorkInTechCard> list = new List<WorkInTechCard> { };
+                while (enumerator.MoveNext())
+                {
+                    list.Add((WorkInTechCard)enumerator.Current);
+                }
+                MainWindow.statusBar.WriteStatus("Вывод списка ...", Cursors.Wait);
+                Reports.ReportFileName = "Reports\\ProductionProductListView.frx";
+                Reports.WorkInTechCardDataSet = list;
+                Reports.ReportMode = "ProductionProductListViewForm";
+                Reports.RunReport();
+            }
+            catch (Exception ex)
+            {
+                _ = MessageBox.Show(ex.Message + "\n" + ex?.InnerException?.Message ?? "", "Ошибка отображения списка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            finally
+            {
+                MainWindow.statusBar.ClearStatus();
+            }
+        }
     }
 
     public class ObservableCollectionConverter : IValueConverter
@@ -863,6 +900,21 @@ namespace AdvertisementWpf
             }
         }
 
+        private bool isChecked;
+        [NotMapped]
+        public bool IsChecked
+        {
+            get => isChecked;
+            set
+            {
+                if (value != isChecked)
+                {
+                    isChecked = value;
+                    NotifyPropertyChanged("IsChecked");
+                }
+            }
+        }
+        
         public event PropertyChangedEventHandler PropertyChanged;
         public void NotifyPropertyChanged(string propName)
         {

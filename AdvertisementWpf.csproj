@@ -89,6 +89,7 @@
     <None Remove="Reports\Dictionary_VMP_dataset.frd" />
     <None Remove="Reports\OrderListView.frx" />
     <None Remove="Reports\OrderListView_data.frx" />
+    <None Remove="Reports\ProductionProductListView.frx" />
     <None Remove="Reports\ProductListView.frx" />
     <None Remove="Reports\ProductListView_data.frx" />
     <None Remove="Reports\VMP_data.frx" />
@@ -110,11 +111,13 @@
     <None Remove="Бухгалтерия_правки1.doc" />
     <None Remove="Конструктор изделий.docx" />
     <None Remove="Освоенные за период.doc" />
+    <None Remove="Отбор в производстве правка 1.xlsx" />
     <None Remove="Отбор данных.doc" />
     <None Remove="Отбор данных.docx" />
     <None Remove="Счет на оплату от РТ.xls" />
     <None Remove="счет фактура бланк.xls" />
     <None Remove="ТЗ электронный бланк заказа.xlsx" />
+    <None Remove="ТК печать с правкой 1.doc" />
     <None Remove="ТК печать.doc" />
     <None Remove="ТК эскиз.pdf" />
     <None Remove="ТК.pdf" />
@@ -203,6 +206,9 @@
     <Resource Include="Images\premium-icon-payment.png" />
     <Resource Include="Images\premium-icon-refresh.png" />
     <Resource Include="Images\premium-icon-view.png" />
+    <Resource Include="Reports\ProductionProductListView.frx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
     <Content Include="Reports\OrderListView.frx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

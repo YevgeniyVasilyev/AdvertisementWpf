@@ -32,11 +32,12 @@ namespace AdvertisementWpf
         public static StatusBar statusBar;
         public static OrderLegendColors orderLegendColors;
         public static List<IAccessMatrix> userIAccessMatrix;
-        private CollectionViewSource ordersViewSource, productsViewSource;
+        private CollectionViewSource ordersViewSource, productsViewSource, workInTechCardViewSource;
         private App.AppDbContext _context;
         public static string WhereCondition = "", WhereStateCondition = "";
         public static List<string> WhereProductCategoryCondition = new List<string> { }, WhereProductClientCondition = new List<string> { },
             WhereProductManagerCondition = new List<string> { }, WhereProductDesignerCondition = new List<string> { };
+        public static List<long> WhereTypeOfActivityCondition = new List<long> { };
         public static DateTime? dStartDate, dEndDate;
 
         public MainWindow()
@@ -89,6 +90,7 @@ namespace AdvertisementWpf
             Connectiondata.Is_verify_connection = false;
             OrderListView.Visibility = Visibility.Collapsed;
             ProductListView.Visibility = Visibility.Collapsed;
+            ProductionProductListView.Visibility = Visibility.Collapsed;
             LogonWindow logon = new LogonWindow
             {
                 Owner = this
@@ -336,49 +338,43 @@ namespace AdvertisementWpf
                     OrderWindow order = new OrderWindow(NewOrder: true) { };
                     _ = order.ShowDialog();
                 }
-                if (btn.Name == "ViewOrderButton")
+                else if (btn == ViewOrderButton || btn == EditOrderButton)
                 {
                     long nOrderID = 0;
-                    if (ordersViewSource != null && ordersViewSource.View != null && (ordersViewSource.View.CurrentItem is Order nOrder) && OrderListView.Visibility == Visibility.Visible)
+                    if (ordersViewSource != null && ordersViewSource.View != null && ordersViewSource.View.CurrentItem is Order nOrder && OrderListView.IsVisible)
                     {
                         nOrderID = nOrder.ID;
                     }
-                    else if (productsViewSource != null && productsViewSource.View != null && (productsViewSource.View.CurrentItem is Product product) && ProductListView.Visibility == Visibility.Visible)
+                    else if (productsViewSource != null && productsViewSource.View != null && productsViewSource.View.CurrentItem is Product product && ProductListView.IsVisible)
                     {
                         nOrderID = product.OrderID;
                     }
-                    OrderWindow order = new OrderWindow(NewOrder: false, EditMode: false, nOrderID: nOrderID) { };
+                    else if (workInTechCardViewSource != null && workInTechCardViewSource.View != null && workInTechCardViewSource.View.CurrentItem is WorkInTechCard workInTechCard && ProductionProductListView.IsVisible)
+                    {
+                        nOrderID = workInTechCard.TechCard.Product.OrderID;
+                    }
+                    OrderWindow order = new OrderWindow(NewOrder: false, EditMode: btn == EditOrderButton, nOrderID: nOrderID) { };
                     _ = order.ShowDialog();
                 }
-                if (btn.Name == "EditOrderButton")
-                {
-                    long nOrderID = 0;
-                    if (ordersViewSource != null && ordersViewSource.View != null && (ordersViewSource.View.CurrentItem is Order nOrder) && OrderListView.Visibility == Visibility.Visible)
-                    {
-                        nOrderID = nOrder.ID;
-                    }
-                    else if (productsViewSource != null && productsViewSource.View != null && (productsViewSource.View.CurrentItem is Product product) && ProductListView.Visibility == Visibility.Visible)
-                    {
-                        nOrderID = product.OrderID;
-                    }
-                    OrderWindow order = new OrderWindow(NewOrder: false, EditMode: true, nOrderID: nOrderID) { };
-                    _ = order.ShowDialog();
-                }
-                if (btn.Name == "AllOrdersButton")
+                else if (btn == AllOrdersButton)
                 {
                     //очистить условие отбора
                     WhereCondition = WhereStateCondition = "";
                     ShowOrders();
                 }
-                if (btn.Name == "FilterOrdersButton")
+                else if (btn == FilterOrdersButton)
                 {
                     FilterOrders();
                 }
-                if (btn.Name == "FilterProductsButton")
+                else if (btn == FilterProductsButton)
                 {
                     FilterProducts();
                 }
-                if (btn.Name == "RefreshOrderButton")
+                else if (btn == FilterProductionProductsButton)
+                {
+                    FilterProductionProducts();
+                }
+                else if (btn == RefreshOrderButton)
                 {
                     RefreshOrderProduct();
                 }
@@ -400,6 +396,12 @@ namespace AdvertisementWpf
                 mainWnd.ShowProducts();
                 _ = mainWnd.productsViewSource.View.MoveCurrentToPosition(nCurrentIndex);
             }
+            else if (mainWnd.ProductionProductListView.IsVisible)
+            {
+                int nCurrentIndex = mainWnd.workInTechCardViewSource.View.CurrentPosition >= 0 ? mainWnd.workInTechCardViewSource.View.CurrentPosition : 0;
+                mainWnd.ShowProductionProducts();
+                _ = mainWnd.workInTechCardViewSource.View.MoveCurrentToPosition(nCurrentIndex);
+            }            
         }
 
         private void Order_CanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -408,31 +410,39 @@ namespace AdvertisementWpf
             {
                 if (e.OriginalSource is Button btn)
                 {
-                    if ((btn.Name == "NewOrderButton" || btn.Name == "NewOrderButton1") && Userdata.ID > 0)
+                    if ((btn == NewOrderButton || btn == NewOrderButton1) && Userdata.ID > 0)
                     {
                         e.CanExecute = true;
                     }
-                    if (btn.Name == "AllOrdersButton" || (btn.Name == "EditOrderButton" && OrderListView.IsVisible && ordersViewSource != null && ordersViewSource.View.CurrentItem is Order))
+                    if (btn == AllOrdersButton || (btn == EditOrderButton && OrderListView.IsVisible && ordersViewSource?.View != null && ordersViewSource.View.CurrentItem is Order))
                     {
                         e.CanExecute = true;
                     }
-                    if (btn.Name == "EditOrderButton" && ProductListView.IsVisible && productsViewSource != null && productsViewSource.View.CurrentItem is Product)
+                    else if (btn == EditOrderButton && ProductListView.IsVisible && productsViewSource?.View != null && productsViewSource.View.CurrentItem is Product)
                     {
                         e.CanExecute = true;
                     }
-                    if (btn.Name == "ViewOrderButton" && OrderListView.IsVisible && ordersViewSource != null && ordersViewSource.View.CurrentItem is Order)
+                    else if (btn == EditOrderButton && ProductionProductListView.IsVisible && workInTechCardViewSource?.View != null && workInTechCardViewSource.View.CurrentItem is WorkInTechCard)
+                    {
+                        e.CanExecute = true;
+                    }                    
+                    else if (btn == ViewOrderButton && OrderListView.IsVisible && ordersViewSource != null && ordersViewSource.View != null && ordersViewSource.View.CurrentItem is Order)
                     {
                         e.CanExecute = true;
                     }
-                    if (btn.Name == "ViewOrderButton" && ProductListView.IsVisible && productsViewSource != null && productsViewSource.View.CurrentItem is Product)
+                    else if (btn == ViewOrderButton && ProductListView.IsVisible && productsViewSource?.View.CurrentItem is Product)
                     {
                         e.CanExecute = true;
                     }
-                    if (btn.Name == "FilterOrdersButton" || btn.Name == "FilterProductsButton")
+                    else if (btn == ViewOrderButton && ProductionProductListView.IsVisible && workInTechCardViewSource?.View != null && workInTechCardViewSource.View.CurrentItem is WorkInTechCard)
                     {
                         e.CanExecute = true;
                     }
-                    if (btn.Name == "RefreshOrderButton" && (OrderListView.IsVisible || ProductListView.IsVisible))
+                    else if (btn == FilterOrdersButton || btn == FilterProductsButton || btn == FilterProductionProductsButton)
+                    {
+                        e.CanExecute = true;
+                    }
+                    else if (btn == RefreshOrderButton && (OrderListView.IsVisible || ProductListView.IsVisible || ProductionProductListView.IsVisible))
                     {
                         e.CanExecute = true;
                     }
@@ -481,7 +491,7 @@ namespace AdvertisementWpf
             {
                 if (e.OriginalSource is Button btn)
                 {
-                    if (btn.Name == "DeleteOrderButton" && ordersViewSource.View.CurrentItem is Order && Userdata.IsAdmin)
+                    if (btn == DeleteOrderButton && ordersViewSource.View.CurrentItem is Order && Userdata.IsAdmin)
                     {
                         e.CanExecute = true;
                     }
@@ -522,15 +532,19 @@ namespace AdvertisementWpf
         {
             if (e.OriginalSource is Button btn)
             {
-                if (btn.Name == "PrintOrderListButton")
+                if (btn == PrintOrderListButton)
                 {
-                    if (OrderListView.Visibility == Visibility.Visible)
+                    if (OrderListView.IsVisible)
                     {
                         PrintControl.OrderListView(ref OrderListView);
                     }
-                    if (ProductListView.Visibility == Visibility.Visible)
+                    if (ProductListView.IsVisible)
                     {
                         PrintControl.ProductListView(ref ProductListView);
+                    }
+                    if (ProductionProductListView.IsVisible)
+                    {
+                        PrintControl.ProductionProductListView(ref ProductionProductListView);
                     }
                 }
             }
@@ -542,7 +556,7 @@ namespace AdvertisementWpf
             {
                 if (e.OriginalSource is Button btn)
                 {
-                    if (btn.Name == "PrintOrderListButton" && (OrderListView.Visibility == Visibility.Visible || ProductListView.Visibility == Visibility.Visible))
+                    if (btn == PrintOrderListButton && (OrderListView.IsVisible || ProductListView.IsVisible || ProductionProductListView.IsVisible))
                     {
                         e.CanExecute = true;
                     }
@@ -553,7 +567,7 @@ namespace AdvertisementWpf
         private void ShowOrders()
         {
             statusBar.WriteStatus("Получение данных ...", Cursors.Wait);
-            _context = new App.AppDbContext(Connectiondata.Connectionstring);
+            using App.AppDbContext _context = new App.AppDbContext(Connectiondata.Connectionstring);
             try
             {
                 List<Order> OrderList;
@@ -564,13 +578,19 @@ namespace AdvertisementWpf
                     .Include(Order => Order.OrderEntered)
                     .Include(Order => Order.Client)
                     .Include(Order => Order.Payments)
+                    .Include(Order => Order.Accounts)
                     .ToList();
-                if (WhereStateCondition.Length > 0)
+                if (IGrantAccess.CheckGrantAccess(userIAccessMatrix, Userdata.RoleID, "ListManager")) //роль текущего пользователя относится к Менеджерам
+                {
+                    OrderList = OrderList.Where(w => w.ManagerID == Userdata.ID).ToList(); //значит текущему пользователю предоставить только его заказы
+                }
+                if (WhereStateCondition.Length > 0) //указан отбор по состоянию заказа
                 {
                     OrderList = OrderList.Where(Order => WhereStateCondition.IndexOf(Order.State) >= 0).ToList();
                 }
                 ordersViewSource.Source = OrderList;
                 ProductListView.Visibility = Visibility.Collapsed;
+                ProductionProductListView.Visibility = Visibility.Collapsed;
                 OrderListView.Visibility = Visibility.Visible;
             }
             catch (Exception ex)
@@ -580,18 +600,13 @@ namespace AdvertisementWpf
             finally
             {
                 statusBar.ClearStatus();
-                if (_context != null)
-                {
-                    _context.Dispose();
-                    _context = null;
-                }
             }
         }
 
         private void ShowProducts()
         {
             statusBar.WriteStatus("Получение данных ...", Cursors.Wait);
-            _context = new App.AppDbContext(Connectiondata.Connectionstring);
+            using App.AppDbContext _context = new App.AppDbContext(Connectiondata.Connectionstring);
             try
             {
                 List<Product> ProductList;
@@ -601,6 +616,10 @@ namespace AdvertisementWpf
                     .Include(Products => Products.Order)
                     .Include(Products => Products.Designer)
                     .ToList();
+                if (IGrantAccess.CheckGrantAccess(userIAccessMatrix, Userdata.RoleID, "ListManager")) //роль текущего пользователя относится к Менеджерам
+                {
+                    ProductList = ProductList.Where(p => p.Order.ManagerID == Userdata.ID).ToList(); //значит текущему пользователю предоставить только его заказы
+                }
                 //дата приема заказа
                 if (dStartDate.HasValue && dEndDate.HasValue)
                 {
@@ -632,6 +651,7 @@ namespace AdvertisementWpf
                 }
                 productsViewSource.Source = ProductList.OrderBy(Products => Products.Order.Number);
                 OrderListView.Visibility = Visibility.Collapsed;
+                ProductionProductListView.Visibility = Visibility.Collapsed;
                 ProductListView.Visibility = Visibility.Visible;
             }
             catch (Exception ex)
@@ -641,11 +661,42 @@ namespace AdvertisementWpf
             finally
             {
                 statusBar.ClearStatus();
-                if (_context != null)
+            }
+        }
+        private void ShowProductionProducts()
+        {
+            statusBar.WriteStatus("Получение данных ...", Cursors.Wait);
+            using App.AppDbContext _context = new App.AppDbContext(Connectiondata.Connectionstring);
+            try
+            {
+                List<WorkInTechCard> workInTechCards;
+                workInTechCards = _context.WorkInTechCards.AsNoTracking()
+                    .Include(WorkInTechCard => WorkInTechCard.TechCard)
+                    .Include(WorkInTechCard => WorkInTechCard.TypeOfActivity)
+                    .Include(WorkInTechCard => WorkInTechCard.TechCard.Product)
+                    .Include(WorkInTechCard => WorkInTechCard.TechCard.Product.ProductType)
+                    .Include(WorkInTechCard => WorkInTechCard.TechCard.Product.Order)
+                    .Include(WorkInTechCard => WorkInTechCard.TechCard.Product.Order.Client)
+                    .Where(WorkInTechCard => WhereTypeOfActivityCondition.Contains(WorkInTechCard.TypeOfActivity.ID))
+                    .ToList();
+                workInTechCardViewSource = (CollectionViewSource)FindResource(nameof(workInTechCardViewSource));
+                if (IGrantAccess.CheckGrantAccess(userIAccessMatrix, Userdata.RoleID, "ListManager")) //роль текущего пользователя относится к Менеджерам
                 {
-                    _context.Dispose();
-                    _context = null;
+                    workInTechCards = workInTechCards.Where(w => w.TechCard.Product.Order.ManagerID == Userdata.ID).ToList(); //значит текущему пользователю предоставить только его заказы
                 }
+                workInTechCardViewSource.Source = workInTechCards.Where(w => w.TechCard.Product.State == OrderProductStates.GetProductState(3) || w.TechCard.Product.State == OrderProductStates.GetProductState(4))
+                    .OrderBy(w => w.TechCard.Product.Order.Number);
+                OrderListView.Visibility = Visibility.Collapsed;
+                ProductListView.Visibility = Visibility.Collapsed;
+                ProductionProductListView.Visibility = Visibility.Visible;
+            }
+            catch (Exception ex)
+            {
+                _ = MessageBox.Show(ex.Message + "\n" + ex?.InnerException?.Message, "Ошибка загрузки данных", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            finally
+            {
+                statusBar.ClearStatus();
             }
         }
 
@@ -660,10 +711,19 @@ namespace AdvertisementWpf
 
         private void FilterProducts()
         {
-            FilterWindow fw = new FilterWindow(isOrderFilter: false);
+            FilterWindow fw = new FilterWindow(orderFilterMode: 1);
             if ((bool)fw.ShowDialog())
             {
                 ShowProducts();
+            }
+        }
+
+        private void FilterProductionProducts()
+        {
+            FilterWindow fw = new FilterWindow(orderFilterMode: 2);
+            if ((bool)fw.ShowDialog())
+            {
+                ShowProductionProducts();
             }
         }
 

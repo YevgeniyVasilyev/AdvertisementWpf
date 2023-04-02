@@ -18,29 +18,34 @@ namespace AdvertisementWpf
 {
     public partial class FilterWindow : Window
     {
-        private CollectionViewSource categoryOfProductsDataSource, clientsDataSource, managersDataSource, designersDataSource, orderStatesDataSource, productStatesDataSource;
+        private CollectionViewSource categoryOfProductsDataSource, clientsDataSource, managersDataSource, designersDataSource, orderStatesDataSource, productStatesDataSource, typeOfActivityDataSource;
         private App.AppDbContext _context;
-        private static bool IsOrderFilter;
+        private static short OrderFilterMode;
 
         private string sDateCondition = "", sClientCondition = "", sManagerCondition = "", sStateCondition = "", sNumberCondition = ""; //sDesignerCondition = "",
         private readonly List<string> LCategoryCondition = new List<string> { }, LClientCondition = new List<string> { }, LDesignerCondition = new List<string> { }, LManagerCondition = new List<string> { };
 
-        public FilterWindow(bool isOrderFilter = true)
+        public FilterWindow(short orderFilterMode = 0)
         {
-            IsOrderFilter = isOrderFilter;
+            OrderFilterMode = orderFilterMode;
             MainWindow.statusBar.WriteStatus("Инициализация формы ...", Cursors.Wait);
 
             InitializeComponent();
-            if (IsOrderFilter)
+            if (OrderFilterMode == 0)
             {
                 OrdersTabItem.IsSelected = true;
             }
-            else
+            else if (OrderFilterMode == 1)
             {
                 ProductsTabItem.IsSelected = true;
             }
-            OrdersTabItem.IsEnabled = IsOrderFilter;
-            ProductsTabItem.IsEnabled = !IsOrderFilter;
+            else if (OrderFilterMode == 2)
+            {
+                ProductionProductsTabItem.IsSelected = true;
+            }
+            OrdersTabItem.IsEnabled = OrderFilterMode == 0;
+            ProductsTabItem.IsEnabled = OrderFilterMode == 1;
+            ProductionProductsTabItem.IsEnabled = OrderFilterMode == 2;
 
             MainWindow.statusBar.WriteStatus("Получение данных ...", Cursors.Wait);
 
@@ -50,11 +55,14 @@ namespace AdvertisementWpf
             designersDataSource = (CollectionViewSource)FindResource(nameof(designersDataSource));
             orderStatesDataSource = (CollectionViewSource)FindResource(nameof(orderStatesDataSource));
             productStatesDataSource = (CollectionViewSource)FindResource(nameof(productStatesDataSource));
+            productStatesDataSource = (CollectionViewSource)FindResource(nameof(productStatesDataSource));
+            typeOfActivityDataSource = (CollectionViewSource)FindResource(nameof(typeOfActivityDataSource));
 
             _context = new App.AppDbContext(MainWindow.Connectiondata.Connectionstring);
             try
             {
                 categoryOfProductsDataSource.Source = _context.CategoryOfProducts.AsNoTracking().ToList();
+                typeOfActivityDataSource.Source = _context.TypeOfActivitys.AsNoTracking().ToList();
                 clientsDataSource.Source = _context.Clients.AsNoTracking().ToList();
                 managersDataSource.Source = _context.Users.AsNoTracking().ToList().Where(u => IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, u.RoleID, "ListManager"));  // ListManager
                 designersDataSource.Source = _context.Users.AsNoTracking().ToList().Where(u => IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, u.RoleID, "ListDesigner")); //ListDesigner
@@ -78,6 +86,9 @@ namespace AdvertisementWpf
                     pDayDateTime.SelectedDate = DateTime.Today;
                     pStartDate.SelectedDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
                     pEndDate.SelectedDate = DateTime.Today;
+                }
+                else if (ProductionProductsTabItem.IsEnabled)
+                {
                 }
             }
             catch (Exception ex)
@@ -108,6 +119,10 @@ namespace AdvertisementWpf
             else if (ProductsTabItem.IsEnabled)
             {
                 ProductWhereCondition();
+            }
+            else if (ProductionProductsTabItem.IsEnabled)
+            {
+                ProductionProductWhereCondition();
             }
         }
 
@@ -408,6 +423,35 @@ namespace AdvertisementWpf
             {
                 MainWindow.WhereCondition = sDateCondition;
                 MainWindow.WhereStateCondition = sStateCondition;
+                MainWindow.WhereCondition = string.IsNullOrWhiteSpace(MainWindow.WhereCondition) ? "" : $"WHERE {MainWindow.WhereCondition}";
+                DialogResult = true;
+                Close();
+                MainWindow.statusBar.ClearStatus();
+            }
+        }
+
+        private void ProductionProductWhereCondition()
+        {
+            try
+            {
+                MainWindow.WhereTypeOfActivityCondition.Clear();
+
+                //обработка условия "КВД" 
+                foreach (object typeOfActivity in TypeOfActivityListBox.Items)
+                {
+                    ListBoxItem listBoxitem = (ListBoxItem)TypeOfActivityListBox.ItemContainerGenerator.ContainerFromItem(typeOfActivity);
+                    if (listBoxitem != null && listBoxitem.IsSelected)
+                    {
+                        MainWindow.WhereTypeOfActivityCondition.Add(((TypeOfActivity)typeOfActivity).ID);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _ = MessageBox.Show(ex.Message + "\n" + ex?.InnerException?.Message, "Ошибка формирования условия отбора", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            finally
+            {
                 MainWindow.WhereCondition = string.IsNullOrWhiteSpace(MainWindow.WhereCondition) ? "" : $"WHERE {MainWindow.WhereCondition}";
                 DialogResult = true;
                 Close();

@@ -18,6 +18,7 @@ namespace AdvertisementWpf.Models
         public long TechCardID { get; set; }
         public long? TypeOfActivityID { get; set; }
         public string Number { get; set; } = "";
+        public string Name { get; set; } = "";
         [Column(TypeName = "datetime")]
         public DateTime? DatePlanCompletion { get; set; }
         [Column(TypeName = "datetime")]

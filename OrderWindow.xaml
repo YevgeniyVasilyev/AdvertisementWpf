@@ -774,14 +774,14 @@
                                             <TreeView.Resources>
                                                 <HierarchicalDataTemplate DataType="{x:Type model:TechCard}" ItemsSource="{Binding Path=WorkInTechCards_}">
                                                     <StackPanel Orientation="Horizontal">
-                                                        <TextBlock Text=" + " Visibility="{Binding IsPrinted, Converter={StaticResource BooleanToVisibilityConverter}}" FontWeight="ExtraBold"/>
+                                                        <TextBlock Text=" + " Visibility="{Binding IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}" FontWeight="ExtraBold"/>
                                                         <TextBlock Text="{Binding Path=Product.ProductTypeName}" Padding="2" MouseLeftButtonDown="TechCardTreeView_MouseLeftButtonDown" 
                                                                    ToolTip="Ctrl+левая кнопка мыши - отметить/снять отметку"/>
                                                     </StackPanel>
                                                 </HierarchicalDataTemplate>
                                                 <HierarchicalDataTemplate DataType="{x:Type model:WorkInTechCard}" ItemsSource="{Binding Path=OperationInWorks_}">
                                                     <StackPanel Orientation="Horizontal">
-                                                        <TextBlock Text=" + " Visibility="{Binding IsPrinted, Converter={StaticResource BooleanToVisibilityConverter}}" FontWeight="ExtraBlack"/>
+                                                        <TextBlock Text=" + " Visibility="{Binding IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}" FontWeight="ExtraBlack"/>
                                                         <StackPanel Orientation="Vertical">
                                                             <TextBlock Name="WorkInTechCardTextBlock" Text="{Binding Path=TypeOfActivity.CodeName}" Padding="2" 
                                                                        MouseLeftButtonDown="WorkInTechCardTextBlock_MouseLeftButtonDown" 
@@ -842,6 +842,13 @@
                                                 <Label Content="Описание"/>
                                                 <TextBox MinHeight="70" BorderThickness="1" BorderBrush="Black" 
                                                          Text="{Binding ElementName=TechCardTreeView, Path=SelectedItem.Note, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                                         AcceptsReturn="True" TextWrapping="Wrap" HorizontalContentAlignment="Left" VerticalContentAlignment="Top" />
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2" Orientation="Vertical" 
+                                                        Visibility="{Binding ElementName=TechCardTreeView, Path=SelectedItem, Converter={StaticResource VisibilitySelector}, ConverterParameter=WorkInTechCardAttribute}">
+                                                <Label Content="Название работы"/>
+                                                <TextBox MinHeight="70" BorderThickness="1" BorderBrush="Black" Margin="0,0,2,0"
+                                                         Text="{Binding ElementName=TechCardTreeView, Path=SelectedItem.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                                                          AcceptsReturn="True" TextWrapping="Wrap" HorizontalContentAlignment="Left" VerticalContentAlignment="Top" />
                                             </StackPanel>
                                             <Label Grid.Column="1" Grid.Row="2" Content="Дата планового завершения работы " Name="PlanCompletionDate" 
