@@ -15,6 +15,7 @@ using System.Drawing;
 using System.Windows.Media;
 using System.Windows.Controls.Primitives;
 using System.Reflection;
+using System.Windows.Documents;
 
 namespace AdvertisementWpf
 {
@@ -39,6 +40,8 @@ namespace AdvertisementWpf
             WhereProductManagerCondition = new List<string> { }, WhereProductDesignerCondition = new List<string> { };
         public static List<long> WhereTypeOfActivityCondition = new List<long> { };
         public static DateTime? dStartDate, dEndDate;
+        private GridViewColumnHeader listViewSortCol = null;
+        private SortAdorner listViewSortAdorner = null;
 
         public MainWindow()
         {
@@ -663,6 +666,7 @@ namespace AdvertisementWpf
                 statusBar.ClearStatus();
             }
         }
+
         private void ShowProductionProducts()
         {
             statusBar.WriteStatus("Получение данных ...", Cursors.Wait);
@@ -697,6 +701,50 @@ namespace AdvertisementWpf
             finally
             {
                 statusBar.ClearStatus();
+            }
+        }
+
+        private void GridViewColumnHeader_Click(object sender, RoutedEventArgs e)
+        {
+            GridViewColumnHeader column = sender as GridViewColumnHeader;
+            string sortBy = column.Tag.ToString();
+            if (listViewSortCol != null)
+            {
+                AdornerLayer.GetAdornerLayer(listViewSortCol).Remove(listViewSortAdorner);
+                if (OrderListView.IsVisible)
+                {
+                    OrderListView.Items.SortDescriptions.Clear();
+                }
+                else if (ProductListView.IsVisible)
+                {
+                    ProductListView.Items.SortDescriptions.Clear();
+                }
+                else if (ProductionProductListView.IsVisible)
+                {
+                    ProductionProductListView.Items.SortDescriptions.Clear();
+                }
+            }
+
+            ListSortDirection newDir = ListSortDirection.Ascending;
+            if (listViewSortCol == column && listViewSortAdorner.Direction == newDir)
+            {
+                newDir = ListSortDirection.Descending;
+            }
+
+            listViewSortCol = column;
+            listViewSortAdorner = new SortAdorner(listViewSortCol, newDir);
+            AdornerLayer.GetAdornerLayer(listViewSortCol).Add(listViewSortAdorner);
+            if (OrderListView.IsVisible)
+            {
+                OrderListView.Items.SortDescriptions.Add(new SortDescription(sortBy, newDir));
+            }
+            else if (ProductListView.IsVisible)
+            {
+                ProductListView.Items.SortDescriptions.Add(new SortDescription(sortBy, newDir));
+            }
+            else if (ProductionProductListView.IsVisible)
+            {
+                ProductionProductListView.Items.SortDescriptions.Add(new SortDescription(sortBy, newDir));
             }
         }
 
@@ -747,6 +795,45 @@ namespace AdvertisementWpf
         {
             ReportWindow rw = new ReportWindow();
             _ = rw.ShowDialog();
+        }
+    }
+
+    public class SortAdorner : Adorner
+    {
+        private static Geometry ascGeometry = Geometry.Parse("M 0 4 L 3.5 0 L 7 4 Z");
+        private static Geometry descGeometry = Geometry.Parse("M 0 0 L 3.5 4 L 7 0 Z");
+
+        public ListSortDirection Direction { get; private set; }
+
+        public SortAdorner(UIElement element, ListSortDirection dir) : base(element)
+        {
+            Direction = dir;
+        }
+
+        protected override void OnRender(DrawingContext drawingContext)
+        {
+            base.OnRender(drawingContext);
+
+            if (AdornedElement.RenderSize.Width < 20)
+            {
+                return;
+            }
+
+            TranslateTransform transform = new TranslateTransform
+                (
+                    AdornedElement.RenderSize.Width - 15,
+                    (AdornedElement.RenderSize.Height - 5) / 2
+                );
+            drawingContext.PushTransform(transform);
+
+            Geometry geometry = ascGeometry;
+            if (Direction == ListSortDirection.Descending)
+            {
+                geometry = descGeometry;
+            }
+
+            drawingContext.DrawGeometry(System.Windows.Media.Brushes.Black, null, geometry);
+            drawingContext.Pop();
         }
     }
 

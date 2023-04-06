@@ -204,6 +204,7 @@
         </Border>
         <ListView Grid.Row="2" Grid.Column="1" Name="OrderListView" IsSynchronizedWithCurrentItem="True" Visibility="Collapsed"
                   ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto"
+                  ScrollViewer.HorizontalScrollBarVisibility="Auto"
                   ItemsSource="{Binding Source={StaticResource ordersViewSource}}" MouseDoubleClick="OrderListView_MouseDoubleClick">
             <ListView.Resources>
                 <local:OrderBackgroundPaymentSelector x:Key="OrderBackgroundPaymentSelector">
@@ -269,15 +270,31 @@
             <ListView.View>
                 <GridView>
                     <GridView.Columns>
-                        <GridViewColumn Header=" Номер заказа " Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
-                                        DisplayMemberBinding="{Binding Path=Number}"/>
-                        <GridViewColumn Header=" Дата приема " Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
-                                        DisplayMemberBinding="{Binding Path=DateAdmission, StringFormat={}{0:d}, ConverterCulture=ru-RU}"/>
-                        <GridViewColumn Header=" Состояние заказа " Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}" 
-                                        DisplayMemberBinding="{Binding Path=State}"/>
-                        <GridViewColumn Header=" Клиент " Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
-                                        DisplayMemberBinding="{Binding Path=Client.Name}"/>
-                        <GridViewColumn Header=" Изделия в заказе " Width="300" HeaderTemplate="{StaticResource ListViewHeaderTemplate}">
+                        <GridViewColumn Width="200" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
+                                        DisplayMemberBinding="{Binding Path=Number}">
+                            <GridViewColumn.Header>
+                                <GridViewColumnHeader Content=" Номер заказа " Tag="Number" Click="GridViewColumnHeader_Click"/>
+                            </GridViewColumn.Header>
+                        </GridViewColumn>
+                        <GridViewColumn Width="120" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
+                                        DisplayMemberBinding="{Binding Path=DateAdmission, StringFormat={}{0:d}, ConverterCulture=ru-RU}">
+                            <GridViewColumn.Header>
+                                <GridViewColumnHeader Content=" Дата приема " Tag="DateAdmission" Click="GridViewColumnHeader_Click"/>
+                            </GridViewColumn.Header>
+                        </GridViewColumn>
+                        <GridViewColumn Width="150" HeaderTemplate="{StaticResource ListViewHeaderTemplate}" 
+                                        DisplayMemberBinding="{Binding Path=State}">
+                            <GridViewColumn.Header>
+                                <GridViewColumnHeader Content=" Состояние заказа " Tag="State" Click="GridViewColumnHeader_Click"/>
+                            </GridViewColumn.Header>
+                        </GridViewColumn>
+                        <GridViewColumn Width="300" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
+                                        DisplayMemberBinding="{Binding Path=Client.Name}">
+                            <GridViewColumn.Header>
+                                <GridViewColumnHeader Content=" Клиент " Tag="Client.Name" Click="GridViewColumnHeader_Click"/>
+                            </GridViewColumn.Header>
+                        </GridViewColumn>
+                        <GridViewColumn Header=" Изделия в заказе " Width="350" HeaderTemplate="{StaticResource ListViewHeaderTemplate}">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <Expander ToolTip="Показать/скрыть список изделий" Name="OrderDetailList">
@@ -318,14 +335,30 @@
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
-                        <GridViewColumn Header=" Дата счета " Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
-                                        DisplayMemberBinding="{Binding Path=AccountDate, StringFormat=\{0:dd.MM.yyyy\}, ConverterCulture='ru-RU'}"/>
-                        <GridViewColumn Header=" Оплачено " Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
-                                        DisplayMemberBinding="{Binding Path=OrderPayments, StringFormat={}{0:C}, ConverterCulture='ru-RU'}"/>
-                        <GridViewColumn Header=" Краткое описание заказа " Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
-                                        DisplayMemberBinding="{Binding Path=Note}"/>
-                        <GridViewColumn Header=" Менеджер " Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
-                                        DisplayMemberBinding="{Binding Path=Manager.FullUserName}"/>
+                        <GridViewColumn Width="100" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
+                                        DisplayMemberBinding="{Binding Path=AccountDate, StringFormat=\{0:dd.MM.yyyy\}, ConverterCulture='ru-RU'}">
+                            <GridViewColumn.Header>
+                                <GridViewColumnHeader Content=" Дата счета " Tag="AccountDate" Click="GridViewColumnHeader_Click"/>
+                            </GridViewColumn.Header>
+                        </GridViewColumn>
+                        <GridViewColumn Width="100" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
+                                        DisplayMemberBinding="{Binding Path=OrderPayments, StringFormat={}{0:C}, ConverterCulture='ru-RU'}">
+                            <GridViewColumn.Header>
+                                <GridViewColumnHeader Content=" Оплачено " Tag="OrderPayments" Click="GridViewColumnHeader_Click"/>
+                            </GridViewColumn.Header>
+                        </GridViewColumn>
+                        <GridViewColumn Width="250" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
+                                        DisplayMemberBinding="{Binding Path=Note}">
+                            <GridViewColumn.Header>
+                                <GridViewColumnHeader Content=" Краткое описание заказа " Tag="Note" Click="GridViewColumnHeader_Click"/>
+                            </GridViewColumn.Header>
+                        </GridViewColumn>
+                        <GridViewColumn Width="150" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
+                                        DisplayMemberBinding="{Binding Path=Manager.FullUserName}">
+                            <GridViewColumn.Header>
+                                <GridViewColumnHeader Content=" Менеджер " Tag="Manager.FullUserName" Click="GridViewColumnHeader_Click"/>
+                            </GridViewColumn.Header>
+                        </GridViewColumn>
                         <!--ДОБАВЛЯТЬ ИЛИ УДАЛАТЬ СТОЛБЕЦ В ПЕЧАТЬ ИЗ ПЕЧАТИ-->
                     </GridView.Columns>
                 </GridView>
@@ -337,22 +370,54 @@
             <ListView.View>
                 <GridView>
                     <GridView.Columns>
-                        <GridViewColumn Header=" Номер заказа " Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
-                                                    DisplayMemberBinding="{Binding Path=Order.Number}"/>
-                        <GridViewColumn Header=" Категория " Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
-                                                    DisplayMemberBinding="{Binding Path=ProductType.CategoryOfProduct.Name}"/>
-                        <GridViewColumn Header=" Изделие " Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
-                                                    DisplayMemberBinding="{Binding Path=ProductType.Name}"/>
-                        <GridViewColumn Header=" Состояние " Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}" 
-                                                    DisplayMemberBinding="{Binding Path=State}"/>
-                        <GridViewColumn Header=" Количество " Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
-                                                    DisplayMemberBinding="{Binding Path=Quantity}"/>
-                        <GridViewColumn Header=" Стоимость " Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
-                                                    DisplayMemberBinding="{Binding Cost, StringFormat={}{0:C}, ConverterCulture='ru-RU'}"/>
-                        <GridViewColumn Header=" Дизайнер " Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
-                                                    DisplayMemberBinding="{Binding Path=Designer.FullUserName}"/>
-                        <GridViewColumn Header=" Описание " Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
-                                                    DisplayMemberBinding="{Binding Path=Note}"/>
+                        <GridViewColumn Width="200" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
+                                        DisplayMemberBinding="{Binding Path=Order.Number}">
+                            <GridViewColumn.Header>
+                                <GridViewColumnHeader Content=" Номер заказа " Tag="Order.Number" Click="GridViewColumnHeader_Click"/>
+                            </GridViewColumn.Header>
+                        </GridViewColumn>
+                        <GridViewColumn Width="200" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
+                                        DisplayMemberBinding="{Binding Path=ProductType.CategoryOfProduct.Name}">
+                            <GridViewColumn.Header>
+                                <GridViewColumnHeader Content=" Категория " Tag="ProductType.CategoryOfProduct.Name" Click="GridViewColumnHeader_Click"/>
+                            </GridViewColumn.Header>
+                        </GridViewColumn>
+                        <GridViewColumn Width="200" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
+                                        DisplayMemberBinding="{Binding Path=ProductType.Name}">
+                            <GridViewColumn.Header>
+                                <GridViewColumnHeader Content=" Изделие " Tag="ProductType.Name" Click="GridViewColumnHeader_Click"/>
+                            </GridViewColumn.Header>
+                        </GridViewColumn>
+                        <GridViewColumn Width="100" HeaderTemplate="{StaticResource ListViewHeaderTemplate}" 
+                                        DisplayMemberBinding="{Binding Path=State}">
+                            <GridViewColumn.Header>
+                                <GridViewColumnHeader Content=" Состояние " Tag="State" Click="GridViewColumnHeader_Click"/>
+                            </GridViewColumn.Header>
+                        </GridViewColumn>
+                        <GridViewColumn Width="110" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
+                                        DisplayMemberBinding="{Binding Path=Quantity}">
+                            <GridViewColumn.Header>
+                                <GridViewColumnHeader Content=" Количество " Tag="Quantity" Click="GridViewColumnHeader_Click"/>
+                            </GridViewColumn.Header>
+                        </GridViewColumn>
+                        <GridViewColumn Width="100" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
+                                        DisplayMemberBinding="{Binding Path=Cost, StringFormat={}{0:C}, ConverterCulture='ru-RU'}">
+                            <GridViewColumn.Header>
+                                <GridViewColumnHeader Content=" Стоимость " Tag="Cost" Click="GridViewColumnHeader_Click"/>
+                            </GridViewColumn.Header>
+                        </GridViewColumn>
+                        <GridViewColumn Width="100" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
+                                        DisplayMemberBinding="{Binding Path=Designer.FullUserName}">
+                            <GridViewColumn.Header>
+                                <GridViewColumnHeader Content=" Дизайнер " Tag="Designer.FullUserName" Click="GridViewColumnHeader_Click"/>
+                            </GridViewColumn.Header>
+                        </GridViewColumn>
+                        <GridViewColumn Width="400" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
+                                        DisplayMemberBinding="{Binding Path=Note}">
+                            <GridViewColumn.Header>
+                                <GridViewColumnHeader Content=" Описание " Tag="Note" Click="GridViewColumnHeader_Click"/>
+                            </GridViewColumn.Header>
+                        </GridViewColumn>
                         <!--ДОБАВИТЬ СТОЛБЕЦ В ПЕЧАТЬ-->
                     </GridView.Columns>
                 </GridView>
@@ -364,20 +429,48 @@
             <ListView.View>
                 <GridView>
                     <GridView.Columns>
-                        <GridViewColumn Header=" Номер заказа " Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
-                                        DisplayMemberBinding="{Binding Path=TechCard.Product.Order.Number}"/>
-                        <GridViewColumn Header=" Дата приема " Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
-                                        DisplayMemberBinding="{Binding Path=TechCard.Product.Order.DateAdmission, StringFormat={}{0:d}, ConverterCulture=ru-RU}"/>
-                        <GridViewColumn Header=" Изделие " Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
-                                        DisplayMemberBinding="{Binding Path=TechCard.Product.ProductType.Name}"/>
-                        <GridViewColumn Header=" Код " Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
-                                        DisplayMemberBinding="{Binding Path=TypeOfActivity.Code}"/>
-                        <GridViewColumn Header=" Расшифровка " Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
-                                        DisplayMemberBinding="{Binding Path=TypeOfActivity.Name}"/>
-                        <GridViewColumn Header=" Дата окончания (план) " Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
-                                        DisplayMemberBinding="{Binding Path=DatePlanCompletion, StringFormat={}{0:d}, ConverterCulture=ru-RU}"/>
-                        <GridViewColumn Header=" Название работы " Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
-                                        DisplayMemberBinding="{Binding Path=Name}"/>
+                        <GridViewColumn Width="200" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
+                                        DisplayMemberBinding="{Binding Path=TechCard.Product.Order.Number}">
+                            <GridViewColumn.Header>
+                                <GridViewColumnHeader Content=" Номер заказа " Tag="TechCard.Product.Order.Number" Click="GridViewColumnHeader_Click"/>
+                            </GridViewColumn.Header>
+                        </GridViewColumn>
+                        <GridViewColumn Width="200" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
+                                        DisplayMemberBinding="{Binding Path=TechCard.Product.Order.DateAdmission, StringFormat={}{0:d}, ConverterCulture=ru-RU}">
+                            <GridViewColumn.Header>
+                                <GridViewColumnHeader Content=" Дата приема " Tag="TechCard.Product.Order.DateAdmission" Click="GridViewColumnHeader_Click"/>
+                            </GridViewColumn.Header>
+                        </GridViewColumn>
+                        <GridViewColumn Width="300" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
+                                        DisplayMemberBinding="{Binding Path=TechCard.Product.ProductType.Name}">
+                            <GridViewColumn.Header>
+                                <GridViewColumnHeader Content=" Изделие " Tag="TechCard.Product.ProductType.Name" Click="GridViewColumnHeader_Click"/>
+                            </GridViewColumn.Header>
+                        </GridViewColumn>
+                        <GridViewColumn Width="80" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
+                                        DisplayMemberBinding="{Binding Path=TypeOfActivity.Code}">
+                            <GridViewColumn.Header>
+                                <GridViewColumnHeader Content=" Код " Tag="TypeOfActivity.Code" Click="GridViewColumnHeader_Click"/>
+                            </GridViewColumn.Header>
+                        </GridViewColumn>
+                        <GridViewColumn Width="200" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
+                                        DisplayMemberBinding="{Binding Path=TypeOfActivity.Name}">
+                            <GridViewColumn.Header>
+                                <GridViewColumnHeader Content=" Расшифровка " Tag="TypeOfActivity.Name" Click="GridViewColumnHeader_Click"/>
+                            </GridViewColumn.Header>
+                        </GridViewColumn>
+                        <GridViewColumn Width="200" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
+                                        DisplayMemberBinding="{Binding Path=DatePlanCompletion, StringFormat={}{0:d}, ConverterCulture=ru-RU}">
+                            <GridViewColumn.Header>
+                                <GridViewColumnHeader Content=" Дата окончания (план) " Tag="DatePlanCompletion" Click="GridViewColumnHeader_Click"/>
+                            </GridViewColumn.Header>
+                        </GridViewColumn>
+                        <GridViewColumn Width="400" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
+                                        DisplayMemberBinding="{Binding Path=Name}">
+                            <GridViewColumn.Header>
+                                <GridViewColumnHeader Content=" Название работы " Tag="Name" Click="GridViewColumnHeader_Click"/>
+                            </GridViewColumn.Header>
+                        </GridViewColumn>
                         <!--ДОБАВИТЬ СТОЛБЕЦ В ПЕЧАТЬ-->
                     </GridView.Columns>
                 </GridView>
