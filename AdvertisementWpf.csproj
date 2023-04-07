@@ -52,6 +52,7 @@
     <None Remove="Images\free-icon-account.png" />
     <None Remove="Images\free-icon-act.png" />
     <None Remove="Images\free-icon-add-button.png" />
+    <None Remove="Images\free-icon-back.png" />
     <None Remove="Images\free-icon-bin-Recycler.png" />
     <None Remove="Images\free-icon-cross.png" />
     <None Remove="Images\free-icon-delete-button.png" />
@@ -176,6 +177,7 @@
     <Resource Include="Images\free-icon-account.png" />
     <Resource Include="Images\free-icon-act.png" />
     <Resource Include="Images\free-icon-add-button.png" />
+    <Resource Include="Images\free-icon-back.png" />
     <Resource Include="Images\free-icon-bin-Recycler.png" />
     <Resource Include="Images\free-icon-cross.png" />
     <Resource Include="Images\free-icon-delete-button.png" />

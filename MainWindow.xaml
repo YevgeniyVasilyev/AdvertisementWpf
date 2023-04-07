@@ -118,7 +118,7 @@
                         </StackPanel>
                     </Button.Content>
                 </Button>
-                <Button Name="AllOrdersButton"  Style="{StaticResource ButtonOnStackPanel}" Command="ApplicationCommands.New">
+                <!--<Button Name="AllOrdersButton"  Style="{StaticResource ButtonOnStackPanel}" Command="ApplicationCommands.New">
                     <Button.Content>
                         <StackPanel>
                             <Image Source="/Images/premium-icon-all-order.png" Width="25" Height="25"/>
@@ -126,7 +126,7 @@
                                        VerticalAlignment="Center" HorizontalAlignment="Center"/>
                         </StackPanel>
                     </Button.Content>
-                </Button>
+                </Button>-->
                 <Button Name="FilterOrdersButton"  Style="{StaticResource ButtonOnStackPanel}" Command="ApplicationCommands.New">
                     <Button.Content>
                         <StackPanel>
@@ -204,7 +204,7 @@
         </Border>
         <ListView Grid.Row="2" Grid.Column="1" Name="OrderListView" IsSynchronizedWithCurrentItem="True" Visibility="Collapsed"
                   ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto"
-                  ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                  ScrollViewer.HorizontalScrollBarVisibility="Auto" IsVisibleChanged="OrderListView_IsVisibleChanged"
                   ItemsSource="{Binding Source={StaticResource ordersViewSource}}" MouseDoubleClick="OrderListView_MouseDoubleClick">
             <ListView.Resources>
                 <local:OrderBackgroundPaymentSelector x:Key="OrderBackgroundPaymentSelector">
@@ -365,8 +365,10 @@
             </ListView.View>
         </ListView>
         <ListView Grid.Row="3" Grid.Column="1" Name="ProductListView" IsSynchronizedWithCurrentItem="True" 
-                          ItemsSource="{Binding Source={StaticResource productsViewSource}}" Visibility="Collapsed"
-                          MouseDoubleClick="OrderListView_MouseDoubleClick" ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto">
+                  ItemsSource="{Binding Source={StaticResource productsViewSource}}" Visibility="Collapsed"
+                  MouseDoubleClick="OrderListView_MouseDoubleClick" 
+                  ScrollViewer.VerticalScrollBarVisibility="Auto" 
+                  IsVisibleChanged="ProductListView_IsVisibleChanged">
             <ListView.View>
                 <GridView>
                     <GridView.Columns>
@@ -424,8 +426,9 @@
             </ListView.View>
         </ListView>
         <ListView Grid.Row="4" Grid.Column="1" Name="ProductionProductListView" IsSynchronizedWithCurrentItem="True" 
-                          ItemsSource="{Binding Source={StaticResource workInTechCardViewSource}}" Visibility="Collapsed"
-                          MouseDoubleClick="OrderListView_MouseDoubleClick" ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto">
+                  ItemsSource="{Binding Source={StaticResource workInTechCardViewSource}}" Visibility="Collapsed"
+                  MouseDoubleClick="OrderListView_MouseDoubleClick" IsVisibleChanged="ProductionProductListView_IsVisibleChanged"
+                  ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto">
             <ListView.View>
                 <GridView>
                     <GridView.Columns>

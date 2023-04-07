@@ -593,56 +593,61 @@ namespace AdvertisementWpf
             if (e.OriginalSource.GetType().FullName.Contains("Button"))
             {
                 Button btn = e.OriginalSource as Button;
-                if (btn.Name == "NewPaymentButton" && context_ != null)
+                if (btn == NewPaymentButton && context_ != null)
                 {
                     _ = context_.Payments.Add(NewPayment());
                     _ = paymentsViewSource.View.MoveCurrentToLast();
                 }
-                if (btn.Name == "LoadPaymentButton" && context_ != null)
-                {
-                    LoadOrderPayments();
-                }
-                if (btn.Name == "NewAccountButton")
+                //if (btn == LoadPaymentButton && context_ != null)
+                //{
+                //    LoadOrderPayments();
+                //}
+                else if (btn == NewAccountButton)
                 {
                     CreateNewAccount();
                 }
-                if (btn.Name == "LoadPADButton")
+                else if (btn == LoadPADButton)
                 {
                     LoadOrderAccounts();
                 }
-                if (btn.Name == "NewActButton")
+                else if (btn == NewActButton)
                 {
                     _ = CanCreateNewAct();
                     CreateNewAct();
                 }
-                if (btn == LoadTechCardButton)
+                else if (btn == LoadTechCardButton)
                 {
                     LoadTechCard(true);
                     return;
                 }
-                if (btn == AddTechCardButton)
+                else if (btn == AddTechCardButton)
                 {
                     AddNewObjectInTechCard("TechCard");
                     return;
                 }
-                if (btn == AddTechCardWorkButton)
+                else if (btn == AddTechCardWorkButton)
                 {
                     AddNewObjectInTechCard("Work");
                     return;
                 }
-                if (btn == AddTechCardOperationButton)
+                else if (btn == AddTechCardOperationButton)
                 {
                     NewOperationListBoxRow.Height = new GridLength(1, GridUnitType.Star);
                     NewOperationListBox.Visibility = Visibility.Visible;
                     operationsViewSource.View.Refresh(); //для активации фильтра
                     return;
                 }
-                if (btn == SendTechCardButton)
+                else if (btn == SendTechCardButton)
                 {
                     SendTechCardToProduction();
                     return;
                 }
-                if (btn == NewOperationFileButton && TechCardTreeView != null && TechCardTreeView.SelectedItem is OperationInWork operationInWork)
+                else if (btn == RecallTechCardButton)
+                {
+                    RecallTechCardFromProduction();
+                    return;
+                }
+                else  if (btn == NewOperationFileButton && TechCardTreeView != null && TechCardTreeView.SelectedItem is OperationInWork operationInWork)
                 {
                     try
                     {
@@ -702,12 +707,12 @@ namespace AdvertisementWpf
             if (e.OriginalSource.GetType().FullName.Contains("Button"))
             {
                 Button btn = e.OriginalSource as Button;
-                if (btn.Name == "LoadPaymentButton" && context_ != null)
-                {
-                    e.CanExecute = true;
-                    return;
-                }
-                if (btn.Name == "NewPaymentButton")
+                //if (btn == LoadPaymentButton && context_ != null)
+                //{
+                //    e.CanExecute = true;
+                //    return;
+                //}
+                if (btn == NewPaymentButton)
                 {
                     if (context_ != null && currentOrder != null && currentOrder.ID > 0 && paymentsViewSource != null && paymentsViewSource.View != null)
                     {
@@ -715,7 +720,7 @@ namespace AdvertisementWpf
                         return;
                     }
                 }
-                if (btn.Name == "NewAccountButton")
+                else if (btn == NewAccountButton)
                 {
                     if (currentOrder != null && currentOrder.ID > 0)
                     {
@@ -723,7 +728,7 @@ namespace AdvertisementWpf
                         return;
                     }
                 }
-                if (btn.Name == "NewActButton")
+                else if (btn == NewActButton)
                 {
                     if (accountsViewSource != null && accountsViewSource.View != null && accountsViewSource.View.CurrentItem is Account && CanCreateNewAct())
                     {
@@ -731,32 +736,32 @@ namespace AdvertisementWpf
                         return;
                     }
                 }
-                if (btn.Name == "LoadPADButton" && currentOrder != null && currentOrder.ID > 0)
+                else if (btn == LoadPADButton && currentOrder != null && currentOrder.ID > 0)
                 {
                     e.CanExecute = true;
                     return;
                 }
-                if (btn == LoadTechCardButton && currentOrder != null && currentOrder.ID > 0)
+                else if (btn == LoadTechCardButton && currentOrder != null && currentOrder.ID > 0)
                 {
                     e.CanExecute = true;
                     return;
                 }
-                if (btn == AddTechCardButton && currentOrder != null && currentOrder.ID > 0 && techCardsViewSource != null && techCardsViewSource.View != null)
+                else if (btn == AddTechCardButton && currentOrder != null && currentOrder.ID > 0 && techCardsViewSource != null && techCardsViewSource.View != null)
                 {
                     e.CanExecute = true;
                     return;
                 }
-                if (btn == AddTechCardWorkButton && techCardsViewSource != null && techCardsViewSource.View != null && TechCardTreeView.SelectedItem != null)
+                else if (btn == AddTechCardWorkButton && techCardsViewSource?.View != null && TechCardTreeView.SelectedItem != null)
                 {
                     e.CanExecute = true;
                     return;
                 }
-                if (btn == AddTechCardOperationButton && techCardsViewSource != null && techCardsViewSource.View != null && TechCardTreeView.SelectedItem != null && (TechCardTreeView.SelectedItem is WorkInTechCard || TechCardTreeView.SelectedItem is OperationInWork))
+                else if (btn == AddTechCardOperationButton && techCardsViewSource?.View != null && TechCardTreeView.SelectedItem != null && (TechCardTreeView.SelectedItem is WorkInTechCard || TechCardTreeView.SelectedItem is OperationInWork))
                 {
                     e.CanExecute = true;
                     return;
                 }
-                if (btn == SendTechCardButton && techCardsViewSource != null && techCardsViewSource.View != null && TechCardTreeView.SelectedItem != null)
+                else if (btn == SendTechCardButton && techCardsViewSource?.View != null && TechCardTreeView?.SelectedItem != null)
                 {
                     TechCard techCard = (TechCard)GetParentTreeViewItem(TechCardTreeView.SelectedItem, 0); //ищем корневого родителя на уровне TechCard
                     if (techCard != null && !techCard.Product.DateTransferProduction.HasValue) //если дата передачи в производство не установлена
@@ -765,7 +770,16 @@ namespace AdvertisementWpf
                     }
                     return;
                 }
-                if (btn == NewOperationFileButton && techCardsViewSource != null && techCardsViewSource.View != null && TechCardTreeView != null && TechCardTreeView.SelectedItem is OperationInWork)
+                else if (btn == RecallTechCardButton && techCardsViewSource?.View != null && TechCardTreeView?.SelectedItem != null)
+                {
+                    TechCard techCard = (TechCard)GetParentTreeViewItem(TechCardTreeView.SelectedItem, 0); //ищем корневого родителя на уровне TechCard
+                    if (techCard != null && techCard.Product.DateTransferProduction.HasValue) //если дата передачи в производство установлена
+                    {
+                        e.CanExecute = true;
+                    }
+                    return;
+                }
+                else if (btn == NewOperationFileButton && techCardsViewSource?.View != null && TechCardTreeView != null && TechCardTreeView.SelectedItem is OperationInWork)
                 {
                     e.CanExecute = true;
                     return;
@@ -1042,10 +1056,14 @@ namespace AdvertisementWpf
                     DependencyObject child = VisualTreeHelper.GetChild(depObj, i);
 
                     if (child != null && child is T)
+                    {
                         yield return (T)child;
+                    }
 
                     foreach (T childOfChild in FindVisualChildren<T>(child))
+                    {
                         yield return childOfChild;
+                    }
                 }
             }
         }
@@ -1972,6 +1990,33 @@ namespace AdvertisementWpf
                 catch (Exception ex)
                 {
                     _ = MessageBox.Show(ex.Message + "\n" + ex?.InnerException?.Message, "Ошибка передачи в производство", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+
+        private void RecallTechCardFromProduction()
+        {
+            if (TechCardTreeView?.SelectedItem != null)
+            {
+                try
+                {
+                    TechCard techCard = (TechCard)GetParentTreeViewItem(TechCardTreeView.SelectedItem, 0); //ищем корневого родителя на уровне TechCard
+                    if (techCard != null)
+                    {
+                        techCard.Product.DateTransferProduction = null; //убрать дату передачи в производство
+                        foreach (Product product in productsViewSource.View) //найти изделие в контекте Заказа
+                        {
+                            if (product.ID == techCard.Product.ID)
+                            {
+                                product.DateTransferProduction = null;
+                                break;
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _ = MessageBox.Show(ex.Message + "\n" + ex?.InnerException?.Message, "Ошибка отзыва с производства", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
         }

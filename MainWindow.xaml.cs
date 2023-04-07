@@ -359,12 +359,12 @@ namespace AdvertisementWpf
                     OrderWindow order = new OrderWindow(NewOrder: false, EditMode: btn == EditOrderButton, nOrderID: nOrderID) { };
                     _ = order.ShowDialog();
                 }
-                else if (btn == AllOrdersButton)
-                {
-                    //очистить условие отбора
-                    WhereCondition = WhereStateCondition = "";
-                    ShowOrders();
-                }
+                //else if (btn == AllOrdersButton)
+                //{
+                //    //очистить условие отбора
+                //    WhereCondition = WhereStateCondition = "";
+                //    ShowOrders();
+                //}
                 else if (btn == FilterOrdersButton)
                 {
                     FilterOrders();
@@ -390,7 +390,7 @@ namespace AdvertisementWpf
             if (mainWnd.OrderListView.IsVisible)
             {
                 int nCurrentIndex = mainWnd.ordersViewSource.View.CurrentPosition >= 0 ? mainWnd.ordersViewSource.View.CurrentPosition : 0;
-                _ = mainWnd.ShowDialog();
+                mainWnd.ShowOrders();
                 _ = mainWnd.ordersViewSource.View.MoveCurrentToPosition(nCurrentIndex);
             }
             else if (mainWnd.ProductListView.IsVisible)
@@ -417,10 +417,10 @@ namespace AdvertisementWpf
                     {
                         e.CanExecute = true;
                     }
-                    if (btn == AllOrdersButton || (btn == EditOrderButton && OrderListView.IsVisible && ordersViewSource?.View != null && ordersViewSource.View.CurrentItem is Order))
-                    {
-                        e.CanExecute = true;
-                    }
+                    //if (btn == AllOrdersButton || (btn == EditOrderButton && OrderListView.IsVisible && ordersViewSource?.View != null && ordersViewSource.View.CurrentItem is Order))
+                    //{
+                    //    e.CanExecute = true;
+                    //}
                     else if (btn == EditOrderButton && ProductListView.IsVisible && productsViewSource?.View != null && productsViewSource.View.CurrentItem is Product)
                     {
                         e.CanExecute = true;
@@ -704,8 +704,30 @@ namespace AdvertisementWpf
             }
         }
 
+        private void ProductListView_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            ProductList.Height = (bool)e.NewValue ? new GridLength(1, GridUnitType.Star) : new GridLength(1, GridUnitType.Auto);
+            OrderList.Height = new GridLength(1, GridUnitType.Auto);
+            ProductionProductList.Height = new GridLength(1, GridUnitType.Auto);
+        }
+
+        private void OrderListView_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            OrderList.Height = (bool)e.NewValue ? new GridLength(1, GridUnitType.Star) : new GridLength(1, GridUnitType.Auto);
+            ProductList.Height = new GridLength(1, GridUnitType.Auto);
+            ProductionProductList.Height = new GridLength(1, GridUnitType.Auto);
+        }
+
+        private void ProductionProductListView_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            ProductionProductList.Height = (bool)e.NewValue ? new GridLength(1, GridUnitType.Star) : new GridLength(1, GridUnitType.Auto);
+            ProductList.Height = new GridLength(1, GridUnitType.Auto);
+            OrderList.Height = new GridLength(1, GridUnitType.Auto);
+        }
+
         private void GridViewColumnHeader_Click(object sender, RoutedEventArgs e)
         {
+            e.Handled = true;
             GridViewColumnHeader column = sender as GridViewColumnHeader;
             string sortBy = column.Tag.ToString();
             if (listViewSortCol != null)
