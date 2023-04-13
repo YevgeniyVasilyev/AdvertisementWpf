@@ -88,10 +88,7 @@
     <None Remove="Reports\Dictionary_Act.frd" />
     <None Remove="Reports\Dictionary_Order.frd" />
     <None Remove="Reports\Dictionary_VMP_dataset.frd" />
-    <None Remove="Reports\OrderListView.frx" />
     <None Remove="Reports\OrderListView_data.frx" />
-    <None Remove="Reports\ProductionProductListView.frx" />
-    <None Remove="Reports\ProductListView.frx" />
     <None Remove="Reports\ProductListView_data.frx" />
     <None Remove="Reports\VMP_data.frx" />
     <None Remove="Reports\_Account.frx" />
@@ -208,15 +205,18 @@
     <Resource Include="Images\premium-icon-payment.png" />
     <Resource Include="Images\premium-icon-refresh.png" />
     <Resource Include="Images\premium-icon-view.png" />
-    <Resource Include="Reports\ProductionProductListView.frx">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Content Include="Reports\OrderListView.frx">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Reports\ProductListView.frx">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Reports\OrderListView.frx">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\ProductionProductListView.frx">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\ProductListView.frx">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

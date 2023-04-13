@@ -53,6 +53,10 @@ namespace AdvertisementWpf.Models
         {
             get
             {
+                if (string.IsNullOrWhiteSpace(DirectorName))
+                {
+                    return "";
+                }
                 string[] aDn = DirectorName.Split(' ', StringSplitOptions.RemoveEmptyEntries);
                 if (aDn.Length == 3)
                 {
@@ -62,7 +66,7 @@ namespace AdvertisementWpf.Models
                 {
                     return $"{aDn[0]} {aDn[1].Substring(0, 1)}.";
                 }
-                return string.IsNullOrWhiteSpace(DirectorName) ? "" : DirectorName;
+                return DirectorName;
             }
         }
         [NotMapped]
@@ -70,6 +74,10 @@ namespace AdvertisementWpf.Models
         {
             get
             {
+                if (string.IsNullOrWhiteSpace(ChiefAccountant))
+                {
+                    return "";
+                }
                 string[] aCa = ChiefAccountant.Split(' ', StringSplitOptions.RemoveEmptyEntries);
                 if (aCa.Length == 3)
                 {
@@ -78,9 +86,8 @@ namespace AdvertisementWpf.Models
                 else if (aCa.Length == 2)
                 {
                     return $"{aCa[0]} {aCa[1].Substring(0, 1)}.";
-                }
-                
-                return string.IsNullOrWhiteSpace(ChiefAccountant) ? "" : ChiefAccountant;
+                }                
+                return ChiefAccountant;
             }
         }
     }

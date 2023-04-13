@@ -289,7 +289,7 @@ namespace AdvertisementWpf
     {
         public static List<string> productStates = new List<string> { "Не определено", "Отгружено", "Запланирована отгрузка", "В производстве", "Подготовка", "Утвержден макет", "Передано на утверждение", "В разработке" };
         //public static List<string> productStates = new List<string> { "Не определено", "Отгружено", "Запланирована отгрузка", "Подготовка", "Утвержден макет", "Передано на утверждение", "В разработке" };
-        public static List<string> orderStates = new List<string> { "Оформление", "Производство", "Не отгружен", "Частично отгружен", "Отгружен" };
+        public static List<string> orderStates = new List<string> { "Оформление", "В производстве", "Не отгружен", "Частично отгружен", "Отгружен" };
 
         public static string GetProductState(byte nIndex = 0)
         {
@@ -758,9 +758,12 @@ namespace AdvertisementWpf
 
         public static void OrderListView(ref ListView listView)
         {
+            using App.AppDbContext _reportcontext = new App.AppDbContext(MainWindow.Connectiondata.Connectionstring);
             try
             {
                 MainWindow.statusBar.WriteStatus("Подготовка списка ...", Cursors.Wait);
+                string viewFilename = "OrderListView.frx";
+                string _pathToReportTemplate = _reportcontext.Setting.FirstOrDefault(setting => setting.SettingParameterName == "PathToReportTemplate").SettingParameterValue;
                 enumerator = listView.ItemsSource.GetEnumerator();
                 List<Order> list = new List<Order> { };
                 while (enumerator.MoveNext())
@@ -768,10 +771,17 @@ namespace AdvertisementWpf
                     list.Add((Order)enumerator.Current);
                 }
                 MainWindow.statusBar.WriteStatus("Вывод списка ...", Cursors.Wait);
-                Reports.ReportFileName = "Reports\\OrderListView.frx";
-                Reports.OrderDataSet = list;
-                Reports.ReportMode = "OrderListViewForm";
-                Reports.RunReport();
+                if (File.Exists(Path.Combine(_pathToReportTemplate, viewFilename)))
+                {
+                    Reports.ReportFileName = Path.Combine(_pathToReportTemplate, viewFilename); ;
+                    Reports.OrderDataSet = list;
+                    Reports.ReportMode = "OrderListViewForm";
+                    Reports.RunReport();
+                }
+                else
+                {
+                    _ = MessageBox.Show($"Не найден файл {viewFilename} !", "Ошибка отображения списка", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
             catch (Exception ex)
             {
@@ -785,9 +795,12 @@ namespace AdvertisementWpf
 
         public static void ProductListView(ref ListView listView)
         {
+            using App.AppDbContext _reportcontext = new App.AppDbContext(MainWindow.Connectiondata.Connectionstring);
             try
             {
                 MainWindow.statusBar.WriteStatus("Подготовка списка ...", Cursors.Wait);
+                string viewFilename = "ProductListView.frx";
+                string _pathToReportTemplate = _reportcontext.Setting.FirstOrDefault(setting => setting.SettingParameterName == "PathToReportTemplate").SettingParameterValue;
                 enumerator = listView.ItemsSource.GetEnumerator();
                 List<Product> list = new List<Product> { };
                 while (enumerator.MoveNext())
@@ -795,10 +808,17 @@ namespace AdvertisementWpf
                     list.Add((Product)enumerator.Current);
                 }
                 MainWindow.statusBar.WriteStatus("Вывод списка ...", Cursors.Wait);
-                Reports.ReportFileName = "Reports\\ProductListView.frx";
-                Reports.ProductDataSet = list;
-                Reports.ReportMode = "ProductListViewForm";
-                Reports.RunReport();
+                if (File.Exists(Path.Combine(_pathToReportTemplate, viewFilename)))
+                {
+                    Reports.ReportFileName = Path.Combine(_pathToReportTemplate, viewFilename); ;
+                    Reports.ProductDataSet = list;
+                    Reports.ReportMode = "ProductListViewForm";
+                    Reports.RunReport();
+                }
+                else
+                {
+                    _ = MessageBox.Show($"Не найден файл {viewFilename} !", "Ошибка отображения списка", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
             catch (Exception ex)
             {
@@ -812,9 +832,12 @@ namespace AdvertisementWpf
 
         public static void ProductionProductListView(ref ListView listView)
         {
+            using App.AppDbContext _reportcontext = new App.AppDbContext(MainWindow.Connectiondata.Connectionstring);
             try
             {
                 MainWindow.statusBar.WriteStatus("Подготовка списка ...", Cursors.Wait);
+                string viewFilename = "ProductionProductListView.frx";
+                string _pathToReportTemplate = _reportcontext.Setting.FirstOrDefault(setting => setting.SettingParameterName == "PathToReportTemplate").SettingParameterValue;
                 enumerator = listView.ItemsSource.GetEnumerator();
                 List<WorkInTechCard> list = new List<WorkInTechCard> { };
                 while (enumerator.MoveNext())
@@ -822,10 +845,17 @@ namespace AdvertisementWpf
                     list.Add((WorkInTechCard)enumerator.Current);
                 }
                 MainWindow.statusBar.WriteStatus("Вывод списка ...", Cursors.Wait);
-                Reports.ReportFileName = "Reports\\ProductionProductListView.frx";
-                Reports.WorkInTechCardDataSet = list;
-                Reports.ReportMode = "ProductionProductListViewForm";
-                Reports.RunReport();
+                if (File.Exists(Path.Combine(_pathToReportTemplate, viewFilename)))
+                {
+                    Reports.ReportFileName = Path.Combine(_pathToReportTemplate, viewFilename);
+                    Reports.WorkInTechCardDataSet = list;
+                    Reports.ReportMode = "ProductionProductListViewForm";
+                    Reports.RunReport();
+                }
+                else
+                {
+                    _ = MessageBox.Show($"Не найден файл {viewFilename} !", "Ошибка отображения списка", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
             catch (Exception ex)
             {

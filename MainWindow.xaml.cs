@@ -336,7 +336,7 @@ namespace AdvertisementWpf
         {
             if (e.OriginalSource is Button btn)
             {
-                if (btn.Name == "NewOrderButton" || btn.Name == "NewOrderButton1")
+                if (btn == NewOrderButton || btn == NewOrderButton1)
                 {
                     OrderWindow order = new OrderWindow(NewOrder: true) { };
                     _ = order.ShowDialog();
@@ -421,6 +421,10 @@ namespace AdvertisementWpf
                     //{
                     //    e.CanExecute = true;
                     //}
+                    else if (btn == EditOrderButton && OrderListView.IsVisible && ordersViewSource?.View != null && ordersViewSource.View.CurrentItem is Order)
+                    {
+                        e.CanExecute = true;
+                    }
                     else if (btn == EditOrderButton && ProductListView.IsVisible && productsViewSource?.View != null && productsViewSource.View.CurrentItem is Product)
                     {
                         e.CanExecute = true;

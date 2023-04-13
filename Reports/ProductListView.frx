@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Report ScriptLanguage="CSharp" ReportInfo.Created="10/29/2022 21:32:45" ReportInfo.Modified="11/27/2022 18:52:27" ReportInfo.CreatorVersion="2022.3.11.0">
+<Report ScriptLanguage="CSharp" ReportInfo.Created="10/29/2022 21:32:45" ReportInfo.Modified="04/10/2023 20:23:06" ReportInfo.CreatorVersion="2023.1.0.0">
   <Dictionary>
     <BusinessObjectDataSource Name="Product" ReferenceName="Product" DataType="null" Enabled="true">
       <Column Name="ID" DataType="System.Int64"/>
@@ -760,12 +760,12 @@
       <TextObject Name="Text15" Left="623.7" Width="113.4" Height="18.9" Border.Lines="All" Border.Width="0.5" Text="Дизайнер" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt, style=Bold"/>
     </ReportTitleBand>
     <DataBand Name="Data1" Top="22.1" Width="1084.86" Height="18.9" CanGrow="true" DataSource="Product">
-      <TextObject Name="Text8" Width="94.5" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" GrowToBottom="true" Text="[Product.Order.Number]" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt"/>
+      <TextObject Name="Text8" Width="94.5" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" GrowToBottom="true" Text="[Product.Order.Number]" VertAlign="Center" Font="Arial, 8pt"/>
       <TextObject Name="Text9" Left="94.5" Width="94.5" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" GrowToBottom="true" Text="[Product.ProductType.CategoryOfProduct.Name]" VertAlign="Center" Font="Arial, 8pt"/>
       <TextObject Name="Text10" Left="189" Width="151.2" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" GrowToBottom="true" Text="[Product.ProductType.Name]" VertAlign="Center" Font="Arial, 8pt"/>
       <TextObject Name="Text11" Left="340.2" Width="94.5" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" GrowToBottom="true" Text="[Product.State]" VertAlign="Center" Font="Arial, 8pt"/>
-      <TextObject Name="Text12" Left="434.7" Width="75.6" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" GrowToBottom="true" Text="[Product.Quantity]" HorzAlign="Right" VertAlign="Center" Font="Arial, 8pt"/>
-      <TextObject Name="Text13" Left="510.3" Width="113.4" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" GrowToBottom="true" Text="[Product.Cost]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Right" VertAlign="Center" Font="Arial, 8pt"/>
+      <TextObject Name="Text12" Left="434.7" Width="75.6" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" GrowToBottom="true" Text="[Product.Quantity]" VertAlign="Center" Font="Arial, 8pt"/>
+      <TextObject Name="Text13" Left="510.3" Width="113.4" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" GrowToBottom="true" Text="[Product.Cost]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" VertAlign="Center" Font="Arial, 8pt"/>
       <TextObject Name="Text14" Left="737.1" Width="349.65" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" GrowToBottom="true" Text="[Product.Note]" VertAlign="Center" Font="Arial, 8pt"/>
       <TextObject Name="Text16" Left="623.7" Width="113.4" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" GrowToBottom="true" Text="[Product.Designer.FullUserName]" VertAlign="Center" Font="Arial, 8pt"/>
     </DataBand>

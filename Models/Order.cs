@@ -109,7 +109,7 @@ namespace AdvertisementWpf.Models
 
         private string _OrderState(object products)
         {
-            byte nState = 0, nCountDateTransferDesigner = 0, nCountDateShipment = 0;
+            byte nState = 0, nCountDateTransferDesigner = 0, nCountDateShipment = 0, nCountDateManufacture = 0;
             int nCount = 0;
             if (products != null)
             {
@@ -117,6 +117,10 @@ namespace AdvertisementWpf.Models
                 {
                     foreach (Product product in collection)
                     {
+                        if (product.DateManufacture.HasValue) //есть дата Изготовления
+                        {
+                            nCountDateManufacture++;
+                        }
                         if (product.DateTransferDesigner.HasValue)
                         {
                             nCountDateTransferDesigner++;
@@ -132,6 +136,10 @@ namespace AdvertisementWpf.Models
                 {
                     foreach (Product product in ((CollectionViewSource)products).View)
                     {
+                        if (product.DateManufacture.HasValue) //есть дата Изготовления
+                        {
+                            nCountDateManufacture++;
+                        }
                         if (product.DateTransferDesigner.HasValue)
                         {
                             nCountDateTransferDesigner++;
@@ -143,21 +151,25 @@ namespace AdvertisementWpf.Models
                         nCount++;
                     }
                 }
-                if (nCountDateShipment == nCount) //Даты отгрузки у всех
+                if (nCountDateTransferDesigner == 0) //ни одной даты "Передано дизайнеру"
                 {
-                    nState = 4;
+                    nState = 0; //оформление
                 }
-                else if (nCountDateShipment > 0 && nCountDateShipment != nCount) //Даты отгрузки не у всех
+                else if (nCountDateManufacture >= 0 && nCountDateManufacture < nCount) //не все даты Изготовления
                 {
-                    nState = 3;
+                    nState = 1; //в производстве
                 }
-                else if (nCountDateShipment == 0) //нет ни одной Даты отгрузки
+                else if (nCountDateManufacture == nCount && nCountDateShipment == 0) //Дата изготовления у всех но Даты отгрузки ни укого нет
                 {
-                    nState = 2;
+                    nState = 2; //не отгружен
                 }
-                else if (nCountDateTransferDesigner > 0) //хотя бы у одного изделия есть Дата передачи дизайнеру - "Производство"
+                else if (nCountDateManufacture == nCount && nCountDateShipment > 0 && nCountDateShipment < nCount) //Дата изготовления есть у всех но Даты отгрузки не у всех
                 {
-                    nState = 1;
+                    nState = 3; //частично отгружен
+                }
+                else if (nCountDateManufacture == nCount && nCountDateShipment == nCount) //Дата изготовления и Дата отгружено у всех
+                {
+                    nState = 4; //отгружен
                 }
             }
             return OrderProductStates.GetOrderState(nState);

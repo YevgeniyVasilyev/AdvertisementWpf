@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Report ScriptLanguage="CSharp" ReportInfo.Created="07/06/2022 20:44:22" ReportInfo.Modified="11/30/2022 19:46:40" ReportInfo.CreatorVersion="2022.3.11.0">
+<Report ScriptLanguage="CSharp" ReportInfo.Created="07/06/2022 20:44:22" ReportInfo.Modified="04/13/2023 20:28:06" ReportInfo.CreatorVersion="2023.1.0.0">
   <Dictionary>
     <BusinessObjectDataSource Name="Order" ReferenceName="Order" DataType="null" Enabled="true">
       <Column Name="ID" DataType="System.Int64"/>
@@ -480,10 +480,10 @@
       <Column Name="CountProduct" DataType="System.Int16"/>
       <Column Name="State" DataType="System.String"/>
     </BusinessObjectDataSource>
-    <Parameter Name="DesignerID" DataType="System.Int64"/>
+    <Parameter Name="DesignerID" DataType="System.Int64" AsString=""/>
   </Dictionary>
-  <ReportPage Name="Page1" Guides="-9450,-9355.5,0,718.2,321.3,708.75,415.8,510.3,9.45,359.1,595.35" Watermark.Font="Arial, 60pt">
-    <ReportTitleBand Name="ReportTitle1" Width="718.2" Height="56.7" Guides="-9450,-9431.1,0,18.9,37.8,56.7,75.6">
+  <ReportPage Name="Page1" RawPaperSize="9" Guides="-9450,-9355.5" Watermark.Font="Arial, 60pt">
+    <ReportTitleBand Name="ReportTitle1" Width="718.2" Height="56.7" Guides="-9450,-9431.1,75.6">
       <TextObject Name="Text1" Left="-9450" Top="-9450" Width="94.5" Height="18.9" Text="БЛАНК-ЗАКАЗ № [Order.Number] от [Substring(ToString([Order.DateAdmission]),0,10)]" Font="Arial, 10pt"/>
       <TextObject Name="Text2" Left="-9450" Top="-9450" Width="94.5" Height="18.9" Text="БЛАНК-ЗАКАЗ № [Order.Number] от [Substring(ToString([Order.DateAdmission]),0,10)]" Font="Arial, 10pt"/>
       <TextObject Name="Text3" Width="718.2" Height="18.9" Border.Color="224, 224, 224" Fill.Color="Gainsboro" CanBreak="false" Text="БЛАНК-ЗАКАЗ № [Order.Number] от [Substring(ToString([Order.DateAdmission]),0,10)]" VertAlign="Center" Font="Arial, 10pt"/>
@@ -492,22 +492,22 @@
       <TextObject Name="Text17" Top="37.8" Width="510.3" Height="18.9" Border.Color="224, 224, 224" Border.Width="0.25" Fill.Color="White" CanShrink="true" Text="Плановая дата окончания работ: [FormatDateTime(ToDateTime([Order.DateCompletion]), &quot;Short Date&quot;)]" HideZeros="true" VertAlign="Center" Font="Arial, 10pt"/>
       <TextObject Name="Text19" Left="66.15" Top="18.9" Width="642.6" Height="18.9" VisibleExpression="[DesignerID] == 0" Border.Color="224, 224, 224" Border.Width="0.25" Fill.Color="White" Text="[Order.Client.Name]" VertAlign="Center" Font="Arial, 10pt"/>
     </ReportTitleBand>
-    <DataBand Name="Data1" Top="59.9" Width="718.2" Height="37.8" Guides="0,18.9" DataSource="Products10" Filter="IIf([DesignerID] &gt; 0, [Order.Products.DesignerID] == [DesignerID], true)" KeepTogether="true">
+    <DataBand Name="Data1" Top="58.99" Width="718.2" Height="37.8" CanGrow="true" CanBreak="true" DataSource="Products10" Filter="IIf([DesignerID] &gt; 0, [Order.Products.DesignerID] == [DesignerID], true)">
       <TextObject Name="Text7" Width="718.2" Height="18.9" Fill.Color="Gainsboro" Text="ИЗДЕЛИЕ: [Order.Products.ProductType.Name]" VertAlign="Center" Font="Arial, 10pt"/>
-      <TextObject Name="Text8" Left="415.8" Width="302.4" Height="18.9" Border.Color="224, 224, 224" Fill.Color="Gainsboro" Text="КОЛИЧЕСТВО: [Order.Products.Quantity]" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt"/>
+      <TextObject Name="Text8" Left="406.35" Width="311.85" Height="18.9" Border.Color="224, 224, 224" Fill.Color="Gainsboro" Text="КОЛИЧЕСТВО: [Order.Products.Quantity]" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt"/>
       <TextObject Name="Text23" Top="18.9" Width="718.2" Height="18.9" Fill.Color="Gainsboro" CanGrow="true" GrowToBottom="true" Font="Arial, 10pt"/>
-      <TextObject Name="Text21" Left="415.8" Top="18.9" Width="302.4" Height="18.9" Border.Color="224, 224, 224" Border.Width="0.25" Fill.Color="Gainsboro" CanGrow="true" GrowToBottom="true" Text="Дата изготовления макета: [FormatDateTime(ToDateTime([Order.Products.DateProductionLayout]), &quot;Short Date&quot;)]" HideZeros="true" HorzAlign="Right" VertAlign="Center" WordWrap="false" Font="Arial, 10pt"/>
+      <TextObject Name="Text21" Left="406.35" Top="18.9" Width="311.85" Height="18.9" Border.Color="224, 224, 224" Border.Width="0.25" Fill.Color="Gainsboro" CanGrow="true" GrowToBottom="true" Text="Дата изготовления макета: [FormatDateTime(ToDateTime([Order.Products.DateProductionLayout]), &quot;Short Date&quot;)]" HideZeros="true" HorzAlign="Right" VertAlign="Center" WordWrap="false" Font="Arial, 10pt"/>
       <TextObject Name="Text16" Top="18.9" Width="415.8" Height="18.9" Border.Color="224, 224, 224" Border.Width="0.25" Fill.Color="Gainsboro" CanGrow="true" GrowToBottom="true" Text="Дизайнер: [Order.Products.Designer.FullUserName]" VertAlign="Center" Font="Arial, 10pt"/>
-      <DataBand Name="Data2" Top="100.9" Width="718.2" Height="18.9" Guides="0,18.89999" DataSource="ProductParameter" KeepDetail="true">
-        <TextObject Name="Text6" Left="9.45" Width="349.65" Height="18.9" Border.Lines="All" Border.Width="0.25" Text="[Order.Products.ProductParameter.Name]" VertAlign="Center" Font="Arial, 10pt"/>
-        <TextObject Name="Text9" Left="359.1" Width="236.25" Height="18.9" Border.Lines="All" Border.Width="0.25" Text="[Order.Products.ProductParameter.ParameterValue]" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt"/>
+      <DataBand Name="Data2" Top="99.07" Width="718.2" Height="18.9" CanGrow="true" CanBreak="true" DataSource="ProductParameter">
+        <TextObject Name="Text6" Width="368.55" Height="18.9" Border.Lines="All" Border.Width="0.25" CanGrow="true" CanShrink="true" GrowToBottom="true" Text="[Order.Products.ProductParameter.Name]" VertAlign="Center" Font="Arial, 10pt"/>
+        <TextObject Name="Text9" Left="368.55" Width="226.8" Height="18.9" Border.Lines="All" Border.Width="0.25" CanGrow="true" CanShrink="true" GrowToBottom="true" Text="[Order.Products.ProductParameter.ParameterValue]" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt"/>
         <TextObject Name="Text10" Left="595.35" Width="122.85" Height="18.9" Border.Lines="All" Border.Width="0.25" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt"/>
       </DataBand>
-      <DataBand Name="Data3" Top="123" Width="718.2" Height="75.6" Guides="0,18.89999,37.79999,56.7,75.59999">
+      <DataBand Name="Data3" Top="120.26" Width="718.2" Height="75.6" CanGrow="true" CanShrink="true" CanBreak="true">
         <TextObject Name="Text11" Width="718.2" Height="18.9" Border.Lines="All" Border.Color="224, 224, 224" Fill.Color="Gainsboro" Text="Описание" VertAlign="Center" Font="Arial, 10pt"/>
-        <TextObject Name="Text12" Top="18.9" Width="718.2" Height="18.9" Border.Lines="All" Border.Color="224, 224, 224" Fill.Color="White" Text="[Order.Products.Note]" VertAlign="Center" Font="Arial, 10pt"/>
-        <TextObject Name="Text14" Top="37.8" Width="718.2" Height="18.9" Border.Lines="All" Border.Color="224, 224, 224" Fill.Color="Gainsboro" Text="Файлы" VertAlign="Center" Font="Arial, 10pt"/>
-        <TextObject Name="Text13" Top="56.7" Width="718.2" Height="18.9" Border.Lines="All" Border.Color="224, 224, 224" Fill.Color="White" Text="[Order.Products.Files]" VertAlign="Center" Font="Arial, 10pt"/>
+        <TextObject Name="Text12" Top="18.9" Width="718.2" Height="18.9" Border.Lines="All" Border.Color="224, 224, 224" Fill.Color="White" CanGrow="true" CanShrink="true" Text="[Order.Products.Note]" VertAlign="Center" Font="Arial, 10pt"/>
+        <TextObject Name="Text14" Top="37.8" Width="718.2" Height="18.9" Border.Lines="All" Border.Color="224, 224, 224" Fill.Color="Gainsboro" CanGrow="true" CanShrink="true" Text="Файлы" VertAlign="Center" Font="Arial, 10pt"/>
+        <TextObject Name="Text13" Top="56.7" Width="718.2" Height="18.9" Border.Lines="All" Border.Color="224, 224, 224" Fill.Color="White" CanGrow="true" CanShrink="true" Text="[Order.Products.Files]" VertAlign="Center" Font="Arial, 10pt"/>
       </DataBand>
     </DataBand>
   </ReportPage>

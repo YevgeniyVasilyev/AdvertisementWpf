@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Report ScriptLanguage="CSharp" ReportInfo.Created="03/26/2023 16:32:33" ReportInfo.Modified="04/01/2023 19:17:29" ReportInfo.CreatorVersion="2023.1.0.0">
+<Report ScriptLanguage="CSharp" ReportInfo.Created="03/26/2023 16:32:33" ReportInfo.Modified="04/12/2023 21:34:19" ReportInfo.CreatorVersion="2023.1.0.0">
   <ScriptText>using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -9792,7 +9792,7 @@ namespace FastReport
         </TableRow>
       </TableObject>
       <DataBand Name="Data2" Top="119.8" Width="718.2" Height="56.7" CanGrow="true" CanShrink="true" CanBreak="true" DataSource="WorkInTechCards23" Filter="[TechCard.WorkInTechCards.IsPrinted]" PrintIfDetailEmpty="true">
-        <TextObject Name="Text2" Left="-1" Width="719.71" Height="18.9" Fill.Color="Black" Text="Работа [TechCard.WorkInTechCards.Number]" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt, style=Bold" TextFill.Color="White"/>
+        <TextObject Name="Text2" Left="-1" Width="719.71" Height="18.9" Fill.Color="Black" CanGrow="true" CanShrink="true" Text="Работа [TechCard.WorkInTechCards.Number]" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt, style=Bold" TextFill.Color="White"/>
         <TableObject Name="Table2" Top="18.9" Width="718.2" Height="37.8" GrowToBottom="true" RepeatHeaders="false">
           <TableColumn Name="Column5" Width="179.55"/>
           <TableColumn Name="Column6" Width="179.55"/>
@@ -9804,7 +9804,7 @@ namespace FastReport
             <TableCell Name="Cell27" Border.Lines="All" Fill.Color="Gainsboro" Text="Дата планового окончания работы" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt"/>
             <TableCell Name="Cell28" Border.Lines="All" Text="[FormatDateTime(ToDateTime([TechCard.WorkInTechCards.DatePlanCompletion]),&quot;ShortDate&quot;)]" Font="Arial, 10pt"/>
           </TableRow>
-          <TableRow Name="Row11">
+          <TableRow Name="Row11" AutoSize="true">
             <TableCell Name="Cell48" Border.Lines="All" Fill.Color="Gainsboro" Text="Название работы" VertAlign="Center" Font="Arial, 10pt"/>
             <TableCell Name="Cell49" Border.Lines="All" BeforePrintEvent="Cell49_BeforePrint" Text="[TechCard.WorkInTechCards.Name]" VertAlign="Center" Font="Arial, 10pt" ColSpan="3"/>
             <TableCell Name="Cell50" Font="Arial, 10pt"/>
@@ -9812,7 +9812,7 @@ namespace FastReport
           </TableRow>
         </TableObject>
         <DataBand Name="Data3" Top="179.7" Width="718.2" Height="75.6" CanGrow="true" CanShrink="true" CanBreak="true" DataSource="OperationInWorks54" RowCount="0" Filter="[TechCard.WorkInTechCards.OperationInWorks.IsPrinted]" PrintIfDetailEmpty="true">
-          <TableObject Name="Table3" Width="717.76" Height="75.6">
+          <TableObject Name="Table3" Width="717.76" Height="75.6" GrowToBottom="true">
             <TableColumn Name="Column9" Width="179.44"/>
             <TableColumn Name="Column10" Width="179.44"/>
             <TableColumn Name="Column11" Width="179.44"/>
@@ -9829,20 +9829,20 @@ namespace FastReport
               <TableCell Name="Cell36" Border.Lines="All" Text="[TechCard.WorkInTechCards.OperationInWorks.Operation.ProductionArea.Name]" VertAlign="Center" Font="Arial, 10pt" ColSpan="2"/>
               <TableCell Name="Cell37" VertAlign="Center" Font="Arial, 10pt"/>
             </TableRow>
-            <TableRow Name="Row9">
+            <TableRow Name="Row9" AutoSize="true">
               <TableCell Name="Cell39" Border.Lines="All" Fill.Color="Gainsboro" Text="Описание" VertAlign="Center" Font="Arial, 10pt"/>
               <TableCell Name="Cell40" Border.Lines="All" BeforePrintEvent="Cell40_BeforePrint" Text="[TechCard.WorkInTechCards.OperationInWorks.Note]" VertAlign="Center" Font="Arial, 10pt" ColSpan="3"/>
               <TableCell Name="Cell41" Font="Arial, 10pt"/>
               <TableCell Name="Cell42" Font="Arial, 10pt"/>
             </TableRow>
-            <TableRow Name="Row10">
+            <TableRow Name="Row10" AutoSize="true">
               <TableCell Name="Cell44" Border.Lines="All" Fill.Color="Gainsboro" Text="Файлы" VertAlign="Center" Font="Arial, 10pt"/>
               <TableCell Name="Cell45" Border.Lines="All" BeforePrintEvent="Cell45_BeforePrint" Text="[TechCard.WorkInTechCards.OperationInWorks.Files]" VertAlign="Center" Font="Arial, 10pt" ColSpan="3"/>
               <TableCell Name="Cell46" Font="Arial, 10pt"/>
               <TableCell Name="Cell47" Font="Arial, 10pt"/>
             </TableRow>
           </TableObject>
-          <ChildBand Name="Child1" Top="258.5" Width="718.2" Height="18.9">
+          <ChildBand Name="Child1" Top="258.5" Width="718.2" Height="18.9" CanGrow="true" CanShrink="true" CanBreak="true">
             <TableObject Name="Table4" Width="717.92" Height="18.9" Border.Lines="All" PrintOnParent="true">
               <TableColumn Name="Column13" Width="179.48"/>
               <TableColumn Name="Column14" Width="179.48"/>

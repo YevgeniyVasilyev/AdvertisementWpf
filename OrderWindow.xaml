@@ -882,7 +882,7 @@
                                                     <TextBlock Text="{Binding ElementName=TechCardTreeView, Path=SelectedItem.Operation.ProductionArea.Name}"/>
                                                 </StackPanel>
                                                 <Label Content="Описание"/>
-                                                <TextBox MinHeight="70" BorderThickness="1" BorderBrush="Black" 
+                                                <TextBox MinHeight="70" BorderThickness="1" BorderBrush="Black" AcceptsReturn="True" TextWrapping="Wrap"
                                                          Text="{Binding ElementName=TechCardTreeView, Path=SelectedItem.Note, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                                                 <StackPanel Margin="0,5,0,0" Orientation="Horizontal" HorizontalAlignment="Left">
                                                     <Label Content="Файлы и иллюстрации"/>
@@ -1171,7 +1171,7 @@
                                 <TextBlock Text="СЧЕТА" Margin="2" FontWeight="Bold" HorizontalAlignment="Center"/>
                             </Border>
                             <ListView Grid.Column="0" Grid.Row="2" Name="ListAccount" IsSynchronizedWithCurrentItem="True" 
-                                      ItemsSource="{Binding Source={StaticResource accountsViewSource}}" 
+                                      ItemsSource="{Binding Source={StaticResource accountsViewSource}, UpdateSourceTrigger=PropertyChanged}" 
                                       KeyDown="ListAccount_KeyDown">
                                 <ListView.View>
                                     <GridView>
@@ -1179,14 +1179,10 @@
                                                 HeaderTemplate="{StaticResource ListViewHeaderTemplate}"/>
                                         <GridViewColumn Header=" Дата счета " DisplayMemberBinding="{Binding Path=AccountDate, ConverterCulture=ru-RU, StringFormat=\{0:dd.MM.yyyy\}}"
                                                 HeaderTemplate="{StaticResource ListViewHeaderTemplate}"/>
-                                        <GridViewColumn Header=" Поставщик " DisplayMemberBinding="{Binding Path=Contractor.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HeaderTemplate="{StaticResource ListViewHeaderTemplate}" Width="200" >
-                                            <!--<GridViewColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <TextBlock Text="{Binding Path=ContractorName}" TextWrapping="Wrap"/>
-                                                </DataTemplate>
-                                            </GridViewColumn.CellTemplate>-->
-                                        </GridViewColumn>
-                                        <GridViewColumn Header=" Основание " DisplayMemberBinding="{Binding Path=Footing}" Width="200"
+                                        <GridViewColumn Header=" Поставщик " 
+                                                        DisplayMemberBinding="{Binding Path=Contractor.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                                        HeaderTemplate="{StaticResource ListViewHeaderTemplate}" Width="200"/>
+                                        <GridViewColumn Header=" Основание " DisplayMemberBinding="{Binding Path=Footing, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="200"
                                                 HeaderTemplate="{StaticResource ListViewHeaderTemplate}"/>
                                     </GridView>
                                 </ListView.View>
@@ -1233,12 +1229,11 @@
                             </Grid>
                             <ListView Grid.Column="0" Grid.Row="3" Name="ListAccountDetail" IsSynchronizedWithCurrentItem="True"
                                       ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto"
-                                      ItemsSource="{Binding Source={StaticResource accountsViewSource}, Path=DetailsList}" Height="200">
+                                      ItemsSource="{Binding Source={StaticResource accountsViewSource}, Path=DetailsList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Height="200">
                                 <ListView.View>
                                     <GridView>
                                         <GridViewColumn Header=" Товары (работы, услуги) " DisplayMemberBinding="{Binding Path=ProductInfoForAccount}" 
-                                                    HeaderTemplate="{StaticResource ListViewHeaderTemplate}">
-                                        </GridViewColumn>
+                                                    HeaderTemplate="{StaticResource ListViewHeaderTemplate}"/>
                                         <GridViewColumn Header=" Кол-во " DisplayMemberBinding="{Binding Path=Quantity}"
                                                 HeaderTemplate="{StaticResource ListViewHeaderTemplate}" Width="100"/>
                                         <GridViewColumn Header=" Ед. изм. " DisplayMemberBinding="{Binding Path=UnitName}"

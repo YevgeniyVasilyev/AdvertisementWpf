@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Report ScriptLanguage="CSharp" ReportInfo.Created="04/02/2023 16:47:18" ReportInfo.Modified="04/02/2023 17:53:00" ReportInfo.CreatorVersion="2023.1.0.0">
+<Report ScriptLanguage="CSharp" ReportInfo.Created="04/02/2023 16:47:18" ReportInfo.Modified="04/10/2023 20:19:32" ReportInfo.CreatorVersion="2023.1.0.0">
   <Dictionary>
     <BusinessObjectDataSource Name="WorkInTechCard" ReferenceName="WorkInTechCard" DataType="null" Enabled="true">
       <Column Name="ID" DataType="System.Int64"/>
@@ -1494,20 +1494,22 @@
     <ReportTitleBand Name="ReportTitle1" Width="1047.06" Height="28.35">
       <TextObject Name="Text1" Width="85.05" Height="28.35" Border.Lines="All" Text="Номер заказа" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt, style=Bold"/>
       <TextObject Name="Text2" Left="85.05" Width="94.5" Height="28.35" Border.Lines="All" Text="Дата приема" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt, style=Bold"/>
-      <TextObject Name="Text3" Left="179.55" Width="217.35" Height="28.35" Border.Lines="All" Text="Изделие" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt, style=Bold"/>
-      <TextObject Name="Text4" Left="396.9" Width="37.8" Height="28.35" Border.Lines="All" Text="Код" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt, style=Bold"/>
-      <TextObject Name="Text5" Left="434.7" Width="179.55" Height="28.35" Border.Lines="All" Text="Расшифровка" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt, style=Bold"/>
-      <TextObject Name="Text6" Left="614.25" Width="94.5" Height="28.35" Border.Lines="All" Text="Дата окончания (план)" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt, style=Bold"/>
-      <TextObject Name="Text7" Left="708.75" Width="340.2" Height="28.35" Border.Lines="All" Text="Название работы" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt, style=Bold"/>
+      <TextObject Name="Text3" Left="359.1" Width="151.2" Height="28.35" Border.Lines="All" Text="Изделие" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt, style=Bold"/>
+      <TextObject Name="Text4" Left="510.3" Width="37.8" Height="28.35" Border.Lines="All" Text="Код" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt, style=Bold"/>
+      <TextObject Name="Text5" Left="548.1" Width="122.85" Height="28.35" Border.Lines="All" Text="Расшифровка" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt, style=Bold"/>
+      <TextObject Name="Text6" Left="670.95" Width="94.5" Height="28.35" Border.Lines="All" Text="Дата окончания (план)" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt, style=Bold"/>
+      <TextObject Name="Text7" Left="765.45" Width="283.5" Height="28.35" Border.Lines="All" Text="Название работы" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt, style=Bold"/>
+      <TextObject Name="Text15" Left="179.55" Width="179.55" Height="28.35" Border.Lines="All" Text="Заказчик" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt, style=Bold"/>
     </ReportTitleBand>
     <DataBand Name="Data1" Top="31.55" Width="1047.06" Height="18.9" CanGrow="true" CanShrink="true" CanBreak="true" DataSource="WorkInTechCard">
       <TextObject Name="Text8" Width="85.05" Height="18.9" Border.Lines="All" Text="[WorkInTechCard.TechCard.Product.Order.Number]" VertAlign="Center" Font="Arial, 8pt"/>
       <TextObject Name="Text9" Left="85.05" Width="94.5" Height="18.9" Border.Lines="All" Text="[FormatDateTime(ToDateTime([WorkInTechCard.TechCard.Product.Order.DateAdmission]),&quot;ShortDate&quot;)]" VertAlign="Center" Font="Arial, 8pt"/>
-      <TextObject Name="Text10" Left="396.9" Width="37.8" Height="18.9" Border.Lines="All" Text="[WorkInTechCard.TypeOfActivity.Code]" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt"/>
-      <TextObject Name="Text11" Left="179.55" Width="217.35" Height="18.9" Border.Lines="All" GrowToBottom="true" Text="[WorkInTechCard.TechCard.Product.ProductType.Name]" VertAlign="Center" Font="Arial, 8pt"/>
-      <TextObject Name="Text12" Left="434.7" Width="179.55" Height="18.9" Border.Lines="All" Text="[WorkInTechCard.TypeOfActivity.Name]" VertAlign="Center" Font="Arial, 8pt"/>
-      <TextObject Name="Text13" Left="614.25" Width="94.5" Height="18.9" Border.Lines="All" Text="[FormatDateTime(ToDateTime([WorkInTechCard.DatePlanCompletion]),&quot;ShortDate&quot;)]" VertAlign="Center" Font="Arial, 8pt"/>
-      <TextObject Name="Text14" Left="708.75" Width="340.2" Height="18.9" Border.Lines="All" Text="[WorkInTechCard.Name]" VertAlign="Center" Font="Arial, 8pt"/>
+      <TextObject Name="Text10" Left="510.3" Width="37.8" Height="18.9" Border.Lines="All" Text="[WorkInTechCard.TypeOfActivity.Code]" VertAlign="Center" Font="Arial, 8pt"/>
+      <TextObject Name="Text11" Left="359.1" Width="151.2" Height="18.9" Border.Lines="All" GrowToBottom="true" Text="[WorkInTechCard.TechCard.Product.ProductType.Name]" VertAlign="Center" Font="Arial, 8pt"/>
+      <TextObject Name="Text12" Left="548.1" Width="122.85" Height="18.9" Border.Lines="All" Text="[WorkInTechCard.TypeOfActivity.Name]" VertAlign="Center" Font="Arial, 8pt"/>
+      <TextObject Name="Text13" Left="670.95" Width="94.5" Height="18.9" Border.Lines="All" Text="[FormatDateTime(ToDateTime([WorkInTechCard.DatePlanCompletion]),&quot;ShortDate&quot;)]" VertAlign="Center" Font="Arial, 8pt"/>
+      <TextObject Name="Text14" Left="765.45" Width="283.5" Height="18.9" Border.Lines="All" Text="[WorkInTechCard.Name]" VertAlign="Center" Font="Arial, 8pt"/>
+      <TextObject Name="Text16" Left="179.55" Width="179.55" Height="18.9" Border.Lines="All" Text="[WorkInTechCard.TechCard.Product.Order.Client.Name]" VertAlign="Center" Font="Arial, 8pt"/>
     </DataBand>
   </ReportPage>
 </Report>

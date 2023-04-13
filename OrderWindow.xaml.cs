@@ -730,7 +730,7 @@ namespace AdvertisementWpf
                 }
                 else if (btn == NewActButton)
                 {
-                    if (accountsViewSource != null && accountsViewSource.View != null && accountsViewSource.View.CurrentItem is Account && CanCreateNewAct())
+                    if (accountsViewSource?.View != null && accountsViewSource.View.CurrentItem is Account && CanCreateNewAct())
                     {
                         e.CanExecute = true;
                         return;
@@ -1244,10 +1244,16 @@ namespace AdvertisementWpf
             _ = context__.Accounts.Add(account);
             context__.Entry(account).Reference(account => account.Contractor).Load(); //загрузить через св-во навигации
             context__.Entry(account).Reference(account => account.Order).Load(); //загрузить через св-во навигации
+            Order order = account.Order;
+            context__.Entry(order).Collection(o => o.Products).Load(); //загрузить через св-во навигации
+            foreach (Product product in order.Products)
+            {
+                context__.Entry(product).Reference(p => p.ProductType).Load(); //загрузить через св-во навигации
+            }
             _ = accountsViewSource.View.MoveCurrentTo(account);
             account.DetailsList = CreateNewAccountDetails();
             account.ListToDetails();
-            accountsViewSource.View.Refresh();
+             accountsViewSource.View.Refresh();
             _ = accountsViewSource.View.MoveCurrentTo(account);
         }
 
@@ -1260,6 +1266,8 @@ namespace AdvertisementWpf
                     ActDate = DateTime.Now,
                     AccountID = account.ID,
                 };
+                _ = context__.Acts.Add(act);
+                context__.Entry(act).Reference(act => act.Account).Load(); //загрузить через св-во навигации
                 act.ListProductInAct = GetProductsInAct(); //список productID 
                 act.ListToProductInAct(); //свернуть список productID в строку
                 account.Acts.Add(act);
@@ -1360,7 +1368,7 @@ namespace AdvertisementWpf
         private List<AccountDetail> CreateNewAccountDetails(bool IsManual = false)
         {
             List<AccountDetail> accountDetails = new List<AccountDetail> { };
-            if (accountsViewSource != null && accountsViewSource.View != null)
+            if (accountsViewSource?.View != null)
             {
                 if (accountsViewSource.View.CurrentItem is null)
                 {
@@ -1380,7 +1388,7 @@ namespace AdvertisementWpf
                     while (products.MoveNext())
                     {
                         Product product = (Product)products.Current;
-                        accountDetails.Add(new AccountDetail { ProductID = product.ID, ProductInfoForAccount = product.ProductInfoForAccount, Quantity = product.Quantity, UnitName = "шт.", Cost = product.Cost });
+                        accountDetails.Add(new AccountDetail { ProductID = product.ID, ProductInfoForAccount = product.ProductType.Name, Quantity = product.Quantity, UnitName = "шт.", Cost = product.Cost });
                     }
                 }
             }
@@ -1392,28 +1400,13 @@ namespace AdvertisementWpf
             MainWindow.statusBar.WriteStatus("Загрузка счетов ...", Cursors.Wait);
             try
             {
-                if (accountsViewSource != null && accountsViewSource.View != null)
+                if (accountsViewSource?.View != null)
                 {
-                    foreach (Account account in context__.Accounts.Local) //для повторной загрузки из БД
+                    foreach (EntityEntry entityEntry in context__.ChangeTracker.Entries().ToArray()) //для повторной загрузки из БД
                     {
-                        if (account.ID > 0 && account != null)
+                        if (entityEntry.Entity != null)
                         {
-                            if (account.Order != null)
-                            {
-                                context__.Entry(account.Order).State = EntityState.Detached;
-                            }
-                            if (account.Acts != null)
-                            {
-                                foreach (Act act in account.Acts)
-                                {
-                                    context__.Entry(act).State = EntityState.Detached;
-                                }
-                            }
-                            context__.Entry(account).State = EntityState.Detached;
-                        }
-                        else
-                        {
-                            _ = context__.Remove(account);
+                            entityEntry.State = EntityState.Detached;
                         }
                     }
                 }

@@ -103,8 +103,8 @@ namespace AdvertisementWpf.Models
         public long ProductID = 0;
         private string _productInfoForAccount = "";
         public string ProductInfoForAccount
-        { 
-            get => _productInfoForAccount; 
+        {
+            get => _productInfoForAccount;
             set
             {
                 _productInfoForAccount = value;
