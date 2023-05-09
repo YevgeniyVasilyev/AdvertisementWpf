@@ -389,7 +389,7 @@ namespace AdvertisementWpf
         public static List<object> ObjectDataSet = null;
         public static List<TechCard> TechCardDataSet = null;
         public static List<WorkInTechCard> WorkInTechCardDataSet = null;
-        public static DateTime ReportDate = DateTime.Now;
+        public static DateTime? ReportDate = DateTime.Now;
         public static DateTime BeginPeriod = DateTime.Now;
         public static DateTime EndPeriod = DateTime.Now;
         public static bool WithSignature = true;
@@ -733,15 +733,15 @@ namespace AdvertisementWpf
             }
         }
 
-        public static string Month(DateTime dateTime)
+        public static string Month(DateTime? dateTime)
         {
             string[] sMonthName = { "", "января", "Февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября", "декабря" };
-            return sMonthName[dateTime.Month];
+            return dateTime == null ? "" : sMonthName[((DateTime)dateTime).Month];
         }
 
-        public static string Date(DateTime dateTime)
+        public static string Date(DateTime? dateTime)
         {
-            return $"{dateTime.Day} {Month(dateTime)} {dateTime.Year} года";
+            return dateTime == null ? "" : $"{((DateTime)dateTime).Day} {Month(dateTime)} {((DateTime)dateTime).Year} года";
         }
 
         public static string MonthName(DateTime dateTime)

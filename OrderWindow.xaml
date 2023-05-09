@@ -985,8 +985,8 @@
                 <Border Margin="2" BorderThickness="1" BorderBrush="DarkBlue">
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="28*"/>
-                            <ColumnDefinition Width="1011*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
                             <!--список платежей-->
                             <ColumnDefinition Width="Auto"/>
                             <!--поля для редактирования-->
@@ -999,7 +999,7 @@
                             <RowDefinition Height="Auto"/>
                             <!--поля для правки данных платежа-->
                         </Grid.RowDefinitions>
-                        <WrapPanel Grid.Row="0" Orientation="Horizontal" Grid.ColumnSpan="3" Margin="0,0,329,414" Grid.RowSpan="2">
+                        <WrapPanel Grid.Row="0" Orientation="Horizontal" Grid.ColumnSpan="3">
                             <!--<Button Name="LoadPaymentButton" Style="{StaticResource ButtonOfOrder}" Command="ApplicationCommands.New"
                                             ToolTip="Загрузить платежи из БД">
                                 <StackPanel Orientation="Horizontal">

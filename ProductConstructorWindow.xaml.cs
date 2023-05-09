@@ -144,17 +144,23 @@ namespace AdvertisementWpf
 
         private void ParametersInProductstGrid_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Delete && _context != null && productTypesViewSource != null && productTypesViewSource.View.CurrentItem is ProductType productType)
+            if (e.Key == Key.Delete && _context != null && productTypesViewSource?.View.CurrentItem is ProductType productType)
             {
-                _ = _context.ParameterInProductTypes.Remove(((DataGrid)sender).SelectedItem as ParameterInProductType);
+                if (((DataGrid)sender).SelectedItem is ParameterInProductType parameterInProductType && parameterInProductType.ID > 0)
+                {
+                    _ = _context.ParameterInProductTypes.Remove(parameterInProductType);
+                }
             }
         }
 
         private void TypeOfActivityInProductstGrid_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Delete && _context != null && productTypesViewSource != null && productTypesViewSource.View.CurrentItem is ProductType productType)
+            if (e.Key == Key.Delete && _context != null && productTypesViewSource?.View.CurrentItem is ProductType)
             {
-                _ = _context.TypeOfActivityInProducts.Remove(((DataGrid)sender).SelectedItem as TypeOfActivityInProduct);
+                if (((DataGrid)sender).SelectedItem is TypeOfActivityInProduct typeOfActivityInProduct && typeOfActivityInProduct.ID > 0)
+                {
+                    _ = _context.TypeOfActivityInProducts.Remove(typeOfActivityInProduct);
+                }
             }
         }
 

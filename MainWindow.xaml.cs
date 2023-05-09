@@ -94,6 +94,9 @@ namespace AdvertisementWpf
             OrderListView.Visibility = Visibility.Collapsed;
             ProductListView.Visibility = Visibility.Collapsed;
             ProductionProductListView.Visibility = Visibility.Collapsed;
+            OrderList.Height = new GridLength(1, GridUnitType.Star);
+            ProductList.Height = new GridLength(1, GridUnitType.Auto);
+            ProductionProductList.Height = new GridLength(1, GridUnitType.Auto);
             LogonWindow logon = new LogonWindow
             {
                 Owner = this

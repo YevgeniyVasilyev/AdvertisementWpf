@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Report ScriptLanguage="CSharp" ReportInfo.Created="09/09/2022 20:49:00" ReportInfo.Modified="10/20/2022 21:30:38" ReportInfo.CreatorVersion="2022.3.0.0">
+<Report ScriptLanguage="CSharp" ReportInfo.Created="09/09/2022 20:49:00" ReportInfo.Modified="04/18/2023 19:33:26" ReportInfo.CreatorVersion="2023.1.0.0">
   <ScriptText>using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -21,6 +21,18 @@ namespace FastReport
     public string Cop(decimal n)
     {
       return $&quot;{n * 100 % 100:00}&quot;;
+    }
+
+    private void Text3_BeforePrint(object sender, EventArgs e)
+    { //[FormatDateTime([ReportDate],&quot;Short Date&quot;)]
+      if (Report.GetParameterValue(&quot;ReportDate&quot;) == null)
+      {
+        Text3.Text = &quot;&quot;;
+      }
+      else
+      {
+        Text3.Text = FormatDateTime(ToDateTime(Report.GetParameterValue(&quot;ReportDate&quot;)),&quot;Short Date&quot;);
+      }                  
     }
   }
 }
@@ -461,12 +473,12 @@ namespace FastReport
       </TableObject>
       <TextObject Name="Text1" Left="292.95" Top="434.7" Width="217.35" Height="18.9" Text="ТОВАРНАЯ НАКЛАДНАЯ" HorzAlign="Center" VertAlign="Center" Font="Arial, 12pt, style=Bold"/>
       <TextObject Name="Text2" Left="510.3" Top="434.7" Width="132.3" Height="18.9" Border.Lines="All" Border.Width="1.5" Text="[Act.Account.Acts.ActNumber]" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
-      <TextObject Name="Text3" Left="642.6" Top="434.7" Width="132.3" Height="18.9" Border.Lines="All" Border.Width="1.5" Text="[FormatDateTime([ReportDate],&quot;Short Date&quot;)]" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
+      <TextObject Name="Text3" Left="642.6" Top="434.7" Width="132.3" Height="18.9" Border.Lines="All" Border.Width="1.5" BeforePrintEvent="Text3_BeforePrint" HideZeros="true" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
       <TextObject Name="Text4" Left="510.3" Top="406.35" Width="132.3" Height="28.35" Border.Lines="All" Border.Width="0.5" Text="Номер&#13;&#10;документа" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
       <TextObject Name="Text5" Left="642.6" Top="406.35" Width="132.3" Height="28.35" Border.Lines="All" Border.Width="0.5" Text="Дата&#13;&#10;составления" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
       <TextObject Name="Text6" Left="727.65" Top="9.45" Width="302.4" Height="18.9" Text="Унифицированная форма № ТОРГ-12" HorzAlign="Right" VertAlign="Bottom" Font="Arial, 9pt"/>
     </ReportTitleBand>
-    <PageHeaderBand Name="PageHeader2" Top="480.75" Width="1047.06" Height="124.95" Guides="21,124.95,106.05,58.79999,0,18.89999">
+    <PageHeaderBand Name="PageHeader2" Top="479.84" Width="1047.06" Height="124.95" Guides="21,124.95,106.05,58.79999,0,18.89999">
       <TableObject Name="Table2" Left="9.45" Top="21" Width="1023.5" Height="103.95">
         <TableColumn Name="Column6" Width="37.17"/>
         <TableColumn Name="Column7" Width="217.35"/>
@@ -537,7 +549,7 @@ namespace FastReport
       </TableObject>
       <TextObject Name="Text22" Left="765.45" Width="264.6" Height="18.9" PrintOn="LastPage, OddPages, EvenPages, RepeatedBand, SinglePage" Text="Оборотная сторона формы № ТОРГ-12" HorzAlign="Right" VertAlign="Center" Font="Arial, 9pt"/>
     </PageHeaderBand>
-    <DataBand Name="Data1" Top="608.9" Width="1047.06" Height="18.9" CanGrow="true" CanShrink="true" Guides="0,18.90002" DataSource="DetailsList5">
+    <DataBand Name="Data1" Top="607.07" Width="1047.06" Height="18.9" CanGrow="true" CanShrink="true" Guides="0,18.90002" DataSource="DetailsList5">
       <TextObject Name="Text7" Left="9.45" Width="37.8" Height="18.9" Border.Lines="All" CanGrow="true" CanShrink="true" GrowToBottom="true" CanBreak="false" Text="[Row#]" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt"/>
       <TextObject Name="Text8" Left="47.25" Width="217.35" Height="18.9" Border.Lines="All" CanGrow="true" CanShrink="true" GrowToBottom="true" CanBreak="false" Text="[Act.DetailsList.ProductInfoForAccount]" Font="Arial, 8pt"/>
       <TextObject Name="Text9" Left="264.6" Width="37.8" Height="18.9" Border.Lines="All" CanGrow="true" CanShrink="true" GrowToBottom="true" CanBreak="false" Font="Arial, 8pt, style=Bold"/>
@@ -553,7 +565,7 @@ namespace FastReport
       <TextObject Name="Text19" Left="837.05" Width="65.52" Height="18.9" Border.Lines="All" CanGrow="true" CanShrink="true" GrowToBottom="true" CanBreak="false" Text="Без НДС" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt"/>
       <TextObject Name="Text20" Left="902.75" Width="46.62" Height="18.9" Border.Lines="All" CanGrow="true" CanShrink="true" GrowToBottom="true" CanBreak="false" Text="0,00 р." Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Right" VertAlign="Center" Font="Arial, 8pt"/>
       <TextObject Name="Text21" Left="949.45" Width="84.42" Height="18.9" Border.Lines="All" CanGrow="true" CanShrink="true" GrowToBottom="true" CanBreak="false" Text="[Act.DetailsList.Cost]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Right" VertAlign="Center" Font="Arial, 8pt"/>
-      <DataFooterBand Name="DataFooter1" Top="631" Width="1047.06" Height="18.9" Guides="0,18.90002,37.80005" KeepWithData="true" RepeatOnEveryPage="true">
+      <DataFooterBand Name="DataFooter1" Top="628.26" Width="1047.06" Height="18.9" Guides="0,18.90002,37.80005" KeepWithData="true" RepeatOnEveryPage="true">
         <TextObject Name="Text26" Left="453.6" Width="56.7" Height="18.9" Text="Итого" HorzAlign="Right" VertAlign="Center" Font="Arial, 8pt"/>
         <TextObject Name="Text32" Left="677.4" Width="74.97" Height="18.9" Border.Lines="All" Border.Width="0.5" Text="Х" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt"/>
         <TextObject Name="Text33" Left="837.05" Width="65.52" Height="18.9" Border.Lines="All" Border.Width="0.5" Text="Х" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt"/>
@@ -561,7 +573,7 @@ namespace FastReport
         <TextObject Name="Text38" Left="752" Width="85.05" Height="18.9" Text="[TotalCost]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Right" VertAlign="Center" Font="Arial, 8pt"/>
       </DataFooterBand>
     </DataBand>
-    <ReportSummaryBand Name="ReportSummary1" Top="653.1" Width="1047.06" Height="404.62" Guides="66.15002,136.08,94.5,126.63,105.84,124.74,124.29,37.79999,0,18.90002,63.60004,151.2,287.28,170.1,181.4401,200.34,211.6801,230.58,249.48,268.3801,0" KeepWithData="true">
+    <ReportSummaryBand Name="ReportSummary1" Top="649.44" Width="1047.06" Height="404.62" Guides="66.15002,136.08,94.5,126.63,105.84,124.74,124.29,37.79999,0,18.90002,63.60004,151.2,287.28,170.1,181.4401,200.34,211.6801,230.58,249.48,268.3801,0" KeepWithData="true">
       <TableObject Name="Table3" Left="9.45" Top="83.17" Width="1020.6" Height="69.93">
         <TableColumn Name="Column21" Width="115.29"/>
         <TableColumn Name="Column22" Width="219.24"/>

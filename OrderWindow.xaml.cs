@@ -1335,16 +1335,18 @@ namespace AdvertisementWpf
                 { //ищем изделия со статусом "Запланирована отгрузка" для включения в акт
                     if (account.Order != null)
                     {
-                        listProductsID = account.Order.Products.Where(product => product.ProductState() == OrderProductStates.GetProductState(2)).Select(product => product.ID).ToList(); //список всех изделий, которые можно отгрузить
+                        //listProductsID = account.Order.Products.Where(product => product.ProductState() == OrderProductStates.GetProductState(2)).Select(product => product.ID).ToList(); //список всех изделий, которые можно отгрузить
+                        listProductsID = account.Order.Products.Select(product => product.ID).ToList(); //список всех изделий
                     }
                     else
                     {
                         foreach (Product product in productsViewSource.View)
                         {
-                            if (product.ProductState() == OrderProductStates.GetProductState(2))
-                            {
-                                listProductsID.Add(product.ID);
-                            }
+                            listProductsID.Add(product.ID);
+                            //if (product.ProductState() == OrderProductStates.GetProductState(2))
+                            //{
+                            //    listProductsID.Add(product.ID);
+                            //}
                         }
                     }
                     foreach (Account acc in accountsViewSource.View) //проверяем было ли изделие уже отгружено в другом акте
@@ -1469,7 +1471,7 @@ namespace AdvertisementWpf
 
         private void ListAccount_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Delete && context__ != null && accountsViewSource != null && accountsViewSource.View.CurrentItem is Account account)
+            if (e.Key == Key.Delete && context__ != null && accountsViewSource?.View?.CurrentItem is Account account) //&& accountsViewSource != null
             {
                 _ = context__.Accounts.Remove(account);
             }
@@ -1588,7 +1590,7 @@ namespace AdvertisementWpf
                     List<Account> accounts = new List<Account> { account };
                     Reports.AccountDataSet = accounts;
                     Reports.ReportFileName = Path.Combine(_pathToReportTemplate, AccountFileTemplate);
-                    Reports.ReportDate = AccountDate.SelectedDate.Value;
+                    Reports.ReportDate = AccountDate.SelectedDate ?? null;
                     Reports.ReportMode = "AccountForm";
                     Reports.WithSignature = (bool)WithSignature.IsChecked;
                     Reports.AmountInWords = InWords.Amount(CountTotals());
@@ -1624,7 +1626,7 @@ namespace AdvertisementWpf
                     Reports.ActDataSet = new List<Act> { (Act)ListAct.SelectedItem };
                 }
                 Reports.AmountInWords = InWords.Amount(Reports.ActDataSet[0].DetailsList.Sum(a => a.Cost));
-                Reports.ReportDate = ActDate.SelectedDate.Value;
+                Reports.ReportDate = ActDate.SelectedDate ?? null;
                 if ((bool)TemplateAct.IsChecked)
                 {
                     if (File.Exists(Path.Combine(_pathToReportTemplate, "Act.frx")))
@@ -1669,8 +1671,8 @@ namespace AdvertisementWpf
                     {
                         Reports.ReportFileName = Path.Combine(_pathToReportTemplate, "UPD.frx");
                         Reports.ReportMode = "UPDForm";
-                        Reports.MonthInWords = InWords.Month(ActDate.SelectedDate.Value);
-                        Reports.ReportDateInWords = InWords.Date(ActDate.SelectedDate.Value);
+                        Reports.MonthInWords = InWords.Month(ActDate.SelectedDate);
+                        Reports.ReportDateInWords = InWords.Date(ActDate.SelectedDate);
                         Reports.RunReport();
                     }
                     else

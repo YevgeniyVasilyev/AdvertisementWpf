@@ -192,7 +192,8 @@
             <DataGrid Name="TypeOfActivityInProductstGrid" Margin="3" BorderThickness="1" BorderBrush="DeepSkyBlue"
                       Style="{StaticResource DataGridStyle}" GridLinesVisibility="None"
                       CanUserAddRows="False" CanUserDeleteRows="True"
-                      ItemsSource="{Binding Source={StaticResource productTypesViewSource}, Path=TypeOfActivitysInProduct, UpdateSourceTrigger=PropertyChanged}" PreviewKeyDown="TypeOfActivityInProductstGrid_PreviewKeyDown">
+                      ItemsSource="{Binding Source={StaticResource productTypesViewSource}, Path=TypeOfActivitysInProduct, UpdateSourceTrigger=PropertyChanged}" 
+                      PreviewKeyDown="TypeOfActivityInProductstGrid_PreviewKeyDown">
                 <DataGrid.Resources>
                     <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="LightSlateGray"/>
                 </DataGrid.Resources>

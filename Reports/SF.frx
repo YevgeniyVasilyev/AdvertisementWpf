@@ -1,5 +1,40 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Report ScriptLanguage="CSharp" ReportInfo.Created="09/09/2022 20:49:00" ReportInfo.Modified="09/26/2022 21:34:58" ReportInfo.CreatorVersion="2022.3.0.0">
+<Report ScriptLanguage="CSharp" ReportInfo.Created="09/09/2022 20:49:00" ReportInfo.Modified="04/18/2023 19:32:43" ReportInfo.CreatorVersion="2023.1.0.0">
+  <ScriptText>using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Windows.Forms;
+using System.Drawing;
+using System.Data;
+using FastReport;
+using FastReport.Data;
+using FastReport.Dialog;
+using FastReport.Barcode;
+using FastReport.Table;
+using FastReport.Utils;
+
+namespace FastReport
+{
+  public class ReportScript
+  {
+
+    private void Text1_BeforePrint(object sender, EventArgs e)
+    {
+      //СЧЕТ-ФАКТУРА № [Act.ActNumber] от [FormatDateTime([ReportDate],&quot;Short Date&quot;)]
+      if (Report.GetParameterValue(&quot;ReportDate&quot;) == null)
+      {
+        //Text1.Text = &quot;СЧЕТ-ФАКТУРА № &quot; + Report.GetColumnValue(&quot;Act.ActNumber&quot;) + &quot; от _____ ________________ г.&quot;;
+        Text1.Text = &quot;СЧЕТ-ФАКТУРА № &quot; + Report.GetColumnValue(&quot;Act.ActNumber&quot;) + &quot; от                            .&quot;;
+      }
+      else
+      {
+        Text1.Text = &quot;СЧЕТ-ФАКТУРА № &quot; + Report.GetColumnValue(&quot;Act.ActNumber&quot;) + &quot; от &quot; + FormatDateTime(ToDateTime(Report.GetParameterValue(&quot;ReportDate&quot;)),&quot;Short Date&quot;) + &quot; г.&quot;;
+      }            
+    }
+  }
+}
+</ScriptText>
   <Dictionary>
     <BusinessObjectDataSource Name="Act" ReferenceName="Act" DataType="null" Enabled="true">
       <Column Name="ID" DataType="System.Int64"/>
@@ -286,7 +321,7 @@
   </Dictionary>
   <ReportPage Name="Page1" Landscape="true" PaperWidth="297" PaperHeight="210" RawPaperSize="9" Guides="9.45,670.95,708.75,1039.5,37.8,170.1,217.35,330.75,245.7,387.45,453.6,529.2,576.45,642.6,718.2,793.8,926.1,859.95,274.05,18.9,189,406.35,604.8,822.15,907.2,916.65,207.9" Watermark.Font="Arial, 60pt">
     <ReportTitleBand Name="ReportTitle1" Width="1047.06" Height="264.6" Guides="0,18.9,37.8,56.7,75.6,94.5,113.4,132.3,151.2,170.1,189,207.9,226.8,245.7,264.6">
-      <TextObject Name="Text1" Left="9.45" Width="812.7" Height="18.9" Text="СЧЕТ-ФАКТУРА № [Act.ActNumber] от [FormatDateTime([ReportDate],&quot;Short Date&quot;)]" HorzAlign="Right" VertAlign="Center" Font="Arial, 9pt"/>
+      <TextObject Name="Text1" Left="9.45" Width="812.7" Height="18.9" BeforePrintEvent="Text1_BeforePrint" HorzAlign="Right" VertAlign="Center" WordWrap="false" Font="Arial, 9pt"/>
       <TextObject Name="Text2" Left="822.15" Width="37.8" Height="18.9" Text="(1)" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
       <TextObject Name="Text3" Left="822.15" Top="18.9" Width="37.8" Height="18.9" Text="(1а)" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
       <TextObject Name="Text4" Left="9.45" Top="18.9" Width="812.7" Height="18.9" Text="ИСПРАВЛЕНИЕ № __________ от _________" HorzAlign="Right" VertAlign="Center" Font="Arial, 9pt"/>
@@ -315,7 +350,7 @@
       <TextObject Name="Text27" Left="9.45" Top="245.7" Width="812.7" Height="18.9" Text="Идентификатор государственного контракта, договора (соглашения) (при наличии)" VertAlign="Center" Font="Arial, 9pt"/>
       <TextObject Name="Text28" Left="822.15" Top="245.7" Width="37.8" Height="18.9" Text="(8)" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
     </ReportTitleBand>
-    <DataBand Name="Data1" Top="422.2" Width="1047.06" Height="18.9" CanGrow="true" CanBreak="true" Guides="0,18.89999" DataSource="DetailsList5">
+    <DataBand Name="Data1" Top="420.37" Width="1047.06" Height="18.9" CanGrow="true" CanBreak="true" Guides="0,18.89999" DataSource="DetailsList5">
       <TextObject Name="Text36" Left="245.7" Width="28.35" Height="18.9" HorzAlign="Right" VertAlign="Center" Font="Arial, 8pt"/>
       <TextObject Name="Text32" Left="9.45" Width="28.35" Height="18.9" Border.Lines="All" CanGrow="true" GrowToBottom="true" Text="[Row#]" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt"/>
       <TextObject Name="Text30" Left="453.6" Width="75.6" Height="18.9" Border.Lines="All" CanGrow="true" GrowToBottom="true" Text="[Act.DetailsList.Cost]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Right" VertAlign="Center" Font="Arial, 8pt"/>
@@ -332,7 +367,7 @@
       <TextObject Name="Text43" Left="793.8" Width="66.15" Height="18.9" Border.Lines="All" CanGrow="true" GrowToBottom="true" HorzAlign="Right" VertAlign="Center" Font="Arial, 8pt"/>
       <TextObject Name="Text44" Left="859.95" Width="66.15" Height="18.9" Border.Lines="All" CanGrow="true" GrowToBottom="true" HorzAlign="Right" VertAlign="Center" Font="Arial, 8pt"/>
       <TextObject Name="Text45" Left="926.1" Width="113.4" Height="18.9" Border.Lines="All" CanGrow="true" GrowToBottom="true" HorzAlign="Right" VertAlign="Center" Font="Arial, 8pt"/>
-      <DataHeaderBand Name="DataHeader1" Top="267.8" Width="1047.06" Height="151.2" CanShrink="true" KeepWithData="true" RepeatOnEveryPage="true">
+      <DataHeaderBand Name="DataHeader1" Top="266.89" Width="1047.06" Height="151.2" CanShrink="true" KeepWithData="true" RepeatOnEveryPage="true">
         <TableObject Name="Table1" Left="9.45" Width="1030.05" Height="151.2" CanBreak="false">
           <TableColumn Name="Column1" Width="28.35"/>
           <TableColumn Name="Column2" Width="132.3"/>
@@ -402,7 +437,7 @@
           </TableRow>
         </TableObject>
       </DataHeaderBand>
-      <DataFooterBand Name="DataFooter1" Top="444.3" Width="1047.06" Height="132.3" Guides="0,18.89999,28.35001,56.70001,56.25,66.14999,75.60001,103.95,103.5,113.4">
+      <DataFooterBand Name="DataFooter1" Top="441.56" Width="1047.06" Height="132.3" Guides="0,18.89999,28.35001,56.70001,56.25,66.14999,75.60001,103.95,103.5,113.4">
         <TextObject Name="Text29" Left="18.9" Width="434.7" Height="18.9" Text="Всего к оплате (9)" VertAlign="Center" Font="Arial, 8pt"/>
         <TextObject Name="Text46" Left="453.6" Width="75.6" Height="18.9" Border.Lines="All" Text="[TotalCost]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Right" VertAlign="Center" Font="Arial, 8pt"/>
         <TextObject Name="Text47" Left="529.2" Width="47.25" Height="18.9" Border.Lines="All" HorzAlign="Right" VertAlign="Center" Font="Arial, 8pt"/>
