@@ -107,6 +107,7 @@
     <None Remove="Бланки ПУД.zip" />
     <None Remove="Бухгалтерия.doc" />
     <None Remove="Бухгалтерия_правки1.doc" />
+    <None Remove="Доработка ПУД.doc" />
     <None Remove="Конструктор изделий.docx" />
     <None Remove="Освоенные за период.doc" />
     <None Remove="Отбор в производстве правка 1.xlsx" />
@@ -121,6 +122,7 @@
     <None Remove="ТК.pdf" />
     <None Remove="Товарная накладная бланк.xls" />
     <None Remove="УПД бланк.pdf" />
+    <None Remove="Этапы и доработки.xlsx" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
 #nullable disable
@@ -39,14 +38,8 @@ namespace AdvertisementWpf.Models
         public virtual ICollection<Order> Orders { get; set; }
 
         [NotMapped]
-        public string ClientInfoForAccount
-        {
-            get => $"{Name}, ИНН {INN}, КПП {KPP}, {BusinessAddress}, {WorkPhone}";
-        }
+        public string ClientInfoForAccount => $"{Name ?? ""}, ИНН {INN ?? ""}, КПП {KPP ?? ""}, {BusinessAddress ?? ""}, {WorkPhone ?? ""}";
         [NotMapped]
-        public string ClientInfoForAct
-        {
-            get => $"{Name}, ИНН {INN}, {BusinessAddress}, р/с {BankAccount}, в банке {Bank?.Name ?? ""}, БИК {Bank?.BIK ?? ""}, к/с {Bank?.CorrAccount ?? ""}";
-        }
+        public string ClientInfoForAct => $"{Name ?? ""}, ИНН {INN ?? ""}, {BusinessAddress ?? ""}, р/с {BankAccount ?? ""}, в банке {Bank?.Name ?? ""}, БИК {Bank?.BIK ?? ""}, к/с {Bank?.CorrAccount ?? ""}";
     }
 }

@@ -13,6 +13,7 @@ namespace AdvertisementWpf.Models
         public Account()
         {
             Acts = new HashSet<Act>();
+            Payments = new HashSet<Payment>();
         }
         public long ID { get; set; }
         public long OrderID { get; set; }
@@ -29,6 +30,7 @@ namespace AdvertisementWpf.Models
         public virtual Order Order { get; set; }
         public virtual Contractor Contractor { get; set; }
         public virtual ICollection<Act> Acts { get; set; }
+        public virtual ICollection<Payment> Payments { get; set; }
 
         public List<AccountDetail> DetailsList { get; set; } = new List<AccountDetail> { };
 

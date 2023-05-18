@@ -37,6 +37,7 @@
         <CollectionViewSource x:Key="contractorsViewSource"/>
         <CollectionViewSource x:Key="techCardsViewSource"/>
         <CollectionViewSource x:Key="operationsViewSource"/>
+        <CollectionViewSource x:Key="accountsListViewSource"/>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <local:ValueConverterGroup x:Key="BoolToVisibilityConverter">
             <local:BoolNotBoolConverter/>
@@ -1024,9 +1025,11 @@
                             </Button>
                         </WrapPanel>
                         <ListView Grid.Column="0" Grid.Row="1" Name="ListPayments" Margin="5,5,5,5" Padding="2" IsSynchronizedWithCurrentItem="True" 
-                                              ItemsSource="{Binding Source={StaticResource paymentsViewSource}}" KeyDown="ListPayments_KeyDown" Grid.ColumnSpan="2">
+                                  ItemsSource="{Binding Source={StaticResource paymentsViewSource}}" KeyDown="ListPayments_KeyDown" Grid.ColumnSpan="2">
                             <ListView.View>
                                 <GridView>
+                                    <GridViewColumn Header=" Счёт " DisplayMemberBinding="{Binding Path=Account.AccountNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                                    HeaderTemplate="{StaticResource ListViewHeaderTemplate}" Width="150"/>
                                     <GridViewColumn Header=" Дата платежа " DisplayMemberBinding="{Binding Path=PaymentDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ConverterCulture=ru-RU, StringFormat=\{0:dd.MM.yyyy\}}" 
                                                     HeaderTemplate="{StaticResource ListViewHeaderTemplate}"/>
                                     <GridViewColumn Header=" Сумма платежа "
@@ -1053,27 +1056,33 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
-                            <Label Name="PaymentDateLabel" Content="Дата платежа" Grid.Column="0" Grid.Row="1" Style="{StaticResource UnderlineLabel}" MouseLeftButtonDown="Label_MouseLeftButtonDown"/>
-                            <DatePicker Name="DatePaymentDate" Grid.Column="1" Grid.Row="1" IsEnabled="True" 
+                            <Label Content="Платеж по счету" Grid.Column="0" Grid.Row="1"/>
+                            <ComboBox Grid.Column="1" Grid.Row="1" Name="AccountsListComboBox" IsEnabled="True" Width="200"
+                                      ItemsSource="{Binding Source={StaticResource accountsListViewSource}}" SelectionChanged="AccountsListComboBox_SelectionChanged"
+                                      SelectedValuePath="ID" DisplayMemberPath="AccountNumber"
+                                      SelectedValue="{Binding Source={StaticResource paymentsViewSource}, Path=AccountID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                            <Label Name="PaymentDateLabel" Content="Дата платежа" Grid.Column="0" Grid.Row="2" Style="{StaticResource UnderlineLabel}" MouseLeftButtonDown="Label_MouseLeftButtonDown"/>
+                            <DatePicker Name="DatePaymentDate" Grid.Column="1" Grid.Row="2" IsEnabled="True" 
                                         SelectedDate="{Binding Source={StaticResource paymentsViewSource}, 
                                         Path=PaymentDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, 
                                         ValidatesOnExceptions=True, ValidatesOnNotifyDataErrors=True}" 
                                         IsTodayHighlighted="True"/>
-                            <Label Content="Сумма платежа" Grid.Column="0" Grid.Row="2"/>
-                            <TextBox Grid.Column="1" Grid.Row="2" Name="PaymentAmountTextBox" IsEnabled="True"
+                            <Label Content="Сумма платежа" Grid.Column="0" Grid.Row="3"/>
+                            <TextBox Grid.Column="1" Grid.Row="3" Name="PaymentAmountTextBox" IsEnabled="True"
                                      Text="{Binding Source={StaticResource paymentsViewSource},
                                      Path=PaymentAmount, Mode=TwoWay, UpdateSourceTrigger=LostFocus, ConverterCulture=ru-RU, StringFormat={}{0:C}}"/>
-                            <Label Content="Квитанция/П.п." Grid.Column="0" Grid.Row="3"/>
-                            <TextBox Grid.Column="1" Grid.Row="3" Width="200" IsEnabled="True" 
+                            <Label Content="Квитанция/П.п." Grid.Column="0" Grid.Row="4"/>
+                            <TextBox Grid.Column="1" Grid.Row="4" Width="200" IsEnabled="True" 
                                      Text="{Binding Source={StaticResource paymentsViewSource}, Path=PaymentDocNumber, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged }"/>
-                            <Label Content="Назначение платежа" Grid.Column="0" Grid.Row="4"/>
-                            <ComboBox Grid.Column="1" Grid.Row="4" IsEnabled="True" Width="200"
+                            <Label Content="Назначение платежа" Grid.Column="0" Grid.Row="5"/>
+                            <ComboBox Grid.Column="1" Grid.Row="5" IsEnabled="True" Width="200"
                                       ItemsSource="{Binding Source={StaticResource purposeOfPaymentsViewSource}}"
                                       SelectedIndex="{Binding Source={StaticResource paymentsViewSource}, Path=PurposeOfPayment, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                             <!--SelectedValuePath="{Binding RelativeSource={RelativeSource Mode=Self}, Path=SelectedIndex}"-->
-                            <Label Content="Вид платежа" Grid.Column="0" Grid.Row="5"/>
-                            <ComboBox Grid.Column="1" Grid.Row="5" IsEnabled="True" Width="200"
+                            <Label Content="Вид платежа" Grid.Column="0" Grid.Row="6"/>
+                            <ComboBox Grid.Column="1" Grid.Row="6" IsEnabled="True" Width="200"
                                       ItemsSource="{Binding Source={StaticResource typeOfPaymentsViewSource}}"
                                       SelectedIndex="{Binding Source={StaticResource paymentsViewSource}, Path=TypeOfPayment, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                         </Grid>
@@ -1128,7 +1137,7 @@
                                 <!--акты список и поля для правки-->
                                 <RowDefinition Height="Auto" MinHeight="70"/>
                                 <!--детали акта список и поля для правки-->
-                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
                             <WrapPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal">
                                 <Button Name="LoadPADButton" Style="{StaticResource ButtonOfOrder}" Command="ApplicationCommands.New"
@@ -1229,7 +1238,8 @@
                             </Grid>
                             <ListView Grid.Column="0" Grid.Row="3" Name="ListAccountDetail" IsSynchronizedWithCurrentItem="True"
                                       ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto"
-                                      ItemsSource="{Binding Source={StaticResource accountsViewSource}, Path=DetailsList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Height="200">
+                                      ItemsSource="{Binding Source={StaticResource accountsViewSource}, Path=DetailsList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Height="200" 
+                                      KeyDown="ListAccountDetail_KeyDown">
                                 <ListView.View>
                                     <GridView>
                                         <GridViewColumn Header=" Товары (работы, услуги) " DisplayMemberBinding="{Binding Path=ProductInfoForAccount}" 

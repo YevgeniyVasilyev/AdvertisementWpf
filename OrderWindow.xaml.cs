@@ -25,7 +25,7 @@ namespace AdvertisementWpf
     {
         private CollectionViewSource productsViewSource, ordersViewSource, usersViewSource, designersViewSource, clientsViewSource, productTypesViewSource, parametersInProductViewSource,
             filesListViewSource, productCostsViewSource, paymentsViewSource, purposeOfPaymentsViewSource, typeOfPaymentsViewSource, totalProductCostsViewSource, accountsViewSource,
-            contractorsViewSource, techCardsViewSource, operationsViewSource;
+            contractorsViewSource, techCardsViewSource, operationsViewSource, accountsListViewSource;
         private App.AppDbContext _context, __context, ___context, context_, context__, _context_;
         private List<ReferencebookParameter> referencebookParameters;
         private List<Referencebook> referencebooks;
@@ -71,6 +71,7 @@ namespace AdvertisementWpf
             contractorsViewSource = (CollectionViewSource)FindResource(nameof(contractorsViewSource));
             techCardsViewSource = (CollectionViewSource)FindResource(nameof(techCardsViewSource));
             operationsViewSource = (CollectionViewSource)FindResource(nameof(operationsViewSource));
+            accountsListViewSource = (CollectionViewSource)FindResource(nameof(accountsListViewSource));
 
             ___context = new App.AppDbContext(MainWindow.Connectiondata.Connectionstring); //для ProductCosts
             __context = new App.AppDbContext(MainWindow.Connectiondata.Connectionstring);  //для Orders
@@ -808,11 +809,20 @@ namespace AdvertisementWpf
             {
                 Payment payment = new Payment { PaymentDate = DateTime.Now };
                 context_ = new App.AppDbContext(MainWindow.Connectiondata.Connectionstring);   //платежи, ПУД
-                context_.Payments.Where(Payment => Payment.OrderID == currentOrder.ID).Load();
+                context_.Payments.Where(Payment => Payment.OrderID == currentOrder.ID)
+                    .Include(Payment => Payment.Account)
+                    .Load();
                 paymentsViewSource.Source = context_.Payments.Local.ToObservableCollection();
-                _ = paymentsViewSource.View.MoveCurrentToFirst();
+                accountsListViewSource.Source = context_.Accounts.AsNoTracking().Where(account => account.OrderID == currentOrder.ID).ToList();
+                foreach (Payment p in paymentsViewSource.View)
+                {
+                    p.Account?.DetailsToList(); //для каждого счета распаковать его детали
+                }
                 purposeOfPaymentsViewSource.Source = payment.ListPurposeOfPayment;
                 typeOfPaymentsViewSource.Source = payment.ListTypeOfPayment;
+                accountsListViewSource.Filter += AccountsListViewSource_Filter;
+                paymentsViewSource.View.CurrentChanged += PaymentsViewSource_CurrentChanged;
+                _ = paymentsViewSource.View.MoveCurrentToFirst();
                 //_ = MessageBox.Show("   Все платежи загружены успешно!   ", "Загрузка платежей");
             }
             catch (Exception ex)
@@ -822,6 +832,18 @@ namespace AdvertisementWpf
             finally
             {
                 MainWindow.statusBar.ClearStatus();
+            }
+        }
+
+        private void PaymentsViewSource_CurrentChanged(object sender, EventArgs e)
+        {
+            if (accountsListViewSource?.View != null)
+            {
+                accountsListViewSource.View.Refresh(); //инициализация фильтра
+                if (paymentsViewSource?.View?.CurrentItem is Payment payment)
+                {
+                    AccountsListComboBox.SelectedValue = payment.AccountID;
+                }
             }
         }
 
@@ -866,6 +888,88 @@ namespace AdvertisementWpf
             totalProductCosts.AddRange(grouping.OrderBy(grp => grp.Code));
             totalProductCosts.Add(new { Code = "", Name = "Итого по заказу ", Cost = grouping.Sum(grp => grp.Cost), Outlay = grouping.Sum(grp => grp.Outlay), Margin = grouping.Sum(grp => grp.Margin) });
             return totalProductCosts;
+        }
+
+        private void AccountsListViewSource_Filter(object sender, FilterEventArgs e)
+        {
+            if (e.Item is Account account && paymentsViewSource?.View != null)
+            {
+                decimal nAllPaymentOnAccount = 0, nAllCostOnAccount = 0;
+                nAllPaymentOnAccount = context_.Payments.Local.Where(p => p.Account?.ID == account.ID).Sum(p => p.PaymentAmount); //получить ВСЕ платежи по данному счету
+                foreach (Payment payment in paymentsViewSource.View)
+                {
+                    if (payment.Account?.ID == account.ID) //получить ВСЕ платежи по данному счету
+                    {
+                        foreach (AccountDetail accountDetail in payment.Account.DetailsList) //полная стоимость изделий по данному счету
+                        {
+                            nAllCostOnAccount += accountDetail.Cost;
+                        }
+                        break;
+                    }
+                }
+                //MessageBox.Show($"{nAllPaymentOnAccount}    {nAllCostOnAccount}     {nAllPaymentOnAccount < nAllCostOnAccount}");
+
+                //foreach (Payment payment in paymentsViewSource.View)
+                //{
+                //    nAllPaymentOnAccount += payment.PaymentAmount;
+                //    if (payment.Account?.ID == account.ID) //получить ВСЕ платежи по данному счету
+                //    {
+                //        foreach (AccountDetail accountDetail in payment.Account.DetailsList) //полная стоимость изделий по данному счету
+                //        {
+                //            nAllCostOnAccount += accountDetail.Cost;
+                //        }
+                //    }
+                //}
+                if (nAllPaymentOnAccount > 0 && nAllCostOnAccount > 0) //если есть платежи по счету
+                {
+                    if (nAllPaymentOnAccount >= nAllCostOnAccount && account.ID == (paymentsViewSource.View.CurrentItem as Payment).Account?.ID)
+                    {
+                        e.Accepted = true; //"свой" счет тоже берем 
+                    }
+                    else
+                    {
+                        e.Accepted = nAllPaymentOnAccount < nAllCostOnAccount; //брать счета для которых сумма платежей меньше стоимости изделий 
+                    }
+                }
+                else
+                {
+                    e.Accepted = true;
+                }
+
+                //if (payment.Account is null || payment.Account.ID == account.ID) //"свой" текущий счет добавить обязательно
+                //{
+                //    e.Accepted = true;
+                //}
+                //else
+                //{
+                //    //decimal nAllPaymentOnAccount = context_.Payments.Local.Where(p => p.Account?.ID == account.ID).Sum(p => p.PaymentAmount); //получить ВСЕ платежи по данному счету
+                //    //decimal? nAllCostOnAccount = payment.Account?.DetailsList?.Sum(p => p.Cost) ?? 0; //полная стоимость изделий по данному счету
+                //    decimal nAllPaymentOnAccount = 0; 
+                //    foreach (Payment p in paymentsViewSource.View)
+                //    {
+                //        if (p.Account?.ID == account.ID)
+                //        {
+                //            nAllPaymentOnAccount += p.PaymentAmount; //получить ВСЕ платежи по данному счету
+                //        }
+                //    }
+                //    decimal nAllCostOnAccount = 0; 
+                //    foreach (AccountDetail accountDetail in payment.Account.DetailsList)
+                //    {
+                //        nAllCostOnAccount += accountDetail.Cost; //полная стоимость изделий по данному счету
+                //    }
+                //    e.Accepted = nAllPaymentOnAccount < nAllCostOnAccount; //брать счета для которых сумма платежей меньше стоимости изделий 
+                //}
+            }
+        }
+
+        private void AccountsListComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (paymentsViewSource?.View?.CurrentItem is Payment payment)
+            {
+                context_.Entry(payment).Reference(p => p.Account).Load();
+                payment.Account?.DetailsToList(); 
+                paymentsViewSource.View.Refresh();
+            }
         }
 
         private void CopyFileToPathToFilesOfProduct(string fullFileName)
@@ -1197,6 +1301,13 @@ namespace AdvertisementWpf
                     {
                         GetProductParameters(product);
                         product.FilesToList();
+                        foreach (ProductParameters productParameter in product.ProductParameter)
+                        {
+                            if (productParameter.ReferencebookID > 0) //если параметр должен заполниться из справочника
+                            {
+                                productParameter.ParameterValue = referencebookParameters.Find(rp => rp.ReferencebookID == productParameter.ReferencebookID && rp.ID == productParameter.ParameterID)?.Value ?? "";
+                            }
+                        }
                     }
                 }
                 if (File.Exists(Path.Combine(_pathToReportTemplate, "OrderForm.frx")))
@@ -1224,26 +1335,28 @@ namespace AdvertisementWpf
 
         private void CreateNewAccount()
         {
-            if (contractorsViewSource.View.CurrentItem is null)
-            {
-                _ = contractorsViewSource.View.MoveCurrentToFirst();
-            }
-            Account account = new Account
-            {
-                OrderID = currentOrder.ID,
-                IsManual = false,
-                ContractorID = (contractorsViewSource.View.CurrentItem as Contractor).ID,
-                ContractorInfoForAccount = (contractorsViewSource.View.CurrentItem as Contractor).ContractorInfoForAccount,
-                ContractorName = (contractorsViewSource.View.CurrentItem as Contractor).Name,
-                AccountNumber = currentOrder.Number
-            };
             if (accountsViewSource is null || accountsViewSource.View is null)
             {
                 LoadOrderAccounts(false);
             }
+            if (contractorsViewSource.View.CurrentItem is null)
+            {
+                _ = contractorsViewSource.View.MoveCurrentToFirst();
+            }
+            Contractor contractor = contractorsViewSource.View.CurrentItem as Contractor;
+            Account account = new Account
+            {
+                OrderID = currentOrder.ID,
+                IsManual = false,
+                ContractorID = contractor.ID,
+                ContractorInfoForAccount = contractor.ContractorInfoForAccount,
+                ContractorName = contractor.Name,
+                AccountNumber = ""
+            };
             _ = context__.Accounts.Add(account);
             context__.Entry(account).Reference(account => account.Contractor).Load(); //загрузить через св-во навигации
             context__.Entry(account).Reference(account => account.Order).Load(); //загрузить через св-во навигации
+            account.AccountNumber = GetNewAccountNumber(ref account);
             Order order = account.Order;
             context__.Entry(order).Collection(o => o.Products).Load(); //загрузить через св-во навигации
             foreach (Product product in order.Products)
@@ -1268,7 +1381,12 @@ namespace AdvertisementWpf
                 };
                 _ = context__.Acts.Add(act);
                 context__.Entry(act).Reference(act => act.Account).Load(); //загрузить через св-во навигации
-                act.ListProductInAct = GetProductsInAct(); //список productID 
+                List<long> listProductID = new List<long> { };
+                foreach (Act a in account.Acts) //получить список всех изделий, уже входящих в акты данного счета
+                {
+                    listProductID.AddRange(a.DetailsList.Select(d => d.ProductID));
+                }
+                act.ListProductInAct = account.DetailsList.Select(d => d.ProductID).Except(listProductID).ToList(); //список productID 
                 act.ListToProductInAct(); //свернуть список productID в строку
                 account.Acts.Add(act);
                 act.CreateDetailsList(account);
@@ -1280,6 +1398,23 @@ namespace AdvertisementWpf
                 ListAct.Items.Refresh();
                 ListActDetail.Items.Refresh();
             }
+        }
+
+        private string GetNewAccountNumber(ref Account account)
+        {
+            short nMaxAccountNumber = 1;
+            if (accountsViewSource?.View != null)
+            {
+                foreach (Account acc in accountsViewSource.View)
+                {
+                    string[] s = acc.AccountNumber.Split('/');
+                    if (s.Length > 1 && short.TryParse(s[1], out short nMax))
+                    {
+                        nMaxAccountNumber = (short)Math.Max(nMax + 1, nMaxAccountNumber);
+                    }
+                }
+            }
+            return $"{currentOrder.Number.TrimStart('0')}/{nMaxAccountNumber}/{account.Contractor.AbbrForAcc}";
         }
 
         private string GetNewActNumber(Act act)
@@ -1299,11 +1434,11 @@ namespace AdvertisementWpf
                         short nNumber = 1;
                         foreach (Act a in account.Acts)
                         {
-                            if (a == act) //ищем последний, кроме текущего
+                            string[] s = a.ActNumber.Split('-');
+                            if (s.Length > 1 && short.TryParse(s[1], out short nMax))
                             {
-                                break;
+                                nNumber = (short)Math.Max(nMax + 1, nNumber);
                             }
-                            nNumber++;
                         }
                         sNewActNumber = $"{account.AccountNumber} - {nNumber}";
                     }
@@ -1321,7 +1456,7 @@ namespace AdvertisementWpf
             bool lCanCreateNewAct = false;
             if (accountsViewSource.View.CurrentItem is Account account)
             {
-                lCanCreateNewAct = account.IsManual ? account.Acts == null || account.Acts.Count == 0 : GetProductsInAct().Count > 0;
+                lCanCreateNewAct = account.IsManual ? account.Acts?.Count == 0 : GetProductsInAct().Count > 0;
             }
             return lCanCreateNewAct;
         }
@@ -1381,7 +1516,7 @@ namespace AdvertisementWpf
                 {
                     accountDetails.Add(new AccountDetail { ProductID = 0, ProductInfoForAccount = "Оплата по договору № ...", Quantity = 1, UnitName = "шт.", Cost = account.Order?.OrderCost ?? CountTotals() });
                 }
-                else //загрузка из номенклатуры изделий заказа
+                else //загрузка из номенклатуры изделий заказа. Грузим только не включенные в другой счет
                 {
                     IEnumerator products;
                     products = account.Order is null
@@ -1390,7 +1525,22 @@ namespace AdvertisementWpf
                     while (products.MoveNext())
                     {
                         Product product = (Product)products.Current;
-                        accountDetails.Add(new AccountDetail { ProductID = product.ID, ProductInfoForAccount = product.ProductType.Name, Quantity = product.Quantity, UnitName = "шт.", Cost = product.Cost });
+                        bool lIncluded = false;
+                        foreach (Account a in accountsViewSource.View) //проходим по счетам
+                        {
+                            foreach (AccountDetail accountDetail in a.DetailsList) //проверяем включено ли изделие в какой-либо счет
+                            {
+                                if (accountDetail.ProductID.Equals(product.ID))
+                                {
+                                    lIncluded = true;
+                                    break; //выход во внешний цикл "по счетам"
+                                }
+                            }
+                        }
+                        if (!lIncluded) //в итоге ни в одном из счетов изделия нет
+                        {
+                            accountDetails.Add(new AccountDetail { ProductID = product.ID, ProductInfoForAccount = product.ProductType.Name, Quantity = product.Quantity, UnitName = "шт.", Cost = product.Cost });
+                        }
                     }
                 }
             }
@@ -1460,6 +1610,11 @@ namespace AdvertisementWpf
                     //(accountsViewSource.View.CurrentItem as Account).ContractorInfoForAccount = (e.AddedItems[0] as Contractor).ContractorInfoForAccount;
                     //(accountsViewSource.View.CurrentItem as Account).ContractorName = (e.AddedItems[0] as Contractor).Name;
                     context__.Entry(account).Reference(account => account.Contractor).Load();
+                    if (account.AccountNumber.Count(c => c == '/') > 1) //наименование счета нового формата
+                    {
+                        string[] s = account.AccountNumber.Split("/");
+                        account.AccountNumber = $"{s[0]}/{s[1]}/{account.Contractor.AbbrForAcc}";
+                    }
                     accountsViewSource.View.Refresh();
                     if (ListAct.Items.Count > 0)
                     {
@@ -1474,6 +1629,20 @@ namespace AdvertisementWpf
             if (e.Key == Key.Delete && context__ != null && accountsViewSource?.View?.CurrentItem is Account account) //&& accountsViewSource != null
             {
                 _ = context__.Accounts.Remove(account);
+            }
+        }
+
+        private void ListAccountDetail_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Delete && context__ != null && accountsViewSource?.View?.CurrentItem is Account account && account.Acts.Count == 0) //при наличии актов не удалять
+            {
+                ListViewItem listViewItem = (ListViewItem)e.OriginalSource;
+                AccountDetail accountDetail = (AccountDetail)listViewItem.DataContext;
+                int nSelectedIndex = ListAccountDetail.SelectedIndex;
+                _ = account.DetailsList.Remove(accountDetail);
+                account.ListToDetails();
+                ListAccountDetail.Items.Refresh();
+                ListAccountDetail.SelectedIndex = Math.Min(nSelectedIndex, ListAccountDetail.Items.Count - 1);
             }
         }
 
@@ -1494,7 +1663,7 @@ namespace AdvertisementWpf
 
         private void ListActDetail_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Delete && context__ != null && accountsViewSource != null && accountsViewSource.View.CurrentItem is Account account)
+            if (e.Key == Key.Delete && context__ != null && accountsViewSource?.View.CurrentItem is Account account)
             {
                 ListViewItem listViewItem = (ListViewItem)e.OriginalSource;
                 AccountDetail accountDetail = (AccountDetail)listViewItem.DataContext;
@@ -1593,7 +1762,8 @@ namespace AdvertisementWpf
                     Reports.ReportDate = AccountDate.SelectedDate ?? null;
                     Reports.ReportMode = "AccountForm";
                     Reports.WithSignature = (bool)WithSignature.IsChecked;
-                    Reports.AmountInWords = InWords.Amount(CountTotals());
+                    //Reports.AmountInWords = InWords.Amount(CountTotals());
+                    Reports.AmountInWords = InWords.Amount(account.DetailsList.Sum(c => c.Cost));
                     Reports.RunReport();
                 }
                 else

@@ -238,15 +238,17 @@ ClientBin/
 *.jfm
 *.pfx
 *.publishsettings
-orleans.codegen.cs
-OnDeploy/
-_Models/
-.editorconfig
 *.txt
 *.pdf
 *.zip
 *.doc*
-*.xls*
+*.docx
+*.xls
+*.xlsx
+orleans.codegen.cs
+OnDeploy/
+_Models/
+.editorconfig
 
 
 # Including strong name files can present a security risk

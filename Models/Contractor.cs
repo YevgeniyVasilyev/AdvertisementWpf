@@ -32,21 +32,16 @@ namespace AdvertisementWpf.Models
         public string OGRN { get; set; }
         public string BankAccount { get; set; }
         public long? BankID { get; set; }
+        public string AbbrForAcc { get; set; } = "";
         public string AccountFileTemplate { get; set; } = "";
 
         public virtual Bank Bank { get; set; }
         public virtual ICollection<Account> Accounts { get; set; }
 
         [NotMapped]
-        public string ContractorInfoForAccount
-        {
-            get => $"{Name}, ИНН {INN}, КПП {KPP}, {BusinessAddress}";
-        }
+        public string ContractorInfoForAccount => $"{Name ?? ""}, ИНН {INN ?? ""}, КПП {KPP ?? ""}, {BusinessAddress ?? ""}";
         [NotMapped]
-        public string ContractorInfoForAct
-        {
-            get => $"{Name}, ИНН {INN}, {BusinessAddress}, р/с {BankAccount}, в банке {Bank.Name}, БИК {Bank.BIK}, к/с {Bank.CorrAccount}";
-        }
+        public string ContractorInfoForAct => $"{Name ?? ""}, ИНН {INN ?? ""}, {BusinessAddress ?? ""}, р/с {BankAccount ?? ""}, в банке {Bank?.Name ?? ""}, БИК {Bank?.BIK ?? ""}, к/с {Bank?.CorrAccount ?? ""}";
 
         [NotMapped]
         public string DirectorShortName

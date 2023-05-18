@@ -393,6 +393,8 @@
                             <RowDefinition Height="Auto"/>
                             <!--в банке-->
                             <RowDefinition Height="Auto"/>
+                            <!--Аббревиатура для счета-->
+                            <RowDefinition Height="Auto"/>
                             <!--бланк счета на оплату-->
                             <RowDefinition Height="*"/>
                             <!--пусто-->
@@ -509,15 +511,20 @@
                                   UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=true, ValidatesOnExceptions=true}" 
                                   SelectedValuePath="ID" DisplayMemberPath="Name"
                                   VerticalAlignment="Center"/>
-                        <Label Content="Шаблон счета на оплату: " Grid.Row="14" Grid.Column="0"/>
-                        <StackPanel Grid.Row="14" Grid.Column="1" Orientation="Horizontal">
+                        <Label Content="Аббревиатура для счета: " Grid.Row="14" Grid.Column="0"/>
+                        <TextBox Grid.Row="14" Grid.Column="1" Text="{Binding ElementName=ContractorsGrid, 
+                                Path=SelectedItem.AbbrForAcc, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged,
+                                NotifyOnValidationError=true, ValidatesOnExceptions=true}" 
+                                VerticalAlignment="Center"/>
+                        <Label Content="Шаблон счета на оплату: " Grid.Row="15" Grid.Column="0"/>
+                        <StackPanel Grid.Row="15" Grid.Column="1" Orientation="Horizontal">
                             <TextBlock Name="AccountFileTemplateTextBlock" Text="{Binding Source={StaticResource contractorsViewSource}, Path=AccountFileTemplate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
                             <Button Name="OpenDialogButton" Background="Transparent" BorderBrush="Transparent" 
                                 Click="OpenDialogButton_Click" ToolTip="Открыть диалог для выбора файла">
                                 <Image Source="\Images\free-icon-folder_open.png" Width="20" Height="20"/>
                             </Button>
                         </StackPanel>
-                        <Grid Grid.Row="16" Grid.ColumnSpan="2">
+                        <Grid Grid.Row="17" Grid.ColumnSpan="2">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition/>
                                 <ColumnDefinition/>

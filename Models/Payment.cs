@@ -56,14 +56,16 @@ namespace AdvertisementWpf.Models
         private byte? typeOfPayment = 0;
         public byte? TypeOfPayment
         { 
-            get => typeOfPayment; 
+            get => typeOfPayment;
             set
             {
                 typeOfPayment = value;
                 NotifyPropertyChanged("TypeOfPaymentName");
             }
         }
+        public long? AccountID { get; set; }
         public virtual Order Order { get; set; }
+        public virtual Account Account { get; set; }
 
         [NotMapped]
         public List<string> ListPurposeOfPayment = new List<string> { "предоплата", "доплата", "окончательный расчёт", "возврат" };
