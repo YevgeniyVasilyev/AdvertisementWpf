@@ -1605,11 +1605,13 @@ namespace AdvertisementWpf
         {
             if (sender is ComboBox comboBox && comboBox != null)
             {
-                if (accountsViewSource != null && accountsViewSource.View != null && e.AddedItems.Count > 0 && (accountsViewSource.View.CurrentItem is Account account))
+                if (accountsViewSource?.View != null && accountsViewSource.View.CurrentItem is Account account) //&& e.AddedItems.Count > 0
                 {
                     //(accountsViewSource.View.CurrentItem as Account).ContractorInfoForAccount = (e.AddedItems[0] as Contractor).ContractorInfoForAccount;
                     //(accountsViewSource.View.CurrentItem as Account).ContractorName = (e.AddedItems[0] as Contractor).Name;
                     context__.Entry(account).Reference(account => account.Contractor).Load();
+                    Contractor contractor = account.Contractor;
+                    context__.Entry(contractor).Reference(contractor => contractor.Bank).Load();
                     if (account.AccountNumber.Count(c => c == '/') > 1) //наименование счета нового формата
                     {
                         string[] s = account.AccountNumber.Split("/");

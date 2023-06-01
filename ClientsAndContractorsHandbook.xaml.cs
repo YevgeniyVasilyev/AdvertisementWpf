@@ -1,17 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using AdvertisementWpf.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace AdvertisementWpf
@@ -29,7 +23,7 @@ namespace AdvertisementWpf
             MainWindow.statusBar.WriteStatus("Инициализация формы ...", Cursors.Wait);
 
             InitializeComponent();
-            Clients_Tab.Focus();
+            _ = Clients_Tab.Focus();
 
             MainWindow.statusBar.WriteStatus("Получение данных ...", Cursors.Wait);
 
@@ -42,15 +36,17 @@ namespace AdvertisementWpf
             try
             {
                 _context.Clients.Load();
-                _context.Contractors.Load();
+                //_context.Contractors.Load();
                 usersViewSource.Source = _context.Users.AsNoTracking().ToList();
                 banksViewSource.Source = _context.Banks.AsNoTracking().ToList();
                 clientsViewSource.Source = _context.Clients.Local.ToObservableCollection();
-                contractorsViewSource.Source = _context.Contractors.Local.ToObservableCollection();
+                //contractorsViewSource.Source = _context.Contractors.Local.ToObservableCollection();
+                Contractor_Tab.DataContext = new ContractorViewModel();
+                //contractorsViewSource.Source = new ContractorViewModel().Contractors;
             }
             catch (Exception ex)
             {
-                _ = MessageBox.Show(ex.Message + "\n" + ex.InnerException.Message, "Ошибка загрузки данных", MessageBoxButton.OK, MessageBoxImage.Error);
+                _ = MessageBox.Show(ex.Message + "\n" + ex?.InnerException?.Message ?? "", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             finally
             {
@@ -58,7 +54,7 @@ namespace AdvertisementWpf
             }
         }
 
-        private void SaveClientsAndContractors(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
+        private void SaveClientsAndContractors(object sender, ExecutedRoutedEventArgs e)
         {
             try
             {
@@ -79,7 +75,7 @@ namespace AdvertisementWpf
             }
         }
 
-        private void CanExecuteClientsAndContractors(object sender, System.Windows.Input.CanExecuteRoutedEventArgs e)
+        private void CanExecuteClientsAndContractors(object sender, CanExecuteRoutedEventArgs e)
         {
             //Client & Contractor is Grid name
             e.CanExecute = _context != null && !ValidationChecker.HasInvalidRows(ClientsGrid) && !ValidationChecker.HasInvalidTextBox(Client)

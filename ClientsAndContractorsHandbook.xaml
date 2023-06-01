@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:AdvertisementWpf"
+        xmlns:local="clr-namespace:AdvertisementWpf" 
         mc:Ignorable="d"
         Title="Клиенты и подрядчики" MinHeight="800" MinWidth="1200" WindowStartupLocation="CenterOwner" 
         ResizeMode="CanResizeWithGrip" SizeToContent="WidthAndHeight" WindowStyle="ThreeDBorderWindow" Closed="Window_Closed">
@@ -81,6 +81,7 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
+        <local:MultiValueConverter x:Key="MultiValueConverter"/>
     </Window.Resources>
     <Window.CommandBindings>
         <CommandBinding Command="ApplicationCommands.Save"
@@ -325,7 +326,7 @@
                     </Grid>
                 </Grid>
             </TabItem>
-            <TabItem>
+            <TabItem Name="Contractor_Tab">
                 <TabItem.Header>
                     <Label Content="Подрядчики" FontSize="16" FontWeight="Bold"/>
                 </TabItem.Header>
@@ -340,9 +341,11 @@
                         <RowDefinition Height="*"/>
                         <!--грид подрядчиков и правка одного-->
                     </Grid.RowDefinitions>
-                    <DataGrid Name="ContractorsGrid" Grid.Row="0" Grid.Column="0" Margin="10"
+                    <DataGrid Name="ContractorsGrid" Grid.Row="0" Grid.Column="0" Margin="10" 
+                              CanUserAddRows="True" CanUserDeleteRows="True"
                               Style="{StaticResource DataGridStyle}" 
-                              ItemsSource="{Binding Source={StaticResource contractorsViewSource}, UpdateSourceTrigger=PropertyChanged}">
+                              ItemsSource="{Binding Contractors}">
+                        <!--ItemsSource="{Binding Source={StaticResource contractorsViewSource}, UpdateSourceTrigger=PropertyChanged}"-->
                         <DataGrid.RowValidationRules>
                             <local:NotNullAndEmptyValidationGroupRule ValidationStep="CommittedValue"/>
                         </DataGrid.RowValidationRules>
@@ -462,7 +465,7 @@
                                  VerticalAlignment="Center"/>-->
                         <StackPanel Orientation="Horizontal" Grid.Row="9" Grid.Column="0">
                             <Label Content="ИНН: "/>
-                            <TextBox  VerticalAlignment="Center" Style="{StaticResource ValidationTemplate}" Width="110">
+                            <TextBox Name="INN" VerticalAlignment="Center" Style="{StaticResource ValidationTemplate}" Width="110">
                                 <TextBox.Text>
                                     <Binding Path="SelectedItem.INN" ElementName="ContractorsGrid"
                                              Mode="TwoWay" ValidatesOnNotifyDataErrors="True"  ValidatesOnExceptions="True"
@@ -530,13 +533,20 @@
                                 <ColumnDefinition/>
                                 <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
-                            <Button Name="SaveContractors_Button" Grid.Column="0" Grid.Row="0" Command="ApplicationCommands.Save" ToolTip="Сохранить изменения в базе данных">
+                            <!--Command="ApplicationCommands.Save"-->
+                            <Button x:Name="SaveContractors_Button" Grid.Column="1" Grid.Row="0" Command="{Binding SaveCommand}" ToolTip="Сохранить изменения в базе данных">
                                 <StackPanel>
                                     <Image Source="/Images/BlueUI-сохранить-40.png" Width="30" Height="30"/>
                                     <TextBlock Text="Сохранить"/>
                                 </StackPanel>
+                                <Button.CommandParameter>
+                                    <MultiBinding Converter="{StaticResource MultiValueConverter}">
+                                        <Binding ElementName="ContractorsGrid"/>
+                                        <Binding ElementName="INN"/>
+                                    </MultiBinding>
+                                </Button.CommandParameter>
                             </Button>
-                            <Button Name="DeleteContractors_Button" Grid.Column="1" Grid.Row="0" Command="ApplicationCommands.Delete" ToolTip="Удалить строку из таблицы без сохранения в базе данных">
+                            <!--<Button Name="DeleteContractors_Button" Grid.Column="1" Grid.Row="0" Command="ApplicationCommands.Delete" ToolTip="Удалить строку из таблицы без сохранения в базе данных">
                                 <StackPanel>
                                     <Image Source="/Images/BlurUI-удалить-40.png" Width="30" Height="30"/>
                                     <TextBlock Text="Удалить" HorizontalAlignment="Left" VerticalAlignment="Center"/>
@@ -547,7 +557,7 @@
                                     <Image Source="/Images/BlueUI-обновить-40.png" Width="30" Height="30"/>
                                     <TextBlock Text="Обновить"/>
                                 </StackPanel>
-                            </Button>
+                            </Button>-->
                         </Grid>
                     </Grid>
                 </Grid>

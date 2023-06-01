@@ -37,53 +37,5 @@ namespace AdvertisementWpf.Models
 
         public virtual Bank Bank { get; set; }
         public virtual ICollection<Account> Accounts { get; set; }
-
-        [NotMapped]
-        public string ContractorInfoForAccount => $"{Name ?? ""}, ИНН {INN ?? ""}, КПП {KPP ?? ""}, {BusinessAddress ?? ""}";
-        [NotMapped]
-        public string ContractorInfoForAct => $"{Name ?? ""}, ИНН {INN ?? ""}, {BusinessAddress ?? ""}, р/с {BankAccount ?? ""}, в банке {Bank?.Name ?? ""}, БИК {Bank?.BIK ?? ""}, к/с {Bank?.CorrAccount ?? ""}";
-
-        [NotMapped]
-        public string DirectorShortName
-        {
-            get
-            {
-                if (string.IsNullOrWhiteSpace(DirectorName))
-                {
-                    return "";
-                }
-                string[] aDn = DirectorName.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-                if (aDn.Length == 3)
-                {
-                    return $"{aDn[0]} {aDn[1].Substring(0, 1)}. {aDn[2].Substring(0, 1)}.";
-                }
-                else if (aDn.Length == 2)
-                {
-                    return $"{aDn[0]} {aDn[1].Substring(0, 1)}.";
-                }
-                return DirectorName;
-            }
-        }
-        [NotMapped]
-        public string ChiefAccountantShortName
-        {
-            get
-            {
-                if (string.IsNullOrWhiteSpace(ChiefAccountant))
-                {
-                    return "";
-                }
-                string[] aCa = ChiefAccountant.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-                if (aCa.Length == 3)
-                {
-                    return $"{aCa[0]} {aCa[1].Substring(0, 1)}. {aCa[2].Substring(0, 1)}.";
-                }
-                else if (aCa.Length == 2)
-                {
-                    return $"{aCa[0]} {aCa[1].Substring(0, 1)}.";
-                }                
-                return ChiefAccountant;
-            }
-        }
     }
 }
