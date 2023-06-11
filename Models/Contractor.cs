@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
 
 #nullable disable
 
 namespace AdvertisementWpf.Models
 {
-    public partial class Contractor
+    public partial class Contractor : INotifyPropertyChanged
     {
         public Contractor()
         {
@@ -33,9 +34,24 @@ namespace AdvertisementWpf.Models
         public string BankAccount { get; set; }
         public long? BankID { get; set; }
         public string AbbrForAcc { get; set; } = "";
-        public string AccountFileTemplate { get; set; } = "";
+        private string _AccountFileTemplate { get; set; } = "";
+        public string AccountFileTemplate
+        {
+            get => _AccountFileTemplate;
+            set
+            {
+                _AccountFileTemplate = value;
+                NotifyPropertyChanged("AccountFileTemplate");
+            }
+        }
 
         public virtual Bank Bank { get; set; }
         public virtual ICollection<Account> Accounts { get; set; }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void NotifyPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }

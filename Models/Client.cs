@@ -36,10 +36,5 @@ namespace AdvertisementWpf.Models
         public virtual Bank Bank { get; set; }
         public virtual User User { get; set; }
         public virtual ICollection<Order> Orders { get; set; }
-
-        [NotMapped]
-        public string ClientInfoForAccount => $"{Name ?? ""}, ИНН {INN ?? ""}, КПП {KPP ?? ""}, {BusinessAddress ?? ""}, {WorkPhone ?? ""}";
-        [NotMapped]
-        public string ClientInfoForAct => $"{Name ?? ""}, ИНН {INN ?? ""}, {BusinessAddress ?? ""}, р/с {BankAccount ?? ""}, в банке {Bank?.Name ?? ""}, БИК {Bank?.BIK ?? ""}, к/с {Bank?.CorrAccount ?? ""}";
     }
 }

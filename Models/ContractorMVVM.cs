@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -56,15 +58,14 @@ namespace AdvertisementWpf.Models
 
     public class ContractorViewModel
     {
-        RelayCommand saveCommand;
-        App.AppDbContext _context = new App.AppDbContext(MainWindow.Connectiondata.Connectionstring);
+        private RelayCommand saveCommand, openFileDialogCommand;
+        private App.AppDbContext _context = new App.AppDbContext(MainWindow.Connectiondata.Connectionstring);
         public ObservableCollection<Contractor> Contractors { get; set; }
 
         public ContractorViewModel()
         {
             try
             {
-                MainWindow.statusBar.WriteStatus("Загрузка справочника подрядчиков ...", Cursors.Wait);
                 _context.Contractors.Load();
                 Contractors = _context.Contractors.Local.ToObservableCollection();
             }
@@ -104,6 +105,31 @@ namespace AdvertisementWpf.Models
                 MainWindow.statusBar.ClearStatus();
             }
         }, (o) => ValidationCheck((object[])o));
+
+        //команда открытия диалога для выбора файла
+        public RelayCommand OpenFileDialog => openFileDialogCommand ??= new RelayCommand((o) =>
+        {
+            try
+            {
+                string initialDirectory = _context.Setting.FirstOrDefault(setting => setting.SettingParameterName == "PathToReportTemplate").SettingParameterValue;
+                CommonOpenFileDialog dialog = new CommonOpenFileDialog
+                {
+                    IsFolderPicker = false,
+                    InitialDirectory = initialDirectory
+                };
+                if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
+                {
+                    Contractor contractor = o as Contractor;
+                    contractor.AccountFileTemplate = System.IO.Path.GetFileName(dialog.FileName);
+                    //AccountFileTemplateTextBlock.Text = System.IO.Path.GetFileName(dialog.FileName);
+                }
+                //_ = Activate();
+            }
+            catch (Exception ex)
+            {
+                _ = MessageBox.Show(ex.Message + "\n" + ex?.InnerException?.Message, "Ошибка выбора файла", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        });
 
         private bool ValidationCheck(object[] obj)
         {
