@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 
 #nullable disable
 
@@ -32,6 +31,7 @@ namespace AdvertisementWpf.Models
         public string MobilePhone { get; set; } = "";
         public string WorkPhone { get; set; } = "";
         public string Email { get; set; } = "";
+        public string AdditionalInfo { get; set; } = "";
 
         public virtual Bank Bank { get; set; }
         public virtual User User { get; set; }

@@ -445,26 +445,31 @@
                                         <RowDefinition/>
                                         <RowDefinition/>
                                         <RowDefinition/>
+                                        <RowDefinition/>
                                     </Grid.RowDefinitions>
-                                    <Label Name="DateProductionLayoutLabel" Content="Сдать макет: " Grid.Column="0" Grid.Row="0" Style="{StaticResource UnderlineLabel}" MouseLeftButtonDown="Label_MouseLeftButtonDown"/>
-                                    <DatePicker Grid.Column="1" Grid.Row="0" Name="DateProductionLayoutDate" SelectedDate="{Binding Source={StaticResource productsViewSource}, 
+                                    <Label Name="DateDeliveryPlanLabel" Content="Сдать изделие (план): " Grid.Column="0" Grid.Row="0" Style="{StaticResource UnderlineLabel}" MouseLeftButtonDown="Label_MouseLeftButtonDown"/>
+                                    <DatePicker Grid.Column="1" Grid.Row="0" Name="DateDeliveryPlanDate" SelectedDate="{Binding Source={StaticResource productsViewSource}, 
+                                                Path=DateDeliveryPlan, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, 
+                                                ValidatesOnExceptions=True, ValidatesOnNotifyDataErrors=True}" IsTodayHighlighted="True"/>
+                                    <Label Name="DateProductionLayoutLabel" Content="Сдать макет: " Grid.Column="0" Grid.Row="1" Style="{StaticResource UnderlineLabel}" MouseLeftButtonDown="Label_MouseLeftButtonDown"/>
+                                    <DatePicker Grid.Column="1" Grid.Row="1" Name="DateProductionLayoutDate" SelectedDate="{Binding Source={StaticResource productsViewSource}, 
                                                 Path=DateProductionLayout, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, 
                                                 ValidatesOnExceptions=True, ValidatesOnNotifyDataErrors=True}" IsTodayHighlighted="True"/>
-                                    <Label Name="DateTransferDesignerLabel" Content="Передано дизайнеру: " Grid.Column="0" Grid.Row="1" 
+                                    <Label Name="DateTransferDesignerLabel" Content="Передано дизайнеру: " Grid.Column="0" Grid.Row="2" 
                                                 Style="{StaticResource UnderlineLabel}" MouseLeftButtonDown="Label_MouseLeftButtonDown"/>
-                                    <DatePicker Grid.Column="1" Grid.Row="1" Name="DateTransferDesignerDate" SelectedDate="{Binding Source={StaticResource productsViewSource}, 
+                                    <DatePicker Grid.Column="1" Grid.Row="2" Name="DateTransferDesignerDate" SelectedDate="{Binding Source={StaticResource productsViewSource}, 
                                                 Path=DateTransferDesigner, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, 
                                                 NotifyOnSourceUpdated=True,
                                                 ValidatesOnExceptions=True, ValidatesOnNotifyDataErrors=True}" 
                                                 IsTodayHighlighted="True" SourceUpdated="DatePicker_SourceUpdated"/>
-                                    <Label Name="DateTransferApprovalLabel" Content="Передано на утверждение: " Grid.Column="0" Grid.Row="2" Style="{StaticResource UnderlineLabel}" MouseLeftButtonDown="Label_MouseLeftButtonDown"/>
-                                    <DatePicker Name="DateTransferApprovalDate" Grid.Column="1" Grid.Row="2" SelectedDate="{Binding Source={StaticResource productsViewSource}, 
+                                    <Label Name="DateTransferApprovalLabel" Content="Передано на утверждение: " Grid.Column="0" Grid.Row="3" Style="{StaticResource UnderlineLabel}" MouseLeftButtonDown="Label_MouseLeftButtonDown"/>
+                                    <DatePicker Name="DateTransferApprovalDate" Grid.Column="1" Grid.Row="3" SelectedDate="{Binding Source={StaticResource productsViewSource}, 
                                                 Path=DateTransferApproval, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, 
                                                 NotifyOnSourceUpdated=True,
                                                 ValidatesOnExceptions=True, ValidatesOnNotifyDataErrors=True}" IsTodayHighlighted="True" 
                                                 SourceUpdated="DatePicker_SourceUpdated"/>
-                                    <Label Name="DateApprovalLabel" Content="Утверждено: " Grid.Column="0" Grid.Row="3" Style="{StaticResource UnderlineLabel}" MouseLeftButtonDown="Label_MouseLeftButtonDown"/>
-                                    <DatePicker Name="DateApprovalDate" Grid.Column="1" Grid.Row="3" SelectedDate="{Binding Source={StaticResource productsViewSource}, 
+                                    <Label Name="DateApprovalLabel" Content="Утверждено: " Grid.Column="0" Grid.Row="4" Style="{StaticResource UnderlineLabel}" MouseLeftButtonDown="Label_MouseLeftButtonDown"/>
+                                    <DatePicker Name="DateApprovalDate" Grid.Column="1" Grid.Row="4" SelectedDate="{Binding Source={StaticResource productsViewSource}, 
                                                 Path=DateApproval, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, 
                                                 NotifyOnSourceUpdated=True,
                                                 ValidatesOnExceptions=True, ValidatesOnNotifyDataErrors=True}" IsTodayHighlighted="True" 
@@ -1135,7 +1140,7 @@
                                 <!--акты надпись-->
                                 <RowDefinition Height="Auto"/>
                                 <!--акты список и поля для правки-->
-                                <RowDefinition Height="Auto" MinHeight="70"/>
+                                <RowDefinition Height="Auto"/>
                                 <!--детали акта список и поля для правки-->
                                 <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
@@ -1210,6 +1215,7 @@
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
                                 <Label Grid.Column="0" Grid.Row="0" Content="Номер счета: "/>
                                 <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding Source={StaticResource accountsViewSource}, Path=AccountNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
@@ -1238,19 +1244,19 @@
                             </Grid>
                             <ListView Grid.Column="0" Grid.Row="3" Name="ListAccountDetail" IsSynchronizedWithCurrentItem="True"
                                       ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto"
-                                      ItemsSource="{Binding Source={StaticResource accountsViewSource}, Path=DetailsList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Height="200" 
+                                      ItemsSource="{Binding Source={StaticResource accountsViewSource}, Path=DetailsList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                                       KeyDown="ListAccountDetail_KeyDown">
                                 <ListView.View>
                                     <GridView>
-                                        <GridViewColumn Header=" Товары (работы, услуги) " DisplayMemberBinding="{Binding Path=ProductInfoForAccount}" 
+                                        <GridViewColumn x:Name="a_col1" Header=" Товары (работы, услуги) " DisplayMemberBinding="{Binding Path=ProductInfoForAccount}" 
                                                     HeaderTemplate="{StaticResource ListViewHeaderTemplate}"/>
-                                        <GridViewColumn Header=" Кол-во " DisplayMemberBinding="{Binding Path=Quantity}"
+                                        <GridViewColumn x:Name="a_col2" Header=" Кол-во " DisplayMemberBinding="{Binding Path=Quantity}"
                                                 HeaderTemplate="{StaticResource ListViewHeaderTemplate}" Width="100"/>
-                                        <GridViewColumn Header=" Ед. изм. " DisplayMemberBinding="{Binding Path=UnitName}"
+                                        <GridViewColumn x:Name="a_col3" Header=" Ед. изм. " DisplayMemberBinding="{Binding Path=UnitName}"
                                                 HeaderTemplate="{StaticResource ListViewHeaderTemplate}"/>
-                                        <GridViewColumn Header=" Цена " DisplayMemberBinding="{Binding Path=PricePerUnit, ConverterCulture=ru-RU, StringFormat={}{0:C}}" 
+                                        <GridViewColumn x:Name="a_col4" Header=" Цена " DisplayMemberBinding="{Binding Path=PricePerUnit, ConverterCulture=ru-RU, StringFormat={}{0:C}}" 
                                                 HeaderTemplate="{StaticResource ListViewHeaderTemplate}" Width="100"/>
-                                        <GridViewColumn Header=" Сумма " DisplayMemberBinding="{Binding Path=Cost, ConverterCulture=ru-RU, StringFormat={}{0:C}}" 
+                                        <GridViewColumn x:Name="a_col5" Header=" Сумма " DisplayMemberBinding="{Binding Path=Cost, ConverterCulture=ru-RU, StringFormat={}{0:C}}" 
                                                 HeaderTemplate="{StaticResource ListViewHeaderTemplate}" Width="100"/>
                                     </GridView>
                                 </ListView.View>
@@ -1306,7 +1312,21 @@
                                 </StackPanel>
                                 <CheckBox Grid.Column="1" Grid.Row="3" Content=" с подписью и печатью" Name="WithSignature" VerticalAlignment="Center"/>
                             </Grid>
-                            <Border Grid.Column="0" Grid.Row="4" Grid.ColumnSpan="2" Margin="2" BorderThickness="0.5" BorderBrush="Black" CornerRadius="5">
+                            <Border Grid.Column="0" Grid.Row="4" BorderBrush="DeepSkyBlue" BorderThickness="0.5">
+                                <Grid Width="{Binding ElementName=ListAccountDetail, Path=ActualWidth}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="{Binding ElementName=a_col1, Path=ActualWidth}"/>
+                                        <ColumnDefinition Width="{Binding ElementName=a_col2, Path=ActualWidth}"/>
+                                        <ColumnDefinition Width="{Binding ElementName=a_col3, Path=ActualWidth}"/>
+                                        <ColumnDefinition Width="{Binding ElementName=a_col4, Path=ActualWidth}"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="3" Text="ИТОГО: " FontWeight="Bold" HorizontalAlignment="Right"/>
+                                    <TextBlock Grid.Column="4" Margin="10,0,0,0" Text="{Binding ElementName=ListAccount, Path=SelectedItem.TotalCost, ConverterCulture=ru-RU, StringFormat={}{0:C}, UpdateSourceTrigger=PropertyChanged}" 
+                                               FontWeight="Bold"/>
+                                </Grid>
+                            </Border>
+                            <Border Grid.Column="0" Grid.Row="5" Grid.ColumnSpan="2" Margin="2" BorderThickness="0.5" BorderBrush="Black" CornerRadius="5">
                                 <Border.Background>
                                     <LinearGradientBrush StartPoint="0.5,1" EndPoint="0.5,0">
                                         <GradientStop Color="LightSkyBlue" Offset="0" />
@@ -1315,7 +1335,7 @@
                                 </Border.Background>
                                 <TextBlock Text="АКТЫ" Margin="2" FontWeight="Bold" HorizontalAlignment="Center"/>
                             </Border>
-                            <ListView Grid.Column="0" Grid.Row="5" Name="ListAct" IsSynchronizedWithCurrentItem="True" 
+                            <ListView Grid.Column="0" Grid.Row="6" Name="ListAct" IsSynchronizedWithCurrentItem="True" 
                                   ItemsSource="{Binding Source={StaticResource accountsViewSource}, Path=Acts}" KeyDown="ListAct_KeyDown">
                                 <ListView.View>
                                     <GridView>
@@ -1338,7 +1358,7 @@
                                     </GridView>
                                 </ListView.View>
                             </ListView>
-                            <Grid Grid.Column="1" Grid.Row="5">
+                            <Grid Grid.Column="1" Grid.Row="6">
                                 <!--поля для правки деталей акта-->
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" SharedSizeGroup="FieldAccount"/>
@@ -1357,9 +1377,9 @@
                             <Label Grid.Column="0" Grid.Row="3" Content="Покупатель: "/>
                             <Label Grid.Column="0" Grid.Row="4" Content="Основание: "/>-->
                             </Grid>
-                            <ListView Grid.Column="0" Grid.Row="6" Name="ListActDetail" IsSynchronizedWithCurrentItem="True" 
+                            <ListView Grid.Column="0" Grid.Row="7" Name="ListActDetail" IsSynchronizedWithCurrentItem="True" 
                                       ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto"
-                                      ItemsSource="{Binding ElementName=ListAct, Path=SelectedItem.DetailsList}" KeyDown="ListActDetail_KeyDown" Height="200">
+                                      ItemsSource="{Binding ElementName=ListAct, Path=SelectedItem.DetailsList}" KeyDown="ListActDetail_KeyDown">
                                 <ListView.View>
                                     <GridView>
                                         <GridViewColumn Header=" Наименование работ, услуг " DisplayMemberBinding="{Binding Path=ProductInfoForAccount, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"

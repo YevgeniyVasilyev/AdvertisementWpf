@@ -19,16 +19,26 @@ namespace AdvertisementWpf
     {
         public ClientsAndContractorsHandbook()
         {
-            MainWindow.statusBar.WriteStatus("Инициализация формы ...", Cursors.Wait);
-
-            InitializeComponent();
-            _ = Clients_Tab.Focus();
-
             MainWindow.statusBar.WriteStatus("Получение данных ...", Cursors.Wait);
 
             try
             {
                 DataContext = new ClientAndContractorViewModel();
+            }
+            catch (Exception ex)
+            {
+                _ = MessageBox.Show(ex.Message + "\n" + ex?.InnerException?.Message ?? "", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            finally
+            {
+                MainWindow.statusBar.ClearStatus();
+            }
+
+            MainWindow.statusBar.WriteStatus("Инициализация формы ...", Cursors.Wait);
+            InitializeComponent();
+
+            try
+            {
                 Clients_Tab.DataContext = new ClientViewModel();
                 Contractor_Tab.DataContext = new ContractorViewModel();
             }
@@ -40,6 +50,7 @@ namespace AdvertisementWpf
             {
                 MainWindow.statusBar.ClearStatus();
             }
+
         }
 
         private void ClientsGrid_InitializingNewItem(object sender, InitializingNewItemEventArgs e)
@@ -66,9 +77,12 @@ namespace AdvertisementWpf
         public ICollectionView BankList { get; set; }
         public ICollectionView UserList { get; set; }
         public ObservableCollection<User> UsersList { get; set; }
+        public bool ClientsTabEnabled { get; set; }
 
         public ClientAndContractorViewModel()
         {
+            ClientsTabEnabled = IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "ListManager");
+
             using App.AppDbContext _context = new App.AppDbContext(MainWindow.Connectiondata.Connectionstring);
             {
                 BankList = CollectionViewSource.GetDefaultView(_context.Banks.AsNoTracking().ToList());

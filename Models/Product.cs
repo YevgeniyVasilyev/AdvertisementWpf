@@ -22,6 +22,8 @@ namespace AdvertisementWpf.Models
         public string Parameters { get; set; }
         public decimal Cost { get; set; }
         [Column(TypeName = "datetime")]
+        public DateTime? DateDeliveryPlan { get; set; }
+        [Column(TypeName = "datetime")]
         public DateTime? DateProductionLayout { get; set; }
         private DateTime? dateTransferDesigner { get; set; }
         [Column(TypeName = "datetime")]

@@ -11,7 +11,6 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using AdvertisementWpf.Models;
 using System.Globalization;
-using System.Drawing;
 using System.Windows.Media;
 using System.Windows.Controls.Primitives;
 using System.Reflection;
@@ -123,6 +122,15 @@ namespace AdvertisementWpf
                 }
                 List<Setting> settings = _context.Setting.ToList();
                 orderLegendColors = GetOrderLegendColorsSetting.OrderLegendColors(settings);
+                if (IGrantAccess.CheckGrantAccess(userIAccessMatrix, Userdata.RoleID, "ListManager")) //роль текущего пользователя относится к Менеджерам
+                {
+                    List<byte> nMonth = new List<byte> { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+                    DateTime dStartDate, dEndDate;
+                    dStartDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+                    dEndDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, nMonth[DateTime.Today.Month - 1] + (DateTime.IsLeapYear(DateTime.Today.Year) ? 1 : 0));
+                    WhereCondition = $"WHERE DateAdmission >= '{dStartDate.Date}' AND DateAdmission <= '{dEndDate.Date}'";
+                    ShowOrders(); //покажем ему сразу его заказы, принятые в текущем месяце
+                }
             }
             catch (Exception ex)
             {
@@ -343,6 +351,7 @@ namespace AdvertisementWpf
                 {
                     OrderWindow order = new OrderWindow(NewOrder: true) { };
                     _ = order.ShowDialog();
+                    _ = typeof(ButtonBase).GetMethod("OnClick", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(RefreshOrderButton, new object[0]);
                 }
                 else if (btn == ViewOrderButton || btn == EditOrderButton)
                 {
@@ -361,6 +370,7 @@ namespace AdvertisementWpf
                     }
                     OrderWindow order = new OrderWindow(NewOrder: false, EditMode: btn == EditOrderButton, nOrderID: nOrderID) { };
                     _ = order.ShowDialog();
+                    _ = typeof(ButtonBase).GetMethod("OnClick", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(RefreshOrderButton, new object[0]);
                 }
                 //else if (btn == AllOrdersButton)
                 //{

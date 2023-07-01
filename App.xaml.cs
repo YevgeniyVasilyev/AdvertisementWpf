@@ -107,6 +107,7 @@ namespace AdvertisementWpf
                 });
                 _ = modelBuilder.Entity<Product>(p =>
                 {
+                    _ = p.Property(p => p.DateDeliveryPlan).HasColumnType("datetime");
                     _ = p.Property(p => p.DateProductionLayout).HasColumnType("datetime");
                     _ = p.Property(p => p.DateApproval).HasColumnType("datetime");
                     _ = p.Property(p => p.DateManufacture).HasColumnType("datetime");

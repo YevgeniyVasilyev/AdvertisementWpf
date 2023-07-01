@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AdvertisementWpf" 
         mc:Ignorable="d"
+        FocusManager.FocusedElement="{Binding ElementName=Contractor_Tab}"
         Title="Клиенты и подрядчики" MinHeight="800" MinWidth="1200" WindowStartupLocation="CenterOwner" 
         ResizeMode="CanResizeWithGrip" SizeToContent="WidthAndHeight" WindowStyle="ThreeDBorderWindow" Closed="Window_Closed">
     <Window.Resources>
@@ -82,7 +83,7 @@
     </Window.Resources>
     <Grid>
         <TabControl>
-            <TabItem Name="Clients_Tab">
+            <TabItem Name="Clients_Tab" IsEnabled="{Binding RelativeSource={RelativeSource AncestorType=local:ClientsAndContractorsHandbook}, Path=DataContext.ClientsTabEnabled}">
                 <TabItem.Header>
                     <Label Content="Клиенты" FontSize="16" FontWeight="Bold"/>
                 </TabItem.Header>
@@ -159,6 +160,10 @@
                             <!--в банке-->
                             <RowDefinition Height="Auto"/>
                             <!--менеджер-->
+                            <RowDefinition Height="Auto"/>
+                            <!--дополнительная информация-->
+                            <RowDefinition Height="*"/>
+                            <!--дополнительная информация-->
                             <RowDefinition Height="*"/>
                             <!--пусто-->
                             <RowDefinition Height="Auto"/>
@@ -286,7 +291,10 @@
                                   UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=true, ValidatesOnExceptions=true}" 
                                   SelectedValuePath="ID" DisplayMemberPath="FullUserName" 
                                   VerticalAlignment="Center"/>
-                        <Grid Grid.Row="15" Grid.ColumnSpan="2">
+                        <Label Content="Дополнительная информация: " Grid.Row="14" Grid.Column="0"/>
+                        <TextBox Grid.Row="15" Grid.Column="0" Grid.ColumnSpan="2" AcceptsReturn="True" AcceptsTab="True" 
+                                 Text="{Binding ElementName=ClientsGrid, Path=SelectedItem.AdditionalInfo}"/>
+                        <Grid Grid.Row="17" Grid.ColumnSpan="2">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition/>
                                 <ColumnDefinition/>

@@ -1016,7 +1016,7 @@ namespace AdvertisementWpf
                 if (e.OriginalSource.GetType().FullName.Contains("Button"))
                 {
                     Button btn = e.OriginalSource as Button;
-                    if (btn.Name == "DeleteProductButton")
+                    if (btn == DeleteProductButton)
                     {
                         if (productsViewSource.View.CurrentItem is Product product)
                         {
@@ -1027,10 +1027,11 @@ namespace AdvertisementWpf
                             product.Costs.Clear();
                             _context.Products.Remove(product);
                             currentOrder.State = currentOrder.OrderState(productsViewSource);
+                            _ = CountTotals();
                         }
                         return;
                     }
-                    if (btn.Name == "DeleteFileButton")
+                    if (btn == DeleteFileButton)
                     {
                         if (productsViewSource.View.CurrentItem is Product product)
                         {
@@ -1065,12 +1066,12 @@ namespace AdvertisementWpf
             if (e.OriginalSource.GetType().FullName.Contains("Button"))
             {
                 Button btn = e.OriginalSource as Button;
-                if (btn.Name == "DeleteProductButton" && productsViewSource != null && ListProduct.Items.Count > 0)
+                if (btn == DeleteProductButton && productsViewSource != null && ListProduct.Items.Count > 0)
                 {
                     e.CanExecute = true;
                     return;
                 }
-                if (btn.Name == "DeleteFileButton" && filesListViewSource != null && FilesListBox.Items.Count > 0)
+                if (btn == DeleteFileButton && filesListViewSource != null && FilesListBox.Items.Count > 0)
                 {
                     e.CanExecute = true;
                     return;
@@ -1177,7 +1178,11 @@ namespace AdvertisementWpf
             if (e.Source is Label)
             {
                 Label label = e.Source as Label;
-                if (label.Name.Contains("DateAdmission") && DateAdmissionDate.IsEnabled)
+                if (label.Name.Contains("DateDeliveryPlan") && DateDeliveryPlanDate.IsEnabled)
+                {
+                    DateDeliveryPlanDate.SelectedDate = DateTime.Now;
+                }
+                else if (label.Name.Contains("DateAdmission") && DateAdmissionDate.IsEnabled)
                 {
                     DateAdmissionDate.SelectedDate = DateTime.Now;
                 }
@@ -1636,9 +1641,8 @@ namespace AdvertisementWpf
 
         private void ListAccountDetail_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Delete && context__ != null && accountsViewSource?.View?.CurrentItem is Account account && account.Acts.Count == 0) //при наличии актов не удалять
+            if (e.OriginalSource is ListViewItem listViewItem && e.Key == Key.Delete && context__ != null && accountsViewSource?.View?.CurrentItem is Account account && account.Acts.Count == 0) //при наличии актов не удалять
             {
-                ListViewItem listViewItem = (ListViewItem)e.OriginalSource;
                 AccountDetail accountDetail = (AccountDetail)listViewItem.DataContext;
                 int nSelectedIndex = ListAccountDetail.SelectedIndex;
                 _ = account.DetailsList.Remove(accountDetail);
