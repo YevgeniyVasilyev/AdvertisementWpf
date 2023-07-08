@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 using System.Windows;
 
 #nullable disable
@@ -51,11 +52,19 @@ namespace AdvertisementWpf
     {
         public static bool CheckGrantAccess(List<IAccessMatrix> accessMatrixList, long nID, string sAccessName)
         {
-            foreach(IAccessMatrix accessMatrix in accessMatrixList)
-            { 
-                if (accessMatrix.AccessName == sAccessName && accessMatrix.accessGrant.Contains(nID)) //нашли нужный вид доступа и ID роли есть в списке
+            string[] sIgnoredAccessName = { "ListDesigner", "ListManager" };
+            if (MainWindow.Userdata.IsAdmin && !sIgnoredAccessName.Contains(sAccessName)) //исключаемые объекты доступа для админа
+            {
+                return true;
+            }
+            else
+            {
+                foreach (IAccessMatrix accessMatrix in accessMatrixList)
                 {
-                    return true;
+                    if (accessMatrix.AccessName == sAccessName && accessMatrix.accessGrant.Contains(nID)) //нашли нужный вид доступа и ID роли есть в списке
+                    {
+                        return true;
+                    }
                 }
             }
             return false;

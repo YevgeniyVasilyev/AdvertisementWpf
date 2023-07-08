@@ -104,6 +104,7 @@ namespace AdvertisementWpf
                         accessMatrix.ListToGrant();
                     }
                     _ = _context.SaveChanges();
+                    _ = MessageBox.Show("   Сохранено успешно!   ", "Сохранение данных");
                 }
                 catch (Exception ex)
                 {

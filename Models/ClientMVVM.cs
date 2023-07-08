@@ -80,7 +80,7 @@ namespace AdvertisementWpf.Models
             {
                 MainWindow.statusBar.ClearStatus();
             }
-        }, (o) => ValidationCheck((object[])o));
+        }, (o) => ValidationCheck((object[])o) && IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "ClientsHandBookNewEdit"));
 
         private bool ClientFilter(object item)
         {

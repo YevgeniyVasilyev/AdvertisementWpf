@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:System="clr-namespace:System;assembly=mscorlib"
         xmlns:local="clr-namespace:AdvertisementWpf" 
-        xmlns:model="clr-namespace:AdvertisementWpf.Models"
-        xmlns:componentmodel="clr-namespace:System.ComponentModel;assembly=WindowsBase" 
+        xmlns:model="clr-namespace:AdvertisementWpf.Models" 
+        xmlns:componentmodel="clr-namespace:System.ComponentModel;assembly=WindowsBase"
         mc:Ignorable="d"
         Title="Заказ" WindowState="Maximized" MinHeight="700" MinWidth="1400"
         ResizeMode="CanResizeWithGrip" WindowStyle="SingleBorderWindow" Closed="Window_Closed">
@@ -331,8 +331,7 @@
                                      ScrollViewer.VerticalScrollBarVisibility="Auto"
                                      IsSynchronizedWithCurrentItem="true"
                                      ItemsSource="{Binding Source={StaticResource productTypesViewSource}, Mode=OneTime}"
-                                     DisplayMemberPath="Name"
-                                       MouseDoubleClick="NewProductListBox_MouseDoubleClick">
+                                     DisplayMemberPath="Name" MouseDoubleClick="NewProductListBox_MouseDoubleClick">
                                 <ListBox.GroupStyle>
                                     <GroupStyle>
                                         <GroupStyle.ContainerStyle>
@@ -362,7 +361,8 @@
                             <StackPanel x:Name="ProductStack" Grid.Row="2" Orientation="Vertical">
                                 <ListView Name="ListProduct" Margin="5" Padding="2" IsSynchronizedWithCurrentItem="True"
                                           ItemsSource="{Binding Source={StaticResource productsViewSource}, 
-                                                        ValidatesOnNotifyDataErrors=True, ValidatesOnExceptions=True}">
+                                                        ValidatesOnNotifyDataErrors=True, ValidatesOnExceptions=True}" 
+                                          PreviewKeyDown="ListViewUpAndDown_PreviewKeyDown">
                                     <ListView.View>
                                         <GridView>
                                             <GridView.Columns>
@@ -625,7 +625,7 @@
                             <TabItem Header="Стоимость и затраты по КВД">
                                 <StackPanel>
                                     <ListView Name="CostOfProduct" Margin="5" Padding="2" IsSynchronizedWithCurrentItem="True" 
-                                              ItemsSource="{Binding Source={StaticResource productCostsViewSource}}">
+                                              ItemsSource="{Binding Source={StaticResource productCostsViewSource}}" PreviewKeyDown="ListViewUpAndDown_PreviewKeyDown">
                                         <ListView.View>
                                             <GridView>
                                                 <GridViewColumn Header=" Код " Width="Auto"

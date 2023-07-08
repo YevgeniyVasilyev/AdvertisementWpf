@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:AdvertisementWpf"
+        xmlns:local="clr-namespace:AdvertisementWpf" 
         mc:Ignorable="d"
         Title='ООО "Рекламные технологии"' MinHeight="450" MinWidth="800"
         WindowStartupLocation="CenterScreen" WindowStyle="SingleBorderWindow" 
@@ -47,9 +47,6 @@
         </DataTemplate>
     </Window.Resources>
     <Window.CommandBindings>
-        <CommandBinding Command="ApplicationCommands.NotACommand"
-                        Executed="Handbook_Executed"
-                        CanExecute="Handbook_CanExecute"/>
         <CommandBinding Command="ApplicationCommands.New"
                         Executed="Order_Executed"
                         CanExecute="Order_CanExecute"/>
@@ -82,34 +79,30 @@
         <Menu Name="Main_Menu" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="1,1,1,1">
             <MenuItem Header="Подключение к БД" Name="Connect_Item" Style="{StaticResource MainMenu}" Click="Connect_Item_Click"/>
             <Separator></Separator>
-            <MenuItem Header="Справочники" Style="{StaticResource MainMenu}" Command="ApplicationCommands.NotACommand">
-                <MenuItem Header="Пользователи и роли" Name="UserAndRoles_Item" Click="UserAndRoles_Item_Click" Command="ApplicationCommands.NotACommand"/>
+            <MenuItem Name="HandBookItem" Header="Справочники" Style="{StaticResource MainMenu}" Command="{x:Static local:CustomCommands.HandBooks}">
+                <MenuItem Header="Пользователи и роли" Name="UserAndRolesItem" Command="{x:Static local:CustomCommands.UsersAndRoles}"/>
                 <MenuItem Header="Клиенты и подрядчики" Name="ClientsAndContractors_Item" Click="ClientsAndContractors_Item_Click"/>
                 <MenuItem Header="Банки, населенные пункты, ед. измерения, коды видов деятельности, виды изделий" Name="BankLocalityUnit_Item" Click="BankLocalityUnit_Item_Click"/>
                 <MenuItem Header="Производственные участки" Name="ProductionAreas_Item" Click="ProductionAreas_Item_Click"/>
             </MenuItem>
             <Separator></Separator>
-            <MenuItem Header="Отчеты" Name="ReportMenuItem" Style="{StaticResource MainMenu}" Command="ApplicationCommands.NotACommand" Click="ReportMenuItem_Click"/>
+            <MenuItem Header="Отчеты" Name="ReportMenuItem" Style="{StaticResource MainMenu}" Command="{x:Static local:CustomCommands.Reports}"/>
             <Separator></Separator>
-            <MenuItem Header="Конструкторы" Style="{StaticResource MainMenu}" Command="ApplicationCommands.NotACommand">
+            <MenuItem Name="ConstructorsItem" Header="Конструкторы" Style="{StaticResource MainMenu}" Command="{x:Static local:CustomCommands.Constructors}">
                 <MenuItem Header="Изделия" Name="ProductDesigner_Item" Click="ProductDesigner_Item_Click"/>
                 <MenuItem Header="Операции" Name="OperationDesigner_Item" Click="OperationDesigner_Item_Click"/>
                 <MenuItem Header="Параметры изделий и операций" Name="ReferencebookDesigner_Item" Click="ReferencebookDesigner_Item_Click"/>
             </MenuItem>
             <Separator></Separator>
-            <MenuItem Header="Настройки" Style="{StaticResource MainMenu}">
-                <!--<MenuItem Header="Архивация, отправка почтовых сообщений" Name="Email_Item" Click="Email_Item_Click"/>
-                <Separator></Separator>-->
-                <MenuItem Header="Системные настройки" Name="SystemSetting_Item" 
-                          Command="ApplicationCommands.NotACommand" Click="SystemSetting_Item_Click"/>
+            <MenuItem Name="SettingItem" Header="Настройки" Style="{StaticResource MainMenu}" Command="{x:Static local:CustomCommands.Setting}">
+                <MenuItem Header="Системные настройки" Name="SystemSettingItem" Command="{x:Static local:CustomCommands.SystemSetting}"/>
                 <Separator></Separator>
-                <MenuItem Header="Матрица доступа" Name="AccessMatrix_Item" 
-                          Command="ApplicationCommands.NotACommand" Click="AccessMatrix_Item_Click"/>
+                <MenuItem Header="Матрица доступа" Name="AccessMatrixItem" Command="{x:Static local:CustomCommands.AccessMatrix}"/>
             </MenuItem>
         </Menu>
         <Border Grid.Row="1" Grid.Column="0" Grid.RowSpan="4" BorderThickness="4" Background="GhostWhite" BorderBrush="Gainsboro">
             <StackPanel Orientation="Vertical" HorizontalAlignment="Left" Margin="1,1,1,1" Width="65">
-                <Button Name="NewOrderButton" Style="{StaticResource ButtonOnStackPanel}" Command="ApplicationCommands.New">
+                <Button Name="NewOrderButton" ToolTip="Создать новый заказ" Style="{StaticResource ButtonOnStackPanel}" Command="ApplicationCommands.New">
                     <Button.Content>
                         <StackPanel>
                             <Image Source="/Images/premium-icon-new-order.png" Width="25" Height="25"/>
@@ -127,7 +120,7 @@
                         </StackPanel>
                     </Button.Content>
                 </Button>-->
-                <Button Name="FilterOrdersButton"  Style="{StaticResource ButtonOnStackPanel}" Command="ApplicationCommands.New">
+                <Button Name="FilterOrdersButton" ToolTip="Отбор заказов по условиям"  Style="{StaticResource ButtonOnStackPanel}" Command="ApplicationCommands.New">
                     <Button.Content>
                         <StackPanel>
                             <Image Source="/Images/free-icon-search.png" Width="25" Height="25"/>
@@ -136,7 +129,7 @@
                         </StackPanel>
                     </Button.Content>
                 </Button>
-                <Button Name="FilterProductsButton"  Style="{StaticResource ButtonOnStackPanel}" Command="ApplicationCommands.New">
+                <Button Name="FilterProductsButton" ToolTip="Отбор изделий по условиям" Style="{StaticResource ButtonOnStackPanel}" Command="ApplicationCommands.New">
                     <Button.Content>
                         <StackPanel>
                             <Image Source="/Images/free-icon-search.png" Width="25" Height="25"/>
@@ -145,7 +138,7 @@
                         </StackPanel>
                     </Button.Content>
                 </Button>
-                <Button Name="FilterProductionProductsButton"  Style="{StaticResource ButtonOnStackPanel}" Command="ApplicationCommands.New">
+                <Button Name="FilterProductionProductsButton" ToolTip="Отбор изделий в производстве" Style="{StaticResource ButtonOnStackPanel}" Command="ApplicationCommands.New">
                     <Button.Content>
                         <StackPanel>
                             <!--<Image Source="/Images/free-icon-search.png" Width="25" Height="25"/>-->
@@ -160,8 +153,8 @@
         <Border Grid.Row="1" Grid.Column="1" BorderThickness="4" Background="GhostWhite" BorderBrush="Gainsboro">
             <StackPanel Height="40" Orientation="Horizontal">
                 <Button Name="NewOrderButton1" Background="Transparent" BorderBrush="Transparent" 
-                            Style="{StaticResource ButtonOnStackPanel}" Command="ApplicationCommands.New" 
-                            ToolTip="Новый заказ">
+                            Style="{StaticResource ButtonOnStackPanel}" Command="ApplicationCommands.New"
+                            ToolTip="Создать новый заказ">
                     <Image Source="\Images\premium-icon-new-order.png" VerticalAlignment="Center"
                                    Width="30" Height="{Binding Width, RelativeSource={RelativeSource Self}}"/>
                 </Button>

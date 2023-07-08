@@ -15,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Controls.Primitives;
 using System.Reflection;
 using System.Windows.Documents;
+using System.Windows.Threading;
 
 namespace AdvertisementWpf
 {
@@ -44,6 +45,8 @@ namespace AdvertisementWpf
 
         public MainWindow()
         {
+            Connectiondata = new ConnectionData();
+
             InitializeComponent();
 
             statusBar = new StatusBar();
@@ -68,7 +71,6 @@ namespace AdvertisementWpf
 
             IConfigurationSection section;
             section = Configuration.GetSection("DataBase");
-            Connectiondata = new ConnectionData();
             section.Bind(Connectiondata);
             Connectiondata.Is_verify_connection = false;
             statusBar.ClearStatus();
@@ -156,26 +158,6 @@ namespace AdvertisementWpf
             _ = hb.ShowDialog();
         }
 
-        private void Handbook_Executed(object sender, ExecutedRoutedEventArgs e)
-        {
-
-        }
-
-        private void Handbook_CanExecute(object sender, CanExecuteRoutedEventArgs e)
-        {
-            if (e.OriginalSource is MenuItem menuItem && Connectiondata != null && Connectiondata.Is_verify_connection)
-            {
-                if (menuItem.Name == "ReportMenuItem")
-                {
-                    e.CanExecute = true;
-                    return;
-                }
-            }
-            e.CanExecute = Connectiondata != null && Userdata != null
-                ? Connectiondata.Is_verify_connection && (Userdata.IsAdmin || Userdata.Is_sysadmin)
-                : false;
-        }
-
         public class ConnectionData : INotifyPropertyChanged
         {
             private string servername;
@@ -241,15 +223,6 @@ namespace AdvertisementWpf
             }
         }
 
-        private void UserAndRoles_Item_Click(object sender, RoutedEventArgs e)
-        {
-            UsersAndRolesWindow ur = new UsersAndRolesWindow
-            {
-                Owner = this
-            };
-            _ = ur.ShowDialog();
-        }
-
         private void ClientsAndContractors_Item_Click(object sender, RoutedEventArgs e)
         {
             ClientsAndContractorsHandbook cc = new ClientsAndContractorsHandbook
@@ -257,12 +230,6 @@ namespace AdvertisementWpf
                 Owner = this
             };
             _ = cc.ShowDialog();
-        }
-
-        private void SystemSetting_Item_Click(object sender, RoutedEventArgs e)
-        {
-            SettingWindow ss = new SettingWindow { };
-            _ = ss.ShowDialog();
         }
 
         public class StatusBar : INotifyPropertyChanged
@@ -397,43 +364,20 @@ namespace AdvertisementWpf
             }
         }
 
-        public static void RefreshOrderProduct()
-        {
-            MainWindow mainWnd = (MainWindow)Application.Current.MainWindow;
-            if (mainWnd.OrderListView.IsVisible)
-            {
-                int nCurrentIndex = mainWnd.ordersViewSource.View.CurrentPosition >= 0 ? mainWnd.ordersViewSource.View.CurrentPosition : 0;
-                mainWnd.ShowOrders();
-                _ = mainWnd.ordersViewSource.View.MoveCurrentToPosition(nCurrentIndex);
-            }
-            else if (mainWnd.ProductListView.IsVisible)
-            {
-                int nCurrentIndex = mainWnd.productsViewSource.View.CurrentPosition >= 0 ? mainWnd.productsViewSource.View.CurrentPosition : 0;
-                mainWnd.ShowProducts();
-                _ = mainWnd.productsViewSource.View.MoveCurrentToPosition(nCurrentIndex);
-            }
-            else if (mainWnd.ProductionProductListView.IsVisible)
-            {
-                int nCurrentIndex = mainWnd.workInTechCardViewSource.View.CurrentPosition >= 0 ? mainWnd.workInTechCardViewSource.View.CurrentPosition : 0;
-                mainWnd.ShowProductionProducts();
-                _ = mainWnd.workInTechCardViewSource.View.MoveCurrentToPosition(nCurrentIndex);
-            }            
-        }
-
         private void Order_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
             if (Connectiondata != null && Connectiondata.Is_verify_connection)
             {
                 if (e.OriginalSource is Button btn)
                 {
-                    if ((btn == NewOrderButton || btn == NewOrderButton1) && Userdata.ID > 0)
-                    {
-                        e.CanExecute = true;
-                    }
                     //if (btn == AllOrdersButton || (btn == EditOrderButton && OrderListView.IsVisible && ordersViewSource?.View != null && ordersViewSource.View.CurrentItem is Order))
                     //{
                     //    e.CanExecute = true;
                     //}
+                    if ((btn == NewOrderButton || btn == NewOrderButton1) && Userdata.ID > 0)
+                    {
+                        e.CanExecute = true;
+                    }
                     else if (btn == EditOrderButton && OrderListView.IsVisible && ordersViewSource?.View != null && ordersViewSource.View.CurrentItem is Order)
                     {
                         e.CanExecute = true;
@@ -467,6 +411,29 @@ namespace AdvertisementWpf
                         e.CanExecute = true;
                     }
                 }
+            }
+        }
+
+        public static void RefreshOrderProduct()
+        {
+            MainWindow mainWnd = (MainWindow)Application.Current.MainWindow;
+            if (mainWnd.OrderListView.IsVisible)
+            {
+                int nCurrentIndex = mainWnd.ordersViewSource.View.CurrentPosition >= 0 ? mainWnd.ordersViewSource.View.CurrentPosition : 0;
+                mainWnd.ShowOrders();
+                _ = mainWnd.ordersViewSource.View.MoveCurrentToPosition(nCurrentIndex);
+            }
+            else if (mainWnd.ProductListView.IsVisible)
+            {
+                int nCurrentIndex = mainWnd.productsViewSource.View.CurrentPosition >= 0 ? mainWnd.productsViewSource.View.CurrentPosition : 0;
+                mainWnd.ShowProducts();
+                _ = mainWnd.productsViewSource.View.MoveCurrentToPosition(nCurrentIndex);
+            }
+            else if (mainWnd.ProductionProductListView.IsVisible)
+            {
+                int nCurrentIndex = mainWnd.workInTechCardViewSource.View.CurrentPosition >= 0 ? mainWnd.workInTechCardViewSource.View.CurrentPosition : 0;
+                mainWnd.ShowProductionProducts();
+                _ = mainWnd.workInTechCardViewSource.View.MoveCurrentToPosition(nCurrentIndex);
             }
         }
 
@@ -823,18 +790,6 @@ namespace AdvertisementWpf
             };
             ew.Show();
         }
-
-        private void AccessMatrix_Item_Click(object sender, RoutedEventArgs e)
-        {
-            AccessMatrixWindow am = new AccessMatrixWindow();
-            _ = am.ShowDialog();
-        }
-
-        private void ReportMenuItem_Click(object sender, RoutedEventArgs e)
-        {
-            ReportWindow rw = new ReportWindow();
-            _ = rw.ShowDialog();
-        }
     }
 
     public class SortAdorner : Adorner
@@ -1031,5 +986,63 @@ namespace AdvertisementWpf
             }
             return null;
         }
+    }
+
+    public static class CustomCommands
+    {
+        private static RelayCommand handBooks;
+        public static RelayCommand HandBooks => handBooks ??= new RelayCommand((o) =>
+        {
+        }, (o) => MainWindow.Connectiondata.Is_verify_connection && (IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "MainMenuItemHandBook") || MainWindow.Userdata.Is_sysadmin));
+
+        private static RelayCommand reports;
+        public static RelayCommand Reports => reports ??= new RelayCommand((o) =>
+        {
+            ReportWindow rw = new ReportWindow();
+            _ = rw.ShowDialog();
+        }, (o) => MainWindow.Connectiondata.Is_verify_connection && IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "MainMenuItemReport"));
+
+        private static RelayCommand setting;
+        public static RelayCommand Setting => setting ??= new RelayCommand((o) =>
+        {
+        }, (o) => MainWindow.Connectiondata.Is_verify_connection && IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "MainMenuItemSetting"));
+
+        private static RelayCommand systemSetting;
+        public static RelayCommand SystemSetting => systemSetting ??= new RelayCommand((o) =>
+        {
+            SettingWindow ss = new SettingWindow { };
+            _ = ss.ShowDialog();
+        }, (o) => MainWindow.Userdata.IsAdmin || MainWindow.Userdata.Is_sysadmin);
+
+        private static RelayCommand accessMatrix;
+        public static RelayCommand AccessMatrix => accessMatrix ??= new RelayCommand((o) =>
+        {
+            AccessMatrixWindow am = new AccessMatrixWindow();
+            _ = am.ShowDialog();
+        }, (o) => MainWindow.Userdata.IsAdmin || MainWindow.Userdata.Is_sysadmin);
+
+        private static RelayCommand constructors;
+        public static RelayCommand Constructors => constructors ??= new RelayCommand((o) =>
+        {
+        }, (o) => MainWindow.Connectiondata.Is_verify_connection && IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "MainMenuItemConstructor"));
+
+        private static RelayCommand usersAndRoles;
+        public static RelayCommand UsersAndRoles => usersAndRoles ??= new RelayCommand((o) =>
+        {
+            UsersAndRolesWindow ur = new UsersAndRolesWindow
+            {
+                Owner = Application.Current.MainWindow
+            };
+            _ = ur.ShowDialog();
+        }, (o) => MainWindow.Userdata.Is_sysadmin);
+
+        private static RelayCommand newOrder;
+        public static RelayCommand NewOrder => newOrder ??= new RelayCommand((o) =>
+        {
+            OrderWindow order = new OrderWindow(NewOrder: true) { };
+            _ = order.ShowDialog();
+            object btn = Application.Current.MainWindow.FindName("RefreshOrderButton");
+            _ = typeof(ButtonBase).GetMethod("OnClick", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(btn, new object[0]);
+        }, null);
     }
 }

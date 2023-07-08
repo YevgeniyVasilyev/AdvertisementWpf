@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AdvertisementWpf" 
         mc:Ignorable="d"
-        FocusManager.FocusedElement="{Binding ElementName=Contractor_Tab}"
+        FocusManager.FocusedElement="{Binding ElementName=Clients_Tab}"
         Title="Клиенты и подрядчики" MinHeight="800" MinWidth="1200" WindowStartupLocation="CenterOwner" 
         ResizeMode="CanResizeWithGrip" SizeToContent="WidthAndHeight" WindowStyle="ThreeDBorderWindow" Closed="Window_Closed">
     <Window.Resources>
@@ -83,7 +83,7 @@
     </Window.Resources>
     <Grid>
         <TabControl>
-            <TabItem Name="Clients_Tab" IsEnabled="{Binding RelativeSource={RelativeSource AncestorType=local:ClientsAndContractorsHandbook}, Path=DataContext.ClientsTabEnabled}">
+            <TabItem Name="Clients_Tab">
                 <TabItem.Header>
                     <Label Content="Клиенты" FontSize="16" FontWeight="Bold"/>
                 </TabItem.Header>
@@ -101,8 +101,9 @@
                         <RowDefinition Height="Auto"/>
                         <!--строка поиска клиента-->
                     </Grid.RowDefinitions>
-                    <DataGrid Name="ClientsGrid" Grid.Row="0" Grid.Column="0" Margin="10,10,10,10"
-                              CanUserAddRows="True" CanUserDeleteRows="True" Grid.ColumnSpan="2"
+                    <DataGrid Name="ClientsGrid" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="10,10,10,10"
+                              CanUserAddRows="{Binding RelativeSource={RelativeSource AncestorType=local:ClientsAndContractorsHandbook}, Path=DataContext.ClientsHandBookNew}" 
+                              CanUserDeleteRows="{Binding RelativeSource={RelativeSource AncestorType=local:ClientsAndContractorsHandbook}, Path=DataContext.ClientsHandBookDelete}"                               
                               Style="{StaticResource DataGridStyle}" IsSynchronizedWithCurrentItem="True"
                               ItemsSource="{Binding Clients}"
                               InitializingNewItem="ClientsGrid_InitializingNewItem">
@@ -332,7 +333,9 @@
                         <!--грид подрядчиков и правка одного-->
                     </Grid.RowDefinitions>
                     <DataGrid Name="ContractorsGrid" Grid.Row="0" Grid.Column="0" Margin="10" 
-                              CanUserAddRows="True" CanUserDeleteRows="True" IsSynchronizedWithCurrentItem="True"
+                              CanUserAddRows="{Binding RelativeSource={RelativeSource AncestorType=local:ClientsAndContractorsHandbook}, Path=DataContext.ContractorsHandBookNew}" 
+                              CanUserDeleteRows="{Binding RelativeSource={RelativeSource AncestorType=local:ClientsAndContractorsHandbook}, Path=DataContext.ContractorsHandDelete}" 
+                              IsSynchronizedWithCurrentItem="True"
                               Style="{StaticResource DataGridStyle}" 
                               ItemsSource="{Binding Contractors}">
                         <!--ItemsSource="{Binding Source={StaticResource contractorsViewSource}, UpdateSourceTrigger=PropertyChanged}"-->

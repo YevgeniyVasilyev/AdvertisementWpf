@@ -77,11 +77,17 @@ namespace AdvertisementWpf
         public ICollectionView BankList { get; set; }
         public ICollectionView UserList { get; set; }
         public ObservableCollection<User> UsersList { get; set; }
-        public bool ClientsTabEnabled { get; set; }
+        public bool ClientsHandBookNew { get; set; }
+        public bool ClientsHandBookDelete { get; set; }
+        public bool ContractorsHandBookNew { get; set; }
+        public bool ContractorsHandBookDelete { get; set; }
 
         public ClientAndContractorViewModel()
         {
-            ClientsTabEnabled = IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "ListManager");
+            ClientsHandBookNew = IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "ClientsHandBookNewEdit");
+            ClientsHandBookDelete = IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "ClientsHandBookDelete");
+            ContractorsHandBookNew = IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "ContractorsHandBookNewEdi");
+            ContractorsHandBookDelete = IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "ContractorsHandBookDelete");
 
             using App.AppDbContext _context = new App.AppDbContext(MainWindow.Connectiondata.Connectionstring);
             {

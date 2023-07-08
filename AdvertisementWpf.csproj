@@ -41,6 +41,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="AccessMatrix.xlsx" />
     <None Remove="AdvertisementWpf_TemporaryKey.pfx" />
     <None Remove="appsetting.json" />
     <None Remove="free-icon-device-2844994.ico" />
@@ -100,6 +101,7 @@
     <None Remove="WhatsApp Image 2021-11-02 at 10.06.21.jpeg" />
     <None Remove="WhatsApp Image 2022-01-28 at 15.34.21.jpeg" />
     <None Remove="WhatsApp Image 2022-02-01 at 17.20.12.jpeg" />
+    <None Remove="~%24AccessMatrix.xlsx" />
     <None Remove="~%24хгалтерия_правки1.doc" />
     <None Remove="~WRL0001.tmp" />
     <None Remove="Акт об оказании услуг по РТ.xls" />

@@ -15,6 +15,8 @@ using Microsoft.VisualBasic.FileIO;
 using System.IO;
 using System.Collections;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using System.Windows.Threading;
+using System.Threading;
 
 namespace AdvertisementWpf
 {
@@ -2595,6 +2597,111 @@ namespace AdvertisementWpf
                 _ = MessageBox.Show(" Нет данных для печати ТК! ", "Печать техкарты", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
+
+        private void ListViewUpAndDown_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (sender is ListView listView)
+            {
+                ItemContainerGenerator generator = listView.ItemContainerGenerator;
+                //получить имя текущего(в фокусе) TextBox
+                ListViewItem selectedItem = (ListViewItem)generator.ContainerFromItem(listView.SelectedItem);
+                string textBoxFocusedName = "";
+                if (GetFocusedDescendantByType(selectedItem, typeof(TextBox)) is TextBox textBox)
+                {
+                    textBoxFocusedName = textBox.Name;
+                }
+                if (e.Key == Key.Down)
+                {
+                    if (!listView.Items.MoveCurrentToNext())
+                    {
+                        _ = listView.Items.MoveCurrentToFirst();
+                    }
+                }
+                else if (e.Key == Key.Up)
+                {
+                    if (!listView.Items.MoveCurrentToPrevious())
+                    {
+                        _ = listView.Items.MoveCurrentToLast();
+                    }
+                }
+                else
+                {
+                    return;
+                }
+                selectedItem = (ListViewItem)generator.ContainerFromItem(listView.SelectedItem);
+                if (GetDescendantByType(selectedItem, typeof(TextBox), textBoxFocusedName) is TextBox tbFind)
+                {
+                    _ = tbFind.Focus();
+                }
+            }
+        }
+
+        public static Visual GetFocusedDescendantByType(Visual element, Type type)
+        {
+            Visual foundElement = null;
+            if (element != null)
+            {
+                if (element.GetType() == type && element is FrameworkElement fe && fe.IsFocused)
+                {
+                    return fe;
+                }
+                if (element is FrameworkElement)
+                {
+                    _ = (element as FrameworkElement).ApplyTemplate();
+                }
+                for (int i = 0; i < VisualTreeHelper.GetChildrenCount(element); i++)
+                {
+                    Visual visual = VisualTreeHelper.GetChild(element, i) as Visual;
+                    foundElement = GetFocusedDescendantByType(visual, type);
+                    if (foundElement != null)
+                    {
+                        break;
+                    }
+                }
+            }
+            return foundElement;
+        }
+
+        public static Visual GetDescendantByType(Visual element, Type type, string name)
+        {
+            Visual foundElement = null;
+            if (element != null)
+            {
+                if (element.GetType() == type)
+                {
+                    if (element is FrameworkElement fe && fe.Name == name)
+                    {
+                        return fe;
+                    }
+                }
+                if (element is FrameworkElement)
+                {
+                    _ = (element as FrameworkElement).ApplyTemplate();
+                }
+                for (int i = 0; i < VisualTreeHelper.GetChildrenCount(element); i++)
+                {
+                    Visual visual = VisualTreeHelper.GetChild(element, i) as Visual;
+                    foundElement = GetDescendantByType(visual, type, name);
+                    if (foundElement != null)
+                    {
+                        break;
+                    }
+                }
+            }
+            return foundElement;
+        }
+
+        public static class FocusHelper
+        {
+            public static void Focus(UIElement element)
+            {
+                _ = element.Dispatcher.BeginInvoke(DispatcherPriority.Input, new ThreadStart(delegate ()
+                  {
+                      element.Focus();
+                  }));
+            }
+        }
+
         //private void OperationInWorkComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         //{
         //    if (sender is ComboBox comboBox && comboBox != null && comboBox.GetBindingExpression(System.Windows.Controls.Primitives.Selector.SelectedValueProperty).DataItem is OperationInWork operationInWork)

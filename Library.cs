@@ -1025,4 +1025,5 @@ namespace AdvertisementWpf
             execute?.Invoke(parameter);
         }
     }
+
 }
