@@ -67,21 +67,6 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <!--<Border Name="ButtonBorder" Tag="Bank" Grid.Row="1" Grid.Column="1" CornerRadius="5" BorderThickness="3" BorderBrush="LightBlue" HorizontalAlignment="Center">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                --><!--<Button Name="Save_Button" ToolTip="Сохранить все изменения в БД" Command="ApplicationCommands.Save">
-                    <Image Source="/Images/BlueUI-сохранить-40.png" Width="20" Height="20"/>
-                </Button>--><!--
-                <Button Name="Refresh_Button" Command="Refresh"
-                        ToolTip="Обновить таблицы">
-                    <Image Source="/Images/BlueUI-обновить-40.png" Width="20" Height="20"/>
-                </Button>
-                <Button x:Name="Delete_Button" Command="ApplicationCommands.Delete"
-                        ToolTip="Отметить для удаления">
-                    <Image Source="/Images/BlurUI-удалить-40.png" Width="20" Height="20"/>
-                </Button>
-            </StackPanel>
-        </Border>-->
         <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4" Text="Банки">
             <TextBlock.Style>
                 <Style TargetType="TextBlock" BasedOn="{StaticResource ResourceKey=TextBlockStyle}">
@@ -144,6 +129,8 @@
         </TextBlock>
         <DataGrid Name="BanksGrid" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" MinWidth="500" 
                   Style="{StaticResource DataGridStyle}"
+                  CanUserAddRows="{Binding RelativeSource={RelativeSource AncestorType=local:SmallHandBookWindow}, Path=DataContext.SmallHandBookNew}"
+                  CanUserDeleteRows="{Binding RelativeSource={RelativeSource AncestorType=local:SmallHandBookWindow}, Path=DataContext.SmallHandBookDelete}"
                   ItemsSource="{Binding Source={StaticResource banksViewSource}, UpdateSourceTrigger=PropertyChanged}">
             <DataGrid.RowValidationRules>
                 <local:NotNullAndEmptyValidationCheckRule ValidationStep="CommittedValue"/>
@@ -168,6 +155,8 @@
         </DataGrid>
         <DataGrid Name="TypeOfActivitysGrid" Grid.Row="5" Grid.Column="0" MinWidth="100"
                   Style="{StaticResource DataGridStyle}"  
+                  CanUserAddRows="{Binding RelativeSource={RelativeSource AncestorType=local:SmallHandBookWindow}, Path=DataContext.SmallHandBookNew}"
+                  CanUserDeleteRows="{Binding RelativeSource={RelativeSource AncestorType=local:SmallHandBookWindow}, Path=DataContext.SmallHandBookDelete}"
                   ItemsSource="{Binding Source={StaticResource typeOfActivitysDataSource}}">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Наименование" Binding="{Binding Name}" Width="Auto"/>
@@ -176,6 +165,8 @@
         </DataGrid>
         <DataGrid Name="CategoryOfProductsGrid" Grid.Row="5" Grid.Column="1" MinWidth="100"
                   Style="{StaticResource DataGridStyle}"  
+                  CanUserAddRows="{Binding RelativeSource={RelativeSource AncestorType=local:SmallHandBookWindow}, Path=DataContext.SmallHandBookNew}"
+                  CanUserDeleteRows="{Binding RelativeSource={RelativeSource AncestorType=local:SmallHandBookWindow}, Path=DataContext.SmallHandBookDelete}"
                   ItemsSource="{Binding Source={StaticResource categoryOfProductssDataSource}}">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Наименование " Binding="{Binding Name}" Width="Auto"/>
@@ -183,6 +174,8 @@
         </DataGrid>
         <DataGrid Name="LocalitysGrid" Grid.Row="5" Grid.Column="2" MinWidth="100"
                   Style="{StaticResource DataGridStyle}"  
+                  CanUserAddRows="{Binding RelativeSource={RelativeSource AncestorType=local:SmallHandBookWindow}, Path=DataContext.SmallHandBookNew}"
+                  CanUserDeleteRows="{Binding RelativeSource={RelativeSource AncestorType=local:SmallHandBookWindow}, Path=DataContext.SmallHandBookDelete}"
                   ItemsSource="{Binding Source={StaticResource localitysDataSource}}">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Наименование населенного пункта" Binding="{Binding Name}" Width="Auto"/>
@@ -190,6 +183,8 @@
         </DataGrid>
         <DataGrid Name="UnitsGrid" Grid.Row="5" Grid.Column="3" MinWidth="100"
                   Style="{StaticResource DataGridStyle}"  
+                  CanUserAddRows="{Binding RelativeSource={RelativeSource AncestorType=local:SmallHandBookWindow}, Path=DataContext.SmallHandBookNew}"
+                  CanUserDeleteRows="{Binding RelativeSource={RelativeSource AncestorType=local:SmallHandBookWindow}, Path=DataContext.SmallHandBookDelete}"
                   ItemsSource="{Binding Source={StaticResource unitsViewSource}}"> 
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Наименование" Binding="{Binding Name}" Width="Auto"/>

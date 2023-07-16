@@ -1,16 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using Microsoft.EntityFrameworkCore;
 using AdvertisementWpf.Models;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace AdvertisementWpf
 {
@@ -25,6 +19,7 @@ namespace AdvertisementWpf
         public SmallHandBookWindow()
         {
             MainWindow.statusBar.WriteStatus("Инициализация формы ...", Cursors.Wait);
+            DataContext = new SmallHandBookModelViewModel();
 
             InitializeComponent();
 
@@ -95,7 +90,7 @@ namespace AdvertisementWpf
 
         private void CanExecuteSaveHandbooks(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = _context != null && !HasInvalidRows(BanksGrid);
+            e.CanExecute = _context != null && !HasInvalidRows(BanksGrid) && IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "CommonHandBookNewEdit");
         }
 
         public static bool HasInvalidRows(DataGrid datagrid)
@@ -163,4 +158,17 @@ namespace AdvertisementWpf
             }
         }
     }
+
+    public class SmallHandBookModelViewModel
+    {
+        public bool SmallHandBookNew { get; set; }
+        public bool SmallHandBookDelete { get; set; }
+
+        public SmallHandBookModelViewModel()
+        {
+            SmallHandBookNew = IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "CommonHandBookNewEdit");
+            SmallHandBookDelete = IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "CommonHandBookDelete");
+        }
+    }
+
 }

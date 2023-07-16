@@ -91,7 +91,8 @@ namespace AdvertisementWpf
 
         private void Save_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            if (_context != null && typeOfActivityViewSource != null && typeOfActivityViewSource.View != null)
+            if (_context != null && typeOfActivityViewSource != null && typeOfActivityViewSource.View != null 
+                && IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "ProductionAreasHandBookNewEdit"))
             {
                 e.CanExecute = true;
             }
@@ -138,7 +139,8 @@ namespace AdvertisementWpf
             if (e.OriginalSource.GetType().FullName.Contains("Button"))
             {
                 Button btn = e.OriginalSource as Button;
-                if (btn == ProductionAreaButton && typeOfActivityViewSource != null && typeOfActivityViewSource.View != null && typeOfActivityViewSource.View.CurrentItem != null)
+                if (btn == ProductionAreaButton && typeOfActivityViewSource != null && typeOfActivityViewSource.View != null && typeOfActivityViewSource.View.CurrentItem != null 
+                    && IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "ProductionAreasHandBookNewEdit"))
                 {
                     e.CanExecute = true;
                 }
@@ -150,7 +152,8 @@ namespace AdvertisementWpf
             if (e.Key == Key.Delete && _context != null && typeOfActivityViewSource != null && typeOfActivityViewSource.View != null
                 && typeOfActivityViewSource.View.CurrentItem is TypeOfActivity typeOfActivity 
                 && typeOfActivityInProdAreaViewSource != null && typeOfActivityInProdAreaViewSource.View != null 
-                && typeOfActivityInProdAreaViewSource.View.CurrentItem is TypeOfActivityInProdArea typeOfActivityInProdArea)
+                && typeOfActivityInProdAreaViewSource.View.CurrentItem is TypeOfActivityInProdArea typeOfActivityInProdArea 
+                && IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "ProductionAreasHandBookDelete"))
             {
                 try
                 {

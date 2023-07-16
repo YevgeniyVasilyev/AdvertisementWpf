@@ -374,35 +374,39 @@ namespace AdvertisementWpf
                     //{
                     //    e.CanExecute = true;
                     //}
-                    if ((btn == NewOrderButton || btn == NewOrderButton1) && Userdata.ID > 0)
+                    if ((btn == NewOrderButton || btn == NewOrderButton1) && Userdata.ID > 0 && IGrantAccess.CheckGrantAccess(userIAccessMatrix, Userdata.RoleID, "MainWindowOrderNew"))
                     {
                         e.CanExecute = true;
                     }
-                    else if (btn == EditOrderButton && OrderListView.IsVisible && ordersViewSource?.View != null && ordersViewSource.View.CurrentItem is Order)
+                    else if (btn == EditOrderButton && OrderListView.IsVisible && ordersViewSource?.View != null && ordersViewSource.View.CurrentItem is Order && IGrantAccess.CheckGrantAccess(userIAccessMatrix, Userdata.RoleID, "MainWindowOrderEdit"))
                     {
                         e.CanExecute = true;
                     }
-                    else if (btn == EditOrderButton && ProductListView.IsVisible && productsViewSource?.View != null && productsViewSource.View.CurrentItem is Product)
+                    else if (btn == EditOrderButton && ProductListView.IsVisible && productsViewSource?.View != null && productsViewSource.View.CurrentItem is Product && IGrantAccess.CheckGrantAccess(userIAccessMatrix, Userdata.RoleID, "MainWindowOrderEdit"))
                     {
                         e.CanExecute = true;
                     }
-                    else if (btn == EditOrderButton && ProductionProductListView.IsVisible && workInTechCardViewSource?.View != null && workInTechCardViewSource.View.CurrentItem is WorkInTechCard)
+                    else if (btn == EditOrderButton && ProductionProductListView.IsVisible && workInTechCardViewSource?.View != null && workInTechCardViewSource.View.CurrentItem is WorkInTechCard && IGrantAccess.CheckGrantAccess(userIAccessMatrix, Userdata.RoleID, "MainWindowOrderEdit"))
                     {
                         e.CanExecute = true;
                     }                    
-                    else if (btn == ViewOrderButton && OrderListView.IsVisible && ordersViewSource != null && ordersViewSource.View != null && ordersViewSource.View.CurrentItem is Order)
+                    else if (btn == ViewOrderButton && OrderListView.IsVisible && ordersViewSource != null && ordersViewSource.View != null && ordersViewSource.View.CurrentItem is Order && IGrantAccess.CheckGrantAccess(userIAccessMatrix, Userdata.RoleID, "MainWindowOrderView"))
                     {
                         e.CanExecute = true;
                     }
-                    else if (btn == ViewOrderButton && ProductListView.IsVisible && productsViewSource?.View.CurrentItem is Product)
+                    else if (btn == ViewOrderButton && ProductListView.IsVisible && productsViewSource?.View.CurrentItem is Product && IGrantAccess.CheckGrantAccess(userIAccessMatrix, Userdata.RoleID, "MainWindowOrderView"))
                     {
                         e.CanExecute = true;
                     }
-                    else if (btn == ViewOrderButton && ProductionProductListView.IsVisible && workInTechCardViewSource?.View != null && workInTechCardViewSource.View.CurrentItem is WorkInTechCard)
+                    else if (btn == ViewOrderButton && ProductionProductListView.IsVisible && workInTechCardViewSource?.View != null && workInTechCardViewSource.View.CurrentItem is WorkInTechCard && IGrantAccess.CheckGrantAccess(userIAccessMatrix, Userdata.RoleID, "MainWindowOrderView"))
                     {
                         e.CanExecute = true;
                     }
-                    else if (btn == FilterOrdersButton || btn == FilterProductsButton || btn == FilterProductionProductsButton)
+                    else if (btn == FilterOrdersButton && IGrantAccess.CheckGrantAccess(userIAccessMatrix, Userdata.RoleID, "MainWindowOrderSelect"))
+                    {
+                        e.CanExecute = true;
+                    }
+                    else if ((btn == FilterProductsButton || btn == FilterProductionProductsButton) && IGrantAccess.CheckGrantAccess(userIAccessMatrix, Userdata.RoleID, "MainWindowProductSelect"))
                     {
                         e.CanExecute = true;
                     }
@@ -441,7 +445,7 @@ namespace AdvertisementWpf
         {
             if (e.OriginalSource is Button btn)
             {
-                if (btn.Name == "DeleteOrderButton" && ordersViewSource.View.CurrentItem is Order order)
+                if (btn == DeleteOrderButton && ordersViewSource.View.CurrentItem is Order order)
                 {
                     if (MessageBox.Show($"Данная операция является необратимой! \n Вы уверены что хотите удалить заказ № {order.Number}", "Удаление заказа", 
                         MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No) == MessageBoxResult.Yes)
@@ -478,7 +482,7 @@ namespace AdvertisementWpf
             {
                 if (e.OriginalSource is Button btn)
                 {
-                    if (btn == DeleteOrderButton && ordersViewSource.View.CurrentItem is Order && Userdata.IsAdmin)
+                    if (btn == DeleteOrderButton && ordersViewSource.View.CurrentItem is Order && IGrantAccess.CheckGrantAccess(userIAccessMatrix, Userdata.RoleID, "MainWindowOrderDelete"))
                     {
                         e.CanExecute = true;
                     }
@@ -1045,4 +1049,5 @@ namespace AdvertisementWpf
             _ = typeof(ButtonBase).GetMethod("OnClick", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(btn, new object[0]);
         }, null);
     }
+
 }

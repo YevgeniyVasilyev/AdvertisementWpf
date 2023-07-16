@@ -389,6 +389,7 @@ namespace AdvertisementWpf
         public static List<object> ObjectDataSet = null;
         public static List<TechCard> TechCardDataSet = null;
         public static List<WorkInTechCard> WorkInTechCardDataSet = null;
+        public static List<ProductCost> ProductCostDataSet = null;
         public static DateTime? ReportDate = DateTime.Now;
         public static DateTime BeginPeriod = DateTime.Now;
         public static DateTime EndPeriod = DateTime.Now;
@@ -486,6 +487,15 @@ namespace AdvertisementWpf
                     report.RegisterData(WorkInTechCardDataSet, "WorkInTechCard", 5);
                     ReadyReportFileName = "ProductionProductListView.pdf";
                 }
+                else if (ReportMode == "TechCard")
+                {
+                    //report.Dictionary.RegisterBusinessObject(TechCardDataSet, "TechCard", 6, true);
+                    //report.Save($"{Path.GetFileNameWithoutExtension(ReportFileName)}_data.frx");
+                    //return;
+                    report.Load(ReportFileName);
+                    report.RegisterData(TechCardDataSet, "TechCard");
+                    ReadyReportFileName = "TechCard.pdf";
+                }
                 else if (ReportMode == "VMP")
                 {
                     //report.Dictionary.RegisterBusinessObject(ObjectDataSet, "dataset", 4, true);
@@ -497,14 +507,16 @@ namespace AdvertisementWpf
                     report.SetParameterValue("EndPeriod", EndPeriod);
                     ReportMode = "ReportForm";
                 }
-                else if (ReportMode == "TechCard")
+                else if (ReportMode == "MBTD" || ReportMode == "PSFD")
                 {
-                    //report.Dictionary.RegisterBusinessObject(TechCardDataSet, "TechCard", 6, true);
+                    //report.Dictionary.RegisterBusinessObject(ProductCostDataSet, "ProductCost", 4, true);
                     //report.Save($"{Path.GetFileNameWithoutExtension(ReportFileName)}_data.frx");
                     //return;
                     report.Load(ReportFileName);
-                    report.RegisterData(TechCardDataSet, "TechCard");
-                    ReadyReportFileName = "TechCard.pdf";
+                    report.RegisterData(ProductCostDataSet, "ProductCost", 3);
+                    report.SetParameterValue("BeginPeriod", BeginPeriod);
+                    report.SetParameterValue("EndPeriod", EndPeriod);
+                    ReportMode = "ReportForm";
                 }
 
                 if (ReportMode == "ReportForm")
@@ -975,6 +987,25 @@ namespace AdvertisementWpf
         public object[] ConvertBack(object value, Type[] targetType, object parameter, CultureInfo culture)
         {
             return null;
+        }
+    }
+
+    public class AddBoolConverter : IMultiValueConverter
+    {
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        {
+            bool lBool = true;
+            bool lReverse = (string)parameter == "True";
+            foreach (bool value in values)
+            {
+                lBool = lBool && value;
+            }
+            return lReverse ? !lBool : lBool; //parameter == True -> return not lBool
+        }
+
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        {
+            throw new NotSupportedException();
         }
     }
 

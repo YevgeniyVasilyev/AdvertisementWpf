@@ -87,6 +87,9 @@ namespace AdvertisementWpf
                 //designersViewSource.Source = _context.Users.AsNoTracking().ToList().Where(u => IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, u.RoleID, "ListDesigner")); //ListDesigner
                 designerList = _context.Users.AsNoTracking().ToList().Where(u => IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, u.RoleID, "ListDesigner")); //ListDesigner
                 typeOfActivityList = _context_.TypeOfActivitys.AsNoTracking().ToList();
+
+                DataContext = new ViewModel();
+
                 operationsViewSource.Source = _context_.Operations
                     .Include(Operation => Operation.ParameterInOperations)
                     .Include(Operation => Operation.TypeOfActivityInOperations)
@@ -528,17 +531,20 @@ namespace AdvertisementWpf
             if (e.OriginalSource.GetType().FullName.Contains("Button"))
             {
                 Button btn = e.OriginalSource as Button;
-                if (btn.Name == "SavePaymentButton" && context_ != null && currentOrder != null && currentOrder.ID > 0 && paymentsViewSource != null && paymentsViewSource.View != null && !ValidationChecker.HasInvalidTextBox(PaymentAmountTextBox))
+                if (btn == SavePaymentButton && context_ != null && currentOrder != null && currentOrder.ID > 0 && paymentsViewSource != null && paymentsViewSource.View != null && !ValidationChecker.HasInvalidTextBox(PaymentAmountTextBox) 
+                    && IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductPaymentsNewChangeDelete"))
                 {
                     e.CanExecute = true;
                     return;
                 }
-                if (btn.Name == "SavePADButton" && context__ != null && currentOrder != null && currentOrder.ID > 0 && accountsViewSource != null && accountsViewSource.View != null && !ValidationChecker.HasInvalidTextBox(PADGrid))
+                if (btn == SavePADButton && context__ != null && currentOrder != null && currentOrder.ID > 0 && accountsViewSource != null && accountsViewSource.View != null && !ValidationChecker.HasInvalidTextBox(PADGrid) 
+                    && IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductPADNewChangeDelete"))
                 {
                     e.CanExecute = true;
                     return;
                 }
-                if (e.OriginalSource == SaveTechCardButton && _context_ != null && currentOrder != null && currentOrder.ID > 0 && techCardsViewSource?.View != null && TechCardTreeView != null && TechCardTreeView.Items.Count > 0)
+                if (e.OriginalSource == SaveTechCardButton && _context_ != null && currentOrder != null && currentOrder.ID > 0 && techCardsViewSource?.View != null && TechCardTreeView != null && TechCardTreeView.Items.Count > 0 
+                    && IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductTechCardNewChangeDelete"))
                 {
                     e.CanExecute = true;
                     return;
@@ -549,7 +555,7 @@ namespace AdvertisementWpf
                     e.CanExecute = false;
                     return;
                 }
-                if (btn.Name == "SaveOrderButton")
+                if (btn == SaveOrderButton)
                 {
                     if (_context != null)
                     {
@@ -715,7 +721,7 @@ namespace AdvertisementWpf
                 //    e.CanExecute = true;
                 //    return;
                 //}
-                if (btn == NewPaymentButton)
+                if (btn == NewPaymentButton && IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductPaymentsNewChangeDelete"))
                 {
                     if (context_ != null && currentOrder != null && currentOrder.ID > 0 && paymentsViewSource != null && paymentsViewSource.View != null)
                     {
@@ -723,7 +729,7 @@ namespace AdvertisementWpf
                         return;
                     }
                 }
-                else if (btn == NewAccountButton)
+                else if (btn == NewAccountButton && IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductPADNewChangeDelete"))
                 {
                     if (currentOrder != null && currentOrder.ID > 0)
                     {
@@ -731,7 +737,7 @@ namespace AdvertisementWpf
                         return;
                     }
                 }
-                else if (btn == NewActButton)
+                else if (btn == NewActButton && IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductPADNewChangeDelete"))
                 {
                     if (accountsViewSource?.View != null && accountsViewSource.View.CurrentItem is Account && CanCreateNewAct())
                     {
@@ -749,22 +755,25 @@ namespace AdvertisementWpf
                     e.CanExecute = true;
                     return;
                 }
-                else if (btn == AddTechCardButton && currentOrder != null && currentOrder.ID > 0 && techCardsViewSource != null && techCardsViewSource.View != null)
+                else if (btn == AddTechCardButton && currentOrder != null && currentOrder.ID > 0 && techCardsViewSource != null && techCardsViewSource.View != null 
+                    && IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductTechCardNewChangeDelete"))
                 {
                     e.CanExecute = true;
                     return;
                 }
-                else if (btn == AddTechCardWorkButton && techCardsViewSource?.View != null && TechCardTreeView.SelectedItem != null)
+                else if (btn == AddTechCardWorkButton && techCardsViewSource?.View != null && TechCardTreeView.SelectedItem != null && IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductTechCardNewChangeDelete"))
                 {
                     e.CanExecute = true;
                     return;
                 }
-                else if (btn == AddTechCardOperationButton && techCardsViewSource?.View != null && TechCardTreeView.SelectedItem != null && (TechCardTreeView.SelectedItem is WorkInTechCard || TechCardTreeView.SelectedItem is OperationInWork))
+                else if (btn == AddTechCardOperationButton && techCardsViewSource?.View != null && TechCardTreeView.SelectedItem != null && (TechCardTreeView.SelectedItem is WorkInTechCard || TechCardTreeView.SelectedItem is OperationInWork) 
+                    && IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductTechCardNewChangeDelete"))
                 {
                     e.CanExecute = true;
                     return;
                 }
-                else if (btn == SendTechCardButton && techCardsViewSource?.View != null && TechCardTreeView?.SelectedItem != null)
+                else if (btn == SendTechCardButton && techCardsViewSource?.View != null && TechCardTreeView?.SelectedItem != null 
+                    && IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductTechCardTransferToProduction"))
                 {
                     TechCard techCard = (TechCard)GetParentTreeViewItem(TechCardTreeView.SelectedItem, 0); //ищем корневого родителя на уровне TechCard
                     if (techCard != null && !techCard.Product.DateTransferProduction.HasValue) //если дата передачи в производство не установлена
@@ -773,7 +782,8 @@ namespace AdvertisementWpf
                     }
                     return;
                 }
-                else if (btn == RecallTechCardButton && techCardsViewSource?.View != null && TechCardTreeView?.SelectedItem != null)
+                else if (btn == RecallTechCardButton && techCardsViewSource?.View != null && TechCardTreeView?.SelectedItem != null 
+                    && IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductTechCardRecallFromProduction"))
                 {
                     TechCard techCard = (TechCard)GetParentTreeViewItem(TechCardTreeView.SelectedItem, 0); //ищем корневого родителя на уровне TechCard
                     if (techCard != null && techCard.Product.DateTransferProduction.HasValue) //если дата передачи в производство установлена
@@ -864,7 +874,8 @@ namespace AdvertisementWpf
 
         private void ListPayments_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Delete && context_ != null && paymentsViewSource != null && paymentsViewSource.View.CurrentItem is Payment payment)
+            if (e.Key == Key.Delete && context_ != null && paymentsViewSource != null && paymentsViewSource.View.CurrentItem is Payment payment 
+                && IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductPaymentsNewChangeDelete"))
             {
                 _ = context_.Payments.Remove(payment);
             }
@@ -1635,7 +1646,8 @@ namespace AdvertisementWpf
 
         private void ListAccount_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Delete && context__ != null && accountsViewSource?.View?.CurrentItem is Account account) //&& accountsViewSource != null
+            if (e.Key == Key.Delete && context__ != null && accountsViewSource?.View?.CurrentItem is Account account 
+                && IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductPADNewChangeDelete")) //&& accountsViewSource != null
             {
                 _ = context__.Accounts.Remove(account);
             }
@@ -1643,7 +1655,8 @@ namespace AdvertisementWpf
 
         private void ListAccountDetail_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.OriginalSource is ListViewItem listViewItem && e.Key == Key.Delete && context__ != null && accountsViewSource?.View?.CurrentItem is Account account && account.Acts.Count == 0) //при наличии актов не удалять
+            if (e.OriginalSource is ListViewItem listViewItem && e.Key == Key.Delete && context__ != null && accountsViewSource?.View?.CurrentItem is Account account && account.Acts.Count == 0 
+                && IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductPADNewChangeDelete")) //при наличии актов не удалять
             {
                 AccountDetail accountDetail = (AccountDetail)listViewItem.DataContext;
                 int nSelectedIndex = ListAccountDetail.SelectedIndex;
@@ -1656,7 +1669,8 @@ namespace AdvertisementWpf
 
         private void ListAct_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Delete && context__ != null && accountsViewSource != null && accountsViewSource.View.CurrentItem is Account account)
+            if (e.Key == Key.Delete && context__ != null && accountsViewSource != null && accountsViewSource.View.CurrentItem is Account account 
+                && IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductPADNewChangeDelete"))
             {
                 ListViewItem listViewItem = (ListViewItem)e.OriginalSource;
                 Act act = (Act)listViewItem.DataContext;
@@ -1671,7 +1685,8 @@ namespace AdvertisementWpf
 
         private void ListActDetail_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Delete && context__ != null && accountsViewSource?.View.CurrentItem is Account account)
+            if (e.Key == Key.Delete && context__ != null && accountsViewSource?.View.CurrentItem is Account account 
+                && IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductPADNewChangeDelete"))
             {
                 ListViewItem listViewItem = (ListViewItem)e.OriginalSource;
                 AccountDetail accountDetail = (AccountDetail)listViewItem.DataContext;
@@ -1746,7 +1761,8 @@ namespace AdvertisementWpf
                         e.CanExecute = true;
                     }
                 }
-                if (e.OriginalSource == PrintTechCardButton && techCardsViewSource?.View != null && TechCardTreeView?.SelectedItem != null)
+                if (e.OriginalSource == PrintTechCardButton && techCardsViewSource?.View != null && TechCardTreeView?.SelectedItem != null 
+                    && IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductTechCardPrint"))
                 {
                     e.CanExecute = true;
                 }
@@ -2833,12 +2849,29 @@ namespace AdvertisementWpf
 
     public class ViewModel
     {
-        public List<User> DesignerList => OrderWindow.designerList.ToList();
-        public List<TypeOfActivity> TypeOfActivityList => OrderWindow.typeOfActivityList.ToList();
-        //public List<Operation> OperationList => OrderWindow.operationList.ToList();
-        //public List<User> DesignerList
-        //{
-        //    get { return new List<User> { new User { FirstName = "Васильев" }, new User { FirstName = "Троцкий"} }; }
-        //}
+        public List<User> DesignerList { get; set; }
+        public List<TypeOfActivity> TypeOfActivityList { get; set; }
+        public bool ProductCostAndCostsKVDCostsChange { get; set; }
+        public bool OrderCardDateCompletion { get; set; }
+        public bool OrderCardPrintOrderForm { get; set; }
+        public bool OrderCardPrintOrderFormForDesigner { get; set; }
+        public bool OrderCardProductDesigner { get; set; }
+        public bool OrderCardProductDateProductionLayout { get; set; }
+        public bool OrderCardProductDateTransferDesigner { get; set; }
+        public bool IsManager { get; set; }
+
+        public ViewModel()
+        {
+            DesignerList = OrderWindow.designerList.ToList();
+            TypeOfActivityList = OrderWindow.typeOfActivityList.ToList();
+            ProductCostAndCostsKVDCostsChange = IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductCostAndCostsKVDCostsChange");
+            OrderCardDateCompletion = IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardDateCompletion");
+            OrderCardPrintOrderForm = IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardPrintOrderForm");
+            OrderCardPrintOrderFormForDesigner = IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardPrintOrderFormForDesigner");
+            OrderCardProductDesigner = IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductDesigner");
+            OrderCardProductDateProductionLayout = IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductDateProductionLayout");
+            OrderCardProductDateTransferDesigner = IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductDateTransferDesigner");
+            IsManager = IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "ListManager");
+        }
     }
 }

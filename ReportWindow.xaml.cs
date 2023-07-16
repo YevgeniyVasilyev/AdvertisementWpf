@@ -100,7 +100,7 @@ namespace AdvertisementWpf
         {
             if (e.OriginalSource is Button btn)
             {
-                if (btn.Name == "MakeReportButton" && reportsViewSource.View.CurrentItem is Report report)
+                if (btn == MakeReportButton && reportsViewSource.View.CurrentItem is Report report)
                 {
                     DateTime dBeginPeriod = new DateTime(DateTime.Today.Year, 1, 1); //01 января текущего года
                     DateTime dEndPeriod = new DateTime(DateTime.Today.Year, 12, 31); //31 декабря текущего года
@@ -168,7 +168,7 @@ namespace AdvertisementWpf
         {
             if (e.OriginalSource is Button btn)
             {
-                if (btn.Name == "MakeReportButton" && reportsViewSource != null && reportsViewSource.View != null && reportsViewSource.View.CurrentItem is Report)
+                if (btn == MakeReportButton && reportsViewSource?.View?.CurrentItem is Report)
                 {
                     e.CanExecute = true;
                 }
@@ -187,9 +187,9 @@ namespace AdvertisementWpf
                 if (File.Exists(Path.Combine(_pathToReportTemplate, $"{report.Code}.frx")))
                 {
                     Reports.ReportFileName = Path.Combine(_pathToReportTemplate, $"{report.Code}.frx");
-                    if (report.Code == "VMP")
+                    if (report.Code == "VMP") //volume of mastered products
                     {
-                        Reports.ReportMode = "VMP";
+                        Reports.ReportMode = report.Code;
                         var grouping = from pCost in _report.ProductCosts
                                        join p in _report.Products on pCost.ProductID equals p.ID
                                        join tofa in _report.TypeOfActivitys on pCost.TypeOfActivityID equals tofa.ID
@@ -209,6 +209,25 @@ namespace AdvertisementWpf
                         Reports.BeginPeriod = beginPeriod;
                         Reports.EndPeriod = endPeriod;
                         lCanMakeReport = Reports.ObjectDataSet.Count > 0;
+                        if (!lCanMakeReport) //ничего не отобрано
+                        {
+                            _ = MessageBox.Show("Нет данных за указанный период!", "Получение данных для отчета", MessageBoxButton.OK, MessageBoxImage.Information);
+                        }
+                    }
+                    else if (report.Code == "MBTD" || report.Code == "PSFD") //mastered by the designer | payment statement for designers
+                    {
+                        Reports.ReportMode = report.Code;
+                        Reports.ProductCostDataSet = _report.ProductCosts
+                            .Include(pc => pc.Product)
+                            .ThenInclude(product => product.Designer)
+                            .Include(pc => pc.Product.Order)
+                            .Include(pc => pc.Product.ProductType)
+                            .Where(pc => pc.TypeOfActivity.Code.Trim() == "10" && pc.Product.DesignerID != null)
+                            .OrderBy(pc => pc.Product.DesignerID)
+                            .ToList();
+                        Reports.BeginPeriod = beginPeriod;
+                        Reports.EndPeriod = endPeriod;
+                        lCanMakeReport = Reports.ProductCostDataSet.Count > 0;
                         if (!lCanMakeReport) //ничего не отобрано
                         {
                             _ = MessageBox.Show("Нет данных за указанный период!", "Получение данных для отчета", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -248,7 +267,7 @@ namespace AdvertisementWpf
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             Report report = (Report)value;
-            if (report != null && (string)parameter == "P" && report.Parameters.Contains("P"))
+            if (report != null && (string)parameter == "P" && report.Parameters.Contains("P")) //P - Period
             {
                 return true;
             }

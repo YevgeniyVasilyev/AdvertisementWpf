@@ -44,6 +44,7 @@
             <BooleanToVisibilityConverter/>
         </local:ValueConverterGroup>
         <local:CostConverter x:Key="CostConverter"/>
+        <local:AddBoolConverter x:Key="AddBoolConverter"/>
         <local:NullDateTimeToBoolConverter x:Key="NullDateTimeToBoolConverter"/>
         <local:BoolNotBoolConverter x:Key="BoolNotBoolConverter"/>
         <local:ObservableCollectionConverter x:Key="ObservableCollectionConverter"/>
@@ -194,13 +195,17 @@
                 </StackPanel>
             </Button>
             <Separator/>
-            <Button Name="PrintOrderFormButton" Style="{StaticResource ButtonOfOrder}" Click="PrintOrderFormButton_Click">
+            <Button Name="PrintOrderFormButton" Style="{StaticResource ButtonOfOrder}" 
+                    IsEnabled="{Binding RelativeSource={RelativeSource AncestorType=local:OrderWindow}, Path=DataContext.OrderCardPrintOrderForm}"
+                    Click="PrintOrderFormButton_Click">
                 <StackPanel Orientation="Vertical">
                     <Image Source="\Images\free-icon-printer.png" Width="25" Height="25"/>
                     <Label Content="Бланк"/>
                 </StackPanel>
             </Button>
-            <Button Name="PrintOrderFormForDesignerButton" Style="{StaticResource ButtonOfOrder}" Click="PrintOrderFormForDesignerButton_Click">
+            <Button Name="PrintOrderFormForDesignerButton" Style="{StaticResource ButtonOfOrder}" 
+                    IsEnabled="{Binding RelativeSource={RelativeSource AncestorType=local:OrderWindow}, Path=DataContext.OrderCardPrintOrderFormForDesigner}"
+                    Click="PrintOrderFormForDesignerButton_Click">
                 <StackPanel Orientation="Vertical">
                     <Image Source="\Images\free-icon-printer.png" Width="25" Height="25"/>
                     <Label Content="Бланк для дизайнера"/>
@@ -277,9 +282,11 @@
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="2">
                         <Label Name="DateCompletionLabel" Content="Дата окончания работ(план): " Style="{StaticResource UnderlineLabel}" MouseLeftButtonDown="Label_MouseLeftButtonDown"/>
-                        <DatePicker Name="DateCompletionDate" SelectedDate="{Binding Source={StaticResource ordersViewSource}, 
-                            Path=DateCompletion, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, 
-                            ValidatesOnExceptions=True, ValidatesOnNotifyDataErrors=True}" IsTodayHighlighted="True"/>
+                        <DatePicker Name="DateCompletionDate"
+                                    IsEnabled="{Binding RelativeSource={RelativeSource AncestorType=local:OrderWindow}, Path=DataContext.OrderCardDateCompletion}"
+                                    SelectedDate="{Binding Source={StaticResource ordersViewSource}, 
+                                    Path=DateCompletion, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, 
+                                    ValidatesOnExceptions=True, ValidatesOnNotifyDataErrors=True}" IsTodayHighlighted="True"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="3">
                         <Label Content="Заказ внес в базу: "/>
@@ -369,21 +376,26 @@
                                                 <GridViewColumn x:Name="column1" Header=" Наименование " Width="250"
                                                     DisplayMemberBinding="{Binding Path=ProductTypeName}"
                                                     HeaderTemplate="{StaticResource ListViewHeaderTemplate}"/>
-                                                <GridViewColumn x:Name="column2" Header=" Кол-во " Width="80"
-                                                    HeaderTemplate="{StaticResource ListViewHeaderTemplate}">
+                                                <GridViewColumn x:Name="column2" Header=" Кол-во " Width="80" HeaderTemplate="{StaticResource ListViewHeaderTemplate}">
                                                     <GridViewColumn.CellTemplate>
                                                         <DataTemplate>
                                                             <TextBox Name="QuantityTextBox" HorizontalContentAlignment="Right" Width="70"
-                                                             Text="{Binding Path=Quantity, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, 
-                                                                ValidatesOnExceptions=True, ValidatesOnNotifyDataErrors=True}" 
-                                                             GotFocus="QuantityTextBox_GotFocus"/>
+                                                                     Text="{Binding Path=Quantity, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, 
+                                                                            ValidatesOnExceptions=True, ValidatesOnNotifyDataErrors=True}" 
+                                                                     GotFocus="QuantityTextBox_GotFocus" >
+                                                                <TextBox.IsEnabled>
+                                                                    <MultiBinding Converter="{StaticResource AddBoolConverter}" ConverterParameter="True">
+                                                                        <Binding Source="{StaticResource productsViewSource}" Path="DateTransferProduction" Converter="{StaticResource NullDateTimeToBoolConverter}"/>
+                                                                        <Binding RelativeSource="{RelativeSource AncestorType=local:OrderWindow}" Path="DataContext.IsManager"/>
+                                                                    </MultiBinding>
+                                                                </TextBox.IsEnabled>
+                                                            </TextBox>
                                                         </DataTemplate>
                                                     </GridViewColumn.CellTemplate>
                                                 </GridViewColumn>
-                                                <GridViewColumn x:Name="column3" Header=" Стоимость " Width="100" 
-                                                        HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
-                                                        DisplayMemberBinding="{Binding Path=Cost, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ConverterCulture=ru-RU, StringFormat={}{0:C}}">
-                                                    <GridViewColumn.CellTemplate>
+                                                <GridViewColumn x:Name="column3" Header=" Стоимость " Width="100" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
+                                                                DisplayMemberBinding="{Binding Path=Cost, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ConverterCulture=ru-RU, StringFormat={}{0:C}}">
+                                                    <!--<GridViewColumn.CellTemplate>
                                                         <DataTemplate>
                                                             <TextBox Name="CostTextBox" Style="{StaticResource ValidationTemplate}"
                                                                      HorizontalContentAlignment="Right" Width="90" Language="ru-ru" 
@@ -399,12 +411,13 @@
                                                                 </TextBox.Text>
                                                             </TextBox>
                                                         </DataTemplate>
-                                                    </GridViewColumn.CellTemplate>
+                                                    </GridViewColumn.CellTemplate>-->
                                                 </GridViewColumn>
                                                 <GridViewColumn Header=" Дизайнер " Width="200" HeaderTemplate="{StaticResource ListViewHeaderTemplate}">
                                                     <GridViewColumn.CellTemplate>
                                                         <DataTemplate>
                                                             <ComboBox VerticalAlignment="Center" IsEditable="False" Width="190"
+                                                                      IsEnabled="{Binding Source={StaticResource ViewModel}, Path=OrderCardProductDesigner}"
                                                                       ItemsSource="{Binding Source={StaticResource ViewModel}, Path=DesignerList}" 
                                                                       SelectedValuePath="ID" DisplayMemberPath="FullUserName"
                                                                       SelectedValue="{Binding Path=DesignerID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
@@ -448,11 +461,15 @@
                                         <RowDefinition/>
                                     </Grid.RowDefinitions>
                                     <Label Name="DateDeliveryPlanLabel" Content="Сдать изделие (план): " Grid.Column="0" Grid.Row="0" Style="{StaticResource UnderlineLabel}" MouseLeftButtonDown="Label_MouseLeftButtonDown"/>
-                                    <DatePicker Grid.Column="1" Grid.Row="0" Name="DateDeliveryPlanDate" SelectedDate="{Binding Source={StaticResource productsViewSource}, 
+                                    <DatePicker Grid.Column="1" Grid.Row="0" Name="DateDeliveryPlanDate" 
+                                                IsEnabled="{Binding RelativeSource={RelativeSource AncestorType=local:OrderWindow}, Path=DataContext.OrderCardProductDateProductionLayout}"                                                
+                                                SelectedDate="{Binding Source={StaticResource productsViewSource},                                         
                                                 Path=DateDeliveryPlan, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, 
                                                 ValidatesOnExceptions=True, ValidatesOnNotifyDataErrors=True}" IsTodayHighlighted="True"/>
                                     <Label Name="DateProductionLayoutLabel" Content="Сдать макет: " Grid.Column="0" Grid.Row="1" Style="{StaticResource UnderlineLabel}" MouseLeftButtonDown="Label_MouseLeftButtonDown"/>
-                                    <DatePicker Grid.Column="1" Grid.Row="1" Name="DateProductionLayoutDate" SelectedDate="{Binding Source={StaticResource productsViewSource}, 
+                                    <DatePicker Grid.Column="1" Grid.Row="1" Name="DateProductionLayoutDate" 
+                                                IsEnabled="{Binding RelativeSource={RelativeSource AncestorType=local:OrderWindow}, Path=DataContext.OrderCardProductDateTransferDesigner}"
+                                                SelectedDate="{Binding Source={StaticResource productsViewSource}, 
                                                 Path=DateProductionLayout, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, 
                                                 ValidatesOnExceptions=True, ValidatesOnNotifyDataErrors=True}" IsTodayHighlighted="True"/>
                                     <Label Name="DateTransferDesignerLabel" Content="Передано дизайнеру: " Grid.Column="0" Grid.Row="2" 
@@ -644,19 +661,25 @@
                                                                 </DataTrigger>
                                                             </DataTemplate.Triggers>
                                                             <TextBox Name="TypeOfActivityCostTextBox" Style="{StaticResource ValidationTemplate}"
-                                                             HorizontalContentAlignment="Right" Width="90" Language="ru-RU"
-                                                             SourceUpdated="TypeOfActivityCostTextBox_SourceUpdated"
-                                                             GotFocus="TypeOfActivityCostTextBox_GotFocus">
+                                                                     HorizontalContentAlignment="Right" Width="90" Language="ru-RU"
+                                                                     SourceUpdated="TypeOfActivityCostTextBox_SourceUpdated"
+                                                                     GotFocus="TypeOfActivityCostTextBox_GotFocus">
                                                                 <TextBox.Text>
                                                                     <Binding Path="Cost" Mode="TwoWay" UpdateSourceTrigger="LostFocus"
-                                                                     NotifyOnSourceUpdated="True" ValidatesOnExceptions="True" 
-                                                                     ValidatesOnNotifyDataErrors="True" 
-                                                                     Converter="{StaticResource CostConverter}">
+                                                                             NotifyOnSourceUpdated="True" ValidatesOnExceptions="True" 
+                                                                             ValidatesOnNotifyDataErrors="True" 
+                                                                             Converter="{StaticResource CostConverter}">
                                                                         <Binding.ValidationRules>
                                                                             <local:CostValidationRule/>
                                                                         </Binding.ValidationRules>
                                                                     </Binding>
                                                                 </TextBox.Text>
+                                                                <TextBox.IsEnabled>
+                                                                    <MultiBinding Converter="{StaticResource AddBoolConverter}" ConverterParameter="True">
+                                                                        <Binding Source="{StaticResource productsViewSource}" Path="DateTransferProduction" Converter="{StaticResource NullDateTimeToBoolConverter}"/>
+                                                                        <Binding RelativeSource="{RelativeSource AncestorType=local:OrderWindow}" Path="DataContext.IsManager"/>
+                                                                    </MultiBinding>
+                                                                </TextBox.IsEnabled>
                                                             </TextBox>
                                                         </DataTemplate>
                                                     </GridViewColumn.CellTemplate>
@@ -671,9 +694,10 @@
                                                                 </DataTrigger>
                                                             </DataTemplate.Triggers>
                                                             <TextBox Name="TypeOfActivityOutlayTextBox" Style="{StaticResource ValidationTemplate}"
-                                                             HorizontalContentAlignment="Right" Width="90" Language="ru-RU"
-                                                             SourceUpdated="TypeOfActivityCostTextBox_SourceUpdated"
-                                                             GotFocus="TypeOfActivityCostTextBox_GotFocus">
+                                                                     HorizontalContentAlignment="Right" Width="90" Language="ru-RU"
+                                                                     IsEnabled="{Binding Source={StaticResource ViewModel}, Path=ProductCostAndCostsKVDCostsChange}"
+                                                                     SourceUpdated="TypeOfActivityCostTextBox_SourceUpdated"
+                                                                     GotFocus="TypeOfActivityCostTextBox_GotFocus">
                                                                 <TextBox.Text>
                                                                     <Binding Path="Outlay" Mode="TwoWay" UpdateSourceTrigger="LostFocus"
                                                                      NotifyOnSourceUpdated="True" ValidatesOnExceptions="True" 
@@ -1154,7 +1178,7 @@
                                 </Button>
                                 <Separator/>
                                 <Button Name="SavePADButton" Style="{StaticResource ButtonOfOrder}" Command="ApplicationCommands.Save"
-                                            ToolTip="Сохранить данные по ПУДам в БД">
+                                        ToolTip="Сохранить данные по ПУДам в БД">
                                     <StackPanel Orientation="Horizontal">
                                         <Image Source="\Images\free-icon-floppy-disk_save.png" Width="25" Height="25"/>
                                         <Label Content="Сохранить"/>
