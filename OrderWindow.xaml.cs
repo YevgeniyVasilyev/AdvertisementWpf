@@ -1377,6 +1377,7 @@ namespace AdvertisementWpf
             account.AccountNumber = GetNewAccountNumber(ref account);
             Order order = account.Order;
             context__.Entry(order).Collection(o => o.Products).Load(); //загрузить через св-во навигации
+            context__.Entry(order).Reference(o => o.Client).Load(); //загрузить через св-во навигации
             foreach (Product product in order.Products)
             {
                 context__.Entry(product).Reference(p => p.ProductType).Load(); //загрузить через св-во навигации

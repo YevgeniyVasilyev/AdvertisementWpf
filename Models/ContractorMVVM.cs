@@ -85,7 +85,6 @@ namespace AdvertisementWpf.Models
                 _context.Dispose();
                 _context = null;
             }
-            MainWindow.statusBar.ClearStatus();
         }
         // команда сохранения
         public RelayCommand SaveCommand => saveCommand ??= new RelayCommand((o) =>

@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AdvertisementWpf"
         mc:Ignorable="d"
-        Title="Системные настройки" MinHeight="100" MinWidth="600" BorderThickness="1" WindowStartupLocation="CenterScreen" 
-        ResizeMode="CanResizeWithGrip" SizeToContent="WidthAndHeight" WindowStyle="SingleBorderWindow" Closed="Window_Closed">
+        Title="Системные настройки" WindowState="Maximized" MinHeight="100" MinWidth="600" BorderThickness="1" WindowStartupLocation="CenterScreen" 
+        ResizeMode="CanResizeWithGrip" WindowStyle="SingleBorderWindow" Closed="Window_Closed">
     <Window.Resources>
         <CollectionViewSource x:Key="settingViewSource"/>
         <Style x:Key="DropShadow" TargetType="{x:Type FrameworkElement}">

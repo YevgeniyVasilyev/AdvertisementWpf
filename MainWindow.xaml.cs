@@ -16,6 +16,7 @@ using System.Windows.Controls.Primitives;
 using System.Reflection;
 using System.Windows.Documents;
 using System.Windows.Threading;
+using System.Collections;
 
 namespace AdvertisementWpf
 {
@@ -98,6 +99,7 @@ namespace AdvertisementWpf
             OrderList.Height = new GridLength(1, GridUnitType.Star);
             ProductList.Height = new GridLength(1, GridUnitType.Auto);
             ProductionProductList.Height = new GridLength(1, GridUnitType.Auto);
+            TotalOrder.Height = new GridLength(1, GridUnitType.Auto);
             LogonWindow logon = new LogonWindow
             {
                 Owner = this
@@ -697,6 +699,7 @@ namespace AdvertisementWpf
             ProductList.Height = (bool)e.NewValue ? new GridLength(1, GridUnitType.Star) : new GridLength(1, GridUnitType.Auto);
             OrderList.Height = new GridLength(1, GridUnitType.Auto);
             ProductionProductList.Height = new GridLength(1, GridUnitType.Auto);
+            TotalOrder.Height = new GridLength(1, GridUnitType.Auto);
         }
 
         private void OrderListView_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -704,6 +707,7 @@ namespace AdvertisementWpf
             OrderList.Height = (bool)e.NewValue ? new GridLength(1, GridUnitType.Star) : new GridLength(1, GridUnitType.Auto);
             ProductList.Height = new GridLength(1, GridUnitType.Auto);
             ProductionProductList.Height = new GridLength(1, GridUnitType.Auto);
+            TotalOrder.Height = new GridLength(1, GridUnitType.Auto);
         }
 
         private void ProductionProductListView_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -711,6 +715,7 @@ namespace AdvertisementWpf
             ProductionProductList.Height = (bool)e.NewValue ? new GridLength(1, GridUnitType.Star) : new GridLength(1, GridUnitType.Auto);
             ProductList.Height = new GridLength(1, GridUnitType.Auto);
             OrderList.Height = new GridLength(1, GridUnitType.Auto);
+            TotalOrder.Height = new GridLength(1, GridUnitType.Auto);
         }
 
         private void GridViewColumnHeader_Click(object sender, RoutedEventArgs e)
@@ -1050,4 +1055,29 @@ namespace AdvertisementWpf
         }, null);
     }
 
+    public class SumListViewDecimalConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (!(value is IEnumerable enumerable))
+            {
+                return DependencyProperty.UnsetValue;
+            }
+
+            IEnumerable<object> collection = enumerable.Cast<object>();
+
+            PropertyInfo property = null;
+            if (parameter is string propertyName && collection.Any())
+            {
+                property = collection.First().GetType().GetProperty(propertyName);
+            }
+
+            return collection.Select(x => System.Convert.ToDecimal(property != null ? property.GetValue(x) : x)).Sum();
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

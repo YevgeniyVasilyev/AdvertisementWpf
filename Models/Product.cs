@@ -14,7 +14,7 @@ namespace AdvertisementWpf.Models
         public Product()
         {
             //TechCards = new HashSet<TechCard>();
-            Costs = new HashSet<ProductCost>();
+            //Costs = new HashSet<ProductCost>();
         }
 
         public long ID { get; set; }
@@ -141,7 +141,7 @@ namespace AdvertisementWpf.Models
         public virtual User Designer { get; set; }
         public virtual TechCard TechCard { get; set; }
 
-        public virtual ICollection<ProductCost> Costs { get; set; }
+        //public virtual ICollection<ProductCost> Costs { get; set; }
 
         //public virtual ICollection<TechCard> TechCards { get; set; }
 
@@ -152,8 +152,8 @@ namespace AdvertisementWpf.Models
             get => ProductType?.Name ?? _productTypeName;
             set => _productTypeName = value;
         }
-        //[NotMapped]
-        //public ICollection<ProductCost> Costs { get; set; }
+        [NotMapped]
+        public ICollection<ProductCost> Costs { get; set; }
         [NotMapped]
         public List<string> FilesList { get; set; } = new List<string> { };
         [NotMapped]

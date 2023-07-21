@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AdvertisementWpf"
         mc:Ignorable="d"
-        Title="Справочники" MinHeight="400" MinWidth="750" WindowStartupLocation="CenterOwner" 
-        ResizeMode="CanResizeWithGrip" SizeToContent="WidthAndHeight" WindowStyle="ThreeDBorderWindow" Closed="Window_Closed">
+        Title="Справочники" WindowState="Maximized" MinHeight="400" MinWidth="750" WindowStartupLocation="CenterOwner" 
+        ResizeMode="CanResizeWithGrip" WindowStyle="SingleBorderWindow" Closed="Window_Closed">
     <Window.Resources>
         <CollectionViewSource x:Key="banksViewSource"/>
         <CollectionViewSource x:Key="unitsViewSource"/>

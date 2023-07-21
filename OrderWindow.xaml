@@ -1154,7 +1154,7 @@
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
                                 <!--кнопки-->
-                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/> 
                                 <!--счета надпись-->
                                 <RowDefinition Height="Auto"/>
                                 <!--счета список и поля для правки-->
@@ -1444,11 +1444,21 @@
                                         </StackPanel>
                                     </Button>
                                 </StackPanel>
-                                <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" Margin="3,0,0,0">
+                                <Grid Grid.Column="1" Grid.Row="0" Margin="0,20,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <RadioButton Grid.Column="0" GroupName="ActTemplate" Name="TemplateAct" IsChecked="True" Content=" Акт" VerticalContentAlignment="Center"/>
+                                    <RadioButton Grid.Column="1" GroupName="ActTemplate" Name="TemplateSFTN" Margin="3,0,0,0" Content=" СФ и ТН" VerticalContentAlignment="Center" />
+                                    <RadioButton Grid.Column="2" GroupName="ActTemplate" Name="TemplateUPD" Margin="3,0,0,0" Content=" УПД" VerticalContentAlignment="Center" />
+                                </Grid>
+                                <!--<StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" Margin="3,0,0,0">
                                     <RadioButton GroupName="ActTemplate" Name="TemplateAct" IsChecked="True" Content=" Акт" VerticalContentAlignment="Center"/>
                                     <RadioButton GroupName="ActTemplate" Name="TemplateSFTN" Margin="3,0,0,0" Content=" СФ и ТН" VerticalContentAlignment="Center" />
                                     <RadioButton GroupName="ActTemplate" Name="TemplateUPD" Margin="3,0,0,0" Content=" УПД" VerticalContentAlignment="Center" />
-                                </StackPanel>
+                                </StackPanel>-->
                             </Grid>
                         </Grid>
                     </ScrollViewer>

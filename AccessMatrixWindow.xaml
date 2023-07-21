@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AdvertisementWpf"
         mc:Ignorable="d"
-        Title="Матрица доступа" MinHeight="300" MinWidth="800" BorderThickness="1" WindowStartupLocation="CenterScreen" 
-        ResizeMode="CanResizeWithGrip" SizeToContent="WidthAndHeight" WindowStyle="ThreeDBorderWindow" Closed="Window_Closed">
+        Title="Матрица доступа" WindowState="Maximized" MinHeight="300" MinWidth="800" BorderThickness="1" WindowStartupLocation="CenterScreen" 
+        ResizeMode="CanResizeWithGrip" WindowStyle="ThreeDBorderWindow" Closed="Window_Closed">
     <Window.Resources>
         <CollectionViewSource x:Key="iAccessMatrixViewSource"/>
         <Style x:Key="DropShadow" TargetType="{x:Type FrameworkElement}">

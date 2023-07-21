@@ -6,7 +6,7 @@
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:local="clr-namespace:AdvertisementWpf"
         mc:Ignorable="d"
-        Title="Отчеты" Height="600" Width="1300" BorderThickness="1" WindowStartupLocation="CenterScreen" 
+        Title="Отчеты" WindowState="Maximized" Height="600" Width="1300" BorderThickness="1" WindowStartupLocation="CenterScreen" 
         ResizeMode="CanResizeWithGrip" WindowStyle="SingleBorderWindow" Closed="Window_Closed">
     <Window.Resources>
         <CollectionViewSource x:Key="reportsViewSource"/>

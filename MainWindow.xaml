@@ -45,6 +45,7 @@
                 </TextBlock.Text>
             </TextBlock>
         </DataTemplate>
+        <local:SumListViewDecimalConverter x:Key="SumListViewDecimalConverter"/>
     </Window.Resources>
     <Window.CommandBindings>
         <CommandBinding Command="ApplicationCommands.New"
@@ -70,6 +71,7 @@
             <RowDefinition Height="Auto"/>
             <!--buttob-->
             <RowDefinition Height="Auto" Name="OrderList"/>
+            <RowDefinition Height="Auto" Name="TotalOrder"/>
             <RowDefinition Height="Auto" Name="ProductList"/>
             <RowDefinition Height="*" Name="ProductionProductList"/>
             <!--основной раздел-->
@@ -100,7 +102,7 @@
                 <MenuItem Header="Матрица доступа" Name="AccessMatrixItem" Command="{x:Static local:CustomCommands.AccessMatrix}"/>
             </MenuItem>
         </Menu>
-        <Border Grid.Row="1" Grid.Column="0" Grid.RowSpan="4" BorderThickness="4" Background="GhostWhite" BorderBrush="Gainsboro">
+        <Border Grid.Row="1" Grid.Column="0" Grid.RowSpan="5" BorderThickness="4" Background="GhostWhite" BorderBrush="Gainsboro">
             <StackPanel Orientation="Vertical" HorizontalAlignment="Left" Margin="1,1,1,1" Width="65">
                 <Button Name="NewOrderButton" ToolTip="Создать новый заказ" Style="{StaticResource ButtonOnStackPanel}" Command="ApplicationCommands.New">
                     <Button.Content>
@@ -264,31 +266,31 @@
             <ListView.View>
                 <GridView>
                     <GridView.Columns>
-                        <GridViewColumn Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
+                        <GridViewColumn x:Name="o_col1" Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
                                         DisplayMemberBinding="{Binding Path=Number}">
                             <GridViewColumn.Header>
                                 <GridViewColumnHeader Content=" Номер заказа " Tag="Number" Click="GridViewColumnHeader_Click"/>
                             </GridViewColumn.Header>
                         </GridViewColumn>
-                        <GridViewColumn Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
+                        <GridViewColumn x:Name="o_col2" Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
                                         DisplayMemberBinding="{Binding Path=DateAdmission, StringFormat={}{0:d}, ConverterCulture=ru-RU}">
                             <GridViewColumn.Header>
                                 <GridViewColumnHeader Content=" Дата приема " Tag="DateAdmission" Click="GridViewColumnHeader_Click"/>
                             </GridViewColumn.Header>
                         </GridViewColumn>
-                        <GridViewColumn Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}" 
+                        <GridViewColumn x:Name="o_col3" Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}" 
                                         DisplayMemberBinding="{Binding Path=State}">
                             <GridViewColumn.Header>
                                 <GridViewColumnHeader Content=" Состояние заказа " Tag="State" Click="GridViewColumnHeader_Click"/>
                             </GridViewColumn.Header>
                         </GridViewColumn>
-                        <GridViewColumn Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
+                        <GridViewColumn x:Name="o_col4" Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
                                         DisplayMemberBinding="{Binding Path=Client.Name}">
                             <GridViewColumn.Header>
                                 <GridViewColumnHeader Content=" Клиент " Tag="Client.Name" Click="GridViewColumnHeader_Click"/>
                             </GridViewColumn.Header>
                         </GridViewColumn>
-                        <GridViewColumn Header=" Изделия в заказе " Width="350" HeaderTemplate="{StaticResource ListViewHeaderTemplate}">
+                        <GridViewColumn x:Name="o_col5" Header=" Изделия в заказе " Width="350" HeaderTemplate="{StaticResource ListViewHeaderTemplate}">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <Expander ToolTip="Показать/скрыть список изделий" Name="OrderDetailList">
@@ -329,25 +331,25 @@
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
-                        <GridViewColumn Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
+                        <GridViewColumn x:Name="o_col6" Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
                                         DisplayMemberBinding="{Binding Path=AccountDate, StringFormat=\{0:dd.MM.yyyy\}, ConverterCulture='ru-RU'}">
                             <GridViewColumn.Header>
                                 <GridViewColumnHeader Content=" Дата счета " Tag="AccountDate" Click="GridViewColumnHeader_Click"/>
                             </GridViewColumn.Header>
                         </GridViewColumn>
-                        <GridViewColumn Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
+                        <GridViewColumn x:Name="o_col7" Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
                                         DisplayMemberBinding="{Binding Path=OrderPayments, StringFormat={}{0:C}, ConverterCulture='ru-RU'}">
                             <GridViewColumn.Header>
-                                <GridViewColumnHeader Content=" Оплачено " Tag="OrderPayments" Click="GridViewColumnHeader_Click"/>
+                                <GridViewColumnHeader Content="  Оплачено  " Tag="OrderPayments" Click="GridViewColumnHeader_Click"/>
                             </GridViewColumn.Header>
                         </GridViewColumn>
-                        <GridViewColumn Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
+                        <GridViewColumn x:Name="o_col8" Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
                                         DisplayMemberBinding="{Binding Path=Note}">
                             <GridViewColumn.Header>
                                 <GridViewColumnHeader Content=" Краткое описание заказа " Tag="Note" Click="GridViewColumnHeader_Click"/>
                             </GridViewColumn.Header>
                         </GridViewColumn>
-                        <GridViewColumn Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
+                        <GridViewColumn x:Name="o_col9" Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
                                         DisplayMemberBinding="{Binding Path=Manager.FullUserName}">
                             <GridViewColumn.Header>
                                 <GridViewColumnHeader Content=" Менеджер " Tag="Manager.FullUserName" Click="GridViewColumnHeader_Click"/>
@@ -358,7 +360,28 @@
                 </GridView>
             </ListView.View>
         </ListView>
-        <ListView Grid.Row="3" Grid.Column="1" Name="ProductListView" IsSynchronizedWithCurrentItem="True" 
+        <!--Visibility="{Binding ElementName=OrderListView, Path=Visibility}"-->
+        <Border Grid.Row="3" Grid.Column="1" BorderThickness="1" BorderBrush="DarkGray" Visibility="{Binding ElementName=OrderListView, Path=Visibility}">
+            <Grid  Background="{Binding ElementName=OrderListView, Path=Background}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="{Binding ElementName=o_col1, Path=ActualWidth}"/>
+                    <ColumnDefinition Width="{Binding ElementName=o_col2, Path=ActualWidth}"/>
+                    <ColumnDefinition Width="{Binding ElementName=o_col3, Path=ActualWidth}"/>
+                    <ColumnDefinition Width="{Binding ElementName=o_col4, Path=ActualWidth}"/>
+                    <ColumnDefinition Width="{Binding ElementName=o_col5, Path=ActualWidth}"/>
+                    <ColumnDefinition Width="{Binding ElementName=o_col6, Path=ActualWidth}"/>
+                    <ColumnDefinition Width="{Binding ElementName=o_col7, Path=ActualWidth}"/> 
+                    <ColumnDefinition Width="{Binding ElementName=o_col8, Path=ActualWidth}"/>
+                    <ColumnDefinition Width="{Binding ElementName=o_col9, Path=ActualWidth}"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="2" Text="Отобрано заказов: " HorizontalAlignment="Right" FontWeight="Bold"/>
+                <TextBlock Grid.Column="3" Text="{Binding ElementName=OrderListView, Path=Items.Count, UpdateSourceTrigger=PropertyChanged}" FontWeight="Bold"/>
+                <TextBlock Grid.Column="4" Text="{Binding ElementName=OrderListView, Path=ItemsSource, Converter={StaticResource SumListViewDecimalConverter}, ConverterParameter=OrderCost, StringFormat={}{0:C}, ConverterCulture='ru-RU'}" HorizontalAlignment="Right" FontWeight="Bold"/>
+                <TextBlock Grid.Column="6" Text="{Binding ElementName=OrderListView, Path=ItemsSource, Converter={StaticResource SumListViewDecimalConverter}, ConverterParameter=OrderPayments, StringFormat={}{0:C}, ConverterCulture='ru-RU'}" 
+                           HorizontalAlignment="Right" FontWeight="Bold"/>
+            </Grid>
+        </Border>
+        <ListView Grid.Row="4" Grid.Column="1" Name="ProductListView" IsSynchronizedWithCurrentItem="True" 
                   ItemsSource="{Binding Source={StaticResource productsViewSource}}" Visibility="Collapsed"
                   MouseDoubleClick="OrderListView_MouseDoubleClick" 
                   ScrollViewer.VerticalScrollBarVisibility="Auto" 
@@ -419,7 +442,7 @@
                 </GridView>
             </ListView.View>
         </ListView>
-        <ListView Grid.Row="4" Grid.Column="1" Name="ProductionProductListView" IsSynchronizedWithCurrentItem="True" 
+        <ListView Grid.Row="5" Grid.Column="1" Name="ProductionProductListView" IsSynchronizedWithCurrentItem="True" 
                   ItemsSource="{Binding Source={StaticResource workInTechCardViewSource}}" Visibility="Collapsed"
                   MouseDoubleClick="OrderListView_MouseDoubleClick" IsVisibleChanged="ProductionProductListView_IsVisibleChanged"
                   ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto">
@@ -479,7 +502,7 @@
                 </GridView>
             </ListView.View>
         </ListView>
-        <DockPanel Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2">
+        <DockPanel Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2">
             <StatusBar BorderThickness="2" DockPanel.Dock="Bottom">
                 <StatusBar.ItemsPanel>
                     <ItemsPanelTemplate>

@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AdvertisementWpf"
         mc:Ignorable="d"
-        Title="Пользователи и роли" MinHeight="250" MinWidth="810" WindowStartupLocation="CenterOwner" 
-        ResizeMode="CanResizeWithGrip" SizeToContent="WidthAndHeight" WindowStyle="ThreeDBorderWindow" Closed="Window_Closed">
+        Title="Пользователи и роли" WindowState="Maximized" MinHeight="250" MinWidth="810" WindowStartupLocation="CenterOwner" 
+        ResizeMode="CanResizeWithGrip" WindowStyle="SingleBorderWindow" Closed="Window_Closed">
     <Window.Resources>
         <CollectionViewSource x:Key="usersViewSource"/>
         <CollectionViewSource x:Key="rolesViewSource"/>

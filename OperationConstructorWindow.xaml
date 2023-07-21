@@ -5,8 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AdvertisementWpf"
         mc:Ignorable="d"
-        Title="Конструктор операций" MinHeight="500" MinWidth="700" WindowStartupLocation="CenterScreen" 
-        SizeToContent="WidthAndHeight"
+        Title="Конструктор операций" WindowState="Maximized" MinHeight="500" MinWidth="700" WindowStartupLocation="CenterScreen" 
         ResizeMode="CanResizeWithGrip" WindowStyle="SingleBorderWindow" Closed="Window_Closed">
     <Window.Resources>
         <CollectionViewSource x:Key="unitsViewSource"/>
