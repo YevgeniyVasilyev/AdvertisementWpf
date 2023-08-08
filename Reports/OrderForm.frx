@@ -1,5 +1,64 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Report ScriptLanguage="CSharp" ReportInfo.Created="07/06/2022 20:44:22" ReportInfo.Modified="07/01/2023 16:40:03" ReportInfo.CreatorVersion="2023.1.0.0">
+<Report ScriptLanguage="CSharp" ReportInfo.Created="07/06/2022 20:44:22" ReportInfo.Modified="07/24/2023 20:54:42" ReportInfo.CreatorVersion="2023.1.0.0">
+  <ScriptText>using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Windows.Forms;
+using System.Drawing;
+using System.Data;
+using FastReport;
+using FastReport.Data;
+using FastReport.Dialog;
+using FastReport.Barcode;
+using FastReport.Table;
+using FastReport.Utils;
+
+namespace FastReport
+{
+  public class ReportScript
+  {
+    private void Data2_BeforePrint(object sender, EventArgs e)
+    {
+      string s = (string)Report.GetColumnValue(&quot;Order.Products.ProductParameter.ParameterValue&quot;);
+      if (string.IsNullOrWhiteSpace(s))
+      {
+        Data2.Visible = false;
+      }
+      else
+      {
+        Data2.Visible = true;
+      }      
+    }
+
+    private void Text11_BeforePrint(object sender, EventArgs e)
+    {
+      string s = (string)Report.GetColumnValue(&quot;Order.Products.Note&quot;);
+      if (string.IsNullOrWhiteSpace(s))
+      {
+        Text11.Text = &quot;&quot;;
+      }
+      else
+      {
+        Text11.Text = &quot;Описание&quot;;
+      }            
+    }
+
+    private void Text14_BeforePrint(object sender, EventArgs e)
+    {
+      string s = (string)Report.GetColumnValue(&quot;Order.Products.Files&quot;);
+      if (string.IsNullOrWhiteSpace(s))
+      {
+        Text14.Text = &quot;&quot;;
+      }
+      else
+      {
+        Text14.Text = &quot;Файлы&quot;;
+      }                  
+    }
+  }
+}
+</ScriptText>
   <Dictionary>
     <BusinessObjectDataSource Name="Order" ReferenceName="Order" DataType="null" Enabled="true">
       <Column Name="ID" DataType="System.Int64"/>
@@ -499,15 +558,15 @@
       <TextObject Name="Text21" Left="406.35" Top="37.8" Width="311.85" Height="18.9" Border.Color="224, 224, 224" Border.Width="0.25" Fill.Color="Gainsboro" CanGrow="true" GrowToBottom="true" Text="Дата изготовления макета: [FormatDateTime(ToDateTime([Order.Products.DateProductionLayout]), &quot;Short Date&quot;)]" HideZeros="true" HorzAlign="Right" VertAlign="Center" WordWrap="false" Font="Arial, 10pt"/>
       <TextObject Name="Text16" Top="37.8" Width="406.35" Height="18.9" Border.Color="224, 224, 224" Border.Width="0.25" Fill.Color="Gainsboro" CanGrow="true" GrowToBottom="true" Text="Дизайнер: [Order.Products.Designer.FullUserName]" VertAlign="Center" Font="Arial, 10pt"/>
       <TextObject Name="Text24" Left="406.35" Top="18.9" Width="311.85" Height="18.9" Text="Дата изготовления изделия: [FormatDateTime(ToDateTime([Order.Products.DateDeliveryPlan]), &quot;Short Date&quot;)]" HideZeros="true" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt"/>
-      <DataBand Name="Data2" Top="117.97" Width="718.2" Height="18.9" CanGrow="true" CanBreak="true" Guides="0" DataSource="ProductParameter">
+      <DataBand Name="Data2" Top="117.97" Width="718.2" Height="18.9" CanGrow="true" BeforePrintEvent="Data2_BeforePrint" CanBreak="true" Guides="0" DataSource="ProductParameter">
         <TextObject Name="Text6" Width="368.55" Height="18.9" Border.Lines="All" Border.Width="0.25" CanGrow="true" CanShrink="true" GrowToBottom="true" Text="[Order.Products.ProductParameter.Name]" VertAlign="Center" Font="Arial, 10pt"/>
-        <TextObject Name="Text9" Left="368.55" Width="226.8" Height="18.9" Border.Lines="All" Border.Width="0.25" CanGrow="true" CanShrink="true" GrowToBottom="true" Text="[Order.Products.ProductParameter.ParameterValue]" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt"/>
+        <TextObject Name="Text9" Left="368.55" Width="226.8" Height="18.9" Border.Lines="All" Border.Width="0.25" CanGrow="true" CanShrink="true" GrowToBottom="true" Text="[Order.Products.ProductParameter.ParameterValue]" HideZeros="true" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt"/>
         <TextObject Name="Text10" Left="595.35" Width="122.85" Height="18.9" Border.Lines="All" Border.Width="0.25" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt"/>
       </DataBand>
       <DataBand Name="Data3" Top="139.16" Width="718.2" Height="75.6" CanGrow="true" CanShrink="true" CanBreak="true">
-        <TextObject Name="Text11" Width="718.2" Height="18.9" Border.Lines="All" Border.Color="224, 224, 224" Fill.Color="Gainsboro" Text="Описание" VertAlign="Center" Font="Arial, 10pt"/>
-        <TextObject Name="Text12" Top="18.9" Width="718.2" Height="18.9" Border.Lines="All" Border.Color="224, 224, 224" Fill.Color="White" CanGrow="true" CanShrink="true" Text="[Order.Products.Note]" VertAlign="Center" Font="Arial, 10pt"/>
-        <TextObject Name="Text14" Top="37.8" Width="718.2" Height="18.9" Border.Lines="All" Border.Color="224, 224, 224" Fill.Color="Gainsboro" CanGrow="true" CanShrink="true" Text="Файлы" VertAlign="Center" Font="Arial, 10pt"/>
+        <TextObject Name="Text11" Width="718.2" Height="18.9" Border.Lines="All" Border.Color="224, 224, 224" Fill.Color="Gainsboro" CanShrink="true" BeforePrintEvent="Text11_BeforePrint" CanBreak="false" Text="Описание" HideZeros="true" VertAlign="Center" Font="Arial, 10pt" Wysiwyg="true"/>
+        <TextObject Name="Text12" Top="18.9" Width="718.2" Height="18.9" Border.Lines="All" Border.Color="224, 224, 224" Fill.Color="White" CanGrow="true" CanShrink="true" Text="[Order.Products.Note]" HideZeros="true" VertAlign="Center" Font="Arial, 10pt"/>
+        <TextObject Name="Text14" Top="37.8" Width="718.2" Height="18.9" Border.Lines="All" Border.Color="224, 224, 224" Fill.Color="Gainsboro" CanGrow="true" CanShrink="true" BeforePrintEvent="Text14_BeforePrint" Text="Файлы" HideZeros="true" VertAlign="Center" Font="Arial, 10pt"/>
         <TextObject Name="Text13" Top="56.7" Width="718.2" Height="18.9" Border.Lines="All" Border.Color="224, 224, 224" Fill.Color="White" CanGrow="true" CanShrink="true" Text="[Order.Products.Files]" VertAlign="Center" Font="Arial, 10pt"/>
       </DataBand>
     </DataBand>

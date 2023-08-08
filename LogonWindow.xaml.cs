@@ -207,7 +207,6 @@ namespace AdvertisementWpf
                 if (AppSettingGrid.IsVisible)
                 {
                     rootObject = new RootAppConfigObject();
-                    rootObject.DataBase = new Database();
                     rootObject = AppConfig.DeSerialize();
                 }
             }

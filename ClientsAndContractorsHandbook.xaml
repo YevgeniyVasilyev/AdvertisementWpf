@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:AdvertisementWpf" 
         mc:Ignorable="d"
         FocusManager.FocusedElement="{Binding ElementName=Clients_Tab}"
-        Title="Клиенты и подрядчики" WindowState="Maximized" MinHeight="800" MinWidth="1200" WindowStartupLocation="CenterOwner" 
+        Title="Клиенты и подрядчики" WindowState="Maximized" MinHeight="700" MinWidth="1100" WindowStartupLocation="CenterOwner" 
         ResizeMode="CanResizeWithGrip" WindowStyle="ThreeDBorderWindow" Closed="Window_Closed">
     <Window.Resources>
         <CollectionViewSource x:Key="usersViewSource" Source="{Binding RelativeSource={RelativeSource AncestorType=local:ClientsAndContractorsHandbook}, Path=DataContext.UsersList}"/>

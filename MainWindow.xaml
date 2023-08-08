@@ -360,25 +360,18 @@
                 </GridView>
             </ListView.View>
         </ListView>
-        <!--Visibility="{Binding ElementName=OrderListView, Path=Visibility}"-->
         <Border Grid.Row="3" Grid.Column="1" BorderThickness="1" BorderBrush="DarkGray" Visibility="{Binding ElementName=OrderListView, Path=Visibility}">
             <Grid  Background="{Binding ElementName=OrderListView, Path=Background}">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="{Binding ElementName=o_col1, Path=ActualWidth}"/>
-                    <ColumnDefinition Width="{Binding ElementName=o_col2, Path=ActualWidth}"/>
-                    <ColumnDefinition Width="{Binding ElementName=o_col3, Path=ActualWidth}"/>
-                    <ColumnDefinition Width="{Binding ElementName=o_col4, Path=ActualWidth}"/>
-                    <ColumnDefinition Width="{Binding ElementName=o_col5, Path=ActualWidth}"/>
-                    <ColumnDefinition Width="{Binding ElementName=o_col6, Path=ActualWidth}"/>
-                    <ColumnDefinition Width="{Binding ElementName=o_col7, Path=ActualWidth}"/> 
-                    <ColumnDefinition Width="{Binding ElementName=o_col8, Path=ActualWidth}"/>
-                    <ColumnDefinition Width="{Binding ElementName=o_col9, Path=ActualWidth}"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock Grid.Column="2" Text="Отобрано заказов: " HorizontalAlignment="Right" FontWeight="Bold"/>
-                <TextBlock Grid.Column="3" Text="{Binding ElementName=OrderListView, Path=Items.Count, UpdateSourceTrigger=PropertyChanged}" FontWeight="Bold"/>
-                <TextBlock Grid.Column="4" Text="{Binding ElementName=OrderListView, Path=ItemsSource, Converter={StaticResource SumListViewDecimalConverter}, ConverterParameter=OrderCost, StringFormat={}{0:C}, ConverterCulture='ru-RU'}" HorizontalAlignment="Right" FontWeight="Bold"/>
-                <TextBlock Grid.Column="6" Text="{Binding ElementName=OrderListView, Path=ItemsSource, Converter={StaticResource SumListViewDecimalConverter}, ConverterParameter=OrderPayments, StringFormat={}{0:C}, ConverterCulture='ru-RU'}" 
+                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                    <TextBlock Margin="10,0,0,0" Text="{Binding ElementName=OrderListView, Path=Items.Count, UpdateSourceTrigger=PropertyChanged, ConverterParameter=OrderCost, StringFormat=Отобрано заказов: {0}}" FontWeight="Bold"/>
+                    <TextBlock Margin="10,0,0,0" Text="{Binding ElementName=OrderListView, Path=ItemsSource, Converter={StaticResource SumListViewDecimalConverter}, ConverterParameter=OrderCost, StringFormat=К оплате: {0:C}, ConverterCulture='ru-RU'}" HorizontalAlignment="Right" FontWeight="Bold"/>
+                    <TextBlock Margin="10,0,0,0" Text="{Binding ElementName=OrderListView, Path=ItemsSource, Converter={StaticResource SumListViewDecimalConverter}, ConverterParameter=OrderPayments, StringFormat=Оплачено: {0:C}, ConverterCulture='ru-RU'}" 
                            HorizontalAlignment="Right" FontWeight="Bold"/>
+                </StackPanel>
             </Grid>
         </Border>
         <ListView Grid.Row="4" Grid.Column="1" Name="ProductListView" IsSynchronizedWithCurrentItem="True" 

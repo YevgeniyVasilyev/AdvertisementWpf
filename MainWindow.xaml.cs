@@ -17,6 +17,7 @@ using System.Reflection;
 using System.Windows.Documents;
 using System.Windows.Threading;
 using System.Collections;
+using System.Collections.Specialized;
 
 namespace AdvertisementWpf
 {
@@ -53,6 +54,10 @@ namespace AdvertisementWpf
             statusBar = new StatusBar();
             Status.DataContext = statusBar;
             UsrInfo.DataContext = statusBar;
+
+            //GridView gridView = (GridView)OrderListView.View;
+            //gridView.Columns.CollectionChanged += GridViewColumns_CollectionChanged;
+
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -108,7 +113,10 @@ namespace AdvertisementWpf
             {
                 if (Connectiondata.Is_verify_connection)
                 {
+                    statusBar.WriteStatus("Инициализация параметров таблиц ...", null);
                     SetSetting();
+                    SetListViewSetting();
+                    statusBar.ClearStatus();
                 }
             }
         }
@@ -148,6 +156,95 @@ namespace AdvertisementWpf
                 }
                 _context = null;
                 statusBar.ClearStatus();
+            }
+        }
+
+        private void SetListViewSetting()
+        {
+            try
+            {
+                RootAppConfigObject rootObject;
+                rootObject = new RootAppConfigObject();
+                rootObject = AppConfig.DeSerialize();
+                int nFindIndex;
+                if (rootObject.LstView != null) //есть раздел для LstView
+                {
+                    foreach (Listview listview in rootObject.LstView)
+                    {
+                        object lstViewObject = FindName(listview.ListViewName);
+                        if (lstViewObject is ListView listView) //если есть FrameworkElemen ListView с заданным именем
+                        {
+                            ushort nColumnIndex = 0;
+                            GridView gridView = (GridView)listView.View; //текущее представление
+                            foreach (ListviewColumn listviewColumn in listview.ListViewColumns) //проходим по описаниям параметров столбцов для установки
+                            {
+                                if (nColumnIndex < gridView.Columns.Count) //для контроля количества сохраненных описаний с количеством реальных столбцов
+                                {
+                                    if (!gridView.Columns[nColumnIndex].Header.ToString().Equals(listviewColumn.ColumnHeader)) //хэш очередного столбца отличается от хэша в описании. Значит либо новый, либо был перемещен
+                                    {
+                                        if (gridView.Columns.FirstOrDefault(c => c.Header.ToString().Equals(listviewColumn.ColumnHeader)) is GridViewColumn gridViewColumn) //найти в фактическом описании нужный столбец
+                                        {
+                                            nFindIndex = gridView.Columns.IndexOf(gridViewColumn); //найти индекс этого столбца
+                                            if (nFindIndex >= 0)
+                                            {
+                                                gridView.Columns.Move(nFindIndex, nColumnIndex); //переместить в нужную позицию
+                                            }
+                                        }
+                                    }
+                                    gridView.Columns[nColumnIndex].Width = listviewColumn.ColumnWidth; //устанавливаем ширину
+                                    nColumnIndex++;
+                                }
+                                else //если сохраненных описаний оказалось вдруг больше, то остальные не рассматриваем
+                                {
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _ = MessageBox.Show(ex.Message + "\n" + ex?.InnerException?.Message, "Ошибка установки параметров столбцов таблицы", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            finally
+            {
+            }
+        }
+
+        private void SaveListViewSetting(ListView listView)
+        {
+            try
+            {
+                RootAppConfigObject rootObject;
+                rootObject = new RootAppConfigObject();
+                rootObject = AppConfig.DeSerialize();
+                GridView gridView = (GridView)listView.View; //текущее представление
+                Listview[] view = rootObject.LstView?.ToArray(); //получить ветку с описаниями параметров всех ListView
+                Listview lstview;
+                if (view is null) //ветки еще нет
+                {
+                    view = new Listview[] { new Listview { ListViewName = listView.Name, ListViewColumns = Array.Empty<ListviewColumn>() } };
+                }
+                lstview = view.FirstOrDefault(l => l.ListViewName.ToString().Equals(listView.Name)); //получить описание конкретного ListView
+                if (lstview is null) //описания для данного Listview еще нет
+                {
+                    lstview = new Listview { ListViewName = listView.Name, ListViewColumns = Array.Empty<ListviewColumn>() }; //установить ветку для заданного в параметре listView в пустое значение
+                    Array.Resize(ref view, view.Length + 1);
+                    view[^1] = lstview; //добавить ветку в раздел описаний ListView
+                }
+                lstview.ListViewColumns = new ListviewColumn[gridView.Columns.Count]; //очистить все описания столбцов
+                ushort nColumnIndex = 0;
+                foreach (GridViewColumn gridViewColumn in gridView.Columns) //проходим по столбцам и фиксируем параметры столбцов
+                {
+                    lstview.ListViewColumns[nColumnIndex++] = new ListviewColumn { ColumnWidth = gridViewColumn.ActualWidth, ColumnHeader = gridViewColumn.Header.ToString() };
+                }
+                rootObject.LstView = view;
+                AppConfig.Serialize(rootObject);
+            }
+            catch (Exception ex)
+            {
+                _ = MessageBox.Show(ex.Message + "\n" + ex?.InnerException?.Message, "Ошибка сохранения параметров столбцов таблицы", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -700,6 +797,10 @@ namespace AdvertisementWpf
             OrderList.Height = new GridLength(1, GridUnitType.Auto);
             ProductionProductList.Height = new GridLength(1, GridUnitType.Auto);
             TotalOrder.Height = new GridLength(1, GridUnitType.Auto);
+            if (!(bool)e.NewValue) //скрытие
+            {
+                SaveListViewSetting(sender as ListView);
+            }
         }
 
         private void OrderListView_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -708,6 +809,10 @@ namespace AdvertisementWpf
             ProductList.Height = new GridLength(1, GridUnitType.Auto);
             ProductionProductList.Height = new GridLength(1, GridUnitType.Auto);
             TotalOrder.Height = new GridLength(1, GridUnitType.Auto);
+            if (!(bool)e.NewValue) //скрытие
+            {
+                SaveListViewSetting(sender as ListView);
+            }
         }
 
         private void ProductionProductListView_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -716,6 +821,10 @@ namespace AdvertisementWpf
             ProductList.Height = new GridLength(1, GridUnitType.Auto);
             OrderList.Height = new GridLength(1, GridUnitType.Auto);
             TotalOrder.Height = new GridLength(1, GridUnitType.Auto);
+            if (!(bool)e.NewValue) //скрытие
+            {
+                SaveListViewSetting(sender as ListView);
+            }
         }
 
         private void GridViewColumnHeader_Click(object sender, RoutedEventArgs e)
@@ -799,6 +908,41 @@ namespace AdvertisementWpf
             };
             ew.Show();
         }
+
+        //private void GridViewColumns_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        //{
+        //    if (e.Action == NotifyCollectionChangedAction.Move)
+        //    {
+        //        //string msg = string.Format("Column moved from position {0} to position {1}", e.OldStartingIndex, e.NewStartingIndex);
+        //        //MessageBox.Show(msg);
+        //    }
+        //}
+
+        //private void ListView_Loaded(object sender, RoutedEventArgs e)
+        //{
+        //    if (e.OriginalSource is ListView listView)
+        //    {
+        //        PropertyDescriptor pd = DependencyPropertyDescriptor.FromProperty(GridViewColumn.WidthProperty, typeof(GridViewColumn));
+        //        GridView gridView = (GridView)listView.View;
+        //        foreach (GridViewColumn gridViewColumn in gridView.Columns)
+        //        {
+        //            pd.RemoveValueChanged(gridViewColumn, ColumnWidthChanged);
+        //            pd.AddValueChanged(gridViewColumn, ColumnWidthChanged);
+        //            //((INotifyPropertyChanged)gridViewColumn).PropertyChanged -= (sender, e) => { };
+        //            //((INotifyPropertyChanged)gridViewColumn).PropertyChanged += (sender, e) =>
+        //            //{
+        //            //    if (e.PropertyName == "ActualWidth")
+        //            //    {
+        //            //        MessageBox.Show(e.PropertyName);
+        //            //    }
+        //            //};
+        //        }
+        //    }
+        //}
+        //private void ColumnWidthChanged(object sender, EventArgs e)
+        //{
+        //}
+
     }
 
     public class SortAdorner : Adorner
@@ -1075,7 +1219,7 @@ namespace AdvertisementWpf
             return collection.Select(x => System.Convert.ToDecimal(property != null ? property.GetValue(x) : x)).Sum();
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
         }

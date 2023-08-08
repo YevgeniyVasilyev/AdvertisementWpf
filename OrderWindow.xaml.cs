@@ -162,6 +162,7 @@ namespace AdvertisementWpf
                 contractorsViewSource.Source = context__.Contractors.AsNoTracking().ToList();
                 LoadTechCard();
                 operationsViewSource.Filter += OperationsViewSource_Filter;
+                clientsViewSource.Filter += ClientsViewSource_Filter;
             }
             catch (Exception ex)
             {
@@ -2716,6 +2717,27 @@ namespace AdvertisementWpf
                   {
                       element.Focus();
                   }));
+            }
+        }
+
+        private void ClientSearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (clientsViewSource?.View != null)
+            {
+                clientsViewSource.View.Refresh();
+                clientsViewSource.View.MoveCurrentToFirst();
+            }
+        }
+
+        private void ClientsViewSource_Filter(object sender, FilterEventArgs e)
+        {
+            if (e.Item is Client client && !string.IsNullOrWhiteSpace(ClientSearchTextBox.Text))
+            {
+                e.Accepted = client.Name.IndexOf(ClientSearchTextBox.Text, StringComparison.CurrentCultureIgnoreCase) >= 0;
+            }
+            else
+            {
+                e.Accepted = true;
             }
         }
 

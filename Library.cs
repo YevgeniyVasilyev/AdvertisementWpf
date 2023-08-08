@@ -313,6 +313,13 @@ namespace AdvertisementWpf
     public class RootAppConfigObject
     {
         public Database DataBase { get; set; }
+        public Listview[] LstView { get; set; }
+
+        public RootAppConfigObject()
+        {
+            DataBase = new Database();
+            LstView = new Listview[] { };
+        }
     }
 
     public class Database
@@ -321,6 +328,18 @@ namespace AdvertisementWpf
         public string ServerName { get; set; }
         public string[] BaseAliases { get; set; }
         public string[] BaseNames { get; set; }
+    }
+
+    public class Listview
+    {
+        public string ListViewName { get; set; }
+        public ListviewColumn[] ListViewColumns { get; set; }
+    }
+
+    public class ListviewColumn
+    {
+        public double ColumnWidth { get; set; }
+        public string ColumnHeader { get; set; }
     }
 
     public static class AppConfig
@@ -336,7 +355,7 @@ namespace AdvertisementWpf
 
         public static void Serialize(object objectToSerialize)
         {
-            var options = new JsonSerializerOptions
+            JsonSerializerOptions options = new JsonSerializerOptions
             {
                 Encoder = JavaScriptEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.Cyrillic),
                 WriteIndented = true

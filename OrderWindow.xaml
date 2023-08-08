@@ -252,13 +252,15 @@
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="2">
                         <Label Content="Заказчик: "/>
-                        <ComboBox VerticalAlignment="Center" Width="580"
+                        <ComboBox VerticalAlignment="Center" Width="580" 
                                   ItemsSource="{Binding Source={StaticResource clientsViewSource}}" 
                                   SelectedValue="{Binding Source={StaticResource ordersViewSource}, 
                                                 Path=ClientID, Mode=TwoWay, 
                                                 UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=true, ValidatesOnExceptions=true}"  
                                   SelectedValuePath="ID" DisplayMemberPath="Name">
                         </ComboBox>
+                        <Label Content=" Поиск: "/>
+                        <TextBox Name="ClientSearchTextBox" Text="" Width="200" TextChanged="ClientSearchTextBox_TextChanged"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2">
                         <Label Content="Краткое описание: "/>
@@ -1382,25 +1384,6 @@
                                     </GridView>
                                 </ListView.View>
                             </ListView>
-                            <Grid Grid.Column="1" Grid.Row="6">
-                                <!--поля для правки деталей акта-->
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" SharedSizeGroup="FieldAccount"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
-                                <Label Grid.Column="0" Grid.Row="0" Content="Номер акта "/>
-                                <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding ElementName=ListAct, Path=SelectedItem.ActNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                                     Width="150" IsEnabled="True" 
-                                     VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                                <!--<Label Grid.Column="0" Grid.Row="1" Content="Дата акта: "/>
-                            <DatePicker Grid.Column="1" Grid.Row="1" IsTodayHighlighted="True" IsEnabled="True" VerticalAlignment="Center" HorizontalAlignment="Left"/>-->
-                                <!--<Label Grid.Column="0" Grid.Row="2" Content="Поставщик: "/>
-                            <Label Grid.Column="0" Grid.Row="3" Content="Покупатель: "/>
-                            <Label Grid.Column="0" Grid.Row="4" Content="Основание: "/>-->
-                            </Grid>
                             <ListView Grid.Column="0" Grid.Row="7" Name="ListActDetail" IsSynchronizedWithCurrentItem="True" 
                                       ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto"
                                       ItemsSource="{Binding ElementName=ListAct, Path=SelectedItem.DetailsList}" KeyDown="ListActDetail_KeyDown">
@@ -1427,12 +1410,12 @@
                                 </Grid.ColumnDefinitions>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
-                                <!--<Label Grid.Column="0" Grid.Row="0" Content="Наименование работ, услуг: "/>
-                            <TextBox Grid.Column="1" Grid.Row="0" Text="" Width="150" IsEnabled="True" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                            <Label Grid.Column="0" Grid.Row="1" Content="Количество: "/>
-                            <Label Grid.Column="0" Grid.Row="2" Content="Ед. изм.: "/>-->
-                                <StackPanel Grid.Column="0" Grid.Row="0" Orientation="Vertical">
+                                <Label Grid.Column="0" Grid.Row="0" Content="Номер акта "/>
+                                <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding ElementName=ListAct, Path=SelectedItem.ActNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                     Width="150" IsEnabled="True" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                <StackPanel Grid.Column="0" Grid.Row="1" Orientation="Vertical">
                                     <Button Margin="4" Name="PrintActButton" Style="{StaticResource ButtonOfOrder}" Command="ApplicationCommands.Print">
                                         <StackPanel Orientation="Horizontal">
                                             <Image Margin="5,0,0,0" Source="\Images\free-icon-printer.png" Width="25" Height="25"/>
@@ -1444,21 +1427,11 @@
                                         </StackPanel>
                                     </Button>
                                 </StackPanel>
-                                <Grid Grid.Column="1" Grid.Row="0" Margin="0,20,0,0">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
-                                    <RadioButton Grid.Column="0" GroupName="ActTemplate" Name="TemplateAct" IsChecked="True" Content=" Акт" VerticalContentAlignment="Center"/>
-                                    <RadioButton Grid.Column="1" GroupName="ActTemplate" Name="TemplateSFTN" Margin="3,0,0,0" Content=" СФ и ТН" VerticalContentAlignment="Center" />
-                                    <RadioButton Grid.Column="2" GroupName="ActTemplate" Name="TemplateUPD" Margin="3,0,0,0" Content=" УПД" VerticalContentAlignment="Center" />
-                                </Grid>
-                                <!--<StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" Margin="3,0,0,0">
+                                <StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal" Margin="3,0,0,0">
                                     <RadioButton GroupName="ActTemplate" Name="TemplateAct" IsChecked="True" Content=" Акт" VerticalContentAlignment="Center"/>
                                     <RadioButton GroupName="ActTemplate" Name="TemplateSFTN" Margin="3,0,0,0" Content=" СФ и ТН" VerticalContentAlignment="Center" />
                                     <RadioButton GroupName="ActTemplate" Name="TemplateUPD" Margin="3,0,0,0" Content=" УПД" VerticalContentAlignment="Center" />
-                                </StackPanel>-->
+                                </StackPanel>
                             </Grid>
                         </Grid>
                     </ScrollViewer>
