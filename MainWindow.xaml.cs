@@ -39,7 +39,7 @@ namespace AdvertisementWpf
         private App.AppDbContext _context;
         public static string WhereCondition = "", WhereStateCondition = "";
         public static List<string> WhereProductCategoryCondition = new List<string> { }, WhereProductClientCondition = new List<string> { },
-            WhereProductManagerCondition = new List<string> { }, WhereProductDesignerCondition = new List<string> { };
+                     WhereProductManagerCondition = new List<string> { }, WhereProductDesignerCondition = new List<string> { }, WhereProductWorkerCondition = new List<string> { };
         public static List<long> WhereTypeOfActivityCondition = new List<long> { };
         public static DateTime? dStartDate, dEndDate;
         private GridViewColumnHeader listViewSortCol = null;
@@ -725,6 +725,7 @@ namespace AdvertisementWpf
                 {
                     ProductList = ProductList.Where(Product => WhereProductClientCondition.Contains(Product.Order.ClientID.ToString())).ToList();
                 }
+                //менеджер/дизайнер/прочие
                 //менеджер
                 if (WhereProductManagerCondition.Count > 0)
                 {
@@ -735,6 +736,12 @@ namespace AdvertisementWpf
                 {
                     ProductList = ProductList.Where(Product => WhereProductDesignerCondition.Contains(Product.DesignerID.ToString())).ToList();
                 }
+                //прочие
+                if (WhereProductWorkerCondition.Count > 0)
+                {
+                    ProductList = ProductList.Where(Product => WhereProductWorkerCondition.Contains(Product.Order.OrderEnteredID.ToString())).ToList();
+                }
+                //состояние
                 if (WhereStateCondition.Length > 0)
                 {
                     ProductList = ProductList.Where(Product => WhereStateCondition.IndexOf(Product.State) >= 0).ToList();
@@ -775,7 +782,8 @@ namespace AdvertisementWpf
                 {
                     workInTechCards = workInTechCards.Where(w => w.TechCard.Product.Order.ManagerID == Userdata.ID).ToList(); //значит текущему пользователю предоставить только его заказы
                 }
-                workInTechCardViewSource.Source = workInTechCards.Where(w => w.TechCard.Product.State == OrderProductStates.GetProductState(3) || w.TechCard.Product.State == OrderProductStates.GetProductState(4))
+                workInTechCardViewSource.Source = workInTechCards.Where(w => w.DateFactCompletion.HasValue && 
+                    (w.TechCard.Product.State == OrderProductStates.GetProductState(3) || w.TechCard.Product.State == OrderProductStates.GetProductState(4)))
                     .OrderBy(w => w.TechCard.Product.Order.Number);
                 OrderListView.Visibility = Visibility.Collapsed;
                 ProductListView.Visibility = Visibility.Collapsed;

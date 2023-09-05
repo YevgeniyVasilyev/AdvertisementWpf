@@ -14,6 +14,7 @@
         <CollectionViewSource x:Key="clientsDataSource"  Filter="ClientsCollectionViewSourceFilter"/>
         <CollectionViewSource x:Key="managersDataSource"/>
         <CollectionViewSource x:Key="designersDataSource"/>
+        <CollectionViewSource x:Key="workersDataSource"/>
         <CollectionViewSource x:Key="orderStatesDataSource"/>
         <CollectionViewSource x:Key="productStatesDataSource"/>
         <CollectionViewSource x:Key="typeOfActivityDataSource"/>
@@ -144,21 +145,21 @@
                             </DockPanel>
                         </Grid>
                     </TabItem>
-                    <TabItem Header="Менеджер">
-                        <ListBox Name="ManagersListBox" ItemsSource="{Binding Source={StaticResource managersDataSource}}" 
-                                         ScrollViewer.VerticalScrollBarVisibility="Auto" 
-                                         DisplayMemberPath="FullUserName" Style="{StaticResource CheckBoxListStyle}">
-                        </ListBox>
-                        <!--<StackPanel Orientation="Vertical">
+                    <TabItem Header="Сотрудник">
+                        <StackPanel Orientation="Vertical">
                             <GroupBox Header="Менеджеры">
-                            </GroupBox>
-                            <GroupBox Header="Дизайнеры">
-                                <ListBox Name="DesignersListBox" ItemsSource="{Binding Source={StaticResource designersDataSource}}" 
+                                <ListBox Name="ManagersListBox" ItemsSource="{Binding Source={StaticResource managersDataSource}}" 
                                          ScrollViewer.VerticalScrollBarVisibility="Auto" 
                                          DisplayMemberPath="FullUserName" Style="{StaticResource CheckBoxListStyle}">
                                 </ListBox>
                             </GroupBox>
-                        </StackPanel>-->
+                            <GroupBox Header="Прочие">
+                                <ListBox Name="WorkersListBox" ItemsSource="{Binding Source={StaticResource workersDataSource}}" 
+                                         ScrollViewer.VerticalScrollBarVisibility="Auto" 
+                                         DisplayMemberPath="FullUserName" Style="{StaticResource CheckBoxListStyle}">
+                                </ListBox>
+                            </GroupBox>
+                        </StackPanel>
                     </TabItem>
                     <TabItem Header="Состояние/признак оплаты">
                         <StackPanel Orientation="Vertical">
@@ -277,7 +278,7 @@
                             </DockPanel>
                         </Grid>
                     </TabItem>
-                    <TabItem Header="Менеджер/дизайнер">
+                    <TabItem Header="Сотрудник">
                         <StackPanel Orientation="Vertical">
                             <GroupBox Header="Менеджеры">
                                 <ListBox Name="pManagersListBox" ItemsSource="{Binding Source={StaticResource managersDataSource}}" 
@@ -287,6 +288,12 @@
                             </GroupBox>
                             <GroupBox Header="Дизайнеры">
                                 <ListBox Name="pDesignersListBox" ItemsSource="{Binding Source={StaticResource designersDataSource}}" 
+                                         ScrollViewer.VerticalScrollBarVisibility="Auto" 
+                                         DisplayMemberPath="FullUserName" Style="{StaticResource CheckBoxListStyle}">
+                                </ListBox>
+                            </GroupBox>
+                            <GroupBox Header="Прочие">
+                                <ListBox Name="pWorkersListBox" ItemsSource="{Binding Source={StaticResource workersDataSource}}" 
                                          ScrollViewer.VerticalScrollBarVisibility="Auto" 
                                          DisplayMemberPath="FullUserName" Style="{StaticResource CheckBoxListStyle}">
                                 </ListBox>

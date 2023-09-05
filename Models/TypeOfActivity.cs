@@ -22,5 +22,6 @@ namespace AdvertisementWpf.Models
         public virtual ICollection<TypeOfActivityInOperation> TypeOfActivityInOperations { get; set; }
 
         public string CodeName => $"{Code.Trim()} | {Name}";
+        public string TrimCodeName => $"{Code.Trim()}";
     }
 }

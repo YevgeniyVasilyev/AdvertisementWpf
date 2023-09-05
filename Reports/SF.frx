@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Report ScriptLanguage="CSharp" ReportInfo.Created="09/09/2022 20:49:00" ReportInfo.Modified="04/18/2023 19:32:43" ReportInfo.CreatorVersion="2023.1.0.0">
+<Report ScriptLanguage="CSharp" ReportInfo.Created="09/09/2022 20:49:00" ReportInfo.Modified="09/04/2023 12:58:23" ReportInfo.CreatorVersion="2023.1.0.0">
   <ScriptText>using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -332,7 +332,7 @@ namespace FastReport
       <TextObject Name="Text9" Left="9.45" Top="75.6" Width="812.7" Height="18.9" Text="ИНН/КПП продавца [Act.Account.Contractor.INN]/[Act.Account.Contractor.KPP]" VertAlign="Center" Font="Arial, 9pt"/>
       <TextObject Name="Text10" Left="822.15" Top="75.6" Width="37.8" Height="18.9" Text="(2б)" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
       <TextObject Name="Text11" Left="9.45" Top="94.5" Width="812.7" Height="18.9" CanGrow="true" Text="Грузоотправитель и его адрес [Act.Account.Contractor.Name], [Act.Account.Contractor.BusinessAddress]" VertAlign="Center" Font="Arial, 9pt"/>
-      <TextObject Name="Text12" Left="9.45" Top="113.4" Width="812.7" Height="18.9" CanGrow="true" Text="Грузополучатель и его адрес [Act.Account.Order.Client.Name], [Act.Account.Order.Client.BusinessAddress]" VertAlign="Center" Font="Arial, 9pt"/>
+      <TextObject Name="Text12" Left="9.45" Top="113.4" Width="812.7" Height="18.9" CanGrow="true" Text="Грузополучатель и его адрес [Act.Account.Order.Client.Consignee]" VertAlign="Center" Font="Arial, 9pt"/>
       <TextObject Name="Text13" Left="822.15" Top="94.5" Width="37.8" Height="18.9" Text="(3)" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
       <TextObject Name="Text14" Left="822.15" Top="113.4" Width="37.8" Height="18.9" Text="(4)" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
       <TextObject Name="Text15" Left="9.45" Top="132.3" Width="812.7" Height="18.9" Text="К платежно-расчетному документу №                                                                   от" VertAlign="Center" Font="Arial, 9pt"/>

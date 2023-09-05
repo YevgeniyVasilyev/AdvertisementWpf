@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Report ScriptLanguage="CSharp" ReportInfo.Created="09/06/2022 18:54:39" ReportInfo.Modified="07/24/2023 20:09:54" ReportInfo.CreatorVersion="2023.1.0.0">
+<Report ScriptLanguage="CSharp" ReportInfo.Created="09/06/2022 18:54:39" ReportInfo.Modified="09/04/2023 03:04:28" ReportInfo.CreatorVersion="2023.1.0.0">
   <ScriptText>using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -31,6 +31,31 @@ namespace FastReport
       {
         Text1.Text = &quot;Счет на оплату № &quot; + Report.GetColumnValue(&quot;Account.AccountNumber&quot;) + &quot; от &quot; + FormatDateTime(ToDateTime(Report.GetParameterValue(&quot;ReportDate&quot;)),&quot;Short Date&quot;) + &quot; г.&quot;;
       }
+    }
+
+    private void Cell76_BeforePrint(object sender, EventArgs e)
+    {
+      string s = (string)Report.GetColumnValue(&quot;Account.Footing&quot;);
+      if (string.IsNullOrWhiteSpace(s))
+      {
+        Row15.Visible = false;
+      }
+      else
+      {
+        Row15.Visible = true;
+      }         
+    }
+
+    private void Text15_BeforePrint(object sender, EventArgs e)
+    {
+      if (Report.GetColumnValue(&quot;Account.PayBeforeDate&quot;) == null)
+      {
+        Text15.Visible = false;
+      }
+      else
+      {
+        Text15.Visible = true;
+      }               
     }
   }
 }
@@ -986,12 +1011,12 @@ namespace FastReport
         <TableRow Name="Row14" Height="37.8" AutoSize="true">
           <TableCell Name="Cell69" Text="Покупатель&#13;&#10;(Заказчик)" Font="Arial, 10pt"/>
           <TableCell Name="Cell70" Font="Arial, 10pt"/>
-          <TableCell Name="Cell71" Text="[Account.Order.Client.ClientInfoForAccount]" Font="Arial, 10pt, style=Bold"/>
+          <TableCell Name="Cell71" Text="[Account.Order.Client.Name], ИНН [Account.Order.Client.INN], КПП [Account.Order.Client.KPP], [Account.Order.Client.BusinessAddress], [Account.Order.Client.MobilePhone]&#13;&#10;" Font="Arial, 10pt, style=Bold"/>
         </TableRow>
         <TableRow Name="Row15" AutoSize="true">
           <TableCell Name="Cell74" Text="Основание" Font="Arial, 10pt"/>
           <TableCell Name="Cell75" Font="Arial, 10pt"/>
-          <TableCell Name="Cell76" Text="[Account.Footing]" Font="Arial, 10pt, style=Bold"/>
+          <TableCell Name="Cell76" BeforePrintEvent="Cell76_BeforePrint" Text="[Account.Footing]" Font="Arial, 10pt, style=Bold"/>
         </TableRow>
       </TableObject>
       <LineObject Name="Line1" Left="9.45" Top="160.65" Width="689.85"/>
@@ -1028,7 +1053,7 @@ namespace FastReport
         <TextObject Name="Text12" Left="585.9" Top="37.8" Width="113.4" Height="18.9" Text="[TotalCost]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
         <TextObject Name="Text13" Left="453.6" Top="37.8" Width="132.3" Height="18.9" Text="Всего к оплате:" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
         <TextObject Name="Text16" Left="9.45" Top="75.6" Width="444.15" Height="18.9" Text="[AmountInWords]" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
-        <TextObject Name="Text15" Left="9.45" Top="94.5" Width="444.15" Height="18.9" Text="Оплатить не позднее [FormatDateTime(ToDateTime([Account.PayBeforeDate]),&quot;Short Date&quot;)] г." VertAlign="Center" Font="Arial, 10pt"/>
+        <TextObject Name="Text15" Left="9.45" Top="94.5" Width="444.15" Height="18.9" CanShrink="true" BeforePrintEvent="Text15_BeforePrint" Text="Оплатить не позднее [FormatDateTime(ToDateTime([Account.PayBeforeDate]),&quot;Short Date&quot;)] г." HideZeros="true" VertAlign="Center" Font="Arial, 10pt"/>
         <TextObject Name="Text17" Left="9.45" Top="113.4" Width="689.85" Height="66.15" Border.Lines="Bottom" Text="Оплата данного счета означает согласие с условиями поставки товара.&#13;&#10;Уведомление об оплате обязательно, в противном случае не гарантируется наличие товара на складе.&#13;&#10;Товар отпускается по факту прихода денег на р/с Поставщика, самовывозом, при наличии доверенности и паспорта." VertAlign="Center" Font="Arial, 10pt"/>
         <TextObject Name="Text18" Left="9.45" Top="198.45" Width="113.4" Height="18.9" Text="Руководитель" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
         <TextObject Name="Text19" Left="122.85" Top="198.45" Width="236.25" Height="18.9" Border.Lines="Bottom" Text="[Account.Contractor.DirectorShortName]" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt"/>

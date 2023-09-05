@@ -1015,9 +1015,12 @@ namespace AdvertisementWpf
         {
             bool lBool = true;
             bool lReverse = (string)parameter == "True";
-            foreach (bool value in values)
+            foreach (object value in values)
             {
-                lBool = lBool && value;
+                if (!value.GetType().FullName.Contains("MS.Internal.NamedObject"))
+                {
+                    lBool = lBool && (bool)value;
+                }
             }
             return lReverse ? !lBool : lBool; //parameter == True -> return not lBool
         }

@@ -622,7 +622,6 @@ namespace AdvertisementWpf
                 }
                 else if (btn == NewActButton)
                 {
-                    _ = CanCreateNewAct();
                     CreateNewAct();
                 }
                 else if (btn == LoadTechCardButton)
@@ -1003,7 +1002,7 @@ namespace AdvertisementWpf
                     FileSystem.CopyFile(fullFileName, Path.Combine(destinationPath, Path.GetFileName(fullFileName)), UIOption.AllDialogs, UICancelOption.ThrowException);
                     if (lNeedDeleteFile)
                     {
-                        FileSystem.DeleteFile(fullFileName, UIOption.AllDialogs, RecycleOption.SendToRecycleBin);
+                        FileSystem.DeleteFile(fullFileName, UIOption.AllDialogs, RecycleOption.DeletePermanently);
                     }
                 }
                 else
@@ -1039,7 +1038,7 @@ namespace AdvertisementWpf
                                 ___context.Entry(productCost).State = EntityState.Detached;
                             }
                             product.Costs.Clear();
-                            _context.Products.Remove(product);
+                            _ = _context.Products.Remove(product);
                             currentOrder.State = currentOrder.OrderState(productsViewSource);
                             _ = CountTotals();
                         }
@@ -1476,45 +1475,42 @@ namespace AdvertisementWpf
             bool lCanCreateNewAct = false;
             if (accountsViewSource.View.CurrentItem is Account account)
             {
-                lCanCreateNewAct = account.IsManual ? account.Acts?.Count == 0 : GetProductsInAct().Count > 0;
+                lCanCreateNewAct = account.IsManual ? account.Acts?.Count == 0 : (account.Acts?.Count < account.DetailsList.Count && GetProductsInAct(account).Count > 0); //в счете кол-во актов д.б. меньше кол-ва изделий в счете
             }
             return lCanCreateNewAct;
         }
 
-        private List<long> GetProductsInAct()
+        private List<long> GetProductsInAct(Account account)
         {
             List<long> listProductsID = new List<long> { };
-            if (accountsViewSource.View.CurrentItem is Account account)
-            {
-                if (!account.IsManual) //счет создан НЕ вручную, для ручного возврат пустого списка
-                { //ищем изделия со статусом "Запланирована отгрузка" для включения в акт
-                    if (account.Order != null)
+            if (!account.IsManual) //счет создан НЕ вручную, для ручного возврат пустого списка
+            { //ищем изделия со статусом "Запланирована отгрузка" для включения в акт
+                if (account.Order != null)
+                {
+                    //listProductsID = account.Order.Products.Where(product => product.ProductState() == OrderProductStates.GetProductState(2)).Select(product => product.ID).ToList(); //список всех изделий, которые можно отгрузить
+                    listProductsID = account.Order.Products.Select(product => product.ID).ToList(); //список всех изделий
+                }
+                else
+                {
+                    foreach (Product product in productsViewSource.View)
                     {
-                        //listProductsID = account.Order.Products.Where(product => product.ProductState() == OrderProductStates.GetProductState(2)).Select(product => product.ID).ToList(); //список всех изделий, которые можно отгрузить
-                        listProductsID = account.Order.Products.Select(product => product.ID).ToList(); //список всех изделий
+                        listProductsID.Add(product.ID);
+                        //if (product.ProductState() == OrderProductStates.GetProductState(2))
+                        //{
+                        //    listProductsID.Add(product.ID);
+                        //}
                     }
-                    else
+                }
+                foreach (Account acc in accountsViewSource.View) //проверяем было ли изделие уже отгружено в другом акте любого счета
+                {
+                    if (acc.Acts != null)
                     {
-                        foreach (Product product in productsViewSource.View)
+                        foreach (Act act in acc.Acts)
                         {
-                            listProductsID.Add(product.ID);
-                            //if (product.ProductState() == OrderProductStates.GetProductState(2))
-                            //{
-                            //    listProductsID.Add(product.ID);
-                            //}
-                        }
-                    }
-                    foreach (Account acc in accountsViewSource.View) //проверяем было ли изделие уже отгружено в другом акте
-                    {
-                        if (acc.Acts != null)
-                        {
-                            foreach (Act act in acc.Acts)
+                            _ = listProductsID.RemoveAll(delegate (long productInAct)  //в сухом остатке останутся только изделия не входящие ни в один акт, либо пустой список
                             {
-                                _ = listProductsID.RemoveAll(delegate (long productInAct)  //в сухом остатке останутся только изделия не входящие ни в один акт, либо пустой список
-                                {
-                                    return act.ListProductInAct.Contains(productInAct);
-                                });
-                            }
+                                return act.ListProductInAct.Contains(productInAct);
+                            });
                         }
                     }
                 }
@@ -1586,12 +1582,9 @@ namespace AdvertisementWpf
                     .Where(Account => Account.OrderID == currentOrder.ID)
                     .Include(Account => Account.Acts)
                     .Include(Account => Account.Order)
-                    .Include(Account => Account.Contractor)
-                    .ThenInclude(Contractor => Contractor.Bank)
-                    .ThenInclude(Bank => Bank.Localities)
-                    .Include(Account => Account.Order.Client)
-                    .Include(Account => Account.Order.Products)
-                    .ThenInclude(Product => Product.ProductType)
+                    .Include(Account => Account.Contractor).ThenInclude(Contractor => Contractor.Bank).ThenInclude(Bank => Bank.Localities)
+                    .Include(Account => Account.Order.Client).ThenInclude(Client => Client.Bank).ThenInclude(Bank => Bank.Localities)
+                    .Include(Account => Account.Order.Products).ThenInclude(Product => Product.ProductType)
                     .Load();
                 accountsViewSource.Source = context__.Accounts.Local.ToObservableCollection();
                 foreach (Account account in accountsViewSource.View)
@@ -1909,6 +1902,7 @@ namespace AdvertisementWpf
                     .Include(TechCard => TechCard.Product.Order)
                     .Include(TechCard => TechCard.Product.Order.Client)
                     .Include(TechCard => TechCard.Product.Order.Manager)
+                    .Include(TechCard => TechCard.Product.Order.OrderEntered)
                     .Include(TechCard => TechCard.WorkInTechCards)
                     .ThenInclude(WorkInTechCard => WorkInTechCard.TypeOfActivity)
                     .Include(TechCard => TechCard.WorkInTechCards)
@@ -2307,6 +2301,7 @@ namespace AdvertisementWpf
                 {
                     operationInWorkParameter.ReferencebookParametersList = referencebookParameters
                         .Where(refbookParameters => refbookParameters.ReferencebookID == operationInWorkParameter.ReferencebookID).ToList();
+                    operationInWorkParameter.ParameterValue = referencebookParameters.Find(rp => rp.ReferencebookID == operationInWorkParameter.ReferencebookID && rp.ID == operationInWorkParameter.ParameterID)?.Value ?? "";
                 }
             }
         }
@@ -2345,6 +2340,18 @@ namespace AdvertisementWpf
                 {
                     operationInWorkParameter.ReferencebookID = refBook.ID;
                     operationInWorkParameter.ReferencebookParametersList = referencebookParameters.Where(refbookParameters => refbookParameters.ReferencebookID == operationInWorkParameter.ReferencebookID).ToList();
+                }
+            }
+        }
+
+        private void OperationParameterValueComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (sender is ComboBox comboBox && comboBox != null)
+            {
+                if (techCardsViewSource != null && techCardsViewSource != null &&
+                    comboBox.GetBindingExpression(System.Windows.Controls.Primitives.Selector.SelectedValueProperty).DataItem is OperationInWorkParameter operationInWorkParameter)
+                {
+                    operationInWorkParameter.ParameterValue = referencebookParameters.Find(rp => rp.ReferencebookID == operationInWorkParameter.ReferencebookID && rp.ID == operationInWorkParameter.ParameterID)?.Value ?? "";
                 }
             }
         }
@@ -2503,40 +2510,48 @@ namespace AdvertisementWpf
 
                     void PrintTechCardMenuItem_Click(object sender, RoutedEventArgs e)
                     {
-                        if (sender is null)
+                        try
                         {
-                            return;
-                        }
-                        PrintTechCardButton.ContextMenu.IsOpen = false;
-                        PrintTechCardButton.ContextMenu.Visibility = Visibility.Hidden;
-                        prodAreaID.Clear();
-                        for (short i = 0; i < PrintTechCardButton.ContextMenu.Items.Count; i++)
-                        {
-                            if (PrintTechCardButton.ContextMenu.Items[i] is MenuItem menuItem)
+                            if (sender is null)
                             {
-                                if (menuItem.IsChecked && (long)menuItem.Tag > 0)
+                                return;
+                            }
+                            PrintTechCardButton.ContextMenu.IsOpen = false;
+                            PrintTechCardButton.ContextMenu.Visibility = Visibility.Hidden;
+                            prodAreaID.Clear();
+                            for (short i = 0; i < PrintTechCardButton.ContextMenu.Items.Count; i++)
+                            {
+                                if (PrintTechCardButton.ContextMenu.Items[i] is MenuItem menuItem)
                                 {
-                                    prodAreaID.Add((long)menuItem.Tag); //собираем ID выбранных для печати операций
+                                    long nID = (long)(menuItem.Tag ?? 0);
+                                    if (menuItem.IsChecked && nID > 0)
+                                    {
+                                        prodAreaID.Add(nID); //собираем ID выбранных для печати операций
+                                    }
                                 }
                             }
-                        }
-                        TechCard tc = (TechCard)GetParentTreeViewItem(operationInWork, 0);
-                        WorkInTechCard work = (WorkInTechCard)GetParentTreeViewItem(operationInWork, 1);
-                        tc.IsPrinted = true; //берем родителя в печать
-                        work.IsPrinted = true; //берем родителя в печать
-                        techCards.Add(tc);
-                        if (prodAreaID.Count > 0) //есть отобранные на печать производственные участки
-                        {
-                            foreach (OperationInWork operationInW in workInTC.OperationInWorks)
+                            TechCard tc = (TechCard)GetParentTreeViewItem(operationInWork, 0);
+                            WorkInTechCard work = (WorkInTechCard)GetParentTreeViewItem(operationInWork, 1);
+                            tc.IsPrinted = true; //берем родителя в печать
+                            work.IsPrinted = true; //берем родителя в печать
+                            techCards.Add(tc);
+                            if (prodAreaID.Count > 0) //есть отобранные на печать производственные участки
                             {
-                                operationInW.IsPrinted = prodAreaID.Contains((long)operationInW.Operation.ProductionAreaID); //берем операцию для печати если производственный участок есть в отобранных
+                                foreach (OperationInWork operationInW in workInTC.OperationInWorks)
+                                {
+                                    operationInW.IsPrinted = prodAreaID.Contains((long)operationInW.Operation.ProductionAreaID); //берем операцию для печати если производственный участок есть в отобранных
+                                }
                             }
+                            else
+                            {
+                                operationInWork.IsPrinted = true; //если отобранных участков нет, то берем только текущую операцию
+                            }
+                            TechCardPrint(ref techCards);
                         }
-                        else
+                        catch (Exception ex)
                         {
-                            operationInWork.IsPrinted = true; //если отобранных участков нет, то берем только текущую операцию
+                            _ = MessageBox.Show(ex.Message + "\n" + ex?.InnerException?.Message, "Ошибка подготовки техкарты к печати", MessageBoxButton.OK, MessageBoxImage.Error);
                         }
-                        TechCardPrint(ref techCards);
                     }
                 }
             }

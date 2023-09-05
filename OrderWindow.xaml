@@ -310,7 +310,6 @@
         <TabControl Margin="10, 5, 10, 01" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="2">
             <TabItem Header="Изделия">
                 <Border Margin="2" BorderThickness="1" BorderBrush="DarkBlue">
-                    <!--Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="2"-->
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
@@ -384,7 +383,7 @@
                                                             <TextBox Name="QuantityTextBox" HorizontalContentAlignment="Right" Width="70"
                                                                      Text="{Binding Path=Quantity, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, 
                                                                             ValidatesOnExceptions=True, ValidatesOnNotifyDataErrors=True}" 
-                                                                     GotFocus="QuantityTextBox_GotFocus" >
+                                                                     GotFocus="QuantityTextBox_GotFocus">
                                                                 <TextBox.IsEnabled>
                                                                     <MultiBinding Converter="{StaticResource AddBoolConverter}" ConverterParameter="True">
                                                                         <Binding Source="{StaticResource productsViewSource}" Path="DateTransferProduction" Converter="{StaticResource NullDateTimeToBoolConverter}"/>
@@ -962,7 +961,8 @@
                                                           SelectedValue="{Binding Path=ParameterID, Mode=TwoWay, 
                                                                           UpdateSourceTrigger=PropertyChanged, NotifyOnSourceUpdated=True}" 
                                                           SelectedValuePath="ID" DisplayMemberPath="Value" 
-                                                          SourceUpdated="OperationParameterTextBox_SourceUpdated" 
+                                                          SourceUpdated="OperationParameterTextBox_SourceUpdated"
+                                                          SelectionChanged="OperationParameterValueComboBox_SelectionChanged"
                                                           GotFocus="OperationParameterTextBox_GotFocus" MinWidth="90">
                                                     </ComboBox>
                                                 </DataTemplate>
@@ -1162,6 +1162,8 @@
                                 <!--счета список и поля для правки-->
                                 <RowDefinition Height="Auto"/>
                                 <!--детали счета список и поля для правки-->
+                                <RowDefinition Height="Auto"/>
+                                <!--ИТОГО по счету-->
                                 <RowDefinition Height="Auto"/>
                                 <!--акты надпись-->
                                 <RowDefinition Height="Auto"/>

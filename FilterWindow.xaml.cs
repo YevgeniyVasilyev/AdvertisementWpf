@@ -3,27 +3,23 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace AdvertisementWpf
 {
     public partial class FilterWindow : Window
     {
-        private CollectionViewSource categoryOfProductsDataSource, clientsDataSource, managersDataSource, designersDataSource, orderStatesDataSource, productStatesDataSource, typeOfActivityDataSource;
+        private CollectionViewSource categoryOfProductsDataSource, clientsDataSource, managersDataSource, designersDataSource, workersDataSource, orderStatesDataSource, productStatesDataSource, typeOfActivityDataSource;
         private App.AppDbContext _context;
         private static short OrderFilterMode;
 
-        private string sDateCondition = "", sClientCondition = "", sManagerCondition = "", sStateCondition = "", sNumberCondition = ""; //sDesignerCondition = "",
-        private readonly List<string> LCategoryCondition = new List<string> { }, LClientCondition = new List<string> { }, LDesignerCondition = new List<string> { }, LManagerCondition = new List<string> { };
+        private string sDateCondition = "", sClientCondition = "", sManagerCondition = "", sStateCondition = "", sNumberCondition = "", sWorkerCondition = ""; //sDesignerCondition = "",
+        private readonly List<string> LCategoryCondition = new List<string> { }, LClientCondition = new List<string> { }, LDesignerCondition = new List<string> { }, LManagerCondition = new List<string> { }, 
+                         LWorkerCondition = new List<string> { };
 
         public FilterWindow(short orderFilterMode = 0)
         {
@@ -53,6 +49,7 @@ namespace AdvertisementWpf
             clientsDataSource = (CollectionViewSource)FindResource(nameof(clientsDataSource));
             managersDataSource = (CollectionViewSource)FindResource(nameof(managersDataSource));
             designersDataSource = (CollectionViewSource)FindResource(nameof(designersDataSource));
+            workersDataSource = (CollectionViewSource)FindResource(nameof(workersDataSource));
             orderStatesDataSource = (CollectionViewSource)FindResource(nameof(orderStatesDataSource));
             productStatesDataSource = (CollectionViewSource)FindResource(nameof(productStatesDataSource));
             productStatesDataSource = (CollectionViewSource)FindResource(nameof(productStatesDataSource));
@@ -66,6 +63,8 @@ namespace AdvertisementWpf
                 clientsDataSource.Source = _context.Clients.AsNoTracking().ToList();
                 managersDataSource.Source = _context.Users.AsNoTracking().ToList().Where(u => IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, u.RoleID, "ListManager"));  // ListManager
                 designersDataSource.Source = _context.Users.AsNoTracking().ToList().Where(u => IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, u.RoleID, "ListDesigner")); //ListDesigner
+                workersDataSource.Source = _context.Users.AsNoTracking().ToList().Where(u => !IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, u.RoleID, "ListManager") &&
+                                                                                             !IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, u.RoleID, "ListDesigner"));
                 orderStatesDataSource.Source = OrderProductStates.GetOrderListState();
                 productStatesDataSource.Source = OrderProductStates.GetProductListState();
 
@@ -205,9 +204,8 @@ namespace AdvertisementWpf
                 {
                     sClientCondition = $"ClientID IN ({sClientCondition})";
                 }
-                //обработка условия "Менеджер/дизайнер"
-                //обработка условия "Менеджер"
-                foreach (object manager in ManagersListBox.Items)
+                //обработка условия "Сотрудник"
+                foreach (object manager in ManagersListBox.Items) //проход по Менеджерам
                 {
                     ListBoxItem listBoxitem = (ListBoxItem)ManagersListBox.ItemContainerGenerator.ContainerFromItem(manager);
                     if (listBoxitem != null && listBoxitem.IsSelected)
@@ -219,6 +217,19 @@ namespace AdvertisementWpf
                 if (!string.IsNullOrWhiteSpace(sManagerCondition))
                 {
                     sManagerCondition = $"ManagerID IN ({sManagerCondition})";
+                }
+                foreach (object worker in WorkersListBox.Items) //проход по Прочим
+                {
+                    ListBoxItem listBoxitem = (ListBoxItem)WorkersListBox.ItemContainerGenerator.ContainerFromItem(worker);
+                    if (listBoxitem != null && listBoxitem.IsSelected)
+                    {
+                        sWorkerCondition += string.IsNullOrWhiteSpace(sWorkerCondition) ? "" : ", ";
+                        sWorkerCondition += ((User)worker).ID.ToString();
+                    }
+                }
+                if (!string.IsNullOrWhiteSpace(sWorkerCondition))
+                {
+                    sWorkerCondition = $"OrderEnteredID IN ({sWorkerCondition})";
                 }
                 //foreach (object designer in DesignersListBox.Items)
                 //{
@@ -265,6 +276,7 @@ namespace AdvertisementWpf
                 MainWindow.WhereCondition = sDateCondition;
                 MainWindow.WhereCondition += string.IsNullOrWhiteSpace(sClientCondition) ? "" : string.IsNullOrWhiteSpace(MainWindow.WhereCondition) ? sClientCondition : $" AND {sClientCondition}";
                 MainWindow.WhereCondition += string.IsNullOrWhiteSpace(sManagerCondition) ? "" : string.IsNullOrWhiteSpace(MainWindow.WhereCondition) ? sManagerCondition : $" AND {sManagerCondition}";
+                MainWindow.WhereCondition += string.IsNullOrWhiteSpace(sWorkerCondition) ? "" : string.IsNullOrWhiteSpace(MainWindow.WhereCondition) ? sWorkerCondition : $" AND {sWorkerCondition}";
                 //MainWindow.WhereCondition += string.IsNullOrWhiteSpace(sDesignerCondition) ? "" : string.IsNullOrWhiteSpace(MainWindow.WhereCondition) ? sDesignerCondition : $" AND {sDesignerCondition}";
                 MainWindow.WhereStateCondition = sStateCondition;
                 MainWindow.WhereCondition += string.IsNullOrWhiteSpace(sNumberCondition) ? "" : string.IsNullOrWhiteSpace(MainWindow.WhereCondition) ? sNumberCondition : $" AND {sNumberCondition}";
@@ -386,7 +398,7 @@ namespace AdvertisementWpf
                     }
                 }
                 MainWindow.WhereProductClientCondition = LClientCondition;
-                //обработка условия "Менеджер/дизайнер"
+                //обработка условия "Менеджер/дизайнер/прочие"
                 foreach (object manager in pManagersListBox.Items)
                 {
                     ListBoxItem listBoxitem = (ListBoxItem)pManagersListBox.ItemContainerGenerator.ContainerFromItem(manager);
@@ -405,6 +417,15 @@ namespace AdvertisementWpf
                     }
                 }
                 MainWindow.WhereProductDesignerCondition = LDesignerCondition;
+                foreach (object worker in pWorkersListBox.Items)
+                {
+                    ListBoxItem listBoxitem = (ListBoxItem)pWorkersListBox.ItemContainerGenerator.ContainerFromItem(worker);
+                    if (listBoxitem != null && listBoxitem.IsSelected)
+                    {
+                        LWorkerCondition.Add(((User)worker).ID.ToString());
+                    }
+                }
+                MainWindow.WhereProductWorkerCondition = LWorkerCondition;
                 //обработка условия "Состояние"
                 foreach (object state in pStateListBox.Items)
                 {

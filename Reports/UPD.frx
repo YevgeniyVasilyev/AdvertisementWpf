@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Report ScriptLanguage="CSharp" DoublePass="true" ReportInfo.Created="09/09/2022 20:49:00" ReportInfo.Modified="04/18/2023 19:41:28" ReportInfo.CreatorVersion="2023.1.0.0">
+<Report ScriptLanguage="CSharp" DoublePass="true" ReportInfo.Created="09/09/2022 20:49:00" ReportInfo.Modified="09/04/2023 13:00:05" ReportInfo.CreatorVersion="2023.1.0.0">
   <ScriptText>using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -487,7 +487,7 @@ namespace FastReport
           <TableCell Name="Cell88" Font="Arial, 6pt"/>
           <TableCell Name="Cell89" Font="Arial, 6pt"/>
           <TableCell Name="Cell90" VertAlign="Bottom" Font="Arial, 10pt"/>
-          <TableCell Name="Cell91" Border.Lines="Bottom" Border.Width="0.5" Text="[Act.Account.Order.Client.Name], [Act.Account.Order.Client.BusinessAddress]" VertAlign="Center" Font="Arial, 6pt" ColSpan="3"/>
+          <TableCell Name="Cell91" Border.Lines="Bottom" Border.Width="0.5" Text="[Act.Account.Order.Client.Consignee]" VertAlign="Center" Font="Arial, 6pt" ColSpan="3"/>
           <TableCell Name="Cell92" Border.Lines="Bottom" Border.Width="0.5" Font="Arial, 10pt"/>
           <TableCell Name="Cell93" Border.Lines="Bottom" Border.Width="0.5" Font="Arial, 10pt"/>
           <TableCell Name="Cell159" Text="(4)" VertAlign="Bottom" Font="Arial, 6pt"/>

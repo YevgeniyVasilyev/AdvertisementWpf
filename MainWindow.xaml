@@ -466,11 +466,25 @@
                                 <GridViewColumnHeader Content=" Изделие " Tag="TechCard.Product.ProductType.Name" Click="GridViewColumnHeader_Click"/>
                             </GridViewColumn.Header>
                         </GridViewColumn>
-                        <GridViewColumn Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
+                        <!--<GridViewColumn Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
                                         DisplayMemberBinding="{Binding Path=TypeOfActivity.Code}">
                             <GridViewColumn.Header>
                                 <GridViewColumnHeader Content=" Код " Tag="TypeOfActivity.Code" Click="GridViewColumnHeader_Click"/>
                             </GridViewColumn.Header>
+                        </GridViewColumn>-->
+                        <GridViewColumn Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}">
+                            <GridViewColumn.Header>
+                                <GridViewColumnHeader Content=" Работа " Tag="TypeOfActivity.Code" Click="GridViewColumnHeader_Click"/>
+                            </GridViewColumn.Header>
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="{Binding Path=TypeOfActivity.TrimCodeName}"/>
+                                        <TextBlock Text=" - "/>
+                                        <TextBlock Text="{Binding Path=TechCard.Number}"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
                         </GridViewColumn>
                         <GridViewColumn Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
                                         DisplayMemberBinding="{Binding Path=TypeOfActivity.Name}">
