@@ -163,6 +163,7 @@ namespace AdvertisementWpf
                 LoadTechCard();
                 operationsViewSource.Filter += OperationsViewSource_Filter;
                 clientsViewSource.Filter += ClientsViewSource_Filter;
+                productTypesViewSource.Filter += ProductTypesViewSource_Filter;
             }
             catch (Exception ex)
             {
@@ -257,11 +258,11 @@ namespace AdvertisementWpf
 
         private void GetProductCosts(Product product)
         {
-            ICollection<TypeOfActivityInProduct> typeOfActivityInProduct;
+            List<TypeOfActivityInProduct> typeOfActivityInProduct;
             typeOfActivityInProduct = _context.TypeOfActivityInProducts.AsNoTracking()
                 .Where(TypeOfActivityInProducts => TypeOfActivityInProducts.ProductTypeID == product.ProductTypeID)
                 .Include(TypeOfActivityInProducts => TypeOfActivityInProducts.TypeOfActivity).ToList();
-            ICollection<ProductCost> costs;
+            List<ProductCost> costs;
             costs = _context.ProductCosts.Where(ProductCost => ProductCost.ProductID == product.ID).Include(ProductCost => ProductCost.TypeOfActivity).ToList();
             foreach (TypeOfActivityInProduct tainp in typeOfActivityInProduct) //проход по видам деятельности, содержащихся в издеии (его виде)
             {
@@ -297,8 +298,9 @@ namespace AdvertisementWpf
 
         private void NewProductListBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            NewProductListBox.Visibility = Visibility.Collapsed;
-            ListBoxTypeOfProductsRow.Height = GridLength.Auto;
+            NewProductGrid.Visibility = Visibility.Collapsed;
+            //NewProductListBox.Visibility = Visibility.Collapsed;
+            //ListBoxTypeOfProductsRow.Height = GridLength.Auto;
             if (CreateNewProduct() is Product product)
             {
                 _context.Products.Add(product);
@@ -681,25 +683,29 @@ namespace AdvertisementWpf
                 {
                     return;
                 }
-                if (btn.Name == "NewProductButton")
+                if (btn == NewProductButton)
                 {
-                    ListBoxTypeOfProductsRow.Height = new GridLength(1, GridUnitType.Star);
-                    NewProductListBox.Visibility = Visibility.Visible;
+                    NewProductGrid.Visibility = Visibility.Visible;
+                    //ListBoxTypeOfProductsRow.Height = new GridLength(1, GridUnitType.Star);
+                    //NewProductListBox.Visibility = Visibility.Visible;
                 }
-                if (btn.Name == "NewFileButton")
+                if (btn == NewFileButton)
                 {
                     try
                     {
                         OpenFileDialog openFileDialog = new OpenFileDialog();
+                        openFileDialog.Multiselect = true;
                         if ((bool)openFileDialog.ShowDialog()) // Открываем окно диалога с пользователем
                         {
                             if (productsViewSource.View.CurrentItem is Product product)
                             {
-                                string fullFileName = openFileDialog.FileName;
-                                product.FilesList.Add(Path.GetFileName(fullFileName));
+                                foreach (string fullFileName in openFileDialog.FileNames)
+                                {
+                                    product.FilesList.Add(Path.GetFileName(fullFileName));
+                                }
                                 product.ListToFiles();
                                 filesListViewSource.View.Refresh();
-                                CopyFileToPathToFilesOfProduct(fullFileName);
+                                CopyFileToPathToFilesOfProduct(openFileDialog.FileNames);
                             }
                         }
                     }
@@ -985,7 +991,7 @@ namespace AdvertisementWpf
             }
         }
 
-        private void CopyFileToPathToFilesOfProduct(string fullFileName)
+        private void CopyFileToPathToFilesOfProduct(string[] aFullFileNames)
         {
             try
             {
@@ -997,12 +1003,16 @@ namespace AdvertisementWpf
                     {
                         _ = Directory.CreateDirectory(destinationPath);
                     }
-                    bool lNeedDeleteFile = MessageBox.Show($"Файл {fullFileName} будет скопирован в папку {destinationPath}.\n\n Удалить файл в исходной папке?",
-                        "Копирование файла", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes;
-                    FileSystem.CopyFile(fullFileName, Path.Combine(destinationPath, Path.GetFileName(fullFileName)), UIOption.AllDialogs, UICancelOption.ThrowException);
-                    if (lNeedDeleteFile)
+                    string ending = (aFullFileNames.Length > 1 && aFullFileNames.Length < 5 ? "а" : aFullFileNames.Length >= 5 ? "ов" : "");
+                    bool lNeedDeleteFile = MessageBox.Show($"В папку {destinationPath} будет скопировано {aFullFileNames.Length} файл{ending}.\n\n Удалить файл(-ы) в исходной папке?",
+                        "Копирование файлов", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes;
+                    foreach (string fullFileName in aFullFileNames)
                     {
-                        FileSystem.DeleteFile(fullFileName, UIOption.AllDialogs, RecycleOption.DeletePermanently);
+                        FileSystem.CopyFile(fullFileName, Path.Combine(destinationPath, Path.GetFileName(fullFileName)), UIOption.AllDialogs, UICancelOption.DoNothing);
+                        if (lNeedDeleteFile)
+                        {
+                            FileSystem.DeleteFile(fullFileName, UIOption.OnlyErrorDialogs, RecycleOption.DeletePermanently);
+                        }
                     }
                 }
                 else
@@ -1046,9 +1056,9 @@ namespace AdvertisementWpf
                     }
                     if (btn == DeleteFileButton)
                     {
-                        if (productsViewSource.View.CurrentItem is Product product)
+                        if (productsViewSource.View.CurrentItem is Product product && FilesListBox.SelectedItem is string fileToDelete)
                         {
-                            product.FilesList.Clear();
+                            product.FilesList.Remove(fileToDelete);
                             product.ListToFiles();
                             FilesListBox.Items.Refresh();
                         }
@@ -1300,54 +1310,86 @@ namespace AdvertisementWpf
 
         private void PrintOrderForm(long designerID = 0)
         {
-            using App.AppDbContext _reportcontext = new App.AppDbContext(MainWindow.Connectiondata.Connectionstring);
-            try
+            List<long> listProductID = new List<long> { };
+            foreach (Product product in ListProduct.SelectedItems)
             {
-                MainWindow.statusBar.WriteStatus("Получение данных заказа ...", Cursors.Wait);
-                string _pathToReportTemplate = _reportcontext.Setting.FirstOrDefault(setting => setting.SettingParameterName == "PathToReportTemplate").SettingParameterValue;
-                List<Order> orderList = new List<Order> { };
-                orderList = _reportcontext.Orders.AsNoTracking().Where(Order => Order.ID == currentOrder.ID)
-                    .Include(Order => Order.Products).ThenInclude(Products => Products.ProductType)
-                    .Include(Order => Order.Products).ThenInclude(Products => Products.Designer)
-                    .Include(Order => Order.Manager)
-                    .Include(Order => Order.OrderEntered)
-                    .Include(Order => Order.Client)
-                    .ToList();
-                foreach (Order order in orderList)
+                listProductID.Add(product.ID);
+            }
+            if (listProductID.Count == 0) //ничего не было выбрано
+            {
+                foreach (Product product in productsViewSource.View) //добавить ВСЕ
                 {
-                    foreach (Product product in order.Products)
+                    listProductID.Add(product.ID);
+                }
+            }
+            using App.AppDbContext _reportcontext = new App.AppDbContext(MainWindow.Connectiondata.Connectionstring);
+            {
+                try
+                {
+                    MainWindow.statusBar.WriteStatus("Получение данных заказа ...", Cursors.Wait);
+                    string _pathToReportTemplate = _reportcontext.Setting.FirstOrDefault(setting => setting.SettingParameterName == "PathToReportTemplate").SettingParameterValue;
+                    List<Order> orderList = new List<Order> { };
+                    orderList = _reportcontext.Orders.AsNoTracking().Where(Order => Order.ID == currentOrder.ID)
+                        .Include(Order => Order.Products).ThenInclude(Products => Products.ProductType)
+                        .Include(Order => Order.Products).ThenInclude(Products => Products.Designer)
+                        .Include(Order => Order.Manager)
+                        .Include(Order => Order.OrderEntered)
+                        .Include(Order => Order.Client)
+                        .AsNoTracking()
+                        .ToList();
+                    foreach (Order order in orderList)
                     {
-                        GetProductParameters(product);
-                        product.FilesToList();
-                        foreach (ProductParameters productParameter in product.ProductParameter)
+                        Array array = order.Products.ToArray();
+                        for (int ind = 0; ind < array.Length; ind++)
                         {
-                            if (productParameter.ReferencebookID > 0) //если параметр должен заполниться из справочника
+                            if (!listProductID.Contains(((Product)array.GetValue(ind)).ID)) //если изделия нет в писке требующихся для печати, то удалить
                             {
-                                productParameter.ParameterValue = referencebookParameters.Find(rp => rp.ReferencebookID == productParameter.ReferencebookID && rp.ID == productParameter.ParameterID)?.Value ?? "";
+                                _ = order.Products.Remove((Product)array.GetValue(ind));
                             }
                         }
                     }
+                    foreach (Order order in orderList)
+                    {
+                        foreach (Product product in order.Products)
+                        {
+                            GetProductParameters(product);
+                            product.FilesToList();
+                            foreach (ProductParameters productParameter in product.ProductParameter)
+                            {
+                                if (productParameter.ReferencebookID > 0) //если параметр должен заполниться из справочника
+                                {
+                                    productParameter.ParameterValue = referencebookParameters.Find(rp => rp.ReferencebookID == productParameter.ReferencebookID && rp.ID == productParameter.ParameterID)?.Value ?? "";
+                                }
+                            }
+                            product.Costs = _reportcontext.ProductCosts.AsNoTracking().Where(ProductCost => ProductCost.ProductID == product.ID).Include(ProductCost => ProductCost.TypeOfActivity).ToList();
+                            product.KVDForReport = string.Join(",", product.Costs.Where(c => c.Cost != 0).Select(c => c.Code.Trim()).ToList());
+                        }
+                    }
+                    if (File.Exists(Path.Combine(_pathToReportTemplate, "OrderForm.frx")))
+                    {
+                        Reports.OrderDataSet = orderList;
+                        Reports.ReportFileName = Path.Combine(_pathToReportTemplate, "OrderForm.frx");
+                        Reports.ReportMode = "OrderForm";
+                        Reports.designerID = designerID;
+                        Reports.RunReport();
+                    }
+                    else
+                    {
+                        _ = MessageBox.Show("Не найден файл OrderForm.frx !", "Ошибка формирования бланка заказа", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
                 }
-                if (File.Exists(Path.Combine(_pathToReportTemplate, "OrderForm.frx")))
+                catch (Exception ex)
                 {
-                    Reports.OrderDataSet = orderList;
-                    Reports.ReportFileName = Path.Combine(_pathToReportTemplate, "OrderForm.frx");
-                    Reports.ReportMode = "OrderForm";
-                    Reports.designerID = designerID;
-                    Reports.RunReport();
+                    _ = MessageBox.Show(ex.Message + "\n" + ex?.InnerException?.Message ?? "", "Ошибка получения данных", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
-                else
+                finally
                 {
-                    _ = MessageBox.Show("Не найден файл OrderForm.frx !", "Ошибка формирования бланка заказа", MessageBoxButton.OK, MessageBoxImage.Error);
+                    if (_reportcontext != null)
+                    {
+                        _reportcontext.Dispose();
+                    }
+                    MainWindow.statusBar.ClearStatus();
                 }
-            }
-            catch (Exception ex)
-            {
-                _ = MessageBox.Show(ex.Message + "\n" + ex?.InnerException?.Message ?? "", "Ошибка получения данных", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-            finally
-            {
-                MainWindow.statusBar.ClearStatus();
             }
         }
 
@@ -1399,7 +1441,15 @@ namespace AdvertisementWpf
                     AccountID = account.ID,
                 };
                 _ = context__.Acts.Add(act);
-                context__.Entry(act).Reference(act => act.Account).Load(); //загрузить через св-во навигации
+                context__.Entry(act).Reference(act => act.Account).Load(); //загрузить через св-во навигации                
+                context__.Entry(account).Reference(account => account.Contractor).Load(); //загрузить через св-во навигации
+                Contractor contractor = account.Contractor;
+                context__.Entry(contractor).Reference(contractor => contractor.Bank).Load(); //загрузить через св-во навигации
+                context__.Entry(account).Reference(account => account.Order).Load(); //загрузить через св-во навигации
+                Order order = account.Order;
+                context__.Entry(order).Reference(order => order.Client).Load(); //загрузить через св-во навигации
+                Client client = order.Client;
+                context__.Entry(client).Reference(client => client.Bank).Load(); //загрузить через св-во навигации
                 List<long> listProductID = new List<long> { };
                 foreach (Act a in account.Acts) //получить список всех изделий, уже входящих в акты данного счета
                 {
@@ -2133,6 +2183,13 @@ namespace AdvertisementWpf
             NewOperationListBoxRow.Height = GridLength.Auto;
         }
 
+        private void HideNewProductButton_Click(object sender, RoutedEventArgs e)
+        {
+            NewProductGrid.Visibility = Visibility.Collapsed;
+            //NewProductListBox.Visibility = Visibility.Collapsed;
+            //ListBoxTypeOfProductsRow.Height = GridLength.Auto;
+        }
+
         private void WorkTypeOfActivityComboBox_GotFocus(object sender, RoutedEventArgs e)
         {
             if (sender is ComboBox comboBox && comboBox != null && comboBox.GetBindingExpression(System.Windows.Controls.Primitives.Selector.SelectedValueProperty).DataItem is WorkInTechCard workInTechCard)
@@ -2756,6 +2813,27 @@ namespace AdvertisementWpf
             }
         }
 
+        private void FindNewProductTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (productTypesViewSource?.View != null)
+            {
+                productTypesViewSource.View.Refresh();
+                productTypesViewSource.View.MoveCurrentToFirst();
+            }
+        }
+
+        private void ProductTypesViewSource_Filter(object sender, FilterEventArgs e)
+        {
+            if (e.Item is ProductType productType && !string.IsNullOrWhiteSpace(FindNewProductTextBox.Text))
+            {
+                e.Accepted = productType.Name.IndexOf(FindNewProductTextBox.Text, StringComparison.CurrentCultureIgnoreCase) >= 0;
+            }
+            else
+            {
+                e.Accepted = true;
+            }
+        }
+
         //private void OperationInWorkComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         //{
         //    if (sender is ComboBox comboBox && comboBox != null && comboBox.GetBindingExpression(System.Windows.Controls.Primitives.Selector.SelectedValueProperty).DataItem is OperationInWork operationInWork)
@@ -2784,6 +2862,42 @@ namespace AdvertisementWpf
         //    }
         //}
 
+        //private void TestButton_Click(object sender, RoutedEventArgs e)
+        //{
+        //    try
+        //    {
+        //        if (FindName("NewProductListBox") is ListBox listBox)
+        //        {
+        //            foreach (Expander gi in FindVisualChildren<Expander>(listBox))
+        //            {
+        //                gi.IsExpanded = true;
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _ = MessageBox.Show(ex.Message + "\n" + ex?.InnerException?.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+        //    }
+        //}
+
+        //private childItem FindVisualChild<childItem>(DependencyObject obj) where childItem : DependencyObject
+        //{
+        //    for (int i = 0; i < VisualTreeHelper.GetChildrenCount(obj); i++)
+        //    {
+        //        DependencyObject child = VisualTreeHelper.GetChild(obj, i);
+        //        if (child != null && child is childItem)
+        //        {
+        //            return (childItem)child;
+        //        }
+        //        else
+        //        {
+        //            childItem childOfChild = FindVisualChild<childItem>(child);
+        //            if (childOfChild != null)
+        //                return childOfChild;
+        //        }
+        //    }
+        //    return null;
+        //}
     }
 
     public class CostTemplateSelector : DataTemplateSelector
@@ -2909,7 +3023,7 @@ namespace AdvertisementWpf
             OrderCardProductDesigner = IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductDesigner");
             OrderCardProductDateProductionLayout = IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductDateProductionLayout");
             OrderCardProductDateTransferDesigner = IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductDateTransferDesigner");
-            IsManager = IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "ListManager");
+            IsManager = !MainWindow.Userdata.IsAdmin && IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "ListManager");
         }
     }
 }

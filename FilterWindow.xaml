@@ -6,7 +6,7 @@
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:local="clr-namespace:AdvertisementWpf"
         mc:Ignorable="d"
-        Title="Условия отбора/фильтрации" MinHeight="300" MinWidth="620" SizeToContent="WidthAndHeight"
+        Title="Условия отбора/фильтрации" MinHeight="300" MinWidth="620" WindowState="Maximized"
         WindowStartupLocation="CenterScreen" WindowStyle="SingleBorderWindow" ResizeMode="CanResizeWithGrip"
         BorderThickness="1" Closed="Window_Closed">
     <Window.Resources>
@@ -170,7 +170,13 @@
                                 </ListBox>
                             </GroupBox>
                             <GroupBox Header="Признак оплаты">
-
+                                <ListBox Name="PaymentIndicationListBox" 
+                                         ScrollViewer.VerticalScrollBarVisibility="Auto" 
+                                         Style="{StaticResource CheckBoxListStyle}">
+                                    <ListBoxItem>не оплачено</ListBoxItem>
+                                    <ListBoxItem>частично оплачено</ListBoxItem>
+                                    <ListBoxItem>переплачено</ListBoxItem>
+                                </ListBox>
                             </GroupBox>
                         </StackPanel>
                     </TabItem>

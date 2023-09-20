@@ -39,7 +39,8 @@ namespace AdvertisementWpf
         private App.AppDbContext _context;
         public static string WhereCondition = "", WhereStateCondition = "";
         public static List<string> WhereProductCategoryCondition = new List<string> { }, WhereProductClientCondition = new List<string> { },
-                     WhereProductManagerCondition = new List<string> { }, WhereProductDesignerCondition = new List<string> { }, WhereProductWorkerCondition = new List<string> { };
+                        WhereProductManagerCondition = new List<string> { }, WhereProductDesignerCondition = new List<string> { }, WhereProductWorkerCondition = new List<string> { };
+        public static List<bool> WherePaymentIndicationCondition = new List<bool> { };
         public static List<long> WhereTypeOfActivityCondition = new List<long> { };
         public static DateTime? dStartDate, dEndDate;
         private GridViewColumnHeader listViewSortCol = null;
@@ -54,9 +55,6 @@ namespace AdvertisementWpf
             statusBar = new StatusBar();
             Status.DataContext = statusBar;
             UsrInfo.DataContext = statusBar;
-
-            //GridView gridView = (GridView)OrderListView.View;
-            //gridView.Columns.CollectionChanged += GridViewColumns_CollectionChanged;
 
         }
 
@@ -83,6 +81,11 @@ namespace AdvertisementWpf
             orderLegendColors = new OrderLegendColors();
             //Connectiondata.Connectionstring = "Data Source = YEVGENIY; Database = AdvertisementNF; Integrated Security = True;"; // УБРАТЬ!!!!
             Connectiondata.Connectionstring = "Data Source = ; Database = ; Integrated Security = True";
+        }
+
+        private void Window_Closing(object sender, CancelEventArgs e)
+        {
+            e.Cancel = MessageBox.Show("Вы хотите завершить работу ?", "Завершение работы", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes;
         }
 
         private void Window_Closed(object sender, EventArgs e)
@@ -134,7 +137,7 @@ namespace AdvertisementWpf
                 }
                 List<Setting> settings = _context.Setting.ToList();
                 orderLegendColors = GetOrderLegendColorsSetting.OrderLegendColors(settings);
-                if (IGrantAccess.CheckGrantAccess(userIAccessMatrix, Userdata.RoleID, "ListManager")) //роль текущего пользователя относится к Менеджерам
+                if (!Userdata.IsAdmin && IGrantAccess.CheckGrantAccess(userIAccessMatrix, Userdata.RoleID, "ListManager")) //роль текущего пользователя относится к Менеджерам
                 {
                     List<byte> nMonth = new List<byte> { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
                     DateTime dStartDate, dEndDate;
@@ -670,13 +673,19 @@ namespace AdvertisementWpf
                     .Include(Order => Order.Payments)
                     .Include(Order => Order.Accounts)
                     .ToList();
-                if (IGrantAccess.CheckGrantAccess(userIAccessMatrix, Userdata.RoleID, "ListManager")) //роль текущего пользователя относится к Менеджерам
+                if (!Userdata.IsAdmin && IGrantAccess.CheckGrantAccess(userIAccessMatrix, Userdata.RoleID, "ListManager")) //роль текущего пользователя относится к Менеджерам
                 {
                     OrderList = OrderList.Where(w => w.ManagerID == Userdata.ID).ToList(); //значит текущему пользователю предоставить только его заказы
                 }
-                if (WhereStateCondition.Length > 0) //указан отбор по состоянию заказа
+                if (WhereStateCondition.Length > 0) //указан отбор по состоянию заказа 
                 {
                     OrderList = OrderList.Where(Order => WhereStateCondition.IndexOf(Order.State) >= 0).ToList();
+                }
+                if (WherePaymentIndicationCondition.Any(wp => wp.Equals(true))) //указан отбор по оплате
+                {
+                    OrderList = OrderList.Where(Order => (WherePaymentIndicationCondition[0] && OrderPaid.NotPaid(ref Order)) ||
+                                                         (WherePaymentIndicationCondition[1] && OrderPaid.PartiallyPaid(ref Order)) ||
+                                                         (WherePaymentIndicationCondition[2] && OrderPaid.OverPaid(ref Order))).ToList();
                 }
                 ordersViewSource.Source = OrderList;
                 ProductListView.Visibility = Visibility.Collapsed;
@@ -706,7 +715,7 @@ namespace AdvertisementWpf
                     .Include(Products => Products.Order)
                     .Include(Products => Products.Designer)
                     .ToList();
-                if (IGrantAccess.CheckGrantAccess(userIAccessMatrix, Userdata.RoleID, "ListManager")) //роль текущего пользователя относится к Менеджерам
+                if (!Userdata.IsAdmin && IGrantAccess.CheckGrantAccess(userIAccessMatrix, Userdata.RoleID, "ListManager")) //роль текущего пользователя относится к Менеджерам
                 {
                     ProductList = ProductList.Where(p => p.Order.ManagerID == Userdata.ID).ToList(); //значит текущему пользователю предоставить только его заказы
                 }
@@ -778,11 +787,11 @@ namespace AdvertisementWpf
                     .Where(WorkInTechCard => WhereTypeOfActivityCondition.Contains(WorkInTechCard.TypeOfActivity.ID))
                     .ToList();
                 workInTechCardViewSource = (CollectionViewSource)FindResource(nameof(workInTechCardViewSource));
-                if (IGrantAccess.CheckGrantAccess(userIAccessMatrix, Userdata.RoleID, "ListManager")) //роль текущего пользователя относится к Менеджерам
+                if (!Userdata.IsAdmin && IGrantAccess.CheckGrantAccess(userIAccessMatrix, Userdata.RoleID, "ListManager")) //роль текущего пользователя относится к Менеджерам
                 {
                     workInTechCards = workInTechCards.Where(w => w.TechCard.Product.Order.ManagerID == Userdata.ID).ToList(); //значит текущему пользователю предоставить только его заказы
                 }
-                workInTechCardViewSource.Source = workInTechCards.Where(w => w.DateFactCompletion.HasValue && 
+                workInTechCardViewSource.Source = workInTechCards.Where(w => !w.DateFactCompletion.HasValue && 
                     (w.TechCard.Product.State == OrderProductStates.GetProductState(3) || w.TechCard.Product.State == OrderProductStates.GetProductState(4)))
                     .OrderBy(w => w.TechCard.Product.Order.Number);
                 OrderListView.Visibility = Visibility.Collapsed;
@@ -987,7 +996,7 @@ namespace AdvertisementWpf
                 geometry = descGeometry;
             }
 
-            drawingContext.DrawGeometry(System.Windows.Media.Brushes.Black, null, geometry);
+            drawingContext.DrawGeometry(Brushes.Black, null, geometry);
             drawingContext.Pop();
         }
     }

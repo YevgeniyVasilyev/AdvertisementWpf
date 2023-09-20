@@ -1,0 +1,256 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report ScriptLanguage="CSharp" ReportInfo.Created="09/09/2023 18:55:34" ReportInfo.Modified="09/10/2023 12:11:01" ReportInfo.CreatorVersion="2023.1.0.0">
+  <Dictionary>
+    <BusinessObjectDataSource Name="Payment" ReferenceName="Payment" DataType="null" Enabled="true">
+      <Column Name="ID" DataType="System.Int64"/>
+      <Column Name="OrderID" DataType="System.Int64"/>
+      <Column Name="PaymentDate" DataType="null"/>
+      <Column Name="PaymentAmount" DataType="System.Decimal"/>
+      <Column Name="PaymentDocNumber" DataType="System.String"/>
+      <Column Name="PurposeOfPayment" DataType="null"/>
+      <Column Name="TypeOfPayment" DataType="null"/>
+      <Column Name="AccountID" DataType="null"/>
+      <Column Name="Order" DataType="null">
+        <Column Name="ID" DataType="System.Int64"/>
+        <Column Name="Number" DataType="System.String"/>
+        <Column Name="ClientID" DataType="System.Int64"/>
+        <Column Name="Note" DataType="System.String"/>
+        <Column Name="DateAdmission" DataType="null"/>
+        <Column Name="DateCompletion" DataType="null"/>
+        <Column Name="OrderEnteredID" DataType="System.Int64"/>
+        <Column Name="ManagerID" DataType="null"/>
+        <Column Name="Client" DataType="null">
+          <Column Name="ID" DataType="System.Int64"/>
+          <Column Name="Name" DataType="System.String"/>
+          <Column Name="Profile" DataType="System.String"/>
+          <Column Name="IsIndividual" DataType="System.Boolean" BindableControl="CheckBox"/>
+          <Column Name="DirectorName" DataType="System.String"/>
+          <Column Name="ContactPersonName" DataType="System.String"/>
+          <Column Name="PostalAddress" DataType="System.String"/>
+          <Column Name="BusinessAddress" DataType="System.String"/>
+          <Column Name="ActualAddress" DataType="System.String"/>
+          <Column Name="Consignee" DataType="System.String"/>
+          <Column Name="INN" DataType="System.String"/>
+          <Column Name="KPP" DataType="System.String"/>
+          <Column Name="BankAccount" DataType="System.String"/>
+          <Column Name="BankID" DataType="null"/>
+          <Column Name="IsActive" DataType="System.Boolean" BindableControl="CheckBox"/>
+          <Column Name="Note" DataType="System.Byte[]" BindableControl="Picture"/>
+          <Column Name="UserID" DataType="System.Int64"/>
+          <Column Name="MobilePhone" DataType="System.String"/>
+          <Column Name="WorkPhone" DataType="System.String"/>
+          <Column Name="Email" DataType="System.String"/>
+          <Column Name="AdditionalInfo" DataType="System.String"/>
+          <Column Name="Bank" DataType="null"/>
+          <Column Name="User" DataType="null"/>
+          <BusinessObjectDataSource Name="Orders" Enabled="false" DataType="null"/>
+          <Column Name="ClientInfoForAccount" DataType="System.String"/>
+          <Column Name="ClientInfoForAct" DataType="System.String"/>
+        </Column>
+        <Column Name="Manager" DataType="null">
+          <Column Name="ID" DataType="System.Int64"/>
+          <Column Name="FirstName" DataType="System.String"/>
+          <Column Name="LastName" DataType="System.String"/>
+          <Column Name="MiddleName" DataType="System.String"/>
+          <Column Name="LoginName" DataType="System.String"/>
+          <Column Name="RoleID" DataType="System.Int64"/>
+          <Column Name="Disabled" DataType="System.Boolean" BindableControl="CheckBox"/>
+          <Column Name="CategoryWork" DataType="System.Int16"/>
+          <Column Name="IsAdmin" DataType="System.Boolean" BindableControl="CheckBox"/>
+          <Column Name="IsExternal" DataType="System.Boolean" BindableControl="CheckBox"/>
+          <Column Name="Phone" DataType="System.String"/>
+          <Column Name="Email" DataType="System.String"/>
+          <Column Name="CardNumber" DataType="System.String"/>
+          <Column Name="Role" DataType="null"/>
+          <BusinessObjectDataSource Name="Clients" Enabled="false" DataType="null"/>
+          <BusinessObjectDataSource Name="ProductDesigners" Enabled="false" DataType="null"/>
+          <BusinessObjectDataSource Name="OrderManagers" Enabled="false" DataType="null"/>
+          <BusinessObjectDataSource Name="OrderOrderEntereds" Enabled="false" DataType="null"/>
+          <Column Name="FullUserName" DataType="System.String"/>
+          <Column Name="ShortUserName" DataType="System.String"/>
+        </Column>
+        <Column Name="OrderEntered" DataType="null">
+          <Column Name="ID" DataType="System.Int64"/>
+          <Column Name="FirstName" DataType="System.String"/>
+          <Column Name="LastName" DataType="System.String"/>
+          <Column Name="MiddleName" DataType="System.String"/>
+          <Column Name="LoginName" DataType="System.String"/>
+          <Column Name="RoleID" DataType="System.Int64"/>
+          <Column Name="Disabled" DataType="System.Boolean" BindableControl="CheckBox"/>
+          <Column Name="CategoryWork" DataType="System.Int16"/>
+          <Column Name="IsAdmin" DataType="System.Boolean" BindableControl="CheckBox"/>
+          <Column Name="IsExternal" DataType="System.Boolean" BindableControl="CheckBox"/>
+          <Column Name="Phone" DataType="System.String"/>
+          <Column Name="Email" DataType="System.String"/>
+          <Column Name="CardNumber" DataType="System.String"/>
+          <Column Name="Role" DataType="null"/>
+          <BusinessObjectDataSource Name="Clients1" Alias="Clients" Enabled="false" DataType="null" PropName="Clients"/>
+          <BusinessObjectDataSource Name="ProductDesigners1" Alias="ProductDesigners" Enabled="false" DataType="null" PropName="ProductDesigners"/>
+          <BusinessObjectDataSource Name="OrderManagers1" Alias="OrderManagers" Enabled="false" DataType="null" PropName="OrderManagers"/>
+          <BusinessObjectDataSource Name="OrderOrderEntereds1" Alias="OrderOrderEntereds" Enabled="false" DataType="null" PropName="OrderOrderEntereds"/>
+          <Column Name="FullUserName" DataType="System.String"/>
+          <Column Name="ShortUserName" DataType="System.String"/>
+        </Column>
+        <BusinessObjectDataSource Name="Products" DataType="null" Enabled="true">
+          <Column Name="Value" Enabled="false" DataType="System.RuntimeType"/>
+        </BusinessObjectDataSource>
+        <BusinessObjectDataSource Name="Payments" DataType="null" Enabled="true">
+          <Column Name="ID" DataType="System.Int64"/>
+          <Column Name="OrderID" DataType="System.Int64"/>
+          <Column Name="PaymentDate" DataType="null"/>
+          <Column Name="PaymentAmount" DataType="System.Decimal"/>
+          <Column Name="PaymentDocNumber" DataType="System.String"/>
+          <Column Name="PurposeOfPayment" DataType="null"/>
+          <Column Name="TypeOfPayment" DataType="null"/>
+          <Column Name="AccountID" DataType="null"/>
+          <Column Name="Order" DataType="null"/>
+          <Column Name="Account" DataType="null"/>
+          <Column Name="PurposeOfPaymentName" DataType="System.String"/>
+          <Column Name="TypeOfPaymentName" DataType="System.String"/>
+        </BusinessObjectDataSource>
+        <BusinessObjectDataSource Name="Accounts" DataType="null" Enabled="true">
+          <Column Name="Value" Enabled="false" DataType="System.RuntimeType"/>
+        </BusinessObjectDataSource>
+        <Column Name="AccountDate" DataType="null"/>
+        <Column Name="OrderCost" DataType="System.Decimal"/>
+        <Column Name="OrderPayments" DataType="System.Decimal"/>
+        <Column Name="CountProduct" DataType="System.Int16"/>
+        <Column Name="State" DataType="System.String"/>
+      </Column>
+      <Column Name="Account" DataType="null">
+        <Column Name="ID" DataType="System.Int64"/>
+        <Column Name="OrderID" DataType="System.Int64"/>
+        <Column Name="AccountNumber" DataType="System.String"/>
+        <Column Name="AccountDate" DataType="null"/>
+        <Column Name="ContractorID" DataType="null"/>
+        <Column Name="Footing" DataType="System.String"/>
+        <Column Name="IsManual" DataType="System.Boolean" BindableControl="CheckBox"/>
+        <Column Name="Details" DataType="System.String"/>
+        <Column Name="PayBeforeDate" DataType="null"/>
+        <Column Name="Order" DataType="null">
+          <Column Name="ID" DataType="System.Int64"/>
+          <Column Name="Number" DataType="System.String"/>
+          <Column Name="ClientID" DataType="System.Int64"/>
+          <Column Name="Note" DataType="System.String"/>
+          <Column Name="DateAdmission" DataType="null"/>
+          <Column Name="DateCompletion" DataType="null"/>
+          <Column Name="OrderEnteredID" DataType="System.Int64"/>
+          <Column Name="ManagerID" DataType="null"/>
+          <Column Name="Client" DataType="null"/>
+          <Column Name="Manager" DataType="null"/>
+          <Column Name="OrderEntered" DataType="null"/>
+          <BusinessObjectDataSource Name="Products1" Alias="Products" Enabled="false" DataType="null" PropName="Products"/>
+          <BusinessObjectDataSource Name="Payments1" Alias="Payments" Enabled="false" DataType="null" PropName="Payments"/>
+          <BusinessObjectDataSource Name="Accounts1" Alias="Accounts" Enabled="false" DataType="null" PropName="Accounts"/>
+          <Column Name="AccountDate" DataType="null"/>
+          <Column Name="OrderCost" DataType="System.Decimal"/>
+          <Column Name="OrderPayments" DataType="System.Decimal"/>
+          <Column Name="CountProduct" DataType="System.Int16"/>
+          <Column Name="State" DataType="System.String"/>
+        </Column>
+        <Column Name="Contractor" DataType="null">
+          <Column Name="ID" DataType="System.Int64"/>
+          <Column Name="Name" DataType="System.String"/>
+          <Column Name="DirectorName" DataType="System.String"/>
+          <Column Name="DirectorPostName" DataType="System.String"/>
+          <Column Name="DirectorAttorneyNumber" DataType="System.String"/>
+          <Column Name="DirectorAttorneyDate" DataType="null"/>
+          <Column Name="ChiefAccountant" DataType="System.String"/>
+          <Column Name="ChiefAccountantPostName" DataType="System.String"/>
+          <Column Name="ChiefAccountantAttorneyNumber" DataType="System.String"/>
+          <Column Name="ChiefAccountantAttorneyDate" DataType="null"/>
+          <Column Name="BusinessAddress" DataType="System.String"/>
+          <Column Name="INN" DataType="System.String"/>
+          <Column Name="KPP" DataType="System.String"/>
+          <Column Name="OKPO" DataType="System.String"/>
+          <Column Name="OGRN" DataType="System.String"/>
+          <Column Name="BankAccount" DataType="System.String"/>
+          <Column Name="BankID" DataType="null"/>
+          <Column Name="AbbrForAcc" DataType="System.String"/>
+          <Column Name="AccountFileTemplate" DataType="System.String"/>
+          <Column Name="Bank" DataType="null"/>
+          <BusinessObjectDataSource Name="Accounts2" Alias="Accounts" Enabled="false" DataType="null" PropName="Accounts"/>
+          <Column Name="ContractorInfoForAccount" DataType="System.String"/>
+          <Column Name="ContractorInfoForAct" DataType="System.String"/>
+          <Column Name="DirectorShortName" DataType="System.String"/>
+          <Column Name="ChiefAccountantShortName" DataType="System.String"/>
+        </Column>
+        <BusinessObjectDataSource Name="Acts" DataType="null" Enabled="true">
+          <Column Name="ID" DataType="System.Int64"/>
+          <Column Name="AccountID" DataType="System.Int64"/>
+          <Column Name="ActNumber" DataType="System.String"/>
+          <Column Name="ActDate" DataType="null"/>
+          <Column Name="ProductInAct" DataType="System.String"/>
+          <Column Name="Account" DataType="null"/>
+          <BusinessObjectDataSource Name="ListProductInAct" Enabled="false" DataType="null"/>
+          <BusinessObjectDataSource Name="DetailsList" Enabled="false" DataType="null"/>
+        </BusinessObjectDataSource>
+        <BusinessObjectDataSource Name="Payments2" Alias="Payments" DataType="null" PropName="Payments" Enabled="true">
+          <Column Name="ID" DataType="System.Int64"/>
+          <Column Name="OrderID" DataType="System.Int64"/>
+          <Column Name="PaymentDate" DataType="null"/>
+          <Column Name="PaymentAmount" DataType="System.Decimal"/>
+          <Column Name="PaymentDocNumber" DataType="System.String"/>
+          <Column Name="PurposeOfPayment" DataType="null"/>
+          <Column Name="TypeOfPayment" DataType="null"/>
+          <Column Name="AccountID" DataType="null"/>
+          <Column Name="Order" DataType="null"/>
+          <Column Name="Account" DataType="null"/>
+          <Column Name="PurposeOfPaymentName" DataType="System.String"/>
+          <Column Name="TypeOfPaymentName" DataType="System.String"/>
+        </BusinessObjectDataSource>
+        <BusinessObjectDataSource Name="DetailsList1" Alias="DetailsList" DataType="null" PropName="DetailsList" Enabled="true">
+          <Column Name="ProductInfoForAccount" DataType="System.String"/>
+          <Column Name="Quantity" DataType="System.Int16"/>
+          <Column Name="UnitName" DataType="System.String"/>
+          <Column Name="Cost" DataType="System.Decimal"/>
+          <Column Name="PricePerUnit" DataType="System.Decimal"/>
+        </BusinessObjectDataSource>
+        <Column Name="ContractorName" DataType="System.String"/>
+        <Column Name="ContractorInfoForAccount" DataType="System.String"/>
+        <Column Name="ContractorInfoForAct" DataType="System.String"/>
+        <Column Name="TotalCost" DataType="null"/>
+      </Column>
+      <Column Name="PurposeOfPaymentName" DataType="System.String"/>
+      <Column Name="TypeOfPaymentName" DataType="System.String"/>
+    </BusinessObjectDataSource>
+    <Parameter Name="BeginPeriod" DataType="System.DateTime" AsString=""/>
+    <Parameter Name="EndPeriod" DataType="System.DateTime" AsString=""/>
+    <Total Name="CashlessTotal" Expression="[Payment.PaymentAmount]" Evaluator="Data1" PrintOn="GroupFooter1" EvaluateCondition="[Payment.TypeOfPayment] == 0"/>
+    <Total Name="CashTotal" Expression="[Payment.PaymentAmount]" Evaluator="Data1" PrintOn="GroupFooter1" EvaluateCondition="[Payment.TypeOfPayment] == 1"/>
+    <Total Name="Total" Expression="[Payment.PaymentAmount]" Evaluator="Data1" PrintOn="GroupFooter1"/>
+    <Total Name="FullTotal" Expression="[Payment.PaymentAmount]" Evaluator="Data1" PrintOn="ReportSummary1"/>
+    <Total Name="FullCashlessTotal" Expression="[Payment.PaymentAmount]" Evaluator="Data1" PrintOn="ReportSummary1" EvaluateCondition="[Payment.TypeOfPayment] == 0"/>
+    <Total Name="FullCashTotal" Expression="[Payment.PaymentAmount]" Evaluator="Data1" PrintOn="ReportSummary1" EvaluateCondition="[Payment.TypeOfPayment] == 1"/>
+  </Dictionary>
+  <ReportPage Name="Page1" RawPaperSize="9" Watermark.Font="Arial, 60pt" UnlimitedHeight="true">
+    <ReportTitleBand Name="ReportTitle1" Width="718.2" Height="75.6">
+      <TextObject Name="Text1" Width="718.2" Height="18.9" Text="Выручка по сотрудникам и видам платежей" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
+      <TextObject Name="Text2" Top="18.9" Width="718.2" Height="18.9" Text="за период с [FormatDateTime([BeginPeriod], &quot;Short Date&quot;)] по [FormatDateTime([EndPeriod], &quot;Short Date&quot;)]" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt"/>
+      <TextObject Name="Text3" Top="37.8" Width="368.55" Height="37.8" Border.Lines="All" Border.Width="0.5" Text="ФИО сотрудника" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt"/>
+      <TextObject Name="Text4" Left="368.55" Top="37.8" Width="217.35" Height="18.9" Border.Lines="All" Border.Width="0.5" Text="Вид платежа" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt"/>
+      <TextObject Name="Text7" Left="585.9" Top="37.8" Width="132.3" Height="37.8" Border.Lines="All" Border.Width="0.5" Text="ИТОГО" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt"/>
+      <TextObject Name="Text5" Left="368.55" Top="56.7" Width="103.95" Height="18.9" Border.Lines="All" Border.Width="0.5" Text="Безналичный" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt"/>
+      <TextObject Name="Text6" Left="472.5" Top="56.7" Width="113.4" Height="18.9" Border.Lines="All" Border.Width="0.5" Text="Наличный" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt"/>
+    </ReportTitleBand>
+    <GroupHeaderBand Name="GroupHeader1" Printable="false" Top="77.89" Width="718.2" Condition="[Payment.Order.Manager.FirstName]">
+      <DataBand Name="Data1" Printable="false" Top="80.17" Width="718.2" DataSource="Payment">
+        <Sort>
+          <Sort Expression="[Payment.Order.Manager.FirstName]" Descending="true"/>
+        </Sort>
+      </DataBand>
+      <GroupFooterBand Name="GroupFooter1" Top="82.46" Width="718.2" Height="18.9" CanGrow="true">
+        <TextObject Name="Text8" Width="368.55" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" Text="[Payment.Order.Manager.FullUserName]" VertAlign="Center" Font="Arial, 10pt"/>
+        <TextObject Name="Text9" Left="368.55" Width="103.95" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" Text="[CashlessTotal]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt"/>
+        <TextObject Name="Text11" Left="472.5" Width="113.4" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" Text="[CashTotal]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt"/>
+        <TextObject Name="Text12" Left="585.9" Width="132.3" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" Text="[Total]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt"/>
+      </GroupFooterBand>
+    </GroupHeaderBand>
+    <ReportSummaryBand Name="ReportSummary1" Top="103.64" Width="718.2" Height="18.9">
+      <TextObject Name="Text10" Width="368.55" Height="18.9" Border.Lines="All" Border.Width="0.5" Text="ИТОГО за период" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt"/>
+      <TextObject Name="Text13" Left="368.55" Width="103.95" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" Text="[FullCashlessTotal]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt"/>
+      <TextObject Name="Text14" Left="472.5" Width="113.4" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" Text="[FullCashTotal]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt"/>
+      <TextObject Name="Text15" Left="585.9" Width="132.3" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" Text="[FullTotal]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt"/>
+    </ReportSummaryBand>
+  </ReportPage>
+</Report>

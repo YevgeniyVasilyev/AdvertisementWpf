@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Report ScriptLanguage="CSharp" ReportInfo.Created="09/09/2022 20:49:00" ReportInfo.Modified="04/18/2023 19:35:58" ReportInfo.CreatorVersion="2023.1.0.0">
+<Report ScriptLanguage="CSharp" ReportInfo.Created="09/09/2022 20:49:00" ReportInfo.Modified="09/06/2023 17:48:18" ReportInfo.CreatorVersion="2022.3.0.0">
   <ScriptText>using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -316,28 +316,28 @@ namespace FastReport
         <Column Name="Cost" DataType="System.Decimal"/>
       </BusinessObjectDataSource>
     </BusinessObjectDataSource>
-    <Parameter Name="ReportDate" DataType="System.DateTime" AsString=""/>
-    <Parameter Name="AmountInWords" DataType="System.String" AsString=""/>
+    <Parameter Name="ReportDate" DataType="System.DateTime"/>
+    <Parameter Name="AmountInWords" DataType="System.String"/>
     <Total Name="TotalCost" Expression="[Act.DetailsList.Cost]" Evaluator="Data1" PrintOn="DataFooter1"/>
     <Total Name="TotalCount" TotalType="Count" Evaluator="Data1" PrintOn="DataFooter1"/>
   </Dictionary>
   <ReportPage Name="Page1" Guides="18.9,699.3,122.85,47.25,378,434.7,500.85,585.9,491.4,453.6,463.05,708.75,141.75,396.9,397.45,709.3" Watermark.Font="Arial, 60pt">
-    <ReportTitleBand Name="ReportTitle1" Width="718.2" Height="151.2" Guides="9.45,28.35,37.8,75.6,113.4">
+    <ReportTitleBand Name="ReportTitle1" Width="718.2" Height="151.2" CanGrow="true" Guides="9.45,28.35,37.8,75.6,113.4">
       <TextObject Name="Text1" Left="18.9" Top="9.45" Width="680.4" Height="18.9" BeforePrintEvent="Text1_BeforePrint" Text="Акт № [Act.ActNumber] от [FormatDateTime(ToDateTime([ReportDate]),&quot;Short Date&quot;)]" Font="Arial, 10pt, style=Bold"/>
       <LineObject Name="Line1" Left="18.9" Top="28.35" Width="680.4"/>
       <TextObject Name="Text31" Left="18.9" Top="37.8" Width="103.95" Height="37.8" Text="Исполнитель:" VertAlign="Center" Font="Arial, 10pt"/>
-      <TextObject Name="Text32" Left="122.85" Top="37.8" Width="576.45" Height="37.8" CanGrow="true" Text="[Act.Account.Contractor.ContractorInfoForAct]" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
+      <TextObject Name="Text32" Left="122.85" Top="37.8" Width="576.45" Height="37.8" CanGrow="true" Text="[Act.Account.Contractor.ContractorInfoForAct]" VertAlign="Center" Font="Arial, 7.8pt, style=Bold"/>
       <TextObject Name="Text33" Left="18.9" Top="75.6" Width="103.95" Height="37.8" Text="Заказчик:" VertAlign="Center" Font="Arial, 10pt"/>
-      <TextObject Name="Text34" Left="122.85" Top="75.6" Width="576.45" Height="37.8" CanGrow="true" Text="[Act.Account.Order.Client.ClientInfoForAct]" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
+      <TextObject Name="Text34" Left="122.85" Top="75.6" Width="576.45" Height="37.8" CanGrow="true" Text="[Act.Account.Order.Client.ClientInfoForAct]" VertAlign="Center" Font="Arial, 7.8pt, style=Bold"/>
     </ReportTitleBand>
-    <DataBand Name="Data1" Top="174.67" Width="718.2" Height="18.9" CanGrow="true" CanBreak="true" Guides="0,18.89999" DataSource="DetailsList5">
+    <DataBand Name="Data1" Top="174.1" Width="718.2" Height="18.9" CanGrow="true" CanBreak="true" Guides="0,18.89999" DataSource="DetailsList5">
       <TextObject Name="Text2" Left="18.9" Width="28.35" Height="18.9" Border.Lines="All" CanGrow="true" GrowToBottom="true" Text="[Row#]" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt"/>
       <TextObject Name="Text3" Left="47.25" Width="330.75" Height="18.9" Border.Lines="All" CanGrow="true" GrowToBottom="true" Text="[Act.DetailsList.ProductInfoForAccount]" VertAlign="Center" Font="Arial, 10pt"/>
       <TextObject Name="Text4" Left="378" Width="56.7" Height="18.9" Border.Lines="All" GrowToBottom="true" Text="[Act.DetailsList.Quantity]" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt"/>
       <TextObject Name="Text5" Left="434.7" Width="66.15" Height="18.9" Border.Lines="All" GrowToBottom="true" Text="[Act.DetailsList.UnitName]" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt"/>
       <TextObject Name="Text6" Left="500.85" Width="85.05" Height="18.9" Border.Lines="All" GrowToBottom="true" Text="[Act.DetailsList.PricePerUnit]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" VertAlign="Center" Font="Arial, 10pt"/>
       <TextObject Name="Text7" Left="585.9" Width="113.4" Height="18.9" Border.Lines="All" GrowToBottom="true" Text="[Act.DetailsList.Cost]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt"/>
-      <DataHeaderBand Name="DataHeader1" Top="153.49" Width="718.2" Height="18.9" KeepWithData="true" RepeatOnEveryPage="true">
+      <DataHeaderBand Name="DataHeader1" Top="153.2" Width="718.2" Height="18.9" KeepWithData="true" RepeatOnEveryPage="true">
         <TableObject Name="Table3" Left="18.9" Width="680.4" Height="18.9" Border.Lines="All" CanBreak="false" RepeatHeaders="false">
           <TableColumn Name="Column11" Width="28.35"/>
           <TableColumn Name="Column12" Width="330.75"/>
@@ -355,7 +355,7 @@ namespace FastReport
           </TableRow>
         </TableObject>
       </DataHeaderBand>
-      <DataFooterBand Name="DataFooter1" Top="195.86" Width="718.2" Height="217.35" Guides="0,18.89999,37.79999,56.7,85.05,122.85,75.59999,140.3,159.2,178.1,197,215.9,195.55,195" KeepWithData="true">
+      <DataFooterBand Name="DataFooter1" Top="195" Width="718.2" Height="217.35" Guides="0,18.89999,37.79999,56.7,85.05,122.85,75.59999,140.3,159.2,178.1,197,215.9,195.55,195" KeepWithData="true">
         <TextObject Name="Text24" Left="491.4" Width="94.5" Height="18.9" Text="Итого:" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
         <TextObject Name="Text25" Left="585.9" Width="113.4" Height="18.9" Text="[TotalCost]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
         <TextObject Name="Text10" Left="453.6" Top="18.9" Width="132.3" Height="18.9" Text="Без налога (НДС:)" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>

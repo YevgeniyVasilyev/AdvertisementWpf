@@ -15,6 +15,7 @@ namespace AdvertisementWpf.Models
         {
             //TechCards = new HashSet<TechCard>();
             //Costs = new HashSet<ProductCost>();
+            ProductCosts = new HashSet<ProductCost>();
         }
 
         public long ID { get; set; }
@@ -137,6 +138,7 @@ namespace AdvertisementWpf.Models
         }
 
         public virtual Order Order { get; set; }
+        public virtual ICollection<ProductCost> ProductCosts { get; set; }
         public virtual ProductType ProductType { get; set; }
         public virtual User Designer { get; set; }
         public virtual TechCard TechCard { get; set; }
@@ -145,6 +147,8 @@ namespace AdvertisementWpf.Models
 
         //public virtual ICollection<TechCard> TechCards { get; set; }
 
+        [NotMapped]
+        public string KVDForReport { get; set; }
         private string _productTypeName = "";
         [NotMapped]
         public string ProductTypeName

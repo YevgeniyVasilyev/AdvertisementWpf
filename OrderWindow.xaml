@@ -325,17 +325,69 @@
                             <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center">
                                 <Label Content="Изделия" FontWeight="Bold" HorizontalContentAlignment="Stretch"/>
                                 <Button Name="NewProductButton" Background="Transparent" BorderBrush="Transparent" 
-                                    Style="{StaticResource ButtonOfOrder}" Command="ApplicationCommands.New"
-                                    Margin="10,0,0,0" ToolTip="Добавить изделие (показать список)">
-                                    <Image Source="/Images/free-icon-add-button.png" Width="20" Height="20"/>
+                                        Style="{StaticResource ButtonOfOrder}" Command="ApplicationCommands.New"
+                                        Visibility="{Binding ElementName=NewProductGrid, Path=IsVisible, Converter={StaticResource BoolToVisibilityConverter}}"
+                                        Margin="10,0,0,0" ToolTip="Добавить изделие (показать список)">
+                                        <Image Source="/Images/free-icon-add-button.png" Width="20" Height="20"/>
+                                </Button>
+                                <Button Name="HideNewProductButton" Background="Transparent" BorderBrush="Transparent" 
+                                        Visibility="{Binding ElementName=NewProductGrid, Path=Visibility}"
+                                        Style="{StaticResource ButtonOfOrder}" Click="HideNewProductButton_Click"
+                                        Margin="10,0,0,0" ToolTip="Свернуть список изделий">
+                                    <Image Source="/Images/free-icon-minus-button.png" Width="20" Height="20"/>
                                 </Button>
                                 <Button Name="DeleteProductButton" Background="Transparent" BorderBrush="Transparent" 
-                                    Style="{StaticResource ButtonOfOrder}" Command="ApplicationCommands.Delete"
-                                    Margin="0,0,0,0" ToolTip="Отметить изделие для удаления">
-                                    <Image Source="/Images/free-icon-bin-Recycler.png" Width="20" Height="20"/>
+                                        Style="{StaticResource ButtonOfOrder}" Command="ApplicationCommands.Delete"
+                                        Margin="0,0,0,0" ToolTip="Отметить изделие для удаления">
+                                        <Image Source="/Images/free-icon-bin-Recycler.png" Width="20" Height="20"/>
                                 </Button>
                             </StackPanel>
-                            <ListBox Grid.Row="1" Name="NewProductListBox" Visibility="Collapsed"
+                            <Grid Grid.Row="1" Name="NewProductGrid" Margin="5,0,5,0" Visibility="Collapsed">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <StackPanel Orientation="Horizontal" Margin="0,5,0,5" HorizontalAlignment="Center">
+                                    <TextBlock Text="Поиск по наименованию изделия: "/>
+                                    <TextBox Name="FindNewProductTextBox" Text="" Width="300"
+                                             ToolTip="Введите фрагмент наименования изделия"
+                                             TextChanged="FindNewProductTextBox_TextChanged"/>
+                                </StackPanel>
+                                <ListBox Grid.Row="1" Name="NewProductListBox"
+                                     ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                     IsSynchronizedWithCurrentItem="true"
+                                     ItemsSource="{Binding Source={StaticResource productTypesViewSource}, Mode=OneTime}"
+                                     DisplayMemberPath="Name" MouseDoubleClick="NewProductListBox_MouseDoubleClick">
+                                    <ListBox.GroupStyle>
+                                        <GroupStyle>
+                                            <GroupStyle.ContainerStyle>
+                                                <Style TargetType="{x:Type GroupItem}">
+                                                    <Setter Property="Margin" Value="0,0,0,5"/>
+                                                    <Setter Property="Template">
+                                                        <Setter.Value>
+                                                            <ControlTemplate TargetType="{x:Type GroupItem}">
+                                                                <Expander Name="GroupProductExpander" BorderBrush="AntiqueWhite" BorderThickness="0,0,0,1"
+                                                                          IsHitTestVisible="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBoxItem}, Path=IsSelected}" 
+                                                                          IsExpanded="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBoxItem}, Path=IsSelected}">
+                                                                    <Expander.Header>
+                                                                        <DockPanel>
+                                                                            <TextBlock FontWeight="Bold" Text="{Binding Path=Name}" Margin="5,0,0,0" Width="300"/>
+                                                                        </DockPanel>
+                                                                    </Expander.Header>
+                                                                    <Expander.Content>
+                                                                        <ItemsPresenter />
+                                                                    </Expander.Content>
+                                                                </Expander>
+                                                            </ControlTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style>
+                                            </GroupStyle.ContainerStyle>
+                                        </GroupStyle>
+                                    </ListBox.GroupStyle>
+                                </ListBox>
+                            </Grid>
+                            <!--<ListBox Grid.Row="1" Name="NewProductListBox" Visibility="Collapsed"
                                      ScrollViewer.VerticalScrollBarVisibility="Auto"
                                      IsSynchronizedWithCurrentItem="true"
                                      ItemsSource="{Binding Source={StaticResource productTypesViewSource}, Mode=OneTime}"
@@ -365,11 +417,11 @@
                                         </GroupStyle.ContainerStyle>
                                     </GroupStyle>
                                 </ListBox.GroupStyle>
-                            </ListBox>
+                            </ListBox>-->
                             <StackPanel x:Name="ProductStack" Grid.Row="2" Orientation="Vertical">
                                 <ListView Name="ListProduct" Margin="5" Padding="2" IsSynchronizedWithCurrentItem="True"
                                           ItemsSource="{Binding Source={StaticResource productsViewSource}, 
-                                                        ValidatesOnNotifyDataErrors=True, ValidatesOnExceptions=True}" 
+                                                        ValidatesOnNotifyDataErrors=True, ValidatesOnExceptions=True}"
                                           PreviewKeyDown="ListViewUpAndDown_PreviewKeyDown">
                                     <ListView.View>
                                         <GridView>

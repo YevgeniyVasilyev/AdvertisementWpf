@@ -1,5 +1,52 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Report ScriptLanguage="CSharp" ReportInfo.Created="07/16/2023 15:55:30" ReportInfo.Modified="09/12/2023 19:42:48" ReportInfo.CreatorVersion="2023.1.0.0">
+<Report ScriptLanguage="CSharp" ReportInfo.Created="09/16/2023 21:44:53" ReportInfo.Modified="09/20/2023 19:31:55" ReportInfo.CreatorVersion="2023.1.0.0">
+  <ScriptText>using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Windows.Forms;
+using System.Drawing;
+using System.Data;
+using FastReport;
+using FastReport.Data;
+using FastReport.Dialog;
+using FastReport.Barcode;
+using FastReport.Table;
+using FastReport.Utils;
+
+namespace FastReport
+{
+  public class ReportScript
+  {
+    private decimal div = 0;
+    private void Text20_BeforePrint(object sender, EventArgs e)
+    {
+      decimal totalCost = (decimal)Report.GetTotalValue(&quot;TotaCostl&quot;);
+      decimal outlayTotal = (decimal)Report.GetTotalValue(&quot;OutlayTotal&quot;);
+      if (totalCost &gt; 0)
+      {
+        div = outlayTotal / totalCost;
+        if (div.ToString().Contains(&quot;E&quot;))
+        {
+          div = Convert.ToDecimal($&quot;{div:E8}&quot;.Substring(0, 10));  
+        }
+        else if (div.ToString() != &quot;NaN&quot;)
+        {
+          div = Convert.ToDecimal(div);
+        }
+        else
+        {
+          div = 0;
+        }
+      }
+      else
+      {
+        div = 0;
+      }
+    }
+  }
+}
+</ScriptText>
   <Dictionary>
     <BusinessObjectDataSource Name="ProductCost" ReferenceName="ProductCost" DataType="null" Enabled="true">
       <Column Name="ID" DataType="System.Int64"/>
@@ -127,49 +174,23 @@
             <Column Name="DesignerID" DataType="null"/>
             <Column Name="IsHasTechcard" DataType="System.Boolean" BindableControl="CheckBox"/>
             <Column Name="Order" DataType="null"/>
+            <BusinessObjectDataSource Name="ProductCosts" Enabled="false" DataType="null"/>
             <Column Name="ProductType" DataType="null"/>
             <Column Name="Designer" DataType="null"/>
             <Column Name="TechCard" DataType="null"/>
-            <BusinessObjectDataSource Name="Costs" Enabled="false" DataType="null"/>
+            <Column Name="KVDForReport" DataType="System.String"/>
             <Column Name="ProductTypeName" DataType="System.String"/>
+            <BusinessObjectDataSource Name="Costs" Enabled="false" DataType="null"/>
             <BusinessObjectDataSource Name="FilesList" Enabled="false" DataType="null"/>
             <BusinessObjectDataSource Name="ProductParameter" Enabled="false" DataType="null"/>
             <Column Name="State" DataType="System.String"/>
             <Column Name="ProductInfoForAccount" DataType="System.String"/>
           </BusinessObjectDataSource>
           <BusinessObjectDataSource Name="Payments" DataType="null" Enabled="true">
-            <Column Name="ID" DataType="System.Int64"/>
-            <Column Name="OrderID" DataType="System.Int64"/>
-            <Column Name="PaymentDate" DataType="null"/>
-            <Column Name="PaymentAmount" DataType="System.Decimal"/>
-            <Column Name="PaymentDocNumber" DataType="System.String"/>
-            <Column Name="PurposeOfPayment" DataType="null"/>
-            <Column Name="TypeOfPayment" DataType="null"/>
-            <Column Name="AccountID" DataType="null"/>
-            <Column Name="Order" DataType="null"/>
-            <Column Name="Account" DataType="null"/>
-            <Column Name="PurposeOfPaymentName" DataType="System.String"/>
-            <Column Name="TypeOfPaymentName" DataType="System.String"/>
+            <Column Name="Value" Enabled="false" DataType="System.RuntimeType"/>
           </BusinessObjectDataSource>
           <BusinessObjectDataSource Name="Accounts" DataType="null" Enabled="true">
-            <Column Name="ID" DataType="System.Int64"/>
-            <Column Name="OrderID" DataType="System.Int64"/>
-            <Column Name="AccountNumber" DataType="System.String"/>
-            <Column Name="AccountDate" DataType="null"/>
-            <Column Name="ContractorID" DataType="null"/>
-            <Column Name="Footing" DataType="System.String"/>
-            <Column Name="IsManual" DataType="System.Boolean" BindableControl="CheckBox"/>
-            <Column Name="Details" DataType="System.String"/>
-            <Column Name="PayBeforeDate" DataType="null"/>
-            <Column Name="Order" DataType="null"/>
-            <Column Name="Contractor" DataType="null"/>
-            <BusinessObjectDataSource Name="Acts" Enabled="false" DataType="null"/>
-            <BusinessObjectDataSource Name="Payments1" Alias="Payments" Enabled="false" DataType="null" PropName="Payments"/>
-            <BusinessObjectDataSource Name="DetailsList" Enabled="false" DataType="null"/>
-            <Column Name="ContractorName" DataType="System.String"/>
-            <Column Name="ContractorInfoForAccount" DataType="System.String"/>
-            <Column Name="ContractorInfoForAct" DataType="System.String"/>
-            <Column Name="TotalCost" DataType="null"/>
+            <Column Name="Value" Enabled="false" DataType="System.RuntimeType"/>
           </BusinessObjectDataSource>
           <Column Name="AccountDate" DataType="null"/>
           <Column Name="OrderCost" DataType="System.Decimal"/>
@@ -177,6 +198,58 @@
           <Column Name="CountProduct" DataType="System.Int16"/>
           <Column Name="State" DataType="System.String"/>
         </Column>
+        <BusinessObjectDataSource Name="ProductCosts1" Alias="ProductCosts" DataType="null" PropName="ProductCosts" Enabled="true">
+          <Column Name="ID" DataType="System.Int64"/>
+          <Column Name="ProductID" DataType="System.Int64"/>
+          <Column Name="TypeOfActivityID" DataType="System.Int64"/>
+          <Column Name="Cost" DataType="System.Decimal"/>
+          <Column Name="Outlay" DataType="System.Decimal"/>
+          <Column Name="Product" DataType="null">
+            <Column Name="ID" DataType="System.Int64"/>
+            <Column Name="OrderID" DataType="System.Int64"/>
+            <Column Name="ProductTypeID" DataType="System.Int64"/>
+            <Column Name="Parameters" DataType="System.String"/>
+            <Column Name="Cost" DataType="System.Decimal"/>
+            <Column Name="DateDeliveryPlan" DataType="null"/>
+            <Column Name="DateProductionLayout" DataType="null"/>
+            <Column Name="DateTransferDesigner" DataType="null"/>
+            <Column Name="DateTransferApproval" DataType="null"/>
+            <Column Name="DateApproval" DataType="null"/>
+            <Column Name="DateTransferProduction" DataType="null"/>
+            <Column Name="DateManufacture" DataType="null"/>
+            <Column Name="DateShipment" DataType="null"/>
+            <Column Name="Note" DataType="System.String"/>
+            <Column Name="Files" DataType="System.String"/>
+            <Column Name="Quantity" DataType="System.Int16"/>
+            <Column Name="DesignerID" DataType="null"/>
+            <Column Name="IsHasTechcard" DataType="System.Boolean" BindableControl="CheckBox"/>
+            <Column Name="Order" DataType="null"/>
+            <BusinessObjectDataSource Name="ProductCosts2" Alias="ProductCosts" Enabled="false" DataType="null" PropName="ProductCosts"/>
+            <Column Name="ProductType" DataType="null"/>
+            <Column Name="Designer" DataType="null"/>
+            <Column Name="TechCard" DataType="null"/>
+            <Column Name="KVDForReport" DataType="System.String"/>
+            <Column Name="ProductTypeName" DataType="System.String"/>
+            <BusinessObjectDataSource Name="Costs1" Alias="Costs" Enabled="false" DataType="null" PropName="Costs"/>
+            <BusinessObjectDataSource Name="FilesList1" Alias="FilesList" Enabled="false" DataType="null" PropName="FilesList"/>
+            <BusinessObjectDataSource Name="ProductParameter1" Alias="ProductParameter" Enabled="false" DataType="null" PropName="ProductParameter"/>
+            <Column Name="State" DataType="System.String"/>
+            <Column Name="ProductInfoForAccount" DataType="System.String"/>
+          </Column>
+          <Column Name="TypeOfActivity" DataType="null">
+            <Column Name="ID" DataType="System.Int64"/>
+            <Column Name="Name" DataType="System.String"/>
+            <Column Name="Code" DataType="System.String"/>
+            <BusinessObjectDataSource Name="WorkInTechCards" Enabled="false" DataType="null"/>
+            <BusinessObjectDataSource Name="TypeOfActivityInProdAreas" Enabled="false" DataType="null"/>
+            <BusinessObjectDataSource Name="TypeOfActivityInOperations" Enabled="false" DataType="null"/>
+            <Column Name="CodeName" DataType="System.String"/>
+            <Column Name="TrimCodeName" DataType="System.String"/>
+          </Column>
+          <Column Name="Code" DataType="System.String"/>
+          <Column Name="Name" DataType="System.String"/>
+          <Column Name="Margin" DataType="System.Decimal"/>
+        </BusinessObjectDataSource>
         <Column Name="ProductType" DataType="null">
           <Column Name="ID" DataType="System.Int64"/>
           <Column Name="Name" DataType="System.String"/>
@@ -225,7 +298,32 @@
             <BusinessObjectDataSource Name="Users" Enabled="false" DataType="null"/>
           </Column>
           <BusinessObjectDataSource Name="Clients2" Alias="Clients" DataType="null" PropName="Clients" Enabled="true">
-            <Column Name="Value" Enabled="false" DataType="System.RuntimeType"/>
+            <Column Name="ID" DataType="System.Int64"/>
+            <Column Name="Name" DataType="System.String"/>
+            <Column Name="Profile" DataType="System.String"/>
+            <Column Name="IsIndividual" DataType="System.Boolean" BindableControl="CheckBox"/>
+            <Column Name="DirectorName" DataType="System.String"/>
+            <Column Name="ContactPersonName" DataType="System.String"/>
+            <Column Name="PostalAddress" DataType="System.String"/>
+            <Column Name="BusinessAddress" DataType="System.String"/>
+            <Column Name="ActualAddress" DataType="System.String"/>
+            <Column Name="Consignee" DataType="System.String"/>
+            <Column Name="INN" DataType="System.String"/>
+            <Column Name="KPP" DataType="System.String"/>
+            <Column Name="BankAccount" DataType="System.String"/>
+            <Column Name="BankID" DataType="null"/>
+            <Column Name="IsActive" DataType="System.Boolean" BindableControl="CheckBox"/>
+            <Column Name="Note" DataType="System.Byte[]" BindableControl="Picture"/>
+            <Column Name="UserID" DataType="System.Int64"/>
+            <Column Name="MobilePhone" DataType="System.String"/>
+            <Column Name="WorkPhone" DataType="System.String"/>
+            <Column Name="Email" DataType="System.String"/>
+            <Column Name="AdditionalInfo" DataType="System.String"/>
+            <Column Name="Bank" DataType="null"/>
+            <Column Name="User" DataType="null"/>
+            <BusinessObjectDataSource Name="Orders1" Alias="Orders" Enabled="false" DataType="null" PropName="Orders"/>
+            <Column Name="ClientInfoForAccount" DataType="System.String"/>
+            <Column Name="ClientInfoForAct" DataType="System.String"/>
           </BusinessObjectDataSource>
           <BusinessObjectDataSource Name="ProductDesigners2" Alias="ProductDesigners" DataType="null" PropName="ProductDesigners" Enabled="true">
             <Column Name="ID" DataType="System.Int64"/>
@@ -247,21 +345,59 @@
             <Column Name="DesignerID" DataType="null"/>
             <Column Name="IsHasTechcard" DataType="System.Boolean" BindableControl="CheckBox"/>
             <Column Name="Order" DataType="null"/>
+            <BusinessObjectDataSource Name="ProductCosts3" Alias="ProductCosts" Enabled="false" DataType="null" PropName="ProductCosts"/>
             <Column Name="ProductType" DataType="null"/>
             <Column Name="Designer" DataType="null"/>
             <Column Name="TechCard" DataType="null"/>
-            <BusinessObjectDataSource Name="Costs1" Alias="Costs" Enabled="false" DataType="null" PropName="Costs"/>
+            <Column Name="KVDForReport" DataType="System.String"/>
             <Column Name="ProductTypeName" DataType="System.String"/>
-            <BusinessObjectDataSource Name="FilesList1" Alias="FilesList" Enabled="false" DataType="null" PropName="FilesList"/>
-            <BusinessObjectDataSource Name="ProductParameter1" Alias="ProductParameter" Enabled="false" DataType="null" PropName="ProductParameter"/>
+            <BusinessObjectDataSource Name="Costs2" Alias="Costs" Enabled="false" DataType="null" PropName="Costs"/>
+            <BusinessObjectDataSource Name="FilesList2" Alias="FilesList" Enabled="false" DataType="null" PropName="FilesList"/>
+            <BusinessObjectDataSource Name="ProductParameter2" Alias="ProductParameter" Enabled="false" DataType="null" PropName="ProductParameter"/>
             <Column Name="State" DataType="System.String"/>
             <Column Name="ProductInfoForAccount" DataType="System.String"/>
           </BusinessObjectDataSource>
           <BusinessObjectDataSource Name="OrderManagers2" Alias="OrderManagers" DataType="null" PropName="OrderManagers" Enabled="true">
-            <Column Name="Value" Enabled="false" DataType="System.RuntimeType"/>
+            <Column Name="ID" DataType="System.Int64"/>
+            <Column Name="Number" DataType="System.String"/>
+            <Column Name="ClientID" DataType="System.Int64"/>
+            <Column Name="Note" DataType="System.String"/>
+            <Column Name="DateAdmission" DataType="null"/>
+            <Column Name="DateCompletion" DataType="null"/>
+            <Column Name="OrderEnteredID" DataType="System.Int64"/>
+            <Column Name="ManagerID" DataType="null"/>
+            <Column Name="Client" DataType="null"/>
+            <Column Name="Manager" DataType="null"/>
+            <Column Name="OrderEntered" DataType="null"/>
+            <BusinessObjectDataSource Name="Products1" Alias="Products" Enabled="false" DataType="null" PropName="Products"/>
+            <BusinessObjectDataSource Name="Payments1" Alias="Payments" Enabled="false" DataType="null" PropName="Payments"/>
+            <BusinessObjectDataSource Name="Accounts1" Alias="Accounts" Enabled="false" DataType="null" PropName="Accounts"/>
+            <Column Name="AccountDate" DataType="null"/>
+            <Column Name="OrderCost" DataType="System.Decimal"/>
+            <Column Name="OrderPayments" DataType="System.Decimal"/>
+            <Column Name="CountProduct" DataType="System.Int16"/>
+            <Column Name="State" DataType="System.String"/>
           </BusinessObjectDataSource>
           <BusinessObjectDataSource Name="OrderOrderEntereds2" Alias="OrderOrderEntereds" DataType="null" PropName="OrderOrderEntereds" Enabled="true">
-            <Column Name="Value" Enabled="false" DataType="System.RuntimeType"/>
+            <Column Name="ID" DataType="System.Int64"/>
+            <Column Name="Number" DataType="System.String"/>
+            <Column Name="ClientID" DataType="System.Int64"/>
+            <Column Name="Note" DataType="System.String"/>
+            <Column Name="DateAdmission" DataType="null"/>
+            <Column Name="DateCompletion" DataType="null"/>
+            <Column Name="OrderEnteredID" DataType="System.Int64"/>
+            <Column Name="ManagerID" DataType="null"/>
+            <Column Name="Client" DataType="null"/>
+            <Column Name="Manager" DataType="null"/>
+            <Column Name="OrderEntered" DataType="null"/>
+            <BusinessObjectDataSource Name="Products2" Alias="Products" Enabled="false" DataType="null" PropName="Products"/>
+            <BusinessObjectDataSource Name="Payments2" Alias="Payments" Enabled="false" DataType="null" PropName="Payments"/>
+            <BusinessObjectDataSource Name="Accounts2" Alias="Accounts" Enabled="false" DataType="null" PropName="Accounts"/>
+            <Column Name="AccountDate" DataType="null"/>
+            <Column Name="OrderCost" DataType="System.Decimal"/>
+            <Column Name="OrderPayments" DataType="System.Decimal"/>
+            <Column Name="CountProduct" DataType="System.Int16"/>
+            <Column Name="State" DataType="System.String"/>
           </BusinessObjectDataSource>
           <Column Name="FullUserName" DataType="System.String"/>
           <Column Name="ShortUserName" DataType="System.String"/>
@@ -291,17 +427,19 @@
             <Column Name="DesignerID" DataType="null"/>
             <Column Name="IsHasTechcard" DataType="System.Boolean" BindableControl="CheckBox"/>
             <Column Name="Order" DataType="null"/>
+            <BusinessObjectDataSource Name="ProductCosts4" Alias="ProductCosts" Enabled="false" DataType="null" PropName="ProductCosts"/>
             <Column Name="ProductType" DataType="null"/>
             <Column Name="Designer" DataType="null"/>
             <Column Name="TechCard" DataType="null"/>
-            <BusinessObjectDataSource Name="Costs2" Alias="Costs" Enabled="false" DataType="null" PropName="Costs"/>
+            <Column Name="KVDForReport" DataType="System.String"/>
             <Column Name="ProductTypeName" DataType="System.String"/>
-            <BusinessObjectDataSource Name="FilesList2" Alias="FilesList" Enabled="false" DataType="null" PropName="FilesList"/>
-            <BusinessObjectDataSource Name="ProductParameter2" Alias="ProductParameter" Enabled="false" DataType="null" PropName="ProductParameter"/>
+            <BusinessObjectDataSource Name="Costs3" Alias="Costs" Enabled="false" DataType="null" PropName="Costs"/>
+            <BusinessObjectDataSource Name="FilesList3" Alias="FilesList" Enabled="false" DataType="null" PropName="FilesList"/>
+            <BusinessObjectDataSource Name="ProductParameter3" Alias="ProductParameter" Enabled="false" DataType="null" PropName="ProductParameter"/>
             <Column Name="State" DataType="System.String"/>
             <Column Name="ProductInfoForAccount" DataType="System.String"/>
           </Column>
-          <BusinessObjectDataSource Name="WorkInTechCards" DataType="null" Enabled="true">
+          <BusinessObjectDataSource Name="WorkInTechCards1" Alias="WorkInTechCards" DataType="null" PropName="WorkInTechCards" Enabled="true">
             <Column Name="ID" DataType="System.Int64"/>
             <Column Name="TechCardID" DataType="System.Int64"/>
             <Column Name="TypeOfActivityID" DataType="null"/>
@@ -340,7 +478,9 @@
           <Column Name="IsPrinted" DataType="System.Boolean" BindableControl="CheckBox"/>
           <Column Name="IsChecked" DataType="System.Boolean" BindableControl="CheckBox"/>
         </Column>
-        <BusinessObjectDataSource Name="Costs3" Alias="Costs" DataType="null" PropName="Costs" Enabled="true">
+        <Column Name="KVDForReport" DataType="System.String"/>
+        <Column Name="ProductTypeName" DataType="System.String"/>
+        <BusinessObjectDataSource Name="Costs4" Alias="Costs" DataType="null" PropName="Costs" Enabled="true">
           <Column Name="ID" DataType="System.Int64"/>
           <Column Name="ProductID" DataType="System.Int64"/>
           <Column Name="TypeOfActivityID" DataType="System.Int64"/>
@@ -366,13 +506,15 @@
             <Column Name="DesignerID" DataType="null"/>
             <Column Name="IsHasTechcard" DataType="System.Boolean" BindableControl="CheckBox"/>
             <Column Name="Order" DataType="null"/>
+            <BusinessObjectDataSource Name="ProductCosts5" Alias="ProductCosts" Enabled="false" DataType="null" PropName="ProductCosts"/>
             <Column Name="ProductType" DataType="null"/>
             <Column Name="Designer" DataType="null"/>
             <Column Name="TechCard" DataType="null"/>
-            <BusinessObjectDataSource Name="Costs4" Alias="Costs" Enabled="false" DataType="null" PropName="Costs"/>
+            <Column Name="KVDForReport" DataType="System.String"/>
             <Column Name="ProductTypeName" DataType="System.String"/>
-            <BusinessObjectDataSource Name="FilesList3" Alias="FilesList" Enabled="false" DataType="null" PropName="FilesList"/>
-            <BusinessObjectDataSource Name="ProductParameter3" Alias="ProductParameter" Enabled="false" DataType="null" PropName="ProductParameter"/>
+            <BusinessObjectDataSource Name="Costs5" Alias="Costs" Enabled="false" DataType="null" PropName="Costs"/>
+            <BusinessObjectDataSource Name="FilesList4" Alias="FilesList" Enabled="false" DataType="null" PropName="FilesList"/>
+            <BusinessObjectDataSource Name="ProductParameter4" Alias="ProductParameter" Enabled="false" DataType="null" PropName="ProductParameter"/>
             <Column Name="State" DataType="System.String"/>
             <Column Name="ProductInfoForAccount" DataType="System.String"/>
           </Column>
@@ -380,20 +522,20 @@
             <Column Name="ID" DataType="System.Int64"/>
             <Column Name="Name" DataType="System.String"/>
             <Column Name="Code" DataType="System.String"/>
-            <BusinessObjectDataSource Name="WorkInTechCards1" Alias="WorkInTechCards" Enabled="false" DataType="null" PropName="WorkInTechCards"/>
-            <BusinessObjectDataSource Name="TypeOfActivityInProdAreas" Enabled="false" DataType="null"/>
-            <BusinessObjectDataSource Name="TypeOfActivityInOperations" Enabled="false" DataType="null"/>
+            <BusinessObjectDataSource Name="WorkInTechCards2" Alias="WorkInTechCards" Enabled="false" DataType="null" PropName="WorkInTechCards"/>
+            <BusinessObjectDataSource Name="TypeOfActivityInProdAreas1" Alias="TypeOfActivityInProdAreas" Enabled="false" DataType="null" PropName="TypeOfActivityInProdAreas"/>
+            <BusinessObjectDataSource Name="TypeOfActivityInOperations1" Alias="TypeOfActivityInOperations" Enabled="false" DataType="null" PropName="TypeOfActivityInOperations"/>
             <Column Name="CodeName" DataType="System.String"/>
+            <Column Name="TrimCodeName" DataType="System.String"/>
           </Column>
           <Column Name="Code" DataType="System.String"/>
           <Column Name="Name" DataType="System.String"/>
           <Column Name="Margin" DataType="System.Decimal"/>
         </BusinessObjectDataSource>
-        <Column Name="ProductTypeName" DataType="System.String"/>
-        <BusinessObjectDataSource Name="FilesList4" Alias="FilesList" DataType="null" PropName="FilesList" Enabled="true">
+        <BusinessObjectDataSource Name="FilesList5" Alias="FilesList" DataType="null" PropName="FilesList" Enabled="true">
           <Column Name="Length" DataType="System.Int32"/>
         </BusinessObjectDataSource>
-        <BusinessObjectDataSource Name="ProductParameter4" Alias="ProductParameter" DataType="null" PropName="ProductParameter" Enabled="true">
+        <BusinessObjectDataSource Name="ProductParameter5" Alias="ProductParameter" DataType="null" PropName="ProductParameter" Enabled="true">
           <Column Name="ID" DataType="System.Int64"/>
           <Column Name="Name" DataType="System.String"/>
           <Column Name="ParameterValue" DataType="System.String"/>
@@ -423,7 +565,7 @@
         <Column Name="ID" DataType="System.Int64"/>
         <Column Name="Name" DataType="System.String"/>
         <Column Name="Code" DataType="System.String"/>
-        <BusinessObjectDataSource Name="WorkInTechCards2" Alias="WorkInTechCards" DataType="null" PropName="WorkInTechCards" Enabled="true">
+        <BusinessObjectDataSource Name="WorkInTechCards3" Alias="WorkInTechCards" DataType="null" PropName="WorkInTechCards" Enabled="true">
           <Column Name="ID" DataType="System.Int64"/>
           <Column Name="TechCardID" DataType="System.Int64"/>
           <Column Name="TypeOfActivityID" DataType="null"/>
@@ -437,7 +579,7 @@
             <Column Name="Number" DataType="System.String"/>
             <Column Name="Note" DataType="System.String"/>
             <Column Name="Product" DataType="null"/>
-            <BusinessObjectDataSource Name="WorkInTechCards3" Alias="WorkInTechCards" Enabled="false" DataType="null" PropName="WorkInTechCards"/>
+            <BusinessObjectDataSource Name="WorkInTechCards4" Alias="WorkInTechCards" Enabled="false" DataType="null" PropName="WorkInTechCards"/>
             <BusinessObjectDataSource Name="WorkInTechCards_1" Alias="WorkInTechCards_" Enabled="false" DataType="null" PropName="WorkInTechCards_"/>
             <Column Name="IsSelected" DataType="System.Boolean" BindableControl="CheckBox"/>
             <Column Name="IsExpanded" DataType="System.Boolean" BindableControl="CheckBox"/>
@@ -448,10 +590,11 @@
             <Column Name="ID" DataType="System.Int64"/>
             <Column Name="Name" DataType="System.String"/>
             <Column Name="Code" DataType="System.String"/>
-            <BusinessObjectDataSource Name="WorkInTechCards4" Alias="WorkInTechCards" Enabled="false" DataType="null" PropName="WorkInTechCards"/>
-            <BusinessObjectDataSource Name="TypeOfActivityInProdAreas1" Alias="TypeOfActivityInProdAreas" Enabled="false" DataType="null" PropName="TypeOfActivityInProdAreas"/>
-            <BusinessObjectDataSource Name="TypeOfActivityInOperations1" Alias="TypeOfActivityInOperations" Enabled="false" DataType="null" PropName="TypeOfActivityInOperations"/>
+            <BusinessObjectDataSource Name="WorkInTechCards5" Alias="WorkInTechCards" Enabled="false" DataType="null" PropName="WorkInTechCards"/>
+            <BusinessObjectDataSource Name="TypeOfActivityInProdAreas2" Alias="TypeOfActivityInProdAreas" Enabled="false" DataType="null" PropName="TypeOfActivityInProdAreas"/>
+            <BusinessObjectDataSource Name="TypeOfActivityInOperations2" Alias="TypeOfActivityInOperations" Enabled="false" DataType="null" PropName="TypeOfActivityInOperations"/>
             <Column Name="CodeName" DataType="System.String"/>
+            <Column Name="TrimCodeName" DataType="System.String"/>
           </Column>
           <BusinessObjectDataSource Name="OperationInWorks2" Alias="OperationInWorks" DataType="null" PropName="OperationInWorks" Enabled="true">
             <Column Name="ID" DataType="System.Int64"/>
@@ -463,7 +606,7 @@
             <Column Name="Files" DataType="System.String"/>
             <Column Name="Operation" DataType="null"/>
             <Column Name="WorkInTechCard" DataType="null"/>
-            <BusinessObjectDataSource Name="FilesList5" Alias="FilesList" Enabled="false" DataType="null" PropName="FilesList"/>
+            <BusinessObjectDataSource Name="FilesList6" Alias="FilesList" Enabled="false" DataType="null" PropName="FilesList"/>
             <BusinessObjectDataSource Name="OperationInWorkParameters" Enabled="false" DataType="null"/>
             <Column Name="IsSelected" DataType="System.Boolean" BindableControl="CheckBox"/>
             <Column Name="IsExpanded" DataType="System.Boolean" BindableControl="CheckBox"/>
@@ -480,7 +623,7 @@
             <Column Name="Files" DataType="System.String"/>
             <Column Name="Operation" DataType="null"/>
             <Column Name="WorkInTechCard" DataType="null"/>
-            <BusinessObjectDataSource Name="FilesList6" Alias="FilesList" Enabled="false" DataType="null" PropName="FilesList"/>
+            <BusinessObjectDataSource Name="FilesList7" Alias="FilesList" Enabled="false" DataType="null" PropName="FilesList"/>
             <BusinessObjectDataSource Name="OperationInWorkParameters1" Alias="OperationInWorkParameters" Enabled="false" DataType="null" PropName="OperationInWorkParameters"/>
             <Column Name="IsSelected" DataType="System.Boolean" BindableControl="CheckBox"/>
             <Column Name="IsExpanded" DataType="System.Boolean" BindableControl="CheckBox"/>
@@ -492,7 +635,7 @@
           <Column Name="IsPrinted" DataType="System.Boolean" BindableControl="CheckBox"/>
           <Column Name="IsChecked" DataType="System.Boolean" BindableControl="CheckBox"/>
         </BusinessObjectDataSource>
-        <BusinessObjectDataSource Name="TypeOfActivityInProdAreas2" Alias="TypeOfActivityInProdAreas" DataType="null" PropName="TypeOfActivityInProdAreas" Enabled="true">
+        <BusinessObjectDataSource Name="TypeOfActivityInProdAreas3" Alias="TypeOfActivityInProdAreas" DataType="null" PropName="TypeOfActivityInProdAreas" Enabled="true">
           <Column Name="ID" DataType="System.Int64"/>
           <Column Name="ProductionAreaID" DataType="System.Int64"/>
           <Column Name="TypeOfActivityID" DataType="System.Int64"/>
@@ -500,20 +643,21 @@
             <Column Name="ID" DataType="System.Int64"/>
             <Column Name="Name" DataType="System.String"/>
             <BusinessObjectDataSource Name="Operations" Enabled="false" DataType="null"/>
-            <BusinessObjectDataSource Name="TypeOfActivityInProdAreas3" Alias="TypeOfActivityInProdAreas" Enabled="false" DataType="null" PropName="TypeOfActivityInProdAreas"/>
+            <BusinessObjectDataSource Name="TypeOfActivityInProdAreas4" Alias="TypeOfActivityInProdAreas" Enabled="false" DataType="null" PropName="TypeOfActivityInProdAreas"/>
           </Column>
           <Column Name="TypeOfActivity" DataType="null">
             <Column Name="ID" DataType="System.Int64"/>
             <Column Name="Name" DataType="System.String"/>
             <Column Name="Code" DataType="System.String"/>
-            <BusinessObjectDataSource Name="WorkInTechCards5" Alias="WorkInTechCards" Enabled="false" DataType="null" PropName="WorkInTechCards"/>
-            <BusinessObjectDataSource Name="TypeOfActivityInProdAreas4" Alias="TypeOfActivityInProdAreas" Enabled="false" DataType="null" PropName="TypeOfActivityInProdAreas"/>
-            <BusinessObjectDataSource Name="TypeOfActivityInOperations2" Alias="TypeOfActivityInOperations" Enabled="false" DataType="null" PropName="TypeOfActivityInOperations"/>
+            <BusinessObjectDataSource Name="WorkInTechCards6" Alias="WorkInTechCards" Enabled="false" DataType="null" PropName="WorkInTechCards"/>
+            <BusinessObjectDataSource Name="TypeOfActivityInProdAreas5" Alias="TypeOfActivityInProdAreas" Enabled="false" DataType="null" PropName="TypeOfActivityInProdAreas"/>
+            <BusinessObjectDataSource Name="TypeOfActivityInOperations3" Alias="TypeOfActivityInOperations" Enabled="false" DataType="null" PropName="TypeOfActivityInOperations"/>
             <Column Name="CodeName" DataType="System.String"/>
+            <Column Name="TrimCodeName" DataType="System.String"/>
           </Column>
           <Column Name="TypeOfActivityCodeName" DataType="System.String"/>
         </BusinessObjectDataSource>
-        <BusinessObjectDataSource Name="TypeOfActivityInOperations3" Alias="TypeOfActivityInOperations" DataType="null" PropName="TypeOfActivityInOperations" Enabled="true">
+        <BusinessObjectDataSource Name="TypeOfActivityInOperations4" Alias="TypeOfActivityInOperations" DataType="null" PropName="TypeOfActivityInOperations" Enabled="true">
           <Column Name="ID" DataType="System.Int64"/>
           <Column Name="OperationID" DataType="System.Int64"/>
           <Column Name="TypeOfActivityID" DataType="System.Int64"/>
@@ -524,59 +668,70 @@
             <Column Name="ProductionArea" DataType="null"/>
             <BusinessObjectDataSource Name="OperationInWorks3" Alias="OperationInWorks" Enabled="false" DataType="null" PropName="OperationInWorks"/>
             <BusinessObjectDataSource Name="ParameterInOperations1" Alias="ParameterInOperations" Enabled="false" DataType="null" PropName="ParameterInOperations"/>
-            <BusinessObjectDataSource Name="TypeOfActivityInOperations4" Alias="TypeOfActivityInOperations" Enabled="false" DataType="null" PropName="TypeOfActivityInOperations"/>
+            <BusinessObjectDataSource Name="TypeOfActivityInOperations5" Alias="TypeOfActivityInOperations" Enabled="false" DataType="null" PropName="TypeOfActivityInOperations"/>
           </Column>
           <Column Name="TypeOfActivity" DataType="null">
             <Column Name="ID" DataType="System.Int64"/>
             <Column Name="Name" DataType="System.String"/>
             <Column Name="Code" DataType="System.String"/>
-            <BusinessObjectDataSource Name="WorkInTechCards6" Alias="WorkInTechCards" Enabled="false" DataType="null" PropName="WorkInTechCards"/>
-            <BusinessObjectDataSource Name="TypeOfActivityInProdAreas5" Alias="TypeOfActivityInProdAreas" Enabled="false" DataType="null" PropName="TypeOfActivityInProdAreas"/>
-            <BusinessObjectDataSource Name="TypeOfActivityInOperations5" Alias="TypeOfActivityInOperations" Enabled="false" DataType="null" PropName="TypeOfActivityInOperations"/>
+            <BusinessObjectDataSource Name="WorkInTechCards7" Alias="WorkInTechCards" Enabled="false" DataType="null" PropName="WorkInTechCards"/>
+            <BusinessObjectDataSource Name="TypeOfActivityInProdAreas6" Alias="TypeOfActivityInProdAreas" Enabled="false" DataType="null" PropName="TypeOfActivityInProdAreas"/>
+            <BusinessObjectDataSource Name="TypeOfActivityInOperations6" Alias="TypeOfActivityInOperations" Enabled="false" DataType="null" PropName="TypeOfActivityInOperations"/>
             <Column Name="CodeName" DataType="System.String"/>
+            <Column Name="TrimCodeName" DataType="System.String"/>
           </Column>
           <Column Name="TypeOfActivityCodeName" DataType="System.String"/>
         </BusinessObjectDataSource>
         <Column Name="CodeName" DataType="System.String"/>
+        <Column Name="TrimCodeName" DataType="System.String"/>
       </Column>
       <Column Name="Code" DataType="System.String"/>
       <Column Name="Name" DataType="System.String"/>
       <Column Name="Margin" DataType="System.Decimal"/>
     </BusinessObjectDataSource>
-    <Parameter Name="BeginPeriod" DataType="System.DateTime" Expression="BeginPeriod"/>
-    <Parameter Name="EndPeriod" DataType="System.DateTime" Expression="EndPeriod"/>
-    <Total Name="CostTotal" Expression="[ProductCost.Cost]" Evaluator="Data1" PrintOn="GroupFooter1"/>
+    <Total Name="TotaCostl" Expression="[ProductCost.Cost]" Evaluator="Data1" PrintOn="GroupFooter1"/>
     <Total Name="OutlayTotal" Expression="[ProductCost.Outlay]" Evaluator="Data1" PrintOn="GroupFooter1"/>
     <Total Name="MarginTotal" Expression="[ProductCost.Margin]" Evaluator="Data1" PrintOn="GroupFooter1"/>
+    <Total Name="FullTotaCostl" Expression="[ProductCost.Cost]" Evaluator="Data1" PrintOn="ReportSummary1"/>
+    <Total Name="FullOutlayTotal" Expression="[ProductCost.Outlay]" Evaluator="Data1" PrintOn="ReportSummary1"/>
+    <Total Name="FullMarginTotal" Expression="[ProductCost.Margin]" Evaluator="Data1" PrintOn="ReportSummary1"/>
   </Dictionary>
-  <ReportPage Name="Page1" RawPaperSize="9" LeftMargin="5" TopMargin="5" RightMargin="5" BottomMargin="5" Watermark.Font="Arial, 60pt" UnlimitedHeight="true">
-    <ReportTitleBand Name="ReportTitle1" Width="756" Height="28.35">
-      <TextObject Name="Text3" Width="756" Height="18.9" Text="Освоено дизайнерами за период с [FormatDateTime([BeginPeriod],&quot;Short Date&quot;)] г. по [FormatDateTime([EndPeriod],&quot;Short Date&quot;)]" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
+  <ReportPage Name="Page1" Landscape="true" PaperWidth="297" PaperHeight="210" RawPaperSize="9" Watermark.Font="Arial, 60pt">
+    <ReportTitleBand Name="ReportTitle1" Width="1047.06" Height="37.8">
+      <TextObject Name="Text4" Top="18.9" Width="1047.06" Height="18.9" Text="за период с [FormatDateTime([BeginPeriod], &quot;Short Date&quot;)] по [FormatDateTime([EndPeriod], &quot;Short Date&quot;)]" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt"/>
+      <TextObject Name="Text5" Width="1047.06" Height="18.9" Text="Отчет по отпущенным на склад заказам" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
     </ReportTitleBand>
-    <GroupHeaderBand Name="GroupHeader1" Top="30.64" Width="756" Height="37.8" Condition="[ProductCost.Product.Designer.ID]">
-      <TextObject Name="Text12" Width="756" Height="18.9" Border.Lines="All" Border.Width="0.5" Fill.Color="Gainsboro" Text="Дизайнер [AbsRow#] [ProductCost.Product.Designer.FullUserName]" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
-      <TextObject Name="Text13" Top="18.9" Width="94.5" Height="18.9" Border.Lines="All" Border.Width="0.5" Text="№ заказа" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt, style=Bold"/>
-      <TextObject Name="Text14" Left="94.5" Top="18.9" Width="255.15" Height="18.9" Border.Lines="All" Border.Width="0.5" Text="Изделие" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt, style=Bold"/>
-      <TextObject Name="Text15" Left="349.65" Top="18.9" Width="66.15" Height="18.9" Border.Lines="All" Border.Width="0.5" Text="Передано" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt, style=Bold"/>
-      <TextObject Name="Text16" Left="415.8" Top="18.9" Width="75.6" Height="18.9" Border.Lines="All" Border.Width="0.5" Text="Утверждено" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt, style=Bold"/>
-      <TextObject Name="Text17" Left="491.4" Top="18.9" Width="94.5" Height="18.9" Border.Lines="All" Border.Width="0.5" Text="Стоимость" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt, style=Bold"/>
-      <TextObject Name="Text18" Left="585.9" Top="18.9" Width="94.5" Height="18.9" Border.Lines="All" Border.Width="0.5" Text="К оплате" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt, style=Bold"/>
-      <TextObject Name="Text19" Left="680.4" Top="18.9" Width="75.6" Height="18.9" Border.Lines="All" Border.Width="0.5" Text="Маржа" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt, style=Bold"/>
-      <DataBand Name="Data1" Printable="false" Top="70.72" Width="756" Height="18.9" CanGrow="true" DataSource="ProductCost">
-        <TextObject Name="Text23" Width="94.5" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" Text="[ProductCost.Product.Order.Number]" HorzAlign="Right" VertAlign="Center" Font="Arial, 8pt"/>
-        <TextObject Name="Text24" Left="94.5" Width="255.15" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" Text="[ProductCost.Product.ProductType.Name]" HorzAlign="Right" VertAlign="Center" Font="Arial, 8pt"/>
-        <TextObject Name="Text25" Left="349.65" Width="66.15" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" Text="[ToDateTime([ProductCost.Product.DateTransferDesigner])]" HideZeros="true" Format="Date" Format.Format="d" HorzAlign="Right" VertAlign="Center" Font="Arial, 8pt"/>
-        <TextObject Name="Text26" Left="415.8" Width="75.6" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" Text="[ToDateTime([ProductCost.Product.DateApproval])]" HideZeros="true" Format="Date" Format.Format="d" HorzAlign="Right" VertAlign="Center" Font="Arial, 8pt"/>
-        <TextObject Name="Text27" Left="491.4" Width="94.5" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" Text="[ProductCost.Cost]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Right" VertAlign="Center" Font="Arial, 8pt"/>
-        <TextObject Name="Text28" Left="585.9" Width="94.5" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" Text="[ProductCost.Outlay]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Right" VertAlign="Center" Font="Arial, 8pt"/>
-        <TextObject Name="Text29" Left="680.4" Width="75.6" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" Text="[ProductCost.Margin]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Right" VertAlign="Center" Font="Arial, 8pt"/>
-      </DataBand>
-      <GroupFooterBand Name="GroupFooter1" Top="91.91" Width="756" Height="18.9">
-        <TextObject Name="Text2" Left="491.4" Width="94.5" Height="18.9" Border.Lines="All" Border.Width="0.5" Text="[CostTotal]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
-        <TextObject Name="Text20" Width="491.4" Height="18.9" Border.Lines="All" Border.Width="0.5" Text="ИТОГО по дизайнеру [ProductCost.Product.Designer.FullUserName]" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
-        <TextObject Name="Text21" Left="585.9" Width="94.5" Height="18.9" Border.Lines="All" Border.Width="0.5" Text="[OutlayTotal]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
-        <TextObject Name="Text22" Left="680.4" Width="75.6" Height="18.9" Border.Lines="All" Border.Width="0.5" Text="[MarginTotal]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
+    <PageHeaderBand Name="PageHeader1" Top="41" Width="1047.06" Height="47.25">
+      <TextObject Name="Text6" Width="85.05" Height="47.25" Border.Lines="All" Border.Width="0.5" Text="№ заказа" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt"/>
+      <TextObject Name="Text7" Left="85.05" Width="226.8" Height="47.25" Border.Lines="All" Border.Width="0.5" Text="Изделие" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt"/>
+      <TextObject Name="Text8" Left="311.85" Width="103.95" Height="47.25" Border.Lines="All" Border.Width="0.5" Text="Дата фактического изготовления" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt"/>
+      <TextObject Name="Text9" Left="415.8" Width="189" Height="47.25" Border.Lines="All" Border.Width="0.5" Text="Менеджер" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt"/>
+      <TextObject Name="Text10" Left="604.8" Width="66.15" Height="47.25" Border.Lines="All" Border.Width="0.5" Text="Кол-во" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt"/>
+      <TextObject Name="Text11" Left="670.95" Width="94.5" Height="47.25" Border.Lines="All" Border.Width="0.5" Text="Стоимость" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt"/>
+      <TextObject Name="Text12" Left="765.45" Width="94.5" Height="47.25" Border.Lines="All" Border.Width="0.5" Text="Затраты" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt"/>
+      <TextObject Name="Text13" Left="859.95" Width="94.5" Height="47.25" Border.Lines="All" Border.Width="0.5" Text="Материало-&#13;&#10;емкость" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt"/>
+      <TextObject Name="Text14" Left="954.45" Width="92.61" Height="47.25" Border.Lines="All" Border.Width="0.5" Text="Маржа" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt"/>
+    </PageHeaderBand>
+    <GroupHeaderBand Name="GroupHeader1" Top="91.45" Width="1047.06" Condition="[ProductCost.ProductID]" SortOrder="None">
+      <DataBand Name="Data1" Top="94.65" Width="1047.06" CanGrow="true" DataSource="ProductCost"/>
+      <GroupFooterBand Name="GroupFooter1" Top="97.85" Width="1047.06" Height="18.9" CanGrow="true">
+        <TextObject Name="Text1" Width="85.05" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" GrowToBottom="true" Text="[ProductCost.Product.Order.Number]" Duplicates="Merge" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
+        <TextObject Name="Text2" Left="85.05" Width="226.8" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" GrowToBottom="true" Text="[ProductCost.Product.ProductType.Name]" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
+        <TextObject Name="Text3" Left="670.95" Width="94.5" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" GrowToBottom="true" Text="[TotaCostl]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
+        <TextObject Name="Text15" Left="311.85" Width="103.95" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" GrowToBottom="true" Text="[ProductCost.Product.DateManufacture]" Format="Date" Format.Format="dd.MM.yyyy" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
+        <TextObject Name="Text16" Left="415.8" Width="189" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" GrowToBottom="true" Text="[ProductCost.Product.Order.Manager.FullUserName]" Duplicates="Merge" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
+        <TextObject Name="Text17" Left="604.8" Width="66.15" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" GrowToBottom="true" Text="[ProductCost.Product.Quantity]" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
+        <TextObject Name="Text18" Left="765.45" Width="94.5" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" GrowToBottom="true" Text="[OutlayTotal]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
+        <TextObject Name="Text20" Left="859.95" Width="94.5" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" GrowToBottom="true" BeforePrintEvent="Text20_BeforePrint" Text="[div]" Format="Percent" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
+        <TextObject Name="Text21" Left="954.45" Width="92.61" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" GrowToBottom="true" Text="[MarginTotal]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
       </GroupFooterBand>
     </GroupHeaderBand>
+    <ReportSummaryBand Name="ReportSummary1" Top="119.95" Width="1047.06" Height="18.9">
+      <TextObject Name="Text19" Width="670.95" Height="18.9" Border.Lines="All" Border.Width="0.5" Text="ИТОГО" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
+      <TextObject Name="Text22" Left="670.95" Width="94.5" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" Text="[FullTotaCostl]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
+      <TextObject Name="Text23" Left="765.45" Width="94.5" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" Text="[FullOutlayTotal]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
+      <TextObject Name="Text24" Left="859.95" Width="94.5" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" Text="[[FullOutlayTotal] / [FullTotaCostl]]" Format="Percent" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
+      <TextObject Name="Text25" Left="954.45" Width="92.61" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" Text="[FullMarginTotal]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
+    </ReportSummaryBand>
   </ReportPage>
 </Report>

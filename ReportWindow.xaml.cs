@@ -18,8 +18,10 @@ namespace AdvertisementWpf
     /// </summary>
     public partial class ReportWindow : Window
     {
-        private CollectionViewSource reportsViewSource;
+        private CollectionViewSource reportsViewSource, usersViewSource;
         private App.AppDbContext _context;
+
+        public List<User> usersList = new List<User> { };
 
         public ReportWindow()
         {
@@ -41,7 +43,13 @@ namespace AdvertisementWpf
 
                 _context = new App.AppDbContext(MainWindow.Connectiondata.Connectionstring);
                 reportsViewSource = (CollectionViewSource)FindResource(nameof(reportsViewSource));
+                usersViewSource = (CollectionViewSource)FindResource(nameof(usersViewSource));
+
                 reportsViewSource.Source = _context.Reports.AsNoTracking().ToList();
+                usersList = _context.Users.AsNoTracking().ToList();
+
+                reportsViewSource.View.CurrentChanged += ReportsViewSource_CurrentChanged;
+                ReportsViewSource_CurrentChanged(null, null);
             }
             catch (Exception ex)
             {
@@ -50,6 +58,22 @@ namespace AdvertisementWpf
             finally
             {
                 MainWindow.statusBar.ClearStatus();
+            }
+        }
+
+        private void ReportsViewSource_CurrentChanged(object sender, EventArgs e)
+        {
+            if (reportsViewSource?.View != null && reportsViewSource.View.CurrentItem is Report report)
+            {
+                if (report.Code == "RORW" || report.Code == "BCAFPD")
+                {
+                    usersViewSource.Source = usersList.Where(u => IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, u.RoleID, "ListManager")); //только менеджеры
+                }
+                else
+                {
+                    usersViewSource.Source = usersList.Where(u => !IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, u.RoleID, "ListDesigner")); //сотрудники без дизайнеров
+                }
+                usersViewSource.View.Refresh();
             }
         }
 
@@ -98,12 +122,13 @@ namespace AdvertisementWpf
 
         private void Print_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            if (e.OriginalSource is Button btn)
+            if (e.OriginalSource is Button btn && reportsViewSource.View.CurrentItem is Report report)
             {
-                if (btn == MakeReportButton && reportsViewSource.View.CurrentItem is Report report)
+                if (btn == MakeReportButton)
                 {
                     DateTime dBeginPeriod = new DateTime(DateTime.Today.Year, 1, 1); //01 января текущего года
-                    DateTime dEndPeriod = new DateTime(DateTime.Today.Year, 12, 31); //31 декабря текущего года
+                    DateTime dEndPeriod = new DateTime(DateTime.Today.Year, 12, 31, 23, 59, 59); //31 декабря текущего года
+                    List <User> userList = new List<User> { };
                     try
                     {
                         if (PeriodGroupBox.IsEnabled) //обработка условия "Дата"
@@ -111,22 +136,22 @@ namespace AdvertisementWpf
                             if ((bool)YearDate.IsChecked) //отбор за "год"
                             {
                                 dBeginPeriod = new DateTime((int)YearUpDown.Value, 1, 1); //01 января текущего года
-                                dEndPeriod = new DateTime((int)YearUpDown.Value, 12, 31); //31 декабря текущего года
+                                dEndPeriod = new DateTime((int)YearUpDown.Value, 12, 31, 23, 59, 59); //31 декабря текущего года
                             }
                             if ((bool)QuarterDate.IsChecked) //отбор за "квартал"
                             {
                                 switch (QuarterComboBox.SelectedIndex)
                                 {
                                     case 0: //1 квартал
-                                        dEndPeriod = new DateTime(DateTime.Today.Year, 3, 31);
+                                        dEndPeriod = new DateTime(DateTime.Today.Year, 3, 31, 23, 59, 59);
                                         break;
                                     case 1: //2 квартал
                                         dBeginPeriod = new DateTime(DateTime.Today.Year, 4, 1);
-                                        dEndPeriod = new DateTime(DateTime.Today.Year, 6, 30);
+                                        dEndPeriod = new DateTime(DateTime.Today.Year, 6, 30, 23, 59, 59);
                                         break;
                                     case 2: //3 квартал
                                         dBeginPeriod = new DateTime(DateTime.Today.Year, 7, 1);
-                                        dEndPeriod = new DateTime(DateTime.Today.Year, 9, 30);
+                                        dEndPeriod = new DateTime(DateTime.Today.Year, 9, 30, 23, 59, 59);
                                         break;
                                     case 3: //4 квартал
                                         dBeginPeriod = new DateTime(DateTime.Today.Year, 10, 1);
@@ -137,7 +162,7 @@ namespace AdvertisementWpf
                             {
                                 List<byte> nMonth = new List<byte> { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
                                 dBeginPeriod = new DateTime(DateTime.Today.Year, MonthCheckBox.SelectedIndex + 1, 1);
-                                dEndPeriod = new DateTime(DateTime.Today.Year, MonthCheckBox.SelectedIndex + 1, nMonth[MonthCheckBox.SelectedIndex] + (DateTime.IsLeapYear(DateTime.Today.Year) ? 1 : 0));
+                                dEndPeriod = new DateTime(DateTime.Today.Year, MonthCheckBox.SelectedIndex + 1, nMonth[MonthCheckBox.SelectedIndex] + (DateTime.IsLeapYear(DateTime.Today.Year) ? 1 : 0), 23, 59, 59);
                             }
                             if ((bool)DayDate.IsChecked && DayDateTime.SelectedDate.HasValue) //отбор за "день"
                             {
@@ -150,6 +175,25 @@ namespace AdvertisementWpf
                                 dEndPeriod = EndDate.SelectedDate.Value;
                             }
                         }
+                        if (UserGroupBox.IsEnabled) //обработка условия "Сотрудники"
+                        {
+                            foreach (object u in UserListBox.Items)
+                            {
+                                ListBoxItem listBoxitem = (ListBoxItem)UserListBox.ItemContainerGenerator.ContainerFromItem(u);
+                                if (listBoxitem != null && listBoxitem.IsSelected)
+                                {
+                                    userList.Add((User)u);
+                                    if (report.Code == "BCAFPD") //для данного отчета брать только первого отмеченного
+                                    {
+                                        break; 
+                                    }
+                                }
+                            }
+                            if (userList.Count == 0 && report.Code != "BCAFPD") //если не было отмечено ни одного, то берем всех кроме отчета "BCAFPD"
+                            {
+                                userList.AddRange((IEnumerable<User>)usersViewSource.View.SourceCollection);
+                            }
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -158,7 +202,7 @@ namespace AdvertisementWpf
                     finally
                     {
                         MainWindow.statusBar.ClearStatus();
-                        MakeReport(ref report, dBeginPeriod, dEndPeriod);
+                        MakeReport(ref report, dBeginPeriod, dEndPeriod, userList);
                     }
                 }
             }
@@ -175,8 +219,9 @@ namespace AdvertisementWpf
             }
         }
 
-        private void MakeReport(ref Report report, DateTime beginPeriod, DateTime endPeriod)
+        private void MakeReport(ref Report report, DateTime beginPeriod, DateTime endPeriod, List<User> usersList) 
         {
+            endPeriod = new DateTime(endPeriod.Year, endPeriod.Month, endPeriod.Day, 23, 59, 59); //добавить минуты конца дня
             using App.AppDbContext _reportcontext = new App.AppDbContext(MainWindow.Connectiondata.Connectionstring);
             using App.AppDbContext _report = new App.AppDbContext(MainWindow.Connectiondata.Connectionstring);
             try
@@ -209,33 +254,120 @@ namespace AdvertisementWpf
                         Reports.BeginPeriod = beginPeriod;
                         Reports.EndPeriod = endPeriod;
                         lCanMakeReport = Reports.ObjectDataSet.Count > 0;
-                        if (!lCanMakeReport) //ничего не отобрано
-                        {
-                            _ = MessageBox.Show("Нет данных за указанный период!", "Получение данных для отчета", MessageBoxButton.OK, MessageBoxImage.Information);
-                        }
                     }
                     else if (report.Code == "MBTD" || report.Code == "PSFD") //mastered by the designer | payment statement for designers
                     {
                         Reports.ReportMode = report.Code;
                         Reports.ProductCostDataSet = _report.ProductCosts
-                            .Include(pc => pc.Product)
-                            .ThenInclude(product => product.Designer)
+                            .Include(pc => pc.Product).ThenInclude(product => product.Designer)
                             .Include(pc => pc.Product.Order)
                             .Include(pc => pc.Product.ProductType)
-                            .Where(pc => pc.TypeOfActivity.Code.Trim() == "10" && pc.Product.DesignerID != null)
+                            .Include(pc => pc.TypeOfActivity)
+                            .AsNoTracking()
+                            .Where(pc => pc.TypeOfActivity.Code.Trim() == "10" && pc.Product.DesignerID != null && pc.Product.DateApproval >= beginPeriod && pc.Product.DateApproval <= endPeriod)
                             .OrderBy(pc => pc.Product.DesignerID)
                             .ToList();
                         Reports.BeginPeriod = beginPeriod;
                         Reports.EndPeriod = endPeriod;
                         lCanMakeReport = Reports.ProductCostDataSet.Count > 0;
-                        if (!lCanMakeReport) //ничего не отобрано
+                    }
+                    else if (report.Code == "RETP")
+                    {
+                        Reports.ReportMode = report.Code;
+                        Reports.PaymentsDataSet = _report.Payments
+                            .Include(Payment => Payment.Order)
+                            .Include(Payment => Payment.Order.Manager)
+                            .AsNoTracking()
+                            .Where(Payment => (Payment.TypeOfPayment == 0 || Payment.TypeOfPayment == 1) && Payment.PaymentDate >= beginPeriod && Payment.PaymentDate <= endPeriod
+                                                && usersList.Contains(Payment.Order.Manager))
+                            .OrderBy(Payment => Payment.Order.Manager.ID)
+                            .ToList();
+                        Reports.BeginPeriod = beginPeriod;
+                        Reports.EndPeriod = endPeriod;
+                        lCanMakeReport = Reports.PaymentsDataSet.Count > 0;
+                    }
+                    else if (report.Code == "RORW")
+                    {
+                        Reports.ReportMode = report.Code;
+                        Reports.ProductCostDataSet = _report.ProductCosts.AsNoTracking()
+                            .Include(ProductCost => ProductCost.Product)
+                            .Include(ProductCost => ProductCost.Product.ProductType)
+                            .Include(ProductCost => ProductCost.Product.Order)
+                            .Include(ProductCost => ProductCost.Product.Order.Manager)
+                            .Where(ProductCost => ProductCost.Product.DateManufacture >= beginPeriod && ProductCost.Product.DateManufacture <= endPeriod && usersList.Contains(ProductCost.Product.Order.Manager))
+                            .ToList();
+                        Reports.BeginPeriod = beginPeriod;
+                        Reports.EndPeriod = endPeriod;
+                        lCanMakeReport = Reports.ProductCostDataSet.Count > 0;
+                    }
+                    else if (report.Code == "BCAFPD" && usersList.Count > 0)
+                    {
+                        Reports.ReportMode = report.Code;
+
+                        //Заказ должен соответствовать одному из условий:
+                        //дата последней отгрузки меньше или равна верхней дате интервала и дата последнего платежа в указанном интервале (1),
+                        //либо дата последнего платежа меньше или равна верхней дате интервала и дата последней отгрузки в указанном интервале. (2)
+                        //(т.е.смотрим оплачен ли уже изготовленый ранее заказ или изготовлен уже оплаченый и в том и втом случае заказ попадает в таблицу)
+
+                        //    ВНИМАНИЕ!!! Если вдруг в датах при выборке будет NULL, то получим ошибку
+
+                        var orderPayments = from pay in _report.Payments
+                                            join o in _report.Orders on pay.OrderID equals o.ID
+                                            join p in _report.Products on o.ID equals p.OrderID
+                                            join c in _report.Clients on o.ClientID equals c.ID
+                                            where usersList.Contains(o.Manager)
+                                            group pay by new { o.ID,o.Number, pay.PaymentDate, pay.PaymentAmount, c.Name } into grp
+                                            select new
+                                            {
+                                                orderID = grp.Key.ID,
+                                                number = grp.Key.Number,
+                                                paymentSum = grp.Sum(pay => pay.PaymentAmount),
+                                                maxPaymentDate = grp.Max(pay => pay.PaymentDate),
+                                                client = grp.Key.Name
+                                            }; //платежи по заказам
+                        var productCosts = (from op in orderPayments.ToList()
+                                           join p in _report.Products on op.orderID equals p.OrderID
+                                           join pc in _report.ProductCosts on p.ID equals pc.ProductID
+                                           group pc by new { p.ID, p.OrderID, p.DateShipment, op.number, op.maxPaymentDate, op.paymentSum, op.client } into grp
+                                           select new
+                                           {
+                                               productID = grp.Key.ID,
+                                               orderID = grp.Key.OrderID,
+                                               number = grp.Key.number,
+                                               cost = grp.Sum(pc => pc.Cost),
+                                               outlay = grp.Sum(pc => pc.Outlay),
+                                               margin = grp.Sum(pc => pc.Margin),
+                                               maxDateShipment = grp.Max(pc => pc.Product.DateShipment),
+                                               maxPaymentDate = grp.Key.maxPaymentDate,
+                                               paymentSum = grp.Key.paymentSum,
+                                               client = grp.Key.client,
+                                               manager = usersList.FirstOrDefault().FullUserName
+                                           }).Where(pc => (pc.maxDateShipment <= endPeriod && pc.maxPaymentDate >= beginPeriod && pc.maxPaymentDate <= endPeriod)
+                                                    || (pc.maxPaymentDate <= endPeriod && pc.maxDateShipment >= beginPeriod && pc.maxDateShipment <= endPeriod))
+                                           .OrderBy(pc => pc.orderID)
+                                           .ToList(); //оплата, затраты и маржа по заказам
+                        Order order;
+                        for (int ind = 0; ind < productCosts.Count; ind++)
                         {
-                            _ = MessageBox.Show("Нет данных за указанный период!", "Получение данных для отчета", MessageBoxButton.OK, MessageBoxImage.Information);
+                            order = _report.Orders.Include(o => o.Products).First(o => o.ID == productCosts[ind].orderID);
+                            if (order.State != OrderProductStates.GetOrderState(4))
+                            {
+                                productCosts.RemoveAll(pc => pc.orderID == order.ID); //удалить все заказы НЕ в состоянии ОТГРУЖЕН
+                            }
                         }
+                        Reports.ObjectDataSet = new List<object> { };
+                        Reports.ObjectDataSet.AddRange(productCosts);
+                        Reports.BeginPeriod = beginPeriod;
+                        Reports.EndPeriod = endPeriod;
+                        lCanMakeReport = Reports.ObjectDataSet.Count > 0;
                     }
                     if (lCanMakeReport)
                     {
                         Reports.RunReport();
+                    }
+                    else //ничего не отобрано
+                    {
+                        _ = MessageBox.Show("Нет данных для включения в отчет!", "Получение данных для отчета", MessageBoxButton.OK, MessageBoxImage.Information);
                     }
                 }
                 else
@@ -267,11 +399,15 @@ namespace AdvertisementWpf
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             Report report = (Report)value;
-            if (report != null && (string)parameter == "P" && report.Parameters.Contains("P")) //P - Period
+            if (report != null && (string)parameter == "P") //P - Period
             {
-                return true;
+                return report.Parameters.Contains("P");
             }
-            return true;
+            else if (report != null && (string)parameter == "PU") //U - User
+            {
+                return report.Parameters.Contains("P") && report.Parameters.Contains("U");
+            }
+            return false;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

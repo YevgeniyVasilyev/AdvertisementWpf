@@ -18,8 +18,9 @@ namespace AdvertisementWpf
         private static short OrderFilterMode;
 
         private string sDateCondition = "", sClientCondition = "", sManagerCondition = "", sStateCondition = "", sNumberCondition = "", sWorkerCondition = ""; //sDesignerCondition = "",
-        private readonly List<string> LCategoryCondition = new List<string> { }, LClientCondition = new List<string> { }, LDesignerCondition = new List<string> { }, LManagerCondition = new List<string> { }, 
+        private readonly List<string> LCategoryCondition = new List<string> { }, LClientCondition = new List<string> { }, LDesignerCondition = new List<string> { }, LManagerCondition = new List<string> { },
                          LWorkerCondition = new List<string> { };
+        public static List<bool> LPaymentIndicationCondition = new List<bool> { };
 
         public FilterWindow(short orderFilterMode = 0)
         {
@@ -174,6 +175,9 @@ namespace AdvertisementWpf
                     dStartDate = oStartDate.SelectedDate.Value;
                     dEndDate = oEndDate.SelectedDate.Value;
                 }
+
+                dEndDate = new DateTime(dEndDate.Year, dEndDate.Month, dEndDate.Day, 23, 59, 59); //добавить минуты конца дня
+
                 if (!(bool)oNoDate.IsChecked)
                 {
                     switch (oDateName.SelectedIndex)
@@ -253,6 +257,20 @@ namespace AdvertisementWpf
                         sStateCondition += $"{state} ";
                     }
                 }
+                MainWindow.WherePaymentIndicationCondition.Clear();
+                foreach (object paymentIndication in PaymentIndicationListBox.Items)
+                {
+                    ListBoxItem listBoxitem = (ListBoxItem)PaymentIndicationListBox.ItemContainerGenerator.ContainerFromItem(paymentIndication);
+                    if (listBoxitem != null && listBoxitem.IsSelected)
+                    {
+                        LPaymentIndicationCondition.Add(true);
+                    }
+                    else
+                    {
+                        LPaymentIndicationCondition.Add(false);
+                    }
+                }
+                MainWindow.WherePaymentIndicationCondition = LPaymentIndicationCondition;
                 //обработка условия "Номера заказов"
                 if (!string.IsNullOrWhiteSpace(OrderNumberTextBox.Text))
                 {
@@ -378,6 +396,9 @@ namespace AdvertisementWpf
                         MainWindow.dEndDate = dEndDate.Date;
                     }
                 }
+
+                dEndDate = new DateTime(dEndDate.Year, dEndDate.Month, dEndDate.Day, 23, 59, 59); //добавить минуты конца дня
+
                 //обработка условия "Категория" 
                 foreach (object categoryOfProduct in CategoryOfProductsListBox.Items)
                 {

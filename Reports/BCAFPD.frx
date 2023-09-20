@@ -1,0 +1,151 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report ScriptLanguage="CSharp" ReportInfo.Created="09/18/2023 21:36:31" ReportInfo.Modified="09/20/2023 20:55:51" ReportInfo.CreatorVersion="2023.1.0.0">
+  <ScriptText>using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Windows.Forms;
+using System.Drawing;
+using System.Data;
+using FastReport;
+using FastReport.Data;
+using FastReport.Dialog;
+using FastReport.Barcode;
+using FastReport.Table;
+using FastReport.Utils;
+
+namespace FastReport
+{
+  public class ReportScript
+  {
+    private decimal s100, s50, s25, s0;
+    private decimal s100Total = 0;
+    private decimal s50Total = 0;
+    private decimal s25Total = 0;
+    private decimal s0Total = 0;
+    private decimal div = 0;
+    private void Text17_BeforePrint(object sender, EventArgs e)
+    {
+      decimal totalCost = (decimal)Report.GetColumnValue(&quot;dataset.cost&quot;);
+      decimal outlayTotal = (decimal)Report.GetColumnValue(&quot;dataset.outlay&quot;); 
+      if (totalCost &gt; 0)
+      {
+        div = outlayTotal / totalCost;
+        if (div.ToString().Contains(&quot;E&quot;))
+        {
+          div = Convert.ToDecimal($&quot;{div:E8}&quot;.Substring(0, 10));  
+        }
+        else if (div.ToString() != &quot;NaN&quot;)
+        {
+          div = Convert.ToDecimal(div);
+        }
+        else
+        {
+          div = 0;
+        }
+      }
+      else
+      {
+        div = 0;
+      }
+    }
+
+    private void GroupFooter1_BeforePrint(object sender, EventArgs e)
+    {
+      decimal totalCost = (decimal)Report.GetColumnValue(&quot;dataset.cost&quot;);
+      DateTime lastDatePayment = (DateTime)Report.GetColumnValue(&quot;dataset.maxPaymentDate&quot;); 
+      DateTime lastDateShipment = (DateTime)Report.GetColumnValue(&quot;dataset.maxDateShipment&quot;); 
+      int days = DateDiff(lastDatePayment, lastDateShipment).Days;
+      s100 = s50 = s25 = s0 = 0;
+      if (days &gt; 30)
+      {
+        s0 = totalCost;
+        s0Total += s0;
+      } 
+      else if (days &lt;= 10)
+      {
+        s100 = totalCost;
+        s100Total += s100;
+      }
+      else if (days &lt;= 20)
+      {
+        s50 = totalCost;
+        s50Total += s50;
+      }
+      else if (days &lt;= 30)
+      {
+        s25 = totalCost;
+        s25Total += s25;
+      }
+    }
+  }
+}
+</ScriptText>
+  <Dictionary>
+    <BusinessObjectDataSource Name="dataset" ReferenceName="dataset" DataType="null" Enabled="true">
+      <Column Name="productID" DataType="System.Int64"/>
+      <Column Name="orderID" DataType="System.Int64"/>
+      <Column Name="cost" DataType="System.Decimal"/>
+      <Column Name="outlay" DataType="System.Decimal"/>
+      <Column Name="margin" DataType="System.Decimal"/>
+      <Column Name="maxDateShipment" DataType="null"/>
+      <Column Name="maxPaymentDate" DataType="null"/>
+      <Column Name="paymentSum" DataType="System.Decimal"/>
+      <Column Name="client" DataType="System.String"/>
+      <Column Name="manager" DataType="System.String"/>
+    </BusinessObjectDataSource>
+    <Total Name="PaymentTotal" Expression="[dataset.paymentSum]" Evaluator="Data1" PrintOn="GroupFooter1"/>
+    <Total Name="FullCostTotal" Expression="[dataset.cost]" Evaluator="Data1" PrintOn="ReportSummary1"/>
+    <Total Name="FullPaymentTotal" Expression="[dataset.paymentSum]" Evaluator="Data1" PrintOn="ReportSummary1"/>
+    <Total Name="FullOutlayTotal" Expression="[dataset.outlay]" Evaluator="Data1" PrintOn="ReportSummary1"/>
+    <Total Name="FullMarginTotal" Expression="[dataset.margin]" Evaluator="Data1" PrintOn="ReportSummary1"/>
+  </Dictionary>
+  <ReportPage Name="Page1" Landscape="true" PaperWidth="297" PaperHeight="210" RawPaperSize="9" Watermark.Font="Arial, 60pt">
+    <ReportTitleBand Name="ReportTitle1" Width="1047.06" Height="37.8">
+      <TextObject Name="Text7" Width="1039.5" Height="18.9" Text="База для начисления агентского вознаграждения с учетом даты оплаты" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
+      <TextObject Name="Text8" Top="18.9" Width="1039.5" Height="18.9" Text="Менеджер: [dataset.manager] за период с [FormatDateTime([BeginPeriod], &quot;Short Date&quot;)] по [FormatDateTime([EndPeriod], &quot;Short Date&quot;)]" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt"/>
+    </ReportTitleBand>
+    <PageHeaderBand Name="PageHeader1" Top="41" Width="1047.06" Height="37.8" CanGrow="true">
+      <TextObject Name="Text9" Width="85.05" Height="37.8" Border.Lines="All" Border.Width="0.5" Text="№ заказа" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
+      <TextObject Name="Text10" Left="85.05" Width="170.1" Height="37.8" Border.Lines="All" Border.Width="0.5" CanGrow="true" Text="Заказчик" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
+      <TextObject Name="Text11" Left="255.15" Width="94.5" Height="37.8" Border.Lines="All" Border.Width="0.5" CanGrow="true" Text="К оплате" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
+      <TextObject Name="Text13" Left="349.65" Width="94.5" Height="37.8" Border.Lines="All" Border.Width="0.5" Text="Платежи по &#13;&#10;заказу" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
+      <TextObject Name="Text14" Left="444.15" Width="94.5" Height="37.8" Border.Lines="All" Border.Width="0.5" Text="Мат.&#13;&#10;расходы" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
+      <TextObject Name="Text16" Left="538.65" Width="75.6" Height="37.8" Border.Lines="All" Border.Width="0.5" Text="%&#13;&#10;мат. затрат" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
+      <TextObject Name="Text18" Left="614.25" Width="85.05" Height="37.8" Border.Lines="All" Border.Width="0.5" Text="Маржа" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
+      <TextObject Name="Text20" Left="699.3" Width="340.2" Height="18.9" Border.Lines="All" Border.Width="0.5" Text="База для начисления агентского вознаграждения" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
+      <TextObject Name="Text21" Left="699.3" Top="18.9" Width="85.05" Height="18.9" Border.Lines="All" Border.Width="0.5" Text="100%" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt, style=Bold"/>
+      <TextObject Name="Text22" Left="784.35" Top="18.9" Width="85.05" Height="18.9" Border.Lines="All" Border.Width="0.5" Text="50%" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt, style=Bold"/>
+      <TextObject Name="Text23" Left="869.4" Top="18.9" Width="85.05" Height="18.9" Border.Lines="All" Border.Width="0.5" Text="25%" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt, style=Bold"/>
+      <TextObject Name="Text24" Left="954.45" Top="18.9" Width="85.05" Height="18.9" Border.Lines="All" Border.Width="0.5" Text="0%" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt, style=Bold"/>
+    </PageHeaderBand>
+    <GroupHeaderBand Name="GroupHeader1" Top="82" Width="1047.06" Condition="[dataset.orderID]" SortOrder="None">
+      <DataBand Name="Data1" Top="85.2" Width="1047.06" DataSource="dataset"/>
+      <GroupFooterBand Name="GroupFooter1" Top="88.4" Width="1047.06" Height="18.9" CanGrow="true" BeforePrintEvent="GroupFooter1_BeforePrint">
+        <TextObject Name="Text1" Width="85.05" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" Text="[dataset.number]" HorzAlign="Center" Font="Arial, 9pt"/>
+        <TextObject Name="Text12" Left="85.05" Width="170.1" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" Text="[dataset.client]" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
+        <TextObject Name="Text2" Left="255.15" Width="94.5" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" Text="[dataset.cost]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
+        <TextObject Name="Text15" Left="349.65" Width="94.5" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" Text="[PaymentTotal]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
+        <TextObject Name="Text3" Left="444.15" Width="94.5" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" Text="[dataset.outlay]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
+        <TextObject Name="Text17" Left="538.65" Width="75.6" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" BeforePrintEvent="Text17_BeforePrint" Text="[div]" Format="Percent" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
+        <TextObject Name="Text19" Left="614.25" Width="85.05" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" Text="[dataset.margin]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
+        <TextObject Name="Text25" Left="699.3" Width="85.05" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" Text="[s100]" HideZeros="true" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
+        <TextObject Name="Text26" Left="784.35" Width="85.05" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" Text="[s50]" HideZeros="true" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
+        <TextObject Name="Text27" Left="869.4" Width="85.05" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" Text="[s25]" HideZeros="true" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
+        <TextObject Name="Text28" Left="954.45" Width="85.05" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" Text="[s0]" HideZeros="true" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
+      </GroupFooterBand>
+    </GroupHeaderBand>
+    <ReportSummaryBand Name="ReportSummary1" Top="110.5" Width="1047.06" Height="18.9">
+      <TextObject Name="Text29" Width="255.15" Height="18.9" Border.Lines="All" Border.Width="0.5" Text="Итого" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt, style=Bold"/>
+      <TextObject Name="Text30" Left="255.15" Width="94.5" Height="18.9" Border.Lines="All" Border.Width="0.5" Text="[FullCostTotal]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt, style=Bold"/>
+      <TextObject Name="Text31" Left="349.65" Width="94.5" Height="18.9" Border.Lines="All" Border.Width="0.5" Text="[FullPaymentTotal]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt, style=Bold"/>
+      <TextObject Name="Text32" Left="444.15" Width="94.5" Height="18.9" Border.Lines="All" Border.Width="0.5" Text="[FullOutlayTotal]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt, style=Bold"/>
+      <TextObject Name="Text33" Left="538.65" Width="75.6" Height="18.9" Border.Lines="All" Border.Width="0.5" Text="[[FullOutlayTotal] / [FullCostTotal]]" Format="Percent" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt, style=Bold"/>
+      <TextObject Name="Text34" Left="614.25" Width="85.05" Height="18.9" Border.Lines="All" Border.Width="0.5" Text="[FullMarginTotal]" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt, style=Bold"/>
+      <TextObject Name="Text35" Left="699.3" Width="85.05" Height="18.9" Border.Lines="All" Border.Width="0.5" Text="[s100Total]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt, style=Bold"/>
+      <TextObject Name="Text36" Left="784.35" Width="85.05" Height="18.9" Border.Lines="All" Border.Width="0.5" Text="[s50Total]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt, style=Bold"/>
+      <TextObject Name="Text37" Left="869.4" Width="85.05" Height="18.9" Border.Lines="All" Border.Width="0.5" Text="[s25Total]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt, style=Bold"/>
+      <TextObject Name="Text38" Left="954.45" Width="85.05" Height="18.9" Border.Lines="All" Border.Width="0.5" Text="[s0Total]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt, style=Bold"/>
+    </ReportSummaryBand>
+  </ReportPage>
+</Report>

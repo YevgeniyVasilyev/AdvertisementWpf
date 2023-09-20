@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Report ScriptLanguage="CSharp" ReportInfo.Created="09/09/2022 20:49:00" ReportInfo.Modified="09/04/2023 16:38:48" ReportInfo.CreatorVersion="2023.1.0.0">
+<Report ScriptLanguage="CSharp" ReportInfo.Created="09/09/2022 20:49:00" ReportInfo.Modified="09/06/2023 16:36:49" ReportInfo.CreatorVersion="2022.3.0.0">
   <ScriptText>using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -323,14 +323,14 @@ namespace FastReport
     <Total Name="FullTotalCost" Expression="[Act.DetailsList.Cost]" Evaluator="Data1" PrintOn="ReportSummary1"/>
   </Dictionary>
   <ReportPage Name="Page1" Landscape="true" PaperWidth="297" PaperHeight="210" RawPaperSize="9" Guides="9.45,1030.05,132.3,718.2,888.3,963.9,897.75,292.95,510.3,642.6,774.9,727.65,1032.95,46.62,301.39,263.97,406.1,358.47,452.72,564.86,508.79,611.48,677.0001,751.97,836.39,948.53,901.91,765.45,47.25,264.6,302.4,359.1,406.35,452.97,453.6,509.67,509.3,565.37,565,611.62,611.25,677.4,752.37,752,837.05,902.57,902.75,949.37,949.45,1033.87,387.45,124.74,343.98,487.62,754.11,756.11,1033.94,752.22,122.85,340.2,85.05,84.95,755.9,289.17,451.71,370.44,514.08,652.05,756,812.7,935.55" Watermark.Font="Arial, 60pt">
-    <ReportTitleBand Name="ReportTitle1" Width="1047.06" Height="477.55" Guides="37.8,56.7,55.7,85.05,124.74,154.98,434.7,453.6,406.35,9.45,28.35">
-      <TableObject Name="Table1" Left="9.45" Top="37.8" Width="1020.6" Height="379.89" GrowToBottom="true">
+    <ReportTitleBand Name="ReportTitle1" Width="1047.06" Height="458.65" Guides="37.8,56.7,55.7,85.05,124.74,154.98,434.7,453.6,406.35,9.45,28.35">
+      <TableObject Name="Table1" Left="9.45" Top="37.8" Width="1020.6" Height="348.41" GrowToBottom="true">
         <TableColumn Name="Column1" Width="122.85"/>
         <TableColumn Name="Column2" Width="585.9"/>
         <TableColumn Name="Column3" Width="170.1"/>
         <TableColumn Name="Column4" Width="75.6"/>
         <TableColumn Name="Column5"/>
-        <TableRow Name="Row1">
+        <TableRow Name="Row1" Height="17.14">
           <TableCell Name="Cell1" Font="Arial, 10pt"/>
           <TableCell Name="Cell2" Font="Arial, 10pt"/>
           <TableCell Name="Cell3" Font="Arial, 10pt"/>
@@ -339,21 +339,21 @@ namespace FastReport
             <ShapeObject Name="Shape1" Top="17.9" Width="66.15" Height="359.1" Border.Width="2"/>
           </TableCell>
         </TableRow>
-        <TableRow Name="Row2" Height="28.35">
+        <TableRow Name="Row2" Height="26.59">
           <TableCell Name="Cell6" Font="Arial, 10pt"/>
           <TableCell Name="Cell7" Font="Arial, 10pt"/>
           <TableCell Name="Cell8" Text="Форма по ОКУД" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt" ColSpan="2"/>
           <TableCell Name="Cell9" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt"/>
           <TableCell Name="Cell10" Border.Lines="All" Text="0330212" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt"/>
         </TableRow>
-        <TableRow Name="Row3" Height="37.8" AutoSize="true">
-          <TableCell Name="Cell11" Text="[Act.Account.Contractor.ContractorInfoForAct]" Font="Arial, 10pt" ColSpan="3"/>
+        <TableRow Name="Row3" Height="36.05" AutoSize="true">
+          <TableCell Name="Cell11" Text="[Act.Account.Contractor.ContractorInfoForAct]" Font="Arial, 7.8pt" ColSpan="3"/>
           <TableCell Name="Cell12" HorzAlign="Center" Font="Arial, 10pt"/>
           <TableCell Name="Cell13" Font="Arial, 10pt"/>
           <TableCell Name="Cell14" Text="по ОКПО" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt"/>
           <TableCell Name="Cell15" Border.Lines="All" Font="Arial, 10pt"/>
         </TableRow>
-        <TableRow Name="Row4" Height="11.34" AutoSize="true">
+        <TableRow Name="Row4" Height="9.61" AutoSize="true">
           <TableCell Name="Cell16" Font="Arial, 10pt">
             <LineObject Name="Line4" Top="1.1" Width="878.85"/>
           </TableCell>
@@ -362,14 +362,14 @@ namespace FastReport
           <TableCell Name="Cell19" HorzAlign="Right" Font="Arial, 10pt"/>
           <TableCell Name="Cell20" Border.Lines="All" Font="Arial, 10pt" RowSpan="2"/>
         </TableRow>
-        <TableRow Name="Row5">
+        <TableRow Name="Row5" Height="17.14">
           <TableCell Name="Cell21" Font="Arial, 10pt" ColSpan="3"/>
           <TableCell Name="Cell22" Font="Arial, 10pt"/>
           <TableCell Name="Cell23" Font="Arial, 10pt"/>
           <TableCell Name="Cell24" VertAlign="Bottom" Font="Arial, 10pt"/>
           <TableCell Name="Cell25" Font="Arial, 10pt"/>
         </TableRow>
-        <TableRow Name="Row6" Height="11.34">
+        <TableRow Name="Row6" Height="9.61">
           <TableCell Name="Cell26" Font="Arial, 10pt">
             <LineObject Name="Line2" Top="0.1" Width="954.45"/>
           </TableCell>
@@ -378,21 +378,21 @@ namespace FastReport
           <TableCell Name="Cell29" HorzAlign="Right" VertAlign="Bottom" Font="Arial, 10pt"/>
           <TableCell Name="Cell30" Border.Lines="All" Font="Arial, 10pt" RowSpan="2"/>
         </TableRow>
-        <TableRow Name="Row7">
+        <TableRow Name="Row7" Height="17.14">
           <TableCell Name="Cell31" Font="Arial, 10pt"/>
           <TableCell Name="Cell32" Font="Arial, 10pt"/>
           <TableCell Name="Cell33" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt"/>
           <TableCell Name="Cell34" HorzAlign="Right" VertAlign="Bottom" Font="Arial, 10pt"/>
           <TableCell Name="Cell35" Font="Arial, 10pt"/>
         </TableRow>
-        <TableRow Name="Row8" Height="37.8" AutoSize="true">
+        <TableRow Name="Row8" Height="36.05" AutoSize="true">
           <TableCell Name="Cell36" Text="Грузополучатель" VertAlign="Center" Font="Arial, 10pt"/>
-          <TableCell Name="Cell37" Text="[Act.Account.Order.Client.Consignee]" Font="Arial, 10pt" ColSpan="2"/>
+          <TableCell Name="Cell37" Text="[Act.Account.Order.Client.Consignee]" Font="Arial, 7.8pt" ColSpan="2"/>
           <TableCell Name="Cell38" Font="Arial, 10pt"/>
           <TableCell Name="Cell39" Text="по ОКПО" HorzAlign="Right" VertAlign="Bottom" Font="Arial, 10pt"/>
           <TableCell Name="Cell40" Border.Lines="All" Font="Arial, 10pt"/>
         </TableRow>
-        <TableRow Name="Row9" Height="11.34">
+        <TableRow Name="Row9" Height="9.61">
           <TableCell Name="Cell41" VertAlign="Center" Font="Arial, 10pt"/>
           <TableCell Name="Cell42" Text="(организация, адрес, телефон, факс, банковские реквизиты)" HorzAlign="Center" Font="Arial, 6pt">
             <LineObject Name="Line3" Width="756"/>
@@ -401,14 +401,14 @@ namespace FastReport
           <TableCell Name="Cell44" Text="по ОКПО" HorzAlign="Right" VertAlign="Bottom" Font="Arial, 10pt" RowSpan="2"/>
           <TableCell Name="Cell45" Border.Lines="All" Font="Arial, 10pt" RowSpan="2"/>
         </TableRow>
-        <TableRow Name="Row10" Height="28.35" AutoSize="true">
+        <TableRow Name="Row10" Height="26.59" AutoSize="true">
           <TableCell Name="Cell46" Text="Поставщик" VertAlign="Center" Font="Arial, 10pt"/>
-          <TableCell Name="Cell47" Text="[Act.Account.ContractorInfoForAct]" Font="Arial, 10pt" ColSpan="2"/>
+          <TableCell Name="Cell47" Text="[Act.Account.ContractorInfoForAct]" Font="Arial, 7.8pt" ColSpan="2"/>
           <TableCell Name="Cell48" Font="Arial, 10pt"/>
           <TableCell Name="Cell49" HorzAlign="Right" VertAlign="Bottom" Font="Arial, 10pt"/>
           <TableCell Name="Cell50" Font="Arial, 10pt"/>
         </TableRow>
-        <TableRow Name="Row11" Height="11.34">
+        <TableRow Name="Row11" Height="9.61">
           <TableCell Name="Cell51" VertAlign="Center" Font="Arial, 10pt"/>
           <TableCell Name="Cell52" Text="(организация, адрес, телефон, факс, банковские реквизиты)" HorzAlign="Center" Font="Arial, 6pt">
             <LineObject Name="Line5" Width="756"/>
@@ -417,14 +417,14 @@ namespace FastReport
           <TableCell Name="Cell54" Text="по ОКПО" HorzAlign="Right" VertAlign="Bottom" Font="Arial, 10pt" RowSpan="2"/>
           <TableCell Name="Cell55" Border.Lines="All" Font="Arial, 10pt" RowSpan="2"/>
         </TableRow>
-        <TableRow Name="Row12" Height="28.35" AutoSize="true">
+        <TableRow Name="Row12" Height="26.59" AutoSize="true">
           <TableCell Name="Cell56" Text="Плательщик" VertAlign="Center" Font="Arial, 10pt"/>
-          <TableCell Name="Cell57" Text="[Act.Account.Order.Client.ClientInfoForAct]" Font="Arial, 10pt" ColSpan="2"/>
+          <TableCell Name="Cell57" Text="[Act.Account.Order.Client.ClientInfoForAct]" Font="Arial, 7.8pt" ColSpan="2"/>
           <TableCell Name="Cell58" Font="Arial, 10pt"/>
           <TableCell Name="Cell59" HorzAlign="Right" VertAlign="Bottom" Font="Arial, 10pt"/>
           <TableCell Name="Cell60" Font="Arial, 10pt"/>
         </TableRow>
-        <TableRow Name="Row13" Height="11.34">
+        <TableRow Name="Row13" Height="9.61">
           <TableCell Name="Cell61" VertAlign="Center" Font="Arial, 10pt"/>
           <TableCell Name="Cell62" Text="(организация, адрес, телефон, факс, банковские реквизиты)" HorzAlign="Center" Font="Arial, 6pt">
             <LineObject Name="Line6" Width="765.45"/>
@@ -433,14 +433,14 @@ namespace FastReport
           <TableCell Name="Cell64" Border.Lines="All" Text="номер" HorzAlign="Right" VertAlign="Bottom" Font="Arial, 10pt" RowSpan="2"/>
           <TableCell Name="Cell65" Border.Lines="All" Font="Arial, 10pt" RowSpan="2"/>
         </TableRow>
-        <TableRow Name="Row14">
+        <TableRow Name="Row14" Height="17.14">
           <TableCell Name="Cell66" Text="Основание" VertAlign="Center" Font="Arial, 10pt"/>
-          <TableCell Name="Cell67" Text="[Act.Account.Footing]" Font="Arial, 10pt" ColSpan="2"/>
+          <TableCell Name="Cell67" Text="[Act.Account.Footing]" Font="Arial, 7.8pt" ColSpan="2"/>
           <TableCell Name="Cell68" Font="Arial, 10pt"/>
           <TableCell Name="Cell69" Border.Lines="All" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt"/>
           <TableCell Name="Cell70" Font="Arial, 10pt"/>
         </TableRow>
-        <TableRow Name="Row15" Height="11.34">
+        <TableRow Name="Row15" Height="9.61">
           <TableCell Name="Cell71" VertAlign="Center" Font="Arial, 10pt"/>
           <TableCell Name="Cell72" Text="(договор, заказ-наряд)" HorzAlign="Center" Font="Arial, 6pt">
             <LineObject Name="Line7" Width="765.45"/>
@@ -449,37 +449,37 @@ namespace FastReport
           <TableCell Name="Cell74" Border.Lines="All" Text="дата" HorzAlign="Right" VertAlign="Bottom" Font="Arial, 10pt" RowSpan="2"/>
           <TableCell Name="Cell75" Border.Lines="All" Font="Arial, 10pt" RowSpan="2"/>
         </TableRow>
-        <TableRow Name="Row16">
+        <TableRow Name="Row16" Height="17.14">
           <TableCell Name="Cell76" Font="Arial, 10pt"/>
           <TableCell Name="Cell77" Font="Arial, 10pt"/>
           <TableCell Name="Cell78" Text="Транспортная накладная" Font="Arial, 10pt"/>
           <TableCell Name="Cell79" Border.Lines="All" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt"/>
           <TableCell Name="Cell80" Font="Arial, 10pt"/>
         </TableRow>
-        <TableRow Name="Row17" Height="28.35">
+        <TableRow Name="Row17" Height="26.59">
           <TableCell Name="Cell81" Font="Arial, 10pt"/>
           <TableCell Name="Cell82" Font="Arial, 10pt"/>
           <TableCell Name="Cell83" Font="Arial, 10pt"/>
           <TableCell Name="Cell84" Border.Lines="All" Text="номер" HorzAlign="Right" VertAlign="Bottom" Font="Arial, 10pt"/>
           <TableCell Name="Cell85" Border.Lines="All" Font="Arial, 10pt"/>
         </TableRow>
-        <TableRow Name="Row18" Height="28.35">
+        <TableRow Name="Row18" Height="26.59">
           <TableCell Name="Cell86" Font="Arial, 10pt"/>
           <TableCell Name="Cell87" Font="Arial, 10pt">
-            <TextObject Name="Text4" Left="377.49" Top="16.9" Width="132.3" Height="28.35" Border.Lines="All" Border.Width="0.5" Text="Номер&#13;&#10;документа" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
-            <TextObject Name="Text5" Left="510.3" Top="16.9" Width="132.3" Height="28.35" Border.Lines="All" Border.Width="0.5" Text="Дата&#13;&#10;составления" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
+            <TextObject Name="Text4" Left="377.49" Top="16.9" Width="132.3" Height="28.35" Border.Lines="All" Border.Width="0.5" Text="Номер документа" HorzAlign="Center" VertAlign="Center" Font="Arial, 7.8pt"/>
+            <TextObject Name="Text5" Left="510.3" Top="16.9" Width="132.3" Height="28.35" Border.Lines="All" Border.Width="0.5" Text="Дата составления" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
           </TableCell>
           <TableCell Name="Cell88" Font="Arial, 10pt"/>
           <TableCell Name="Cell89" Border.Lines="All" Text="дата" HorzAlign="Right" VertAlign="Bottom" Font="Arial, 10pt"/>
           <TableCell Name="Cell90" Border.Lines="All" Font="Arial, 10pt"/>
         </TableRow>
       </TableObject>
-      <TextObject Name="Text1" Left="292.95" Top="434.7" Width="217.35" Height="18.9" Text="ТОВАРНАЯ НАКЛАДНАЯ" HorzAlign="Center" VertAlign="Center" Font="Arial, 12pt, style=Bold"/>
-      <TextObject Name="Text2" Left="510.3" Top="434.7" Width="132.3" Height="18.9" Border.Lines="All" Border.Width="1.5" CanGrow="true" Text="[Act.Account.Acts.ActNumber]" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
-      <TextObject Name="Text3" Left="642.6" Top="434.7" Width="132.3" Height="18.9" Border.Lines="All" Border.Width="1.5" CanGrow="true" BeforePrintEvent="Text3_BeforePrint" HideZeros="true" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
+      <TextObject Name="Text1" Left="292.95" Top="406.35" Width="217.35" Height="18.9" Text="ТОВАРНАЯ НАКЛАДНАЯ" HorzAlign="Center" VertAlign="Center" Font="Arial, 10.2pt, style=Bold"/>
+      <TextObject Name="Text2" Left="510.3" Top="406.35" Width="132.3" Height="18.9" Border.Lines="All" Border.Width="1.5" CanGrow="true" Text="[Act.Account.Acts.ActNumber]" HorzAlign="Center" VertAlign="Center" Font="Arial, 7.8pt"/>
+      <TextObject Name="Text3" Left="642.6" Top="406.35" Width="132.3" Height="18.9" Border.Lines="All" Border.Width="1.5" CanGrow="true" BeforePrintEvent="Text3_BeforePrint" HideZeros="true" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
       <TextObject Name="Text6" Left="727.65" Top="9.45" Width="302.4" Height="18.9" Text="Унифицированная форма № ТОРГ-12" HorzAlign="Right" VertAlign="Bottom" Font="Arial, 9pt"/>
     </ReportTitleBand>
-    <PageHeaderBand Name="PageHeader2" Top="478.55" Width="1047.06" Height="124.95" Guides="21,124.95,106.05,58.79999,0,18.89999">
+    <PageHeaderBand Name="PageHeader2" Top="460.65" Width="1047.06" Height="124.95" Guides="21,124.95,106.05,58.79999,0,18.89999">
       <TableObject Name="Table2" Left="9.45" Top="21" Width="1023.5" Height="103.95">
         <TableColumn Name="Column6" Width="37.17"/>
         <TableColumn Name="Column7" Width="217.35"/>
@@ -550,7 +550,7 @@ namespace FastReport
       </TableObject>
       <TextObject Name="Text22" Left="765.45" Width="264.6" Height="18.9" PrintOn="LastPage, OddPages, EvenPages, RepeatedBand, SinglePage" Text="Оборотная сторона формы № ТОРГ-12" HorzAlign="Right" VertAlign="Center" Font="Arial, 9pt"/>
     </PageHeaderBand>
-    <DataBand Name="Data1" Top="604.5" Width="1047.06" Height="18.9" CanGrow="true" CanShrink="true" Guides="0,18.90002" DataSource="DetailsList5">
+    <DataBand Name="Data1" Top="587.6" Width="1047.06" Height="18.9" CanGrow="true" CanShrink="true" Guides="0,18.90002" DataSource="DetailsList5">
       <TextObject Name="Text7" Left="9.45" Width="37.8" Height="18.9" Border.Lines="All" CanGrow="true" CanShrink="true" GrowToBottom="true" CanBreak="false" Text="[Row#]" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt"/>
       <TextObject Name="Text8" Left="47.25" Width="217.35" Height="18.9" Border.Lines="All" CanGrow="true" CanShrink="true" GrowToBottom="true" CanBreak="false" Text="[Act.DetailsList.ProductInfoForAccount]" Font="Arial, 8pt"/>
       <TextObject Name="Text9" Left="264.6" Width="37.8" Height="18.9" Border.Lines="All" CanGrow="true" CanShrink="true" GrowToBottom="true" CanBreak="false" Font="Arial, 8pt, style=Bold"/>
@@ -565,8 +565,8 @@ namespace FastReport
       <TextObject Name="Text18" Left="752" Width="85.05" Height="18.9" Border.Lines="All" CanGrow="true" CanShrink="true" GrowToBottom="true" CanBreak="false" Text="[Act.DetailsList.Cost]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Right" VertAlign="Center" Font="Arial, 8pt"/>
       <TextObject Name="Text19" Left="837.05" Width="65.52" Height="18.9" Border.Lines="All" CanGrow="true" CanShrink="true" GrowToBottom="true" CanBreak="false" Text="Без НДС" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt"/>
       <TextObject Name="Text20" Left="902.75" Width="46.62" Height="18.9" Border.Lines="All" CanGrow="true" CanShrink="true" GrowToBottom="true" CanBreak="false" Text="0,00 р." Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Right" VertAlign="Center" Font="Arial, 8pt"/>
-      <TextObject Name="Text21" Left="949.45" Width="84.42" Height="18.9" Border.Lines="All" CanGrow="true" CanShrink="true" GrowToBottom="true" CanBreak="false" Text="[Act.DetailsList.Cost]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Right" VertAlign="Center" Font="Arial, 8pt"/>
-      <DataFooterBand Name="DataFooter1" Top="624.4" Width="1047.06" Height="18.9" Guides="0,18.90002,37.80005" KeepWithData="true" RepeatOnEveryPage="true">
+      <TextObject Name="Text21" Left="949.45" Width="84.49" Height="18.9" Border.Lines="All" CanGrow="true" CanShrink="true" GrowToBottom="true" CanBreak="false" Text="[Act.DetailsList.Cost]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Right" VertAlign="Center" Font="Arial, 8pt"/>
+      <DataFooterBand Name="DataFooter1" Top="608.5" Width="1047.06" Height="18.9" Guides="0,18.90002,37.80005" KeepWithData="true" RepeatOnEveryPage="true">
         <TextObject Name="Text26" Left="453.6" Width="56.7" Height="18.9" Text="Итого" HorzAlign="Right" VertAlign="Center" Font="Arial, 8pt"/>
         <TextObject Name="Text32" Left="677.4" Width="74.97" Height="18.9" Border.Lines="All" Border.Width="0.5" Text="Х" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt"/>
         <TextObject Name="Text33" Left="837.05" Width="65.52" Height="18.9" Border.Lines="All" Border.Width="0.5" Text="Х" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt"/>
@@ -574,14 +574,14 @@ namespace FastReport
         <TextObject Name="Text38" Left="752" Width="85.05" Height="18.9" Text="[TotalCost]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Right" VertAlign="Center" Font="Arial, 8pt"/>
       </DataFooterBand>
     </DataBand>
-    <ReportSummaryBand Name="ReportSummary1" Top="644.3" Width="1047.06" Height="404.62" Guides="66.15002,136.08,94.5,126.63,105.84,124.74,124.29,37.79999,0,18.90002,63.60004,151.2,287.28,170.1,181.4401,200.34,211.6801,230.58,249.48,268.3801,0" KeepWithData="true">
-      <TableObject Name="Table3" Left="9.45" Top="83.17" Width="1020.6" Height="69.93">
+    <ReportSummaryBand Name="ReportSummary1" Top="629.4" Width="1047.06" Height="404.62" Guides="66.15002,136.08,94.5,126.63,105.84,124.74,124.29,37.79999,0,18.90002,63.60004,151.2,287.28,170.1,181.4401,200.34,211.6801,230.58,249.48,268.3801,0" KeepWithData="true">
+      <TableObject Name="Table3" Left="9.45" Top="83.17" Width="1020.6" Height="68.02">
         <TableColumn Name="Column21" Width="115.29"/>
         <TableColumn Name="Column22" Width="219.24"/>
         <TableColumn Name="Column23" Width="143.64"/>
         <TableColumn Name="Column24" Width="266.49"/>
         <TableColumn Name="Column25" Width="275.94"/>
-        <TableRow Name="Row22" Height="28.35">
+        <TableRow Name="Row22" Height="27.52">
           <TableCell Name="Cell164" Font="Arial, 10pt"/>
           <TableCell Name="Cell165" Font="Arial, 10pt"/>
           <TableCell Name="Cell166" Text="Масса груза (нетто)" VertAlign="Bottom" Font="Arial, 10pt"/>
@@ -591,21 +591,21 @@ namespace FastReport
           </TableCell>
           <TableCell Name="Cell168" Border.Lines="Bottom" Border.Width="0.5" Font="Arial, 10pt"/>
         </TableRow>
-        <TableRow Name="Row27" Height="11.34">
+        <TableRow Name="Row27" Height="11.22">
           <TableCell Name="Cell189" Font="Arial, 10pt"/>
           <TableCell Name="Cell190" Font="Arial, 10pt"/>
           <TableCell Name="Cell191" Font="Arial, 10pt"/>
           <TableCell Name="Cell192" Text="(прописью)" HorzAlign="Center" Font="Arial, 6pt"/>
           <TableCell Name="Cell193" Font="Arial, 10pt" RowSpan="2"/>
         </TableRow>
-        <TableRow Name="Row23">
+        <TableRow Name="Row23" Height="18.06">
           <TableCell Name="Cell169" Text="Всего мест" Font="Arial, 10pt"/>
           <TableCell Name="Cell170" Font="Arial, 10pt"/>
           <TableCell Name="Cell171" Text="Масса груза (брутто)" VertAlign="Bottom" Font="Arial, 10pt"/>
           <TableCell Name="Cell172" Font="Arial, 10pt"/>
           <TableCell Name="Cell173" Font="Arial, 10pt"/>
         </TableRow>
-        <TableRow Name="Row24" Height="11.34">
+        <TableRow Name="Row24" Height="11.22">
           <TableCell Name="Cell174" Font="Arial, 10pt">
             <LineObject Name="Line10" Left="113.4" Top="0.33" Width="217.35" Border.Width="0.5"/>
           </TableCell>

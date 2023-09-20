@@ -106,12 +106,15 @@
     <None Remove="~%24хгалтерия_правки1.doc" />
     <None Remove="~WRL0001.tmp" />
     <None Remove="Акт об оказании услуг по РТ.xls" />
+    <None Remove="База для вознаграждения с учётом даты оплаты.xls" />
     <None Remove="Бланк-заказ.pdf" />
     <None Remove="Бланки ПУД.zip" />
     <None Remove="Бухгалтерия.doc" />
     <None Remove="Бухгалтерия_правки1.doc" />
+    <None Remove="выручка по сотрудникам и видам платежей.xls" />
     <None Remove="Доработка ПУД.doc" />
     <None Remove="Конструктор изделий.docx" />
+    <None Remove="маржа по изготовленым за период.xls" />
     <None Remove="Освоенно дизайнером ведомость.doc" />
     <None Remove="Освоенно дизайнером сводный.doc" />
     <None Remove="Освоенные за период.doc" />

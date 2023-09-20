@@ -409,6 +409,8 @@ namespace AdvertisementWpf
         public static List<TechCard> TechCardDataSet = null;
         public static List<WorkInTechCard> WorkInTechCardDataSet = null;
         public static List<ProductCost> ProductCostDataSet = null;
+        public static List<Payment> PaymentsDataSet = null;
+        public static List<IGrouping<Order, Product>> OrderProductDataSet = null;
         public static DateTime? ReportDate = DateTime.Now;
         public static DateTime BeginPeriod = DateTime.Now;
         public static DateTime EndPeriod = DateTime.Now;
@@ -429,6 +431,9 @@ namespace AdvertisementWpf
                 report.AutoFillDataSet = true;
                 if (ReportMode == "OrderForm")
                 {
+                    //report.Dictionary.RegisterBusinessObject(OrderDataSet, "Order", 4, true);
+                    //report.Save($"{Path.GetFileNameWithoutExtension(ReportFileName)}_data.frx");
+                    //return;
                     report.Load(ReportFileName);
                     report.RegisterData(OrderDataSet, "Order", 3);
                     report.SetParameterValue("DesignerID", designerID);
@@ -533,6 +538,39 @@ namespace AdvertisementWpf
                     //return;
                     report.Load(ReportFileName);
                     report.RegisterData(ProductCostDataSet, "ProductCost", 3);
+                    report.SetParameterValue("BeginPeriod", BeginPeriod);
+                    report.SetParameterValue("EndPeriod", EndPeriod);
+                    ReportMode = "ReportForm";
+                }
+                else if (ReportMode == "RETP")
+                {
+                    //report.Dictionary.RegisterBusinessObject(PaymentsDataSet, "Payment", 3, true);
+                    //report.Save($"{Path.GetFileNameWithoutExtension(ReportFileName)}_data.frx");
+                    //return;
+                    report.Load(ReportFileName);
+                    report.RegisterData(PaymentsDataSet, "Payment", 3);
+                    report.SetParameterValue("BeginPeriod", BeginPeriod);
+                    report.SetParameterValue("EndPeriod", EndPeriod);
+                    ReportMode = "ReportForm";
+                }
+                else if (ReportMode == "RORW")
+                {
+                    //report.Dictionary.RegisterBusinessObject(ProductCostDataSet, "ProductCost", 4, true);
+                    //report.Save($"{Path.GetFileNameWithoutExtension(ReportFileName)}_data.frx");
+                    //return;
+                    report.Load(ReportFileName);
+                    report.RegisterData(ProductCostDataSet, "ProductCost", 3);
+                    report.SetParameterValue("BeginPeriod", BeginPeriod);
+                    report.SetParameterValue("EndPeriod", EndPeriod);
+                    ReportMode = "ReportForm";
+                }
+                else if (ReportMode == "BCAFPD")
+                {
+                    //report.Dictionary.RegisterBusinessObject(ObjectDataSet, "dataset", 5, true);
+                    //report.Save($"{Path.GetFileNameWithoutExtension(ReportFileName)}_data.frx");
+                    //return;
+                    report.Load(ReportFileName);
+                    report.RegisterData(ObjectDataSet, "dataset", 4);
                     report.SetParameterValue("BeginPeriod", BeginPeriod);
                     report.SetParameterValue("EndPeriod", EndPeriod);
                     ReportMode = "ReportForm";

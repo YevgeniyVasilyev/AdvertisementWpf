@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Report ScriptLanguage="CSharp" ReportInfo.Created="07/16/2023 15:55:30" ReportInfo.Modified="07/16/2023 16:19:08" ReportInfo.CreatorVersion="2023.1.0.0">
+<Report ScriptLanguage="CSharp" ReportInfo.Created="07/16/2023 15:55:30" ReportInfo.Modified="09/12/2023 19:43:12" ReportInfo.CreatorVersion="2023.1.0.0">
   <Dictionary>
     <BusinessObjectDataSource Name="ProductCost" ReferenceName="ProductCost" DataType="null" Enabled="true">
       <Column Name="ID" DataType="System.Int64"/>
@@ -545,7 +545,7 @@
     </BusinessObjectDataSource>
     <Parameter Name="BeginPeriod" DataType="System.DateTime" Expression="BeginPeriod"/>
     <Parameter Name="EndPeriod" DataType="System.DateTime" Expression="EndPeriod"/>
-    <Total Name="Total" Expression="[ProductCost.Cost]" Evaluator="Data1"/>
+    <Total Name="Total" Expression="[ProductCost.Cost]" Evaluator="Data1" PrintOn="GroupFooter1"/>
     <Total Name="FullTotal" Expression="[Total]" Evaluator="Data1" PrintOn="ReportSummary1"/>
   </Dictionary>
   <ReportPage Name="Page1" RawPaperSize="9" LeftMargin="5" TopMargin="5" RightMargin="5" BottomMargin="5" Watermark.Font="Arial, 60pt" UnlimitedHeight="true">

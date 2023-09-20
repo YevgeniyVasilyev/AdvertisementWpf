@@ -10,6 +10,7 @@
         ResizeMode="CanResizeWithGrip" WindowStyle="SingleBorderWindow" Closed="Window_Closed">
     <Window.Resources>
         <CollectionViewSource x:Key="reportsViewSource"/>
+        <CollectionViewSource x:Key="usersViewSource"/>
         <local:EnableConverter x:Key="EnableConverter"/>
         <Style x:Key="DropShadow" TargetType="{x:Type FrameworkElement}">
             <Style.Triggers>
@@ -29,6 +30,27 @@
             <Setter Property="Content" Value="{Binding}"/>
             <Setter Property="HorizontalContentAlignment" Value="Center"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+        <Style x:Key="CheckBoxListStyle" TargetType="{x:Type ListBox}">
+            <Setter Property="SelectionMode" Value="Multiple"/>
+            <Setter Property="ItemContainerStyle">
+                <Setter.Value>
+                    <Style TargetType="{x:Type ListBoxItem}">
+                        <Setter Property="Margin" Value="2"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                                    <CheckBox Focusable="False" 
+                                              IsChecked="{Binding Path=IsSelected, Mode=TwoWay, 
+                                                        RelativeSource={RelativeSource TemplatedParent}}">
+                                        <ContentPresenter></ContentPresenter>
+                                    </CheckBox>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Setter.Value>
+            </Setter>
         </Style>
     </Window.Resources>
     <Window.CommandBindings>
@@ -60,8 +82,10 @@
         <Grid Grid.Row="1" Grid.Column="1" Margin="1,0,1,0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <GroupBox Grid.Row="0" Name="PeriodGroupBox" Header="Период" Margin="2" IsEnabled="{Binding Converter={StaticResource EnableConverter}, ConverterParameter=P}">
+            <GroupBox Grid.Row="0" Name="PeriodGroupBox" Header="Период" Margin="2" 
+                      IsEnabled="{Binding ElementName=ReportListBox, Path=SelectedItem, Converter={StaticResource EnableConverter}, ConverterParameter=P}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
@@ -109,6 +133,14 @@
                         <DatePicker Name="EndDate" IsTodayHighlighted="True" GotFocus="Control_GotFocus"/>
                     </StackPanel>
                 </Grid>
+            </GroupBox>
+            <GroupBox Grid.Row="1" Name="UserGroupBox" Header="Сотрудники" Margin="2" 
+                      IsEnabled="{Binding ElementName=ReportListBox, Path=SelectedItem, Converter={StaticResource EnableConverter}, ConverterParameter=PU}">
+                <ListBox Name="UserListBox" ItemsSource="{Binding Source={StaticResource usersViewSource}}" 
+                         IsSynchronizedWithCurrentItem="True"
+                         ScrollViewer.VerticalScrollBarVisibility="Auto" 
+                         DisplayMemberPath="FullUserName" Style="{StaticResource CheckBoxListStyle}">
+                </ListBox>
             </GroupBox>
         </Grid>
         <Border Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="2" BorderThickness="1" BorderBrush="DeepSkyBlue">
