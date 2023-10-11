@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Report ScriptLanguage="CSharp" ReportInfo.Created="07/16/2023 15:55:30" ReportInfo.Modified="09/12/2023 19:43:12" ReportInfo.CreatorVersion="2023.1.0.0">
+<Report ScriptLanguage="CSharp" ReportInfo.Created="07/16/2023 15:55:30" ReportInfo.Modified="10/05/2023 19:27:06" ReportInfo.CreatorVersion="2023.1.0.0">
   <Dictionary>
     <BusinessObjectDataSource Name="ProductCost" ReferenceName="ProductCost" DataType="null" Enabled="true">
       <Column Name="ID" DataType="System.Int64"/>
@@ -545,16 +545,16 @@
     </BusinessObjectDataSource>
     <Parameter Name="BeginPeriod" DataType="System.DateTime" Expression="BeginPeriod"/>
     <Parameter Name="EndPeriod" DataType="System.DateTime" Expression="EndPeriod"/>
-    <Total Name="Total" Expression="[ProductCost.Cost]" Evaluator="Data1" PrintOn="GroupFooter1"/>
+    <Total Name="Total" Expression="[ProductCost.Outlay]" Evaluator="Data1" PrintOn="GroupFooter1"/>
     <Total Name="FullTotal" Expression="[Total]" Evaluator="Data1" PrintOn="ReportSummary1"/>
   </Dictionary>
   <ReportPage Name="Page1" RawPaperSize="9" LeftMargin="5" TopMargin="5" RightMargin="5" BottomMargin="5" Watermark.Font="Arial, 60pt" UnlimitedHeight="true">
     <ReportTitleBand Name="ReportTitle1" Width="756" Height="28.35">
       <TextObject Name="Text3" Width="756" Height="18.9" Text="Ведомость по оплате дизайнерам за период с [FormatDateTime([BeginPeriod],&quot;Short Date&quot;)] г. по [FormatDateTime([EndPeriod],&quot;Short Date&quot;)]" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
     </ReportTitleBand>
-    <GroupHeaderBand Name="GroupHeader1" Printable="false" Top="30.64" Width="756" Condition="[ProductCost.Product.Designer.ID]">
-      <DataBand Name="Data1" Printable="false" Top="32.92" Width="756" DataSource="ProductCost"/>
-      <GroupFooterBand Name="GroupFooter1" Top="35.21" Width="756" Height="37.8">
+    <GroupHeaderBand Name="GroupHeader1" Printable="false" Top="31.55" Width="756" Condition="[ProductCost.Product.Designer.ID]">
+      <DataBand Name="Data1" Printable="false" Top="34.75" Width="756" DataSource="ProductCost"/>
+      <GroupFooterBand Name="GroupFooter1" Top="37.95" Width="756" Height="37.8">
         <TextObject Name="Text1" Top="18.9" Width="321.3" Height="18.9" Border.Lines="All" Border.Width="0.5" Text="[ProductCost.Product.Designer.FullUserName]" VertAlign="Center" Font="Arial, 8pt"/>
         <TextObject Name="Text2" Left="642.6" Top="18.9" Width="113.4" Height="18.9" Border.Lines="All" Border.Width="0.5" Text="[Total]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Right" VertAlign="Center" Font="Arial, 8pt"/>
         <TextObject Name="Text4" Width="321.3" Height="18.9" Border.Lines="All" Border.Width="0.5" Fill.Color="Gainsboro" Text="ФИО дизайнера" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
@@ -565,7 +565,7 @@
         <TextObject Name="Text9" Left="444.15" Top="18.9" Width="198.45" Height="18.9" Border.Lines="All" Border.Width="0.5" Text="[ProductCost.Product.Designer.CardNumber]" HorzAlign="Right" VertAlign="Center" Font="Arial, 8pt"/>
       </GroupFooterBand>
     </GroupHeaderBand>
-    <ReportSummaryBand Name="ReportSummary1" Top="75.29" Width="756" Height="18.9">
+    <ReportSummaryBand Name="ReportSummary1" Top="78.95" Width="756" Height="18.9">
       <TextObject Name="Text10" Left="642.6" Width="113.4" Height="18.9" Border.Lines="All" Border.Width="0.5" Text="[FullTotal]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt"/>
       <TextObject Name="Text11" Width="642.6" Height="18.9" Border.Lines="All" Border.Width="0.5" Text="ИТОГО к оплате за период" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
     </ReportSummaryBand>

@@ -31,6 +31,7 @@ namespace AdvertisementWpf.Models
         public string Phone { get; set; } = "";
         public string Email { get; set; } = "";
         public string CardNumber { get; set; } = "";
+        public string PostName { get; set; } = "";
 
         public virtual Role Role { get; set; }
         public virtual ICollection<Client> Clients { get; set; }

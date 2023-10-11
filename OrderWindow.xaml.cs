@@ -17,6 +17,8 @@ using System.Collections;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.Windows.Threading;
 using System.Threading;
+using System.Text.RegularExpressions;
+using System.Text;
 
 namespace AdvertisementWpf
 {
@@ -1109,9 +1111,9 @@ namespace AdvertisementWpf
 
         private void OpenFolderButton_Click(object sender, RoutedEventArgs e)
         {
-            if (ordersViewSource.View.CurrentItem is Order order && System.IO.Directory.Exists(System.IO.Path.Combine(_pathToFilesOfProduct, order.Number)))
+            if (ordersViewSource.View.CurrentItem is Order order && Directory.Exists(Path.Combine(_pathToFilesOfProduct, order.Number)))
             {
-                _ = Process.Start(new ProcessStartInfo { FileName = "explorer.exe", Arguments = $"/n, {System.IO.Path.Combine(_pathToFilesOfProduct, order.Number)}" });
+                _ = Process.Start(new ProcessStartInfo { FileName = "explorer.exe", Arguments = $"/n, {Path.Combine(_pathToFilesOfProduct, order.Number)}" });
             }
         }
 
@@ -1634,6 +1636,7 @@ namespace AdvertisementWpf
                     .Include(Account => Account.Order)
                     .Include(Account => Account.Contractor).ThenInclude(Contractor => Contractor.Bank).ThenInclude(Bank => Bank.Localities)
                     .Include(Account => Account.Order.Client).ThenInclude(Client => Client.Bank).ThenInclude(Bank => Bank.Localities)
+                    .Include(Account => Account.Order.Client).ThenInclude(Client => Client.ConsigneeBank).ThenInclude(ConsigneeBank => ConsigneeBank.Localities)
                     .Include(Account => Account.Order.Products).ThenInclude(Product => Product.ProductType)
                     .Load();
                 accountsViewSource.Source = context__.Accounts.Local.ToObservableCollection();
@@ -1645,8 +1648,8 @@ namespace AdvertisementWpf
                         act.CreateDetailsList();
                     }
                 }
-                accountsViewSource.View.Refresh();
                 _ = accountsViewSource.View.MoveCurrentToFirst();
+                accountsViewSource.View.Refresh();
                 ListAct.SelectedIndex = -1;
                 ListAct.SelectedIndex = 0; //имитация смены текущего выбора для инициации обновления дочерней таблицы
                 if (lShowMessage)
@@ -1675,6 +1678,7 @@ namespace AdvertisementWpf
                     context__.Entry(account).Reference(account => account.Contractor).Load();
                     Contractor contractor = account.Contractor;
                     context__.Entry(contractor).Reference(contractor => contractor.Bank).Load();
+                    contractor.ContractorInfoForAccount = "";
                     if (account.AccountNumber.Count(c => c == '/') > 1) //наименование счета нового формата
                     {
                         string[] s = account.AccountNumber.Split("/");
@@ -1884,6 +1888,7 @@ namespace AdvertisementWpf
                     if (File.Exists(Path.Combine(_pathToReportTemplate, "SF.frx")))
                     {
                         Reports.ReportFileName = Path.Combine(_pathToReportTemplate, "SF.frx");
+                        Reports.ReportDateInWords = InWords.Date(ActDate.SelectedDate);
                         Reports.ReportMode = "SFForm";
                         Reports.RunReport();
                     }
@@ -1895,8 +1900,22 @@ namespace AdvertisementWpf
                     {
                         Reports.ReportFileName = Path.Combine(_pathToReportTemplate, "TN.frx");
                         Reports.ReportMode = "TNForm";
-                        //Reports.NumberInWords = InWords.Number((accountsViewSource.View.CurrentItem as Account).DetailsList.Count);
                         Reports.NumberInWords = InWords.Number(Reports.ActDataSet[0].DetailsList.Count);
+                        Reports.CargoReleasePostName = MainWindow.Userdata.PostName;
+                        Reports.CargoReleaseName = MainWindow.Userdata.ShortUserName;
+                        Reports.ReportDateInWords = InWords.Date(ActDate.SelectedDate);
+                        Reports.FreeValue = new List<string> { "", ""};
+                        MatchCollection matchCollection = Regex.Matches((accountsViewSource.View.CurrentItem as Account).Footing, @"(№|N)?(\s*\w*-?\w*\s*)от(\s*\d{2}.\d{2}.\d{2,4})", RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.CultureInvariant, TimeSpan.FromMilliseconds(200));
+                        if (matchCollection.Count > 0)
+                        {
+                            StringBuilder stringBuilder = new StringBuilder(matchCollection[0].Value.ToLower());
+                            _ = stringBuilder.Replace("№", ""); //убрать лишнее
+                            _ = stringBuilder.Replace("N", "");
+                            _ = stringBuilder.Replace(" ", "");
+                            string str = stringBuilder.ToString();
+                            Reports.FreeValue[0] = str.Substring(0, str.IndexOf("от"));
+                            Reports.FreeValue[1] = str[(str.IndexOf("от") + 2)..];
+                        }
                         Reports.RunReport();
                     }
                     else
@@ -2781,16 +2800,16 @@ namespace AdvertisementWpf
             return foundElement;
         }
 
-        public static class FocusHelper
-        {
-            public static void Focus(UIElement element)
-            {
-                _ = element.Dispatcher.BeginInvoke(DispatcherPriority.Input, new ThreadStart(delegate ()
-                  {
-                      element.Focus();
-                  }));
-            }
-        }
+        //public static class FocusHelper
+        //{
+        //    public static void Focus(UIElement element)
+        //    {
+        //        _ = element.Dispatcher.BeginInvoke(DispatcherPriority.Input, new ThreadStart(delegate ()
+        //          {
+        //              element.Focus();
+        //          }));
+        //    }
+        //}
 
         private void ClientSearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
@@ -2833,71 +2852,6 @@ namespace AdvertisementWpf
                 e.Accepted = true;
             }
         }
-
-        //private void OperationInWorkComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        //{
-        //    if (sender is ComboBox comboBox && comboBox != null && comboBox.GetBindingExpression(System.Windows.Controls.Primitives.Selector.SelectedValueProperty).DataItem is OperationInWork operationInWork)
-        //    {
-        //        MainWindow.statusBar.WriteStatus("Загрузка объектов в техкарту ...", Cursors.Wait);
-        //        _context_.Entry(operationInWork).Reference(w => w.Operation).Load(); //загрузить связки по навигационным свойствам
-        //        operationInWork.IsSelected = true;
-        //        MainWindow.statusBar.ClearStatus();
-        //    }
-        //}
-
-        //private void OperationInWorkTextBlock_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        //{
-        //    if (e.ClickCount >= 2) //ловим двойной или более клик
-        //    {
-        //        (sender as TextBlock).Visibility = Visibility.Collapsed; //скрыть самого себя
-        //    }
-        //}
-
-        //private void OperationInWorkComboBox_DropDownClosed(object sender, EventArgs e)
-        //{
-        //    if (sender is ComboBox comboBox && comboBox != null && comboBox.GetBindingExpression(System.Windows.Controls.Primitives.Selector.SelectedValueProperty).DataItem is OperationInWork operationInWork)
-        //    {
-        //        operationInWork.WorkInTechCard.OperationInWorks_ = null;
-        //        comboBox.Visibility = Visibility.Collapsed; //скрыть самого себя
-        //    }
-        //}
-
-        //private void TestButton_Click(object sender, RoutedEventArgs e)
-        //{
-        //    try
-        //    {
-        //        if (FindName("NewProductListBox") is ListBox listBox)
-        //        {
-        //            foreach (Expander gi in FindVisualChildren<Expander>(listBox))
-        //            {
-        //                gi.IsExpanded = true;
-        //            }
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _ = MessageBox.Show(ex.Message + "\n" + ex?.InnerException?.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-        //    }
-        //}
-
-        //private childItem FindVisualChild<childItem>(DependencyObject obj) where childItem : DependencyObject
-        //{
-        //    for (int i = 0; i < VisualTreeHelper.GetChildrenCount(obj); i++)
-        //    {
-        //        DependencyObject child = VisualTreeHelper.GetChild(obj, i);
-        //        if (child != null && child is childItem)
-        //        {
-        //            return (childItem)child;
-        //        }
-        //        else
-        //        {
-        //            childItem childOfChild = FindVisualChild<childItem>(child);
-        //            if (childOfChild != null)
-        //                return childOfChild;
-        //        }
-        //    }
-        //    return null;
-        //}
     }
 
     public class CostTemplateSelector : DataTemplateSelector

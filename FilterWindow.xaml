@@ -314,7 +314,7 @@
                     </TabItem>
                 </TabControl>
             </TabItem>
-            <TabItem Header="Изделия в произволстве" Name="ProductionProductsTabItem">
+            <TabItem Header="Изделия в производстве" Name="ProductionProductsTabItem">
                 <ListBox Name="TypeOfActivityListBox" ItemsSource="{Binding Source={StaticResource typeOfActivityDataSource}}" 
                          ScrollViewer.VerticalScrollBarVisibility="Auto" 
                          DisplayMemberPath="Name" Style="{StaticResource CheckBoxListStyle}">

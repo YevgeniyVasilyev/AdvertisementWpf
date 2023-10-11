@@ -2,6 +2,7 @@
 using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -11,8 +12,72 @@ namespace AdvertisementWpf.Models
 {
     public partial class Contractor
     {
-        public string ContractorInfoForAccount => $"{Name ?? ""}, ИНН {INN ?? ""}, КПП {KPP ?? ""}, {BusinessAddress ?? ""}";
-        public string ContractorInfoForAct => $"{Name ?? ""}, ИНН {INN ?? ""}, {BusinessAddress ?? ""}, р/с {BankAccount ?? ""}, в банке {Bank?.Name ?? ""}, БИК {Bank?.BIK ?? ""}, к/с {Bank?.CorrAccount ?? ""}";
+        private string _contractorInfoForAccount;
+        [NotMapped]
+        public string ContractorInfoForAccount
+        {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(_contractorInfoForAccount))
+                {
+                    _contractorInfoForAccount = $"{Name ?? ""}, ИНН {INN ?? ""}, КПП {KPP ?? ""}, {BusinessAddress ?? ""}";
+                    NotifyPropertyChanged("ContractorInfoForAccount");
+                }
+                return _contractorInfoForAccount;
+            }
+            set
+            {
+                if (_contractorInfoForAccount != value)
+                {
+                    _contractorInfoForAccount = value;
+                    NotifyPropertyChanged("ContractorInfoForAccount");
+                }
+            }
+        }
+        private string _contractorInfoForAct;
+        [NotMapped]
+        public string ContractorInfoForAct
+        {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(_contractorInfoForAct))
+                {
+                    _contractorInfoForAct = $"{Name ?? ""}, ИНН {INN ?? ""}, {BusinessAddress ?? ""}, р/с {BankAccount ?? ""}, в банке {Bank?.Name ?? ""}, БИК {Bank?.BIK ?? ""}, к/с {Bank?.CorrAccount ?? ""}";
+                    NotifyPropertyChanged("ContractorInfoForAct");
+                }
+                return _contractorInfoForAct;
+            }
+            set
+            {
+                if (_contractorInfoForAct != value)
+                {
+                    _contractorInfoForAct = value;
+                    NotifyPropertyChanged("ContractorInfoForAct");
+                }
+            }
+        }
+        private string _shipperInfoForSFUPD = "";
+        [NotMapped]
+        public string ShipperInfoForSFUPD
+        {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(_shipperInfoForSFUPD))
+                {
+                    _shipperInfoForSFUPD = "-";
+                    NotifyPropertyChanged("ShipperInfoForSFUPD");
+                }
+                return _shipperInfoForSFUPD;
+            }
+            set
+            {
+                if (_shipperInfoForSFUPD != value)
+                {
+                    _shipperInfoForSFUPD = value;
+                    NotifyPropertyChanged("ShipperInfoForSFUPD");
+                }
+            }
+        }
         public string DirectorShortName
         {
             get

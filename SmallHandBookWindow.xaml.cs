@@ -127,17 +127,17 @@ namespace AdvertisementWpf
                     {
                         return new ValidationResult(false, "Значение поля НАСЕЛЕННЫЙ ПУНКТ не может быть пустым!");
                     }
-                    if (string.IsNullOrEmpty(bank.CorrAccount))
-                    {
-                        return new ValidationResult(false, "Значение поля КОРРЕСПОНДЕНТСКИЙ СЧЕТ не может быть пустым!");
-                    }
-                    else
-                    {
-                        if (bank.CorrAccount.Trim().Length != 20)
-                        {
-                            return new ValidationResult(false, "Количество знаков поля КОРРЕСПОНДЕНТСКИЙ СЧЕТ должно быть равно 20!");
-                        }
-                    }
+                    //if (string.IsNullOrEmpty(bank.CorrAccount))
+                    //{
+                    //    return new ValidationResult(false, "Значение поля КОРРЕСПОНДЕНТСКИЙ СЧЕТ не может быть пустым!");
+                    //}
+                    //else
+                    //{
+                    //    if (bank.CorrAccount.Trim().Length != 20)
+                    //    {
+                    //        return new ValidationResult(false, "Количество знаков поля КОРРЕСПОНДЕНТСКИЙ СЧЕТ должно быть равно 20!");
+                    //    }
+                    //}
                     if (string.IsNullOrEmpty(bank.BIK))
                     {
                         return new ValidationResult(false, "Значение поля БИК не может быть пустым!");

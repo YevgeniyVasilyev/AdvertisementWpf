@@ -10,6 +10,7 @@ namespace AdvertisementWpf.Models
         public Bank()
         {
             Clients = new HashSet<Client>();
+            ConsigneeClients = new HashSet<Client>();
             Contractors = new HashSet<Contractor>();
         }
 
@@ -23,6 +24,7 @@ namespace AdvertisementWpf.Models
 
         public virtual Locality Localities { get; set; }
         public virtual ICollection<Client> Clients { get; set; }
+        public virtual ICollection<Client> ConsigneeClients { get; set; }
         public virtual ICollection<Contractor> Contractors { get; set; }
     }
 }

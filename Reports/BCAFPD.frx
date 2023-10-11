@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Report ScriptLanguage="CSharp" ReportInfo.Created="09/18/2023 21:36:31" ReportInfo.Modified="09/20/2023 20:55:51" ReportInfo.CreatorVersion="2023.1.0.0">
+<Report ScriptLanguage="CSharp" ReportInfo.Created="09/18/2023 21:36:31" ReportInfo.Modified="10/02/2023 20:49:55" ReportInfo.CreatorVersion="2023.1.0.0">
   <ScriptText>using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -52,29 +52,29 @@ namespace FastReport
 
     private void GroupFooter1_BeforePrint(object sender, EventArgs e)
     {
-      decimal totalCost = (decimal)Report.GetColumnValue(&quot;dataset.cost&quot;);
+      decimal totalMargin = (decimal)Report.GetColumnValue(&quot;dataset.margin&quot;);
       DateTime lastDatePayment = (DateTime)Report.GetColumnValue(&quot;dataset.maxPaymentDate&quot;); 
       DateTime lastDateShipment = (DateTime)Report.GetColumnValue(&quot;dataset.maxDateShipment&quot;); 
       int days = DateDiff(lastDatePayment, lastDateShipment).Days;
       s100 = s50 = s25 = s0 = 0;
       if (days &gt; 30)
       {
-        s0 = totalCost;
+        s0 = totalMargin;
         s0Total += s0;
       } 
       else if (days &lt;= 10)
       {
-        s100 = totalCost;
+        s100 = totalMargin;
         s100Total += s100;
       }
       else if (days &lt;= 20)
       {
-        s50 = totalCost;
+        s50 = totalMargin;
         s50Total += s50;
       }
       else if (days &lt;= 30)
       {
-        s25 = totalCost;
+        s25 = totalMargin;
         s25Total += s25;
       }
     }
@@ -125,7 +125,7 @@ namespace FastReport
         <TextObject Name="Text1" Width="85.05" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" Text="[dataset.number]" HorzAlign="Center" Font="Arial, 9pt"/>
         <TextObject Name="Text12" Left="85.05" Width="170.1" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" Text="[dataset.client]" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
         <TextObject Name="Text2" Left="255.15" Width="94.5" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" Text="[dataset.cost]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
-        <TextObject Name="Text15" Left="349.65" Width="94.5" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" Text="[PaymentTotal]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
+        <TextObject Name="Text15" Left="349.65" Width="94.5" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" Text="[dataset.paymentSum]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
         <TextObject Name="Text3" Left="444.15" Width="94.5" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" Text="[dataset.outlay]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
         <TextObject Name="Text17" Left="538.65" Width="75.6" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" BeforePrintEvent="Text17_BeforePrint" Text="[div]" Format="Percent" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
         <TextObject Name="Text19" Left="614.25" Width="85.05" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" Text="[dataset.margin]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
@@ -141,7 +141,7 @@ namespace FastReport
       <TextObject Name="Text31" Left="349.65" Width="94.5" Height="18.9" Border.Lines="All" Border.Width="0.5" Text="[FullPaymentTotal]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt, style=Bold"/>
       <TextObject Name="Text32" Left="444.15" Width="94.5" Height="18.9" Border.Lines="All" Border.Width="0.5" Text="[FullOutlayTotal]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt, style=Bold"/>
       <TextObject Name="Text33" Left="538.65" Width="75.6" Height="18.9" Border.Lines="All" Border.Width="0.5" Text="[[FullOutlayTotal] / [FullCostTotal]]" Format="Percent" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt, style=Bold"/>
-      <TextObject Name="Text34" Left="614.25" Width="85.05" Height="18.9" Border.Lines="All" Border.Width="0.5" Text="[FullMarginTotal]" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt, style=Bold"/>
+      <TextObject Name="Text34" Left="614.25" Width="85.05" Height="18.9" Border.Lines="All" Border.Width="0.5" Text="[FullMarginTotal]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt, style=Bold"/>
       <TextObject Name="Text35" Left="699.3" Width="85.05" Height="18.9" Border.Lines="All" Border.Width="0.5" Text="[s100Total]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt, style=Bold"/>
       <TextObject Name="Text36" Left="784.35" Width="85.05" Height="18.9" Border.Lines="All" Border.Width="0.5" Text="[s50Total]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt, style=Bold"/>
       <TextObject Name="Text37" Left="869.4" Width="85.05" Height="18.9" Border.Lines="All" Border.Width="0.5" Text="[s25Total]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt, style=Bold"/>

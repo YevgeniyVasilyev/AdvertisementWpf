@@ -115,13 +115,14 @@
             </DataGrid.RowValidationErrorTemplate>
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Фамилия" Width="Auto" Binding="{Binding Path=FirstName, 
-                    ValidatesOnExceptions=True, ValidatesOnNotifyDataErrors=True}"/>
+                                    ValidatesOnExceptions=True, ValidatesOnNotifyDataErrors=True}"/>
                 <DataGridTextColumn Header="Имя" Binding="{Binding LastName}" Width="Auto"></DataGridTextColumn>
                 <DataGridTextColumn Header="Отчество" Binding="{Binding MiddleName}" Width="Auto"></DataGridTextColumn>
                 <DataGridTextColumn Header="Логин" Width="Auto" Binding="{Binding Path=LoginName, 
-                    ValidatesOnExceptions=True, ValidatesOnNotifyDataErrors=True}"/>
+                                    ValidatesOnExceptions=True, ValidatesOnNotifyDataErrors=True}"/>
                 <DataGridComboBoxColumn Header="Роль" ItemsSource="{Binding Source={StaticResource rolesViewSource}}" 
                                         SelectedValueBinding="{Binding RoleID}" SelectedValuePath="ID" DisplayMemberPath="RoleName" Width="Auto"></DataGridComboBoxColumn>
+                <DataGridTextColumn Header="Должность" Width="Auto" Binding="{Binding Path=PostName}"/>
                 <DataGridComboBoxColumn Header="Категория" ItemsSource="{Binding Source={StaticResource categoryWorkDataSource}}" 
                                         DisplayMemberPath="CategoryName" 
                                         SelectedValueBinding="{Binding CategoryWork}" SelectedValuePath="CategoryID"

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Report ScriptLanguage="CSharp" ReportInfo.Created="09/09/2022 20:49:00" ReportInfo.Modified="09/06/2023 17:48:18" ReportInfo.CreatorVersion="2022.3.0.0">
+<Report ScriptLanguage="CSharp" ReportInfo.Created="09/09/2022 20:49:00" ReportInfo.Modified="10/08/2023 19:03:31" ReportInfo.CreatorVersion="2023.1.0.0">
   <ScriptText>using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -30,6 +30,17 @@ namespace FastReport
       {
         Text1.Text = &quot;Акт № &quot; + Report.GetColumnValue(&quot;Act.ActNumber&quot;) + &quot; от &quot; + FormatDateTime(ToDateTime(Report.GetParameterValue(&quot;ReportDate&quot;)),&quot;Short Date&quot;) + &quot; г.&quot;;
       }      
+    }
+
+    private void Text36_BeforePrint(object sender, EventArgs e)
+    {
+      string footing = (string)Report.GetColumnValue(&quot;Act.Account.Footing&quot;);
+      if (string.IsNullOrWhiteSpace(footing))
+      {
+        string accountNumber = (string)Report.GetColumnValue(&quot;Act.Account.AccountNumber&quot;);
+        string accountDate = FormatDateTime(ToDateTime(Report.GetColumnValue(&quot;Act.Account.AccountDate&quot;)),&quot;Short Date&quot;);          
+        Text36.Text = $&quot;Счет № {accountNumber} от {accountDate} г.&quot;; 
+      }
     }
   }
 }
@@ -316,8 +327,8 @@ namespace FastReport
         <Column Name="Cost" DataType="System.Decimal"/>
       </BusinessObjectDataSource>
     </BusinessObjectDataSource>
-    <Parameter Name="ReportDate" DataType="System.DateTime"/>
-    <Parameter Name="AmountInWords" DataType="System.String"/>
+    <Parameter Name="ReportDate" DataType="System.DateTime" AsString=""/>
+    <Parameter Name="AmountInWords" DataType="System.String" AsString=""/>
     <Total Name="TotalCost" Expression="[Act.DetailsList.Cost]" Evaluator="Data1" PrintOn="DataFooter1"/>
     <Total Name="TotalCount" TotalType="Count" Evaluator="Data1" PrintOn="DataFooter1"/>
   </Dictionary>
@@ -325,19 +336,21 @@ namespace FastReport
     <ReportTitleBand Name="ReportTitle1" Width="718.2" Height="151.2" CanGrow="true" Guides="9.45,28.35,37.8,75.6,113.4">
       <TextObject Name="Text1" Left="18.9" Top="9.45" Width="680.4" Height="18.9" BeforePrintEvent="Text1_BeforePrint" Text="Акт № [Act.ActNumber] от [FormatDateTime(ToDateTime([ReportDate]),&quot;Short Date&quot;)]" Font="Arial, 10pt, style=Bold"/>
       <LineObject Name="Line1" Left="18.9" Top="28.35" Width="680.4"/>
-      <TextObject Name="Text31" Left="18.9" Top="37.8" Width="103.95" Height="37.8" Text="Исполнитель:" VertAlign="Center" Font="Arial, 10pt"/>
+      <TextObject Name="Text31" Left="18.9" Top="37.8" Width="103.95" Height="37.8" CanGrow="true" Text="Исполнитель:" VertAlign="Center" Font="Arial, 10pt"/>
       <TextObject Name="Text32" Left="122.85" Top="37.8" Width="576.45" Height="37.8" CanGrow="true" Text="[Act.Account.Contractor.ContractorInfoForAct]" VertAlign="Center" Font="Arial, 7.8pt, style=Bold"/>
-      <TextObject Name="Text33" Left="18.9" Top="75.6" Width="103.95" Height="37.8" Text="Заказчик:" VertAlign="Center" Font="Arial, 10pt"/>
+      <TextObject Name="Text33" Left="18.9" Top="75.6" Width="103.95" Height="37.8" CanGrow="true" Text="Заказчик:" VertAlign="Center" Font="Arial, 10pt"/>
       <TextObject Name="Text34" Left="122.85" Top="75.6" Width="576.45" Height="37.8" CanGrow="true" Text="[Act.Account.Order.Client.ClientInfoForAct]" VertAlign="Center" Font="Arial, 7.8pt, style=Bold"/>
+      <TextObject Name="Text35" Left="18.9" Top="113.4" Width="103.95" Height="37.8" Text="Основание:" VertAlign="Center" Font="Arial, 10pt"/>
+      <TextObject Name="Text36" Left="122.85" Top="113.4" Width="576.45" Height="37.8" BeforePrintEvent="Text36_BeforePrint" Text="[Act.Account.Footing]" VertAlign="Center" Font="Arial, 7.8pt"/>
     </ReportTitleBand>
-    <DataBand Name="Data1" Top="174.1" Width="718.2" Height="18.9" CanGrow="true" CanBreak="true" Guides="0,18.89999" DataSource="DetailsList5">
+    <DataBand Name="Data1" Top="176.5" Width="718.2" Height="18.9" CanGrow="true" CanBreak="true" Guides="0,18.89999" DataSource="DetailsList5">
       <TextObject Name="Text2" Left="18.9" Width="28.35" Height="18.9" Border.Lines="All" CanGrow="true" GrowToBottom="true" Text="[Row#]" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt"/>
       <TextObject Name="Text3" Left="47.25" Width="330.75" Height="18.9" Border.Lines="All" CanGrow="true" GrowToBottom="true" Text="[Act.DetailsList.ProductInfoForAccount]" VertAlign="Center" Font="Arial, 10pt"/>
-      <TextObject Name="Text4" Left="378" Width="56.7" Height="18.9" Border.Lines="All" GrowToBottom="true" Text="[Act.DetailsList.Quantity]" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt"/>
-      <TextObject Name="Text5" Left="434.7" Width="66.15" Height="18.9" Border.Lines="All" GrowToBottom="true" Text="[Act.DetailsList.UnitName]" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt"/>
-      <TextObject Name="Text6" Left="500.85" Width="85.05" Height="18.9" Border.Lines="All" GrowToBottom="true" Text="[Act.DetailsList.PricePerUnit]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" VertAlign="Center" Font="Arial, 10pt"/>
+      <TextObject Name="Text4" Left="378" Width="56.7" Height="18.9" Border.Lines="All" GrowToBottom="true" Text="[Act.DetailsList.Quantity]" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt"/>
+      <TextObject Name="Text5" Left="434.7" Width="66.15" Height="18.9" Border.Lines="All" GrowToBottom="true" Text="[Act.DetailsList.UnitName]" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt"/>
+      <TextObject Name="Text6" Left="500.85" Width="85.05" Height="18.9" Border.Lines="All" GrowToBottom="true" Text="[Act.DetailsList.PricePerUnit]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt"/>
       <TextObject Name="Text7" Left="585.9" Width="113.4" Height="18.9" Border.Lines="All" GrowToBottom="true" Text="[Act.DetailsList.Cost]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt"/>
-      <DataHeaderBand Name="DataHeader1" Top="153.2" Width="718.2" Height="18.9" KeepWithData="true" RepeatOnEveryPage="true">
+      <DataHeaderBand Name="DataHeader1" Top="154.4" Width="718.2" Height="18.9" KeepWithData="true" RepeatOnEveryPage="true">
         <TableObject Name="Table3" Left="18.9" Width="680.4" Height="18.9" Border.Lines="All" CanBreak="false" RepeatHeaders="false">
           <TableColumn Name="Column11" Width="28.35"/>
           <TableColumn Name="Column12" Width="330.75"/>
@@ -355,7 +368,7 @@ namespace FastReport
           </TableRow>
         </TableObject>
       </DataHeaderBand>
-      <DataFooterBand Name="DataFooter1" Top="195" Width="718.2" Height="217.35" Guides="0,18.89999,37.79999,56.7,85.05,122.85,75.59999,140.3,159.2,178.1,197,215.9,195.55,195" KeepWithData="true">
+      <DataFooterBand Name="DataFooter1" Top="198.6" Width="718.2" Height="217.35" Guides="0,18.89999,37.79999,56.7,85.05,122.85,75.59999,140.3,159.2,178.1,197,215.9,195.55,195" KeepWithData="true">
         <TextObject Name="Text24" Left="491.4" Width="94.5" Height="18.9" Text="Итого:" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
         <TextObject Name="Text25" Left="585.9" Width="113.4" Height="18.9" Text="[TotalCost]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
         <TextObject Name="Text10" Left="453.6" Top="18.9" Width="132.3" Height="18.9" Text="Без налога (НДС:)" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
@@ -364,10 +377,10 @@ namespace FastReport
         <TextObject Name="Text17" Left="18.9" Top="85.05" Width="689.85" Height="37.8" Border.Lines="Bottom" Text="Вышеперечисленные услуги выполнены полностью и в срок. Заказчик претензий по объему, качеству и срокам оказания услуг не имеет." VertAlign="Center" Font="Arial, 10pt"/>
         <TextObject Name="Text16" Left="18.9" Top="56.7" Width="444.15" Height="18.9" Text="[AmountInWords]" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
         <TextObject Name="Text26" Left="18.9" Top="140.3" Width="122.85" Height="18.9" Text="ИСПОЛНИТЕЛЬ" Font="Arial, 10pt, style=Bold"/>
-        <TextObject Name="Text27" Left="18.9" Top="159.2" Width="359.1" Height="18.9" CanGrow="true" Text="[Act.Account.Contractor.DirectorPostName] [Act.Account.Contractor.Name]" Font="Arial, 10pt"/>
+        <TextObject Name="Text27" Left="18.9" Top="159.2" Width="359.1" Height="18.9" CanGrow="true" Text="[Act.Account.Contractor.DirectorPostName] [Act.Account.Contractor.Name]" Font="Arial, 9pt"/>
         <TextObject Name="Text28" Left="396.9" Top="140.3" Width="94.5" Height="18.9" Text="ЗАКАЗЧИК" Font="Arial, 10pt, style=Bold"/>
-        <TextObject Name="Text29" Left="396.9" Top="159.2" Width="311.85" Height="18.9" CanGrow="true" Text="[Act.Account.Order.Client.Name]" Font="Arial, 10pt"/>
-        <TextObject Name="Text30" Left="18.9" Top="197" Width="359.1" Height="18.9" CanGrow="true" Text="[Act.Account.Contractor.DirectorShortName]  доверенность № [Act.Account.Contractor.DirectorAttorneyNumber] от [FormatDateTime(ToDateTime([Act.Account.Contractor.DirectorAttorneyDate]), &quot;Short Date&quot;)]" Font="Arial, 10pt"/>
+        <TextObject Name="Text29" Left="396.9" Top="159.2" Width="311.85" Height="18.9" CanGrow="true" Text="[Act.Account.Order.Client.Name]" Font="Arial, 9pt"/>
+        <TextObject Name="Text30" Left="18.9" Top="197" Width="359.1" Height="18.9" CanGrow="true" Text="[Act.Account.Contractor.DirectorShortName]  доверенность № [Act.Account.Contractor.DirectorAttorneyNumber] от [FormatDateTime(ToDateTime([Act.Account.Contractor.DirectorAttorneyDate]), &quot;Short Date&quot;)]" Font="Arial, 9pt"/>
         <LineObject Name="Line2" Left="18.9" Top="195.55" Width="359.1"/>
         <LineObject Name="Line3" Left="397.45" Top="195" Width="311.85"/>
       </DataFooterBand>

@@ -285,9 +285,9 @@
                             </GridViewColumn.Header>
                         </GridViewColumn>
                         <GridViewColumn x:Name="o_col4" Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
-                                        DisplayMemberBinding="{Binding Path=Client.Name}">
+                                        DisplayMemberBinding="{Binding Path=Client.ShortName}">
                             <GridViewColumn.Header>
-                                <GridViewColumnHeader Content=" Клиент " Tag="Client.Name" Click="GridViewColumnHeader_Click"/>
+                                <GridViewColumnHeader Content=" Клиент " Tag="Client.ShortName" Click="GridViewColumnHeader_Click"/>
                             </GridViewColumn.Header>
                         </GridViewColumn>
                         <GridViewColumn x:Name="o_col5" Header=" Изделия в заказе " Width="350" HeaderTemplate="{StaticResource ListViewHeaderTemplate}">
@@ -455,9 +455,9 @@
                             </GridViewColumn.Header>
                         </GridViewColumn>
                         <GridViewColumn Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
-                                        DisplayMemberBinding="{Binding Path=TechCard.Product.Order.Client.Name}">
+                                        DisplayMemberBinding="{Binding Path=TechCard.Product.Order.Client.ShortName}">
                             <GridViewColumn.Header>
-                                <GridViewColumnHeader Content=" Заказчик " Tag="TechCard.Product.Order.Client.Name" Click="GridViewColumnHeader_Click"/>
+                                <GridViewColumnHeader Content=" Заказчик " Tag="TechCard.Product.Order.Client.ShortName" Click="GridViewColumnHeader_Click"/>
                             </GridViewColumn.Header>
                         </GridViewColumn>
                         <GridViewColumn Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"

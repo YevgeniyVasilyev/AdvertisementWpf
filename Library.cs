@@ -54,7 +54,7 @@ namespace AdvertisementWpf
                 if (bg.Items[0].GetType().Name == "Client")
                 {
                     Client client = bg.Items[0] as Client;
-                    if (string.IsNullOrWhiteSpace(client.Name))
+                    if (string.IsNullOrWhiteSpace(client.ShortName))
                     {
                         return new ValidationResult(false, "Значение поля НАИМЕНОВАНИЕ не может быть пустым!");
                     }
@@ -420,6 +420,9 @@ namespace AdvertisementWpf
         public static string NumberInWords = "";
         public static string ReportDateInWords = "";
         public static string MonthInWords = "";
+        public static string CargoReleasePostName = "";
+        public static string CargoReleaseName = "";
+        public static List<string> FreeValue = null;
         private static string ReadyReportFileName = "";
 
         public static void RunReport()
@@ -465,6 +468,7 @@ namespace AdvertisementWpf
                     report.Load(ReportFileName);
                     report.RegisterData(ActDataSet, "Act", 3);
                     report.SetParameterValue("ReportDate", ReportDate);
+                    report.SetParameterValue("DateInWords", ReportDateInWords);
                     report.SetParameterValue("AmountInWords", AmountInWords);
                     ReadyReportFileName = "SF.pdf";
                 }
@@ -475,6 +479,11 @@ namespace AdvertisementWpf
                     report.SetParameterValue("ReportDate", ReportDate);
                     report.SetParameterValue("AmountInWords", AmountInWords);
                     report.SetParameterValue("NumberInWords", NumberInWords);
+                    report.SetParameterValue("CargoReleasePostName", CargoReleasePostName);
+                    report.SetParameterValue("CargoReleaseName", CargoReleaseName);
+                    report.SetParameterValue("freeString1", FreeValue[0]);
+                    report.SetParameterValue("freeString2", FreeValue[1]);
+                    report.SetParameterValue("DateInWords", ReportDateInWords);
                     ReadyReportFileName = "TN.pdf";
                 }
                 else if (ReportMode == "UPDForm")
@@ -1055,9 +1064,35 @@ namespace AdvertisementWpf
             bool lReverse = (string)parameter == "True";
             foreach (object value in values)
             {
-                if (!value.GetType().FullName.Contains("MS.Internal.NamedObject"))
+                //if (!value.GetType().FullName.Contains("MS.Internal.NamedObject"))
+                //{
+                //    lBool = lBool && (bool)value;
+                //}
+                if (value is bool boolean)
                 {
-                    lBool = lBool && (bool)value;
+                    lBool = lBool && boolean;
+                }
+            }
+            return lReverse ? !lBool : lBool; //parameter == True -> return not lBool
+        }
+
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        {
+            throw new NotSupportedException();
+        }
+    }
+
+    public class LogicalOrBoolConverter : IMultiValueConverter
+    {
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        {
+            bool lBool = false;
+            bool lReverse = (string)parameter == "True";
+            foreach (object value in values)
+            {
+                if (value is bool boolean)
+                {
+                    lBool = lBool || boolean;
                 }
             }
             return lReverse ? !lBool : lBool; //parameter == True -> return not lBool

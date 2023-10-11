@@ -122,39 +122,18 @@ namespace AdvertisementWpf
                     _ = entity.Property(e => e.DateFactCompletion).HasColumnType("datetime");
                     _ = entity.Property(e => e.DatePlanCompletion).HasColumnType("datetime");
                 });
-
-                //_ = modelBuilder.Entity<ParameterInProductType>(pp =>
-                //{
-                //    //_ = pp.HasNoKey();
-                //    _ = pp.HasIndex(pp => pp.ProductTypeID);
-                //});
-                //_ = modelBuilder.Entity<ProductCost>(pcost =>
-                //{
-                //    //pcost.HasNoKey();
-                //    pcost.HasIndex(pcost => pcost.ProductID);
-                //});
-                //_ = modelBuilder.Entity<TypeOfActivityInProduct>(tp =>
-                //{
-                //    //tp.HasNoKey();
-                //    tp.HasIndex(tp => tp.ProductTypeID);
-                //});
-                //_ = modelBuilder.Entity<Order>()
-                //    .HasOne("Designer")
-                //    .WithMany("OrderDesigners");
                 _ = modelBuilder.Entity<Order>()
                     .HasOne("Manager")
                     .WithMany("OrderManagers");
                 _ = modelBuilder.Entity<Order>()
                     .HasOne("OrderEntered")
                     .WithMany("OrderOrderEntereds");
-                //_ = modelBuilder.Entity<Product>()
-                //    .HasOne("Order");
-                //_ = modelBuilder.Entity<Product>()
-                //    .HasOne("ProductType");
-                //_ = modelBuilder.Entity<ProductType>()
-                //    .HasOne("СategoryOfProduct");
-                //_ = modelBuilder.Entity<CategoryOfProduct>()
-                //    .HasMany("Products");
+                _ = modelBuilder.Entity<Client>()
+                    .HasOne("Bank")
+                    .WithMany("Clients");
+                _ = modelBuilder.Entity<Client>()
+                    .HasOne("ConsigneeBank")
+                    .WithMany("ConsigneeClients");
             }
         }
     }

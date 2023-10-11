@@ -45,6 +45,8 @@ namespace AdvertisementWpf
         public static DateTime? dStartDate, dEndDate;
         private GridViewColumnHeader listViewSortCol = null;
         private SortAdorner listViewSortAdorner = null;
+        protected enum SortDirection { None, Ascending, Descending } //внутреннее определение направления сортировки
+        private List<ListViewSort> ListViewSorts = new List<ListViewSort> { };
 
         public MainWindow()
         {
@@ -847,50 +849,191 @@ namespace AdvertisementWpf
         private void GridViewColumnHeader_Click(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
-            GridViewColumnHeader column = sender as GridViewColumnHeader;
-            string sortBy = column.Tag.ToString();
-            if (listViewSortCol != null)
+            GridViewColumnHeader columnHeader = sender as GridViewColumnHeader;
+            ListViewSort listViewSort = ListViewSorts.FirstOrDefault(l => l.СolumnHeader.Equals(columnHeader));
+            if (listViewSort is null) //если столбец отсутствует в списке для сортировки
             {
-                AdornerLayer.GetAdornerLayer(listViewSortCol).Remove(listViewSortAdorner);
-                if (OrderListView.IsVisible)
-                {
-                    OrderListView.Items.SortDescriptions.Clear();
-                }
-                else if (ProductListView.IsVisible)
-                {
-                    ProductListView.Items.SortDescriptions.Clear();
-                }
-                else if (ProductionProductListView.IsVisible)
-                {
-                    ProductionProductListView.Items.SortDescriptions.Clear();
-                }
+                ListViewSorts.Add(new ListViewSort(columnHeader, SortDirection.Ascending)); //то добавить с начальным направлением сортировки "по возрастанию"
             }
-
-            ListSortDirection newDir = ListSortDirection.Ascending;
-            if (listViewSortCol == column && listViewSortAdorner.Direction == newDir)
+            else //столбец есть в списке для сортировки
             {
-                newDir = ListSortDirection.Descending;
+                listViewSort.NextSortDirection(); //установить следующее направление сортировки (циклическое переключение)
             }
-
-            listViewSortCol = column;
-            listViewSortAdorner = new SortAdorner(listViewSortCol, newDir);
-            AdornerLayer.GetAdornerLayer(listViewSortCol).Add(listViewSortAdorner);
+            if ((Keyboard.Modifiers & ModifierKeys.Control) <= 0) //при щелчке по заголовку НЕ БЫЛА зажата клавиша CTRL
+            {
+                ListViewSorts.Where(lws => !lws.СolumnHeader.Equals(columnHeader)).ToList().ForEach(lws => lws.ClearSortDirection()); //то сбросить для всех столбцов направление сортировки КРОМЕ ТЕКУЩЕГО
+                _ = ListViewSorts.RemoveAll(lws => !lws.СolumnHeader.Equals(columnHeader)); //и удалить все КРОМЕ ТЕКУЩЕГО
+            }
             if (OrderListView.IsVisible)
             {
-                OrderListView.Items.SortDescriptions.Add(new SortDescription(sortBy, newDir));
+                OrderListView.Items.SortDescriptions.Clear();
             }
             else if (ProductListView.IsVisible)
             {
-                ProductListView.Items.SortDescriptions.Add(new SortDescription(sortBy, newDir));
+                ProductListView.Items.SortDescriptions.Clear();
             }
             else if (ProductionProductListView.IsVisible)
             {
-                ProductionProductListView.Items.SortDescriptions.Add(new SortDescription(sortBy, newDir));
+                ProductionProductListView.Items.SortDescriptions.Clear();
+            }
+            foreach (ListViewSort lws in ListViewSorts)
+            {
+                if (lws.ColumnSortDirection == SortDirection.None)
+                {
+                    continue;
+                }
+                if (OrderListView.IsVisible)
+                {
+                    OrderListView.Items.SortDescriptions.Add(new SortDescription(lws.SortBy, lws.ColumnSortDirection == SortDirection.Ascending ? ListSortDirection.Ascending : ListSortDirection.Descending));
+                }
+                else if (ProductListView.IsVisible)
+                {
+                    ProductListView.Items.SortDescriptions.Add(new SortDescription(lws.SortBy, lws.ColumnSortDirection == SortDirection.Ascending ? ListSortDirection.Ascending : ListSortDirection.Descending));
+                }
+                else if (ProductionProductListView.IsVisible)
+                {
+                    ProductionProductListView.Items.SortDescriptions.Add(new SortDescription(lws.SortBy, lws.ColumnSortDirection == SortDirection.Ascending ? ListSortDirection.Ascending : ListSortDirection.Descending));
+                }
+            }
+
+
+            //GridViewColumnHeader column = sender as GridViewColumnHeader;
+            //string sortBy = column.Tag.ToString();
+            //if (listViewSortCol != null)
+            //{
+            //    AdornerLayer.GetAdornerLayer(listViewSortCol).Remove(listViewSortAdorner);
+            //    if (OrderListView.IsVisible)
+            //    {
+            //        OrderListView.Items.SortDescriptions.Clear();
+            //    }
+            //    else if (ProductListView.IsVisible)
+            //    {
+            //        ProductListView.Items.SortDescriptions.Clear();
+            //    }
+            //    else if (ProductionProductListView.IsVisible)
+            //    {
+            //        ProductionProductListView.Items.SortDescriptions.Clear();
+            //    }
+            //}
+
+            //ListSortDirection newDir = ListSortDirection.Ascending;
+            //if (listViewSortCol == column && listViewSortAdorner.Direction == newDir)
+            //{
+            //    newDir = ListSortDirection.Descending;
+            //}
+
+            //listViewSortCol = column;
+            //listViewSortAdorner = new SortAdorner(listViewSortCol, newDir);
+            //AdornerLayer.GetAdornerLayer(listViewSortCol).Add(listViewSortAdorner);
+            //if (OrderListView.IsVisible)
+            //{
+            //    OrderListView.Items.SortDescriptions.Add(new SortDescription(sortBy, newDir));
+            //}
+            //else if (ProductListView.IsVisible)
+            //{
+            //    ProductListView.Items.SortDescriptions.Add(new SortDescription(sortBy, newDir));
+            //}
+            //else if (ProductionProductListView.IsVisible)
+            //{
+            //    ProductionProductListView.Items.SortDescriptions.Add(new SortDescription(sortBy, newDir));
+            //}
+        }
+
+        protected class ListViewSort
+        {
+            protected internal GridViewColumnHeader СolumnHeader { get; set; }                          //определение заголовка столбца GridView в составе ListView
+            protected AdornerSort ColumnSortAdorner { get; set; }                                       //рисуемый значок направления сортировки
+            protected internal SortDirection ColumnSortDirection { get; set; } = SortDirection.None;    //новое/текущее направление сортировки 
+            protected internal string SortBy { get; set; }                                              //столбец для сортировки
+
+            public ListViewSort(GridViewColumnHeader gridViewColumnHeader, SortDirection sortDirection)
+            {
+                СolumnHeader = gridViewColumnHeader;
+                ColumnSortDirection = sortDirection;
+                SortBy = gridViewColumnHeader.Tag.ToString();
+                AddAdornerLayer();
+            }
+
+            protected internal void NextSortDirection() //установить следующее направление сортировки
+            {
+                static SortDirection Next(SortDirection sortDirection) => sortDirection switch
+                {
+                    SortDirection.None => SortDirection.Ascending,
+                    SortDirection.Ascending => SortDirection.Descending,
+                    _ => SortDirection.None //в случае SortDirection.Descending
+                };
+                RemoveAdornerLayer();
+                ColumnSortDirection = Next(ColumnSortDirection);
+                AddAdornerLayer();
+            }
+
+            protected internal void ClearSortDirection() //сбросить направление сортировки
+            {
+                RemoveAdornerLayer();
+                ColumnSortDirection = SortDirection.None;
+            }
+
+            private void AddAdornerLayer()
+            {
+                ColumnSortAdorner = ColumnSortDirection == SortDirection.None ? null :
+                                    (ColumnSortDirection == SortDirection.Ascending ? new AdornerSort(СolumnHeader, SortDirection.Ascending) : new AdornerSort(СolumnHeader, SortDirection.Descending));
+                if (ColumnSortAdorner != null)
+                {
+                    AdornerLayer.GetAdornerLayer(СolumnHeader).Add(ColumnSortAdorner); //нарисовать символ направления сортировки
+                }
+            }
+
+            private void RemoveAdornerLayer()
+            {
+                if (ColumnSortAdorner != null)
+                {
+                    AdornerLayer.GetAdornerLayer(СolumnHeader).Remove(ColumnSortAdorner); //убрать символ направления сортировки
+                }
+            }
+
+            protected class AdornerSort : Adorner
+            {
+                private static Geometry ascGeometry = Geometry.Parse("M 0 4 L 3.5 0 L 7 4 Z");
+                private static Geometry descGeometry = Geometry.Parse("M 0 0 L 3.5 4 L 7 0 Z");
+
+                public SortDirection Direction { get; private set; }
+
+                public AdornerSort(UIElement element, SortDirection dir) : base(element)
+                {
+                    Direction = dir;
+                }
+
+                protected override void OnRender(DrawingContext drawingContext)
+                {
+                    base.OnRender(drawingContext);
+
+                    if (AdornedElement.RenderSize.Width < 20)
+                    {
+                        return;
+                    }
+
+                    TranslateTransform transform = new TranslateTransform
+                        (
+                            AdornedElement.RenderSize.Width - 15,
+                            (AdornedElement.RenderSize.Height - 5) / 2
+                        );
+                    drawingContext.PushTransform(transform);
+
+                    Geometry geometry = ascGeometry;
+                    if (Direction == SortDirection.Descending)
+                    {
+                        geometry = descGeometry;
+                    }
+
+                    drawingContext.DrawGeometry(Brushes.Black, null, geometry);
+                    drawingContext.Pop();
+                }
             }
         }
 
         private void FilterOrders()
         {
+            ListViewSorts.Clear(); //очистить список для сортировки
             FilterWindow fw = new FilterWindow();
             if ((bool)fw.ShowDialog())
             {
@@ -900,6 +1043,7 @@ namespace AdvertisementWpf
 
         private void FilterProducts()
         {
+            ListViewSorts.Clear(); //очистить список для сортировки
             FilterWindow fw = new FilterWindow(orderFilterMode: 1);
             if ((bool)fw.ShowDialog())
             {
@@ -909,6 +1053,7 @@ namespace AdvertisementWpf
 
         private void FilterProductionProducts()
         {
+            ListViewSorts.Clear(); //очистить список для сортировки
             FilterWindow fw = new FilterWindow(orderFilterMode: 2);
             if ((bool)fw.ShowDialog())
             {
@@ -925,40 +1070,6 @@ namespace AdvertisementWpf
             };
             ew.Show();
         }
-
-        //private void GridViewColumns_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        //{
-        //    if (e.Action == NotifyCollectionChangedAction.Move)
-        //    {
-        //        //string msg = string.Format("Column moved from position {0} to position {1}", e.OldStartingIndex, e.NewStartingIndex);
-        //        //MessageBox.Show(msg);
-        //    }
-        //}
-
-        //private void ListView_Loaded(object sender, RoutedEventArgs e)
-        //{
-        //    if (e.OriginalSource is ListView listView)
-        //    {
-        //        PropertyDescriptor pd = DependencyPropertyDescriptor.FromProperty(GridViewColumn.WidthProperty, typeof(GridViewColumn));
-        //        GridView gridView = (GridView)listView.View;
-        //        foreach (GridViewColumn gridViewColumn in gridView.Columns)
-        //        {
-        //            pd.RemoveValueChanged(gridViewColumn, ColumnWidthChanged);
-        //            pd.AddValueChanged(gridViewColumn, ColumnWidthChanged);
-        //            //((INotifyPropertyChanged)gridViewColumn).PropertyChanged -= (sender, e) => { };
-        //            //((INotifyPropertyChanged)gridViewColumn).PropertyChanged += (sender, e) =>
-        //            //{
-        //            //    if (e.PropertyName == "ActualWidth")
-        //            //    {
-        //            //        MessageBox.Show(e.PropertyName);
-        //            //    }
-        //            //};
-        //        }
-        //    }
-        //}
-        //private void ColumnWidthChanged(object sender, EventArgs e)
-        //{
-        //}
 
     }
 

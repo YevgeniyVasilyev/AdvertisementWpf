@@ -95,7 +95,7 @@ namespace AdvertisementWpf
                         TypeOfActivityInOperation typeOfActivityInOperation = OperationsListBox.SelectedItem as TypeOfActivityInOperation;
                         ParameterInOperation parameterInOperation = new ParameterInOperation
                         {
-                            Name = "Новый параметер",
+                            Name = "Новый параметр",
                             IsRefbookOnRequest = false,
                             OperationID = typeOfActivityInOperation.OperationID,
                             ReferencebookID = null,

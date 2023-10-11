@@ -69,6 +69,10 @@ namespace AdvertisementWpf
                 {
                     usersViewSource.Source = usersList.Where(u => IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, u.RoleID, "ListManager")); //только менеджеры
                 }
+                else if (report.Code == "MBTD" || report.Code == "PSFD")
+                {
+                    usersViewSource.Source = usersList.Where(u => IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, u.RoleID, "ListDesigner")); //только дизайнеры
+                }
                 else
                 {
                     usersViewSource.Source = usersList.Where(u => !IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, u.RoleID, "ListDesigner")); //сотрудники без дизайнеров
@@ -264,7 +268,7 @@ namespace AdvertisementWpf
                             .Include(pc => pc.Product.ProductType)
                             .Include(pc => pc.TypeOfActivity)
                             .AsNoTracking()
-                            .Where(pc => pc.TypeOfActivity.Code.Trim() == "10" && pc.Product.DesignerID != null && pc.Product.DateApproval >= beginPeriod && pc.Product.DateApproval <= endPeriod)
+                            .Where(pc => pc.TypeOfActivity.Code.Trim() == "10" && usersList.Contains(pc.Product.Designer) && pc.Product.DateApproval >= beginPeriod && pc.Product.DateApproval <= endPeriod)
                             .OrderBy(pc => pc.Product.DesignerID)
                             .ToList();
                         Reports.BeginPeriod = beginPeriod;
@@ -313,10 +317,9 @@ namespace AdvertisementWpf
 
                         var orderPayments = from pay in _report.Payments
                                             join o in _report.Orders on pay.OrderID equals o.ID
-                                            join p in _report.Products on o.ID equals p.OrderID
                                             join c in _report.Clients on o.ClientID equals c.ID
                                             where usersList.Contains(o.Manager)
-                                            group pay by new { o.ID,o.Number, pay.PaymentDate, pay.PaymentAmount, c.Name } into grp
+                                            group pay by new { o.ID, o.Number, c.Name } into grp
                                             select new
                                             {
                                                 orderID = grp.Key.ID,
@@ -325,25 +328,25 @@ namespace AdvertisementWpf
                                                 maxPaymentDate = grp.Max(pay => pay.PaymentDate),
                                                 client = grp.Key.Name
                                             }; //платежи по заказам
+
                         var productCosts = (from op in orderPayments.ToList()
-                                           join p in _report.Products on op.orderID equals p.OrderID
-                                           join pc in _report.ProductCosts on p.ID equals pc.ProductID
-                                           group pc by new { p.ID, p.OrderID, p.DateShipment, op.number, op.maxPaymentDate, op.paymentSum, op.client } into grp
-                                           select new
-                                           {
-                                               productID = grp.Key.ID,
-                                               orderID = grp.Key.OrderID,
-                                               number = grp.Key.number,
-                                               cost = grp.Sum(pc => pc.Cost),
-                                               outlay = grp.Sum(pc => pc.Outlay),
-                                               margin = grp.Sum(pc => pc.Margin),
-                                               maxDateShipment = grp.Max(pc => pc.Product.DateShipment),
-                                               maxPaymentDate = grp.Key.maxPaymentDate,
-                                               paymentSum = grp.Key.paymentSum,
-                                               client = grp.Key.client,
-                                               manager = usersList.FirstOrDefault().FullUserName
-                                           }).Where(pc => (pc.maxDateShipment <= endPeriod && pc.maxPaymentDate >= beginPeriod && pc.maxPaymentDate <= endPeriod)
-                                                    || (pc.maxPaymentDate <= endPeriod && pc.maxDateShipment >= beginPeriod && pc.maxDateShipment <= endPeriod))
+                                            join p in _report.Products on op.orderID equals p.OrderID
+                                            join pc in _report.ProductCosts on p.ID equals pc.ProductID
+                                            group pc by new { p.OrderID, op.number, op.maxPaymentDate, op.paymentSum, op.client } into grp
+                                            select new
+                                            {
+                                                orderID = grp.Key.OrderID,
+                                                number = grp.Key.number,
+                                                cost = grp.Sum(pc => pc.Cost),
+                                                outlay = grp.Sum(pc => pc.Outlay),
+                                                margin = grp.Sum(pc => pc.Margin),
+                                                maxDateShipment = grp.Max(pc => pc.Product.DateShipment),
+                                                paymentSum = grp.Key.paymentSum,
+                                                maxPaymentDate = grp.Key.maxPaymentDate,
+                                                client = grp.Key.client,
+                                                manager = usersList.FirstOrDefault().FullUserName
+                                            }).Where(pc => (pc.maxDateShipment <= endPeriod && pc.maxPaymentDate >= beginPeriod && pc.maxPaymentDate <= endPeriod)
+                                                     || (pc.maxPaymentDate <= endPeriod && pc.maxDateShipment >= beginPeriod && pc.maxDateShipment <= endPeriod))
                                            .OrderBy(pc => pc.orderID)
                                            .ToList(); //оплата, затраты и маржа по заказам
                         Order order;
