@@ -1,0 +1,99 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report ScriptLanguage="CSharp" ReportInfo.Created="10/22/2023 11:22:06" ReportInfo.Modified="10/22/2023 11:22:06" ReportInfo.CreatorVersion="2023.3.7.0">
+  <Dictionary>
+    <BusinessObjectDataSource Name="Clients" ReferenceName="Clients" DataType="System.Collections.Generic.List`1[[AdvertisementWpf.Models.Client, AdvertisementWpf, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]" Enabled="true">
+      <Column Name="ID" DataType="System.Int64"/>
+      <Column Name="Name" DataType="System.String"/>
+      <Column Name="ShortName" DataType="System.String"/>
+      <Column Name="Profile" DataType="System.String"/>
+      <Column Name="FormProperty" DataType="System.Byte"/>
+      <Column Name="DirectorName" DataType="System.String"/>
+      <Column Name="ContactPersonName" DataType="System.String"/>
+      <Column Name="PostalAddress" DataType="System.String"/>
+      <Column Name="BusinessAddress" DataType="System.String"/>
+      <Column Name="ActualAddress" DataType="System.String"/>
+      <Column Name="Consignee" DataType="System.String"/>
+      <Column Name="ConsigneeIsSame" DataType="System.Boolean" BindableControl="CheckBox"/>
+      <Column Name="INN" DataType="System.String"/>
+      <Column Name="KPP" DataType="System.String"/>
+      <Column Name="PersonalAccount" DataType="System.String"/>
+      <Column Name="BankAccount" DataType="System.String"/>
+      <Column Name="BankID" DataType="System.Nullable`1[[System.Int64, System.Private.CoreLib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"/>
+      <Column Name="IsActive" DataType="System.Boolean" BindableControl="CheckBox"/>
+      <Column Name="Note" DataType="System.Byte[]" BindableControl="Picture"/>
+      <Column Name="UserID" DataType="System.Int64"/>
+      <Column Name="MobilePhone" DataType="System.String"/>
+      <Column Name="WorkPhone" DataType="System.String"/>
+      <Column Name="Email" DataType="System.String"/>
+      <Column Name="AdditionalInfo" DataType="System.String"/>
+      <Column Name="ConsigneeName" DataType="System.String"/>
+      <Column Name="ConsigneeINN" DataType="System.String"/>
+      <Column Name="ConsigneeKPP" DataType="System.String"/>
+      <Column Name="ConsigneeBusinessAddress" DataType="System.String"/>
+      <Column Name="ConsigneeWorkPhone" DataType="System.String"/>
+      <Column Name="ConsigneeBankAccount" DataType="System.String"/>
+      <Column Name="ConsigneePersonalAccount" DataType="System.String"/>
+      <Column Name="ConsigneeBankID" DataType="System.Nullable`1[[System.Int64, System.Private.CoreLib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"/>
+      <Column Name="Bank" DataType="AdvertisementWpf.Models.Bank, AdvertisementWpf, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Column Name="ID" DataType="System.Int64"/>
+        <Column Name="Name" DataType="System.String"/>
+        <Column Name="LocalitiesID" DataType="System.Int64"/>
+        <Column Name="CorrAccount" DataType="System.String"/>
+        <Column Name="BIK" DataType="System.String"/>
+        <Column Name="OKPO" DataType="System.String"/>
+        <Column Name="OKONX" DataType="System.String"/>
+        <Column Name="Localities" DataType="AdvertisementWpf.Models.Locality, AdvertisementWpf, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"/>
+        <BusinessObjectDataSource Name="Clients1" Alias="Clients" Enabled="false" DataType="System.Collections.Generic.ICollection`1[[AdvertisementWpf.Models.Client, AdvertisementWpf, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]" PropName="Clients"/>
+        <BusinessObjectDataSource Name="ConsigneeClients" Enabled="false" DataType="System.Collections.Generic.ICollection`1[[AdvertisementWpf.Models.Client, AdvertisementWpf, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"/>
+        <BusinessObjectDataSource Name="Contractors" Enabled="false" DataType="System.Collections.Generic.ICollection`1[[AdvertisementWpf.Models.Contractor, AdvertisementWpf, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"/>
+      </Column>
+      <Column Name="ConsigneeBank" DataType="AdvertisementWpf.Models.Bank, AdvertisementWpf, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Column Name="ID" DataType="System.Int64"/>
+        <Column Name="Name" DataType="System.String"/>
+        <Column Name="LocalitiesID" DataType="System.Int64"/>
+        <Column Name="CorrAccount" DataType="System.String"/>
+        <Column Name="BIK" DataType="System.String"/>
+        <Column Name="OKPO" DataType="System.String"/>
+        <Column Name="OKONX" DataType="System.String"/>
+        <Column Name="Localities" DataType="AdvertisementWpf.Models.Locality, AdvertisementWpf, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"/>
+        <BusinessObjectDataSource Name="Clients2" Alias="Clients" Enabled="false" DataType="System.Collections.Generic.ICollection`1[[AdvertisementWpf.Models.Client, AdvertisementWpf, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]" PropName="Clients"/>
+        <BusinessObjectDataSource Name="ConsigneeClients1" Alias="ConsigneeClients" Enabled="false" DataType="System.Collections.Generic.ICollection`1[[AdvertisementWpf.Models.Client, AdvertisementWpf, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]" PropName="ConsigneeClients"/>
+        <BusinessObjectDataSource Name="Contractors1" Alias="Contractors" Enabled="false" DataType="System.Collections.Generic.ICollection`1[[AdvertisementWpf.Models.Contractor, AdvertisementWpf, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]" PropName="Contractors"/>
+      </Column>
+      <Column Name="User" DataType="AdvertisementWpf.Models.User, AdvertisementWpf, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Column Name="ID" DataType="System.Int64"/>
+        <Column Name="FirstName" DataType="System.String"/>
+        <Column Name="LastName" DataType="System.String"/>
+        <Column Name="MiddleName" DataType="System.String"/>
+        <Column Name="LoginName" DataType="System.String"/>
+        <Column Name="RoleID" DataType="System.Int64"/>
+        <Column Name="Disabled" DataType="System.Boolean" BindableControl="CheckBox"/>
+        <Column Name="CategoryWork" DataType="System.Int16"/>
+        <Column Name="IsAdmin" DataType="System.Boolean" BindableControl="CheckBox"/>
+        <Column Name="IsExternal" DataType="System.Boolean" BindableControl="CheckBox"/>
+        <Column Name="Phone" DataType="System.String"/>
+        <Column Name="Email" DataType="System.String"/>
+        <Column Name="CardNumber" DataType="System.String"/>
+        <Column Name="PostName" DataType="System.String"/>
+        <Column Name="Role" DataType="AdvertisementWpf.Models.Role, AdvertisementWpf, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"/>
+        <BusinessObjectDataSource Name="Clients3" Alias="Clients" Enabled="false" DataType="System.Collections.Generic.ICollection`1[[AdvertisementWpf.Models.Client, AdvertisementWpf, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]" PropName="Clients"/>
+        <BusinessObjectDataSource Name="ProductDesigners" Enabled="false" DataType="System.Collections.Generic.ICollection`1[[AdvertisementWpf.Models.Product, AdvertisementWpf, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"/>
+        <BusinessObjectDataSource Name="OrderManagers" Enabled="false" DataType="System.Collections.Generic.ICollection`1[[AdvertisementWpf.Models.Order, AdvertisementWpf, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"/>
+        <BusinessObjectDataSource Name="OrderOrderEntereds" Enabled="false" DataType="System.Collections.Generic.ICollection`1[[AdvertisementWpf.Models.Order, AdvertisementWpf, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"/>
+        <Column Name="FullUserName" DataType="System.String"/>
+        <Column Name="ShortUserName" DataType="System.String"/>
+      </Column>
+      <BusinessObjectDataSource Name="Orders" DataType="System.Collections.Generic.ICollection`1[[AdvertisementWpf.Models.Order, AdvertisementWpf, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]" Enabled="true">
+        <Column Name="Value" Enabled="false" DataType="System.RuntimeType"/>
+      </BusinessObjectDataSource>
+      <Column Name="ClientInfoForAccount" DataType="System.String"/>
+      <Column Name="ClientInfoForAct" DataType="System.String"/>
+      <Column Name="ConsigneeForSFUPD" DataType="System.String"/>
+      <Column Name="ConsigneeForTN" DataType="System.String"/>
+      <Column Name="IsPrivate" DataType="System.Boolean" BindableControl="CheckBox"/>
+      <Column Name="IsLegal" DataType="System.Boolean" BindableControl="CheckBox"/>
+      <Column Name="IsIndividual" DataType="System.Boolean" BindableControl="CheckBox"/>
+      <Column Name="IsBudget" DataType="System.Boolean" BindableControl="CheckBox"/>
+    </BusinessObjectDataSource>
+  </Dictionary>
+</Report>

@@ -35,5 +35,7 @@ namespace AdvertisementWpf.Models
                 NotifyPropertyChanged("WorkInTechCards_");
             }
         }
+        [NotMapped]
+        public decimal ProductCost => Product?.Cost ?? 0;
     }
 }

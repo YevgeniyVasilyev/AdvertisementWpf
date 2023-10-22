@@ -9,6 +9,7 @@ using System.ComponentModel;
 using System.Windows.Data;
 using System.Collections.ObjectModel;
 using System.Reflection;
+using System.Collections.Generic;
 
 namespace AdvertisementWpf
 {
@@ -88,8 +89,9 @@ namespace AdvertisementWpf
     public class ClientAndContractorViewModel
     {
         public ICollectionView BankList { get; set; }
-        public ICollectionView UserList { get; set; }
-        public ObservableCollection<User> UsersList { get; set; }
+        public ICollectionView ManagerList { get; set; }
+        //public ObservableCollection<User> UsersList { get; set; }
+        public List<User> UsersList = new List<User> { };
         public bool ClientsHandBookNew { get; set; }
         public bool ClientsHandBookDelete { get; set; }
         public bool ContractorsHandBookNew { get; set; }
@@ -105,10 +107,10 @@ namespace AdvertisementWpf
             using App.AppDbContext _context = new App.AppDbContext(MainWindow.Connectiondata.Connectionstring);
             {
                 BankList = CollectionViewSource.GetDefaultView(_context.Banks.AsNoTracking().ToList());
-                //_context.Users.AsNoTracking().Load();
-                _context.Users.Load();
-                UsersList = _context.Users.Local.ToObservableCollection();
-                UserList = CollectionViewSource.GetDefaultView(UsersList);
+                UsersList = _context.Users.AsNoTracking().ToList();
+                //_context.Users.Load();
+                //UsersList = (ObservableCollection<User>)_context.Users.Local.ToObservableCollection().Where(u => IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, u.RoleID, "ListManager"));
+                ManagerList = CollectionViewSource.GetDefaultView(UsersList.Where(u => IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, u.RoleID, "ListManager")));
             }
         }
     }

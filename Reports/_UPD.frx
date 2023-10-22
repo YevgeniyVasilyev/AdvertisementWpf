@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Report ScriptLanguage="CSharp" DoublePass="true" ReportInfo.Created="09/09/2022 20:49:00" ReportInfo.Modified="10/13/2023 10:29:30" ReportInfo.CreatorVersion="2023.3.0.0">
+<Report ScriptLanguage="CSharp" DoublePass="true" ReportInfo.Created="09/09/2022 20:49:00" ReportInfo.Modified="10/14/2023 12:05:13" ReportInfo.CreatorVersion="2023.1.0.0">
   <ScriptText>using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -60,34 +60,34 @@ namespace FastReport
 }
 </ScriptText>
   <Dictionary>
-    <BusinessObjectDataSource Name="Act" ReferenceName="Act" DataType="System.Int32" Enabled="true">
+    <BusinessObjectDataSource Name="Act" ReferenceName="Act" DataType="null" Enabled="true">
       <Column Name="ID" DataType="System.Int64"/>
       <Column Name="AccountID" DataType="System.Int64"/>
       <Column Name="ActNumber" DataType="System.String"/>
-      <Column Name="ActDate" DataType="System.Int32"/>
+      <Column Name="ActDate" DataType="null"/>
       <Column Name="ProductInAct" DataType="System.String"/>
-      <Column Name="Account" DataType="System.Int32">
+      <Column Name="Account" DataType="null">
         <Column Name="ID" DataType="System.Int64"/>
         <Column Name="OrderID" DataType="System.Int64"/>
         <Column Name="AccountNumber" DataType="System.String"/>
-        <Column Name="AccountDate" DataType="System.Int32"/>
-        <Column Name="ContractorID" DataType="System.Int32"/>
+        <Column Name="AccountDate" DataType="null"/>
+        <Column Name="ContractorID" DataType="null"/>
         <Column Name="Footing" DataType="System.String"/>
         <Column Name="IsManual" DataType="System.Boolean" BindableControl="CheckBox"/>
         <Column Name="Details" DataType="System.String"/>
-        <Column Name="PayBeforeDate" DataType="System.Int32"/>
-        <Column Name="Order" DataType="System.Int32">
+        <Column Name="PayBeforeDate" DataType="null"/>
+        <Column Name="Order" DataType="null">
           <Column Name="ID" DataType="System.Int64"/>
           <Column Name="Number" DataType="System.String"/>
           <Column Name="ClientID" DataType="System.Int64"/>
           <Column Name="Note" DataType="System.String"/>
-          <Column Name="DateAdmission" DataType="System.Int32"/>
-          <Column Name="DateCompletion" DataType="System.Int32"/>
-          <Column Name="DateProductionLayout" DataType="System.Int32"/>
+          <Column Name="DateAdmission" DataType="null"/>
+          <Column Name="DateCompletion" DataType="null"/>
+          <Column Name="DateProductionLayout" DataType="null"/>
           <Column Name="OrderEnteredID" DataType="System.Int64"/>
-          <Column Name="ManagerID" DataType="System.Int32"/>
-          <Column Name="DesignerID" DataType="System.Int32"/>
-          <Column Name="Client" DataType="System.Int32">
+          <Column Name="ManagerID" DataType="null"/>
+          <Column Name="DesignerID" DataType="null"/>
+          <Column Name="Client" DataType="null">
             <Column Name="ID" DataType="System.Int64"/>
             <Column Name="Name" DataType="System.String"/>
             <Column Name="Profile" DataType="System.String"/>
@@ -101,20 +101,20 @@ namespace FastReport
             <Column Name="INN" DataType="System.String"/>
             <Column Name="KPP" DataType="System.String"/>
             <Column Name="BankAccount" DataType="System.String"/>
-            <Column Name="BankID" DataType="System.Int32"/>
+            <Column Name="BankID" DataType="null"/>
             <Column Name="IsActive" DataType="System.Boolean" BindableControl="CheckBox"/>
             <Column Name="Note" DataType="System.Byte[]" BindableControl="Picture"/>
             <Column Name="UserID" DataType="System.Int64"/>
             <Column Name="MobilePhone" DataType="System.String"/>
             <Column Name="WorkPhone" DataType="System.String"/>
             <Column Name="Email" DataType="System.String"/>
-            <Column Name="Bank" DataType="System.Int32"/>
-            <Column Name="User" DataType="System.Int32"/>
-            <BusinessObjectDataSource Name="Orders" Enabled="false" DataType="System.Int32"/>
+            <Column Name="Bank" DataType="null"/>
+            <Column Name="User" DataType="null"/>
+            <BusinessObjectDataSource Name="Orders" Enabled="false" DataType="null"/>
             <Column Name="ClientInfoForAccount" DataType="System.String"/>
             <Column Name="ClientInfoForAct" DataType="System.String"/>
           </Column>
-          <Column Name="Designer" DataType="System.Int32">
+          <Column Name="Designer" DataType="null">
             <Column Name="ID" DataType="System.Int64"/>
             <Column Name="FirstName" DataType="System.String"/>
             <Column Name="LastName" DataType="System.String"/>
@@ -128,15 +128,15 @@ namespace FastReport
             <Column Name="Phone" DataType="System.String"/>
             <Column Name="Email" DataType="System.String"/>
             <Column Name="CardNumber" DataType="System.String"/>
-            <Column Name="Role" DataType="System.Int32"/>
-            <BusinessObjectDataSource Name="Clients" Enabled="false" DataType="System.Int32"/>
-            <BusinessObjectDataSource Name="OrderDesigners" Enabled="false" DataType="System.Int32"/>
-            <BusinessObjectDataSource Name="OrderManagers" Enabled="false" DataType="System.Int32"/>
-            <BusinessObjectDataSource Name="OrderOrderEntereds" Enabled="false" DataType="System.Int32"/>
+            <Column Name="Role" DataType="null"/>
+            <BusinessObjectDataSource Name="Clients" Enabled="false" DataType="null"/>
+            <BusinessObjectDataSource Name="OrderDesigners" Enabled="false" DataType="null"/>
+            <BusinessObjectDataSource Name="OrderManagers" Enabled="false" DataType="null"/>
+            <BusinessObjectDataSource Name="OrderOrderEntereds" Enabled="false" DataType="null"/>
             <Column Name="FullUserName" DataType="System.String"/>
             <Column Name="ShortUserName" DataType="System.String"/>
           </Column>
-          <Column Name="Manager" DataType="System.Int32">
+          <Column Name="Manager" DataType="null">
             <Column Name="ID" DataType="System.Int64"/>
             <Column Name="FirstName" DataType="System.String"/>
             <Column Name="LastName" DataType="System.String"/>
@@ -150,15 +150,15 @@ namespace FastReport
             <Column Name="Phone" DataType="System.String"/>
             <Column Name="Email" DataType="System.String"/>
             <Column Name="CardNumber" DataType="System.String"/>
-            <Column Name="Role" DataType="System.Int32"/>
-            <BusinessObjectDataSource Name="Clients1" Alias="Clients" Enabled="false" DataType="System.Int32" PropName="Clients"/>
-            <BusinessObjectDataSource Name="OrderDesigners1" Alias="OrderDesigners" Enabled="false" DataType="System.Int32" PropName="OrderDesigners"/>
-            <BusinessObjectDataSource Name="OrderManagers1" Alias="OrderManagers" Enabled="false" DataType="System.Int32" PropName="OrderManagers"/>
-            <BusinessObjectDataSource Name="OrderOrderEntereds1" Alias="OrderOrderEntereds" Enabled="false" DataType="System.Int32" PropName="OrderOrderEntereds"/>
+            <Column Name="Role" DataType="null"/>
+            <BusinessObjectDataSource Name="Clients1" Alias="Clients" Enabled="false" DataType="null" PropName="Clients"/>
+            <BusinessObjectDataSource Name="OrderDesigners1" Alias="OrderDesigners" Enabled="false" DataType="null" PropName="OrderDesigners"/>
+            <BusinessObjectDataSource Name="OrderManagers1" Alias="OrderManagers" Enabled="false" DataType="null" PropName="OrderManagers"/>
+            <BusinessObjectDataSource Name="OrderOrderEntereds1" Alias="OrderOrderEntereds" Enabled="false" DataType="null" PropName="OrderOrderEntereds"/>
             <Column Name="FullUserName" DataType="System.String"/>
             <Column Name="ShortUserName" DataType="System.String"/>
           </Column>
-          <Column Name="OrderEntered" DataType="System.Int32">
+          <Column Name="OrderEntered" DataType="null">
             <Column Name="ID" DataType="System.Int64"/>
             <Column Name="FirstName" DataType="System.String"/>
             <Column Name="LastName" DataType="System.String"/>
@@ -172,55 +172,55 @@ namespace FastReport
             <Column Name="Phone" DataType="System.String"/>
             <Column Name="Email" DataType="System.String"/>
             <Column Name="CardNumber" DataType="System.String"/>
-            <Column Name="Role" DataType="System.Int32"/>
-            <BusinessObjectDataSource Name="Clients2" Alias="Clients" Enabled="false" DataType="System.Int32" PropName="Clients"/>
-            <BusinessObjectDataSource Name="OrderDesigners2" Alias="OrderDesigners" Enabled="false" DataType="System.Int32" PropName="OrderDesigners"/>
-            <BusinessObjectDataSource Name="OrderManagers2" Alias="OrderManagers" Enabled="false" DataType="System.Int32" PropName="OrderManagers"/>
-            <BusinessObjectDataSource Name="OrderOrderEntereds2" Alias="OrderOrderEntereds" Enabled="false" DataType="System.Int32" PropName="OrderOrderEntereds"/>
+            <Column Name="Role" DataType="null"/>
+            <BusinessObjectDataSource Name="Clients2" Alias="Clients" Enabled="false" DataType="null" PropName="Clients"/>
+            <BusinessObjectDataSource Name="OrderDesigners2" Alias="OrderDesigners" Enabled="false" DataType="null" PropName="OrderDesigners"/>
+            <BusinessObjectDataSource Name="OrderManagers2" Alias="OrderManagers" Enabled="false" DataType="null" PropName="OrderManagers"/>
+            <BusinessObjectDataSource Name="OrderOrderEntereds2" Alias="OrderOrderEntereds" Enabled="false" DataType="null" PropName="OrderOrderEntereds"/>
             <Column Name="FullUserName" DataType="System.String"/>
             <Column Name="ShortUserName" DataType="System.String"/>
           </Column>
-          <BusinessObjectDataSource Name="Products" DataType="System.Int32" Enabled="true">
+          <BusinessObjectDataSource Name="Products" DataType="null" Enabled="true">
             <Column Name="ID" DataType="System.Int64"/>
             <Column Name="OrderID" DataType="System.Int64"/>
             <Column Name="ProductTypeID" DataType="System.Int64"/>
             <Column Name="Parameters" DataType="System.String"/>
             <Column Name="Cost" DataType="System.Decimal"/>
-            <Column Name="DateTransferDesigner" DataType="System.Int32"/>
-            <Column Name="DateTransferApproval" DataType="System.Int32"/>
-            <Column Name="DateApproval" DataType="System.Int32"/>
-            <Column Name="DateTransferProduction" DataType="System.Int32"/>
-            <Column Name="DateManufacture" DataType="System.Int32"/>
-            <Column Name="DateShipment" DataType="System.Int32"/>
+            <Column Name="DateTransferDesigner" DataType="null"/>
+            <Column Name="DateTransferApproval" DataType="null"/>
+            <Column Name="DateApproval" DataType="null"/>
+            <Column Name="DateTransferProduction" DataType="null"/>
+            <Column Name="DateManufacture" DataType="null"/>
+            <Column Name="DateShipment" DataType="null"/>
             <Column Name="Note" DataType="System.String"/>
             <Column Name="Files" DataType="System.String"/>
             <Column Name="Quantity" DataType="System.Int16"/>
-            <Column Name="Order" DataType="System.Int32"/>
-            <Column Name="ProductType" DataType="System.Int32"/>
+            <Column Name="Order" DataType="null"/>
+            <Column Name="ProductType" DataType="null"/>
             <Column Name="ProductTypeName" DataType="System.String"/>
-            <BusinessObjectDataSource Name="Costs" Enabled="false" DataType="System.Int32"/>
-            <BusinessObjectDataSource Name="FilesList" Enabled="false" DataType="System.Int32"/>
-            <BusinessObjectDataSource Name="ProductParameter" Enabled="false" DataType="System.Int32"/>
+            <BusinessObjectDataSource Name="Costs" Enabled="false" DataType="null"/>
+            <BusinessObjectDataSource Name="FilesList" Enabled="false" DataType="null"/>
+            <BusinessObjectDataSource Name="ProductParameter" Enabled="false" DataType="null"/>
             <Column Name="State" DataType="System.String"/>
             <Column Name="ProductInfoForAccount" DataType="System.String"/>
           </BusinessObjectDataSource>
-          <BusinessObjectDataSource Name="Payments" DataType="System.Int32" Enabled="true">
+          <BusinessObjectDataSource Name="Payments" DataType="null" Enabled="true">
             <Column Name="Value" Enabled="false" DataType="System.RuntimeType"/>
           </BusinessObjectDataSource>
-          <BusinessObjectDataSource Name="Accounts" DataType="System.Int32" Enabled="true">
+          <BusinessObjectDataSource Name="Accounts" DataType="null" Enabled="true">
             <Column Name="ID" DataType="System.Int64"/>
             <Column Name="OrderID" DataType="System.Int64"/>
             <Column Name="AccountNumber" DataType="System.String"/>
-            <Column Name="AccountDate" DataType="System.Int32"/>
-            <Column Name="ContractorID" DataType="System.Int32"/>
+            <Column Name="AccountDate" DataType="null"/>
+            <Column Name="ContractorID" DataType="null"/>
             <Column Name="Footing" DataType="System.String"/>
             <Column Name="IsManual" DataType="System.Boolean" BindableControl="CheckBox"/>
             <Column Name="Details" DataType="System.String"/>
-            <Column Name="PayBeforeDate" DataType="System.Int32"/>
-            <Column Name="Order" DataType="System.Int32"/>
-            <Column Name="Contractor" DataType="System.Int32"/>
-            <BusinessObjectDataSource Name="Acts" Enabled="false" DataType="System.Int32"/>
-            <BusinessObjectDataSource Name="DetailsList" Enabled="false" DataType="System.Int32"/>
+            <Column Name="PayBeforeDate" DataType="null"/>
+            <Column Name="Order" DataType="null"/>
+            <Column Name="Contractor" DataType="null"/>
+            <BusinessObjectDataSource Name="Acts" Enabled="false" DataType="null"/>
+            <BusinessObjectDataSource Name="DetailsList" Enabled="false" DataType="null"/>
             <Column Name="ContractorName" DataType="System.String"/>
             <Column Name="ContractorInfoForAccount" DataType="System.String"/>
             <Column Name="ContractorInfoForAct" DataType="System.String"/>
@@ -230,26 +230,26 @@ namespace FastReport
           <Column Name="CountProduct" DataType="System.Int16"/>
           <Column Name="State" DataType="System.String"/>
         </Column>
-        <Column Name="Contractor" DataType="System.Int32">
+        <Column Name="Contractor" DataType="null">
           <Column Name="ID" DataType="System.Int64"/>
           <Column Name="Name" DataType="System.String"/>
           <Column Name="DirectorName" DataType="System.String"/>
           <Column Name="DirectorPostName" DataType="System.String"/>
           <Column Name="DirectorAttorneyNumber" DataType="System.String"/>
-          <Column Name="DirectorAttorneyDate" DataType="System.Int32"/>
+          <Column Name="DirectorAttorneyDate" DataType="null"/>
           <Column Name="ChiefAccountant" DataType="System.String"/>
           <Column Name="ChiefAccountantPostName" DataType="System.String"/>
           <Column Name="ChiefAccountantAttorneyNumber" DataType="System.String"/>
-          <Column Name="ChiefAccountantAttorneyDate" DataType="System.Int32"/>
+          <Column Name="ChiefAccountantAttorneyDate" DataType="null"/>
           <Column Name="BusinessAddress" DataType="System.String"/>
           <Column Name="INN" DataType="System.String"/>
           <Column Name="KPP" DataType="System.String"/>
           <Column Name="OKPO" DataType="System.String"/>
           <Column Name="OGRN" DataType="System.String"/>
           <Column Name="BankAccount" DataType="System.String"/>
-          <Column Name="BankID" DataType="System.Int32"/>
+          <Column Name="BankID" DataType="null"/>
           <Column Name="AccountFileTemplate" DataType="System.String"/>
-          <Column Name="Bank" DataType="System.Int32">
+          <Column Name="Bank" DataType="null">
             <Column Name="ID" DataType="System.Int64"/>
             <Column Name="Name" DataType="System.String"/>
             <Column Name="LocalitiesID" DataType="System.Int64"/>
@@ -257,24 +257,24 @@ namespace FastReport
             <Column Name="BIK" DataType="System.String"/>
             <Column Name="OKPO" DataType="System.String"/>
             <Column Name="OKONX" DataType="System.String"/>
-            <Column Name="Localities" DataType="System.Int32"/>
-            <BusinessObjectDataSource Name="Clients3" Alias="Clients" Enabled="false" DataType="System.Int32" PropName="Clients"/>
-            <BusinessObjectDataSource Name="Contractors" Enabled="false" DataType="System.Int32"/>
+            <Column Name="Localities" DataType="null"/>
+            <BusinessObjectDataSource Name="Clients3" Alias="Clients" Enabled="false" DataType="null" PropName="Clients"/>
+            <BusinessObjectDataSource Name="Contractors" Enabled="false" DataType="null"/>
           </Column>
-          <BusinessObjectDataSource Name="Accounts1" Alias="Accounts" DataType="System.Int32" PropName="Accounts" Enabled="true">
+          <BusinessObjectDataSource Name="Accounts1" Alias="Accounts" DataType="null" PropName="Accounts" Enabled="true">
             <Column Name="ID" DataType="System.Int64"/>
             <Column Name="OrderID" DataType="System.Int64"/>
             <Column Name="AccountNumber" DataType="System.String"/>
-            <Column Name="AccountDate" DataType="System.Int32"/>
-            <Column Name="ContractorID" DataType="System.Int32"/>
+            <Column Name="AccountDate" DataType="null"/>
+            <Column Name="ContractorID" DataType="null"/>
             <Column Name="Footing" DataType="System.String"/>
             <Column Name="IsManual" DataType="System.Boolean" BindableControl="CheckBox"/>
             <Column Name="Details" DataType="System.String"/>
-            <Column Name="PayBeforeDate" DataType="System.Int32"/>
-            <Column Name="Order" DataType="System.Int32"/>
-            <Column Name="Contractor" DataType="System.Int32"/>
-            <BusinessObjectDataSource Name="Acts1" Alias="Acts" Enabled="false" DataType="System.Int32" PropName="Acts"/>
-            <BusinessObjectDataSource Name="DetailsList1" Alias="DetailsList" Enabled="false" DataType="System.Int32" PropName="DetailsList"/>
+            <Column Name="PayBeforeDate" DataType="null"/>
+            <Column Name="Order" DataType="null"/>
+            <Column Name="Contractor" DataType="null"/>
+            <BusinessObjectDataSource Name="Acts1" Alias="Acts" Enabled="false" DataType="null" PropName="Acts"/>
+            <BusinessObjectDataSource Name="DetailsList1" Alias="DetailsList" Enabled="false" DataType="null" PropName="DetailsList"/>
             <Column Name="ContractorName" DataType="System.String"/>
             <Column Name="ContractorInfoForAccount" DataType="System.String"/>
             <Column Name="ContractorInfoForAct" DataType="System.String"/>
@@ -284,34 +284,34 @@ namespace FastReport
           <Column Name="DirectorShortName" DataType="System.String"/>
           <Column Name="ChiefAccountantShortName" DataType="System.String"/>
         </Column>
-        <BusinessObjectDataSource Name="Acts2" Alias="Acts" DataType="System.Int32" PropName="Acts" Enabled="true">
+        <BusinessObjectDataSource Name="Acts2" Alias="Acts" DataType="null" PropName="Acts" Enabled="true">
           <Column Name="ID" DataType="System.Int64"/>
           <Column Name="AccountID" DataType="System.Int64"/>
           <Column Name="ActNumber" DataType="System.String"/>
-          <Column Name="ActDate" DataType="System.Int32"/>
+          <Column Name="ActDate" DataType="null"/>
           <Column Name="ProductInAct" DataType="System.String"/>
-          <Column Name="Account" DataType="System.Int32">
+          <Column Name="Account" DataType="null">
             <Column Name="ID" DataType="System.Int64"/>
             <Column Name="OrderID" DataType="System.Int64"/>
             <Column Name="AccountNumber" DataType="System.String"/>
-            <Column Name="AccountDate" DataType="System.Int32"/>
-            <Column Name="ContractorID" DataType="System.Int32"/>
+            <Column Name="AccountDate" DataType="null"/>
+            <Column Name="ContractorID" DataType="null"/>
             <Column Name="Footing" DataType="System.String"/>
             <Column Name="IsManual" DataType="System.Boolean" BindableControl="CheckBox"/>
             <Column Name="Details" DataType="System.String"/>
-            <Column Name="PayBeforeDate" DataType="System.Int32"/>
-            <Column Name="Order" DataType="System.Int32"/>
-            <Column Name="Contractor" DataType="System.Int32"/>
-            <BusinessObjectDataSource Name="Acts3" Alias="Acts" Enabled="false" DataType="System.Int32" PropName="Acts"/>
-            <BusinessObjectDataSource Name="DetailsList2" Alias="DetailsList" Enabled="false" DataType="System.Int32" PropName="DetailsList"/>
+            <Column Name="PayBeforeDate" DataType="null"/>
+            <Column Name="Order" DataType="null"/>
+            <Column Name="Contractor" DataType="null"/>
+            <BusinessObjectDataSource Name="Acts3" Alias="Acts" Enabled="false" DataType="null" PropName="Acts"/>
+            <BusinessObjectDataSource Name="DetailsList2" Alias="DetailsList" Enabled="false" DataType="null" PropName="DetailsList"/>
             <Column Name="ContractorName" DataType="System.String"/>
             <Column Name="ContractorInfoForAccount" DataType="System.String"/>
             <Column Name="ContractorInfoForAct" DataType="System.String"/>
           </Column>
-          <BusinessObjectDataSource Name="ListProductInAct" DataType="System.Int32" Enabled="true">
+          <BusinessObjectDataSource Name="ListProductInAct" DataType="null" Enabled="true">
             <Column Name="Value" Enabled="false" DataType="System.RuntimeType"/>
           </BusinessObjectDataSource>
-          <BusinessObjectDataSource Name="DetailsList3" Alias="DetailsList" DataType="System.Int32" PropName="DetailsList" Enabled="true">
+          <BusinessObjectDataSource Name="DetailsList3" Alias="DetailsList" DataType="null" PropName="DetailsList" Enabled="true">
             <Column Name="ProductInfoForAccount" DataType="System.String"/>
             <Column Name="Quantity" DataType="System.Int16"/>
             <Column Name="UnitName" DataType="System.String"/>
@@ -319,7 +319,7 @@ namespace FastReport
             <Column Name="Cost" DataType="System.Decimal"/>
           </BusinessObjectDataSource>
         </BusinessObjectDataSource>
-        <BusinessObjectDataSource Name="DetailsList4" Alias="DetailsList" DataType="System.Int32" PropName="DetailsList" Enabled="true">
+        <BusinessObjectDataSource Name="DetailsList4" Alias="DetailsList" DataType="null" PropName="DetailsList" Enabled="true">
           <Column Name="ProductInfoForAccount" DataType="System.String"/>
           <Column Name="Quantity" DataType="System.Int16"/>
           <Column Name="UnitName" DataType="System.String"/>
@@ -330,10 +330,10 @@ namespace FastReport
         <Column Name="ContractorInfoForAccount" DataType="System.String"/>
         <Column Name="ContractorInfoForAct" DataType="System.String"/>
       </Column>
-      <BusinessObjectDataSource Name="ListProductInAct1" Alias="ListProductInAct" DataType="System.Int32" PropName="ListProductInAct" Enabled="true">
+      <BusinessObjectDataSource Name="ListProductInAct1" Alias="ListProductInAct" DataType="null" PropName="ListProductInAct" Enabled="true">
         <Column Name="Value" Enabled="false" DataType="System.RuntimeType"/>
       </BusinessObjectDataSource>
-      <BusinessObjectDataSource Name="DetailsList5" Alias="DetailsList" DataType="System.Int32" PropName="DetailsList" Enabled="true">
+      <BusinessObjectDataSource Name="DetailsList5" Alias="DetailsList" DataType="null" PropName="DetailsList" Enabled="true">
         <Column Name="ProductInfoForAccount" DataType="System.String"/>
         <Column Name="Quantity" DataType="System.Int16"/>
         <Column Name="UnitName" DataType="System.String"/>
@@ -564,11 +564,11 @@ namespace FastReport
         </TableRow>
       </TableObject>
     </ReportTitleBand>
-    <PageHeaderBand Name="PageHeader1" Top="154.53" Width="1047.06" Height="10.9" VisibleExpression="[TotalPages] &gt; 1" CanGrow="true" PrintOn="LastPage, OddPages, EvenPages, RepeatedBand, SinglePage">
+    <PageHeaderBand Name="PageHeader1" Top="154.4" Width="1047.06" Height="10.9" VisibleExpression="[TotalPages] &gt; 1" CanGrow="true" PrintOn="LastPage, OddPages, EvenPages, RepeatedBand, SinglePage">
       <TextObject Name="Text35" Top="1.45" Width="500.85" Height="9.45" Text="Универсальный передаточный документ № [Act.ActNumber] от [DateInWords]" VertAlign="Center" Font="Arial, 6pt"/>
       <TextObject Name="Text36" Left="935.55" Width="94.5" Height="9.45" Text="Лист [Page]" HorzAlign="Right" VertAlign="Center" Font="Arial, 6pt"/>
     </PageHeaderBand>
-    <DataBand Name="Data1" Top="294.95" Width="1047.06" Height="15.12" CanGrow="true" CanShrink="true" DataSource="DetailsList5">
+    <DataBand Name="Data1" Top="294.55" Width="1047.06" Height="15.12" CanGrow="true" CanShrink="true" DataSource="DetailsList5">
       <TextObject Name="Text9" Width="79.38" Height="15.12" Border.Lines="Left, Top, Bottom" Border.Width="0.5" CanGrow="true" GrowToBottom="true" HorzAlign="Center" VertAlign="Center" Font="Arial, 6pt"/>
       <TextObject Name="Text10" Left="80.05" Width="18.9" Height="15.12" Border.Lines="All" Border.Width="0.5" CanGrow="true" GrowToBottom="true" Text="[Row#]" HorzAlign="Center" VertAlign="Center" Font="Arial, 6pt"/>
       <TextObject Name="Text11" Left="69.6" Width="9.45" Height="15.12" Border.Lines="Right" Border.Width="2" CanGrow="true" GrowToBottom="true" HorzAlign="Right" VertAlign="Center" Font="Arial, 6pt"/>
@@ -589,7 +589,7 @@ namespace FastReport
       <TextObject Name="Text28" Left="873.85" Width="37.8" Height="15.12" Border.Lines="All" Border.Width="0.5" CanGrow="true" GrowToBottom="true" HorzAlign="Right" VertAlign="Center" Font="Arial, 6pt"/>
       <TextObject Name="Text29" Left="911.65" Width="47.25" Height="15.12" Border.Lines="All" Border.Width="0.5" CanGrow="true" GrowToBottom="true" HorzAlign="Right" VertAlign="Center" Font="Arial, 6pt"/>
       <TextObject Name="Text30" Left="958.9" Width="75.6" Height="15.12" Border.Lines="All" Border.Width="0.5" CanGrow="true" GrowToBottom="true" HorzAlign="Right" VertAlign="Center" Font="Arial, 6pt"/>
-      <DataHeaderBand Name="DataHeader1" Top="168.77" Width="1047.06" Height="122.85" CanGrow="true" CanShrink="true" CanBreak="true" KeepWithData="true" RepeatOnEveryPage="true">
+      <DataHeaderBand Name="DataHeader1" Top="168.5" Width="1047.06" Height="122.85" CanGrow="true" CanShrink="true" CanBreak="true" KeepWithData="true" RepeatOnEveryPage="true">
         <TableObject Name="Table2" Top="-0.55" Width="1034.49" Height="122.85">
           <TableColumn Name="Column18" Width="70.69"/>
           <TableColumn Name="Column24" Width="7.56"/>
@@ -687,7 +687,7 @@ namespace FastReport
           </TableRow>
         </TableObject>
       </DataHeaderBand>
-      <DataFooterBand Name="DataFooter1" Top="313.4" Width="1047.06" Height="413.91" CanGrow="true" CanShrink="true" CanBreak="true">
+      <DataFooterBand Name="DataFooter1" Top="312.87" Width="1047.06" Height="413.91" CanGrow="true" CanShrink="true" CanBreak="true">
         <TextObject Name="Text2" Width="79.38" Height="15.12" Border.Lines="All" Border.Width="0.5" HorzAlign="Center" VertAlign="Center" Font="Arial, 6pt"/>
         <TextObject Name="Text3" Left="80.05" Width="349.27" Height="15.12" Border.Lines="All" Border.Width="0.5" Text="Всего к оплате" HorzAlign="Right" VertAlign="Center" Font="Arial, 6pt"/>
         <TextObject Name="Text4" Left="429.25" Width="57.08" Height="15.12" Border.Lines="All" Border.Width="0.5" Text="[FullTotalCost]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Right" VertAlign="Center" Font="Arial, 6pt"/>
@@ -710,7 +710,7 @@ namespace FastReport
             <TableCell Name="Cell285" Border.Lines="Right" Border.Width="2" Font="Arial, 10pt"/>
             <TableCell Name="Cell251" Text=" Руководитель организации&#13;&#10; или иное уполномоченное лицо" Font="Arial, 6pt"/>
             <TableCell Name="Cell252" Border.Lines="Bottom" Border.Width="0.5" Font="Arial, 10pt"/>
-            <TableCell Name="Cell253" Border.Lines="Bottom" Border.Width="0.5" Text="[Act.Account.Contractor.DirectorName]" HorzAlign="Right" VertAlign="Bottom" Font="Arial, 6pt"/>
+            <TableCell Name="Cell253" Border.Lines="Bottom" Border.Width="0.5" Text="[Act.Account.Contractor.DirectorShortName]" HorzAlign="Right" VertAlign="Bottom" Font="Arial, 6pt"/>
             <TableCell Name="Cell254" Text="Главный бухгалтер&#13;&#10;или иное уполномоченное лицо" Font="Arial, 6pt"/>
             <TableCell Name="Cell275" Border.Lines="Bottom" Border.Width="0.5" Font="Arial, 10pt"/>
             <TableCell Name="Cell280" Border.Lines="Bottom" Border.Width="0.5" Text="[Act.Account.Contractor.ChiefAccountantShortName]" HorzAlign="Right" VertAlign="Bottom" Font="Arial, 6pt"/>
@@ -894,14 +894,8 @@ namespace FastReport
             <TableCell Name="Cell397" HorzAlign="Center" VertAlign="Center" Font="Arial, 6pt"/>
           </TableRow>
           <TableRow Name="Row33" AutoSize="true">
-            <TableCell Name="Cell398" Border.Lines="Bottom" Border.Width="0.5" Text="[Act.Account.Contractor.DirectorPostName]" HorzAlign="Center" VertAlign="Bottom" Font="Arial, 6pt"/>
-            <TableCell Name="Cell399" Border.Lines="Bottom" Border.Width="0.5" Text="[Act.Account.Contractor.DirectorName]&#13;&#10;доверенность № [Act.Account.Contractor.DirectorAttorneyNumber] от [FormatDateTime(ToDateTime([Act.Account.Contractor.DirectorAttorneyDate]), &quot;Short Date&quot;)]" HorzAlign="Right" VertAlign="Bottom" Font="Arial, 6pt" ColSpan="2">
-              <Formats>
-                <GeneralFormat/>
-                <GeneralFormat/>
-                <GeneralFormat/>
-              </Formats>
-            </TableCell>
+            <TableCell Name="Cell398" Border.Lines="Bottom" Border.Width="0.5" Text="[Act.Account.Contractor.DirectorPostName]" HorzAlign="Right" VertAlign="Bottom" Font="Arial, 6pt"/>
+            <TableCell Name="Cell399" Border.Lines="Bottom" Border.Width="0.5" Text="[Act.Account.Contractor.DirectorShortName]&#13;&#10;доверенность № [Act.Account.Contractor.DirectorAttorneyNumber] от [FormatDateTime(ToDateTime([Act.Account.Contractor.DirectorAttorneyDate]), &quot;Short Date&quot;)]" HorzAlign="Right" VertAlign="Bottom" Font="Arial, 6pt" ColSpan="2"/>
             <TableCell Name="Cell400" Border.Lines="Bottom" Border.Width="0.5" HorzAlign="Right" VertAlign="Bottom" Font="Arial, 6pt"/>
             <TableCell Name="Cell401" Text="[13]" Brackets="(,)" HorzAlign="Center" VertAlign="Center" Font="Arial, 6pt"/>
             <TableCell Name="Cell402" Border.Lines="Right" Border.Width="2" Font="Arial, 10pt"/>

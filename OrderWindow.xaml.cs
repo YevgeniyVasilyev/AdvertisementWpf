@@ -15,8 +15,6 @@ using Microsoft.VisualBasic.FileIO;
 using System.IO;
 using System.Collections;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using System.Windows.Threading;
-using System.Threading;
 using System.Text.RegularExpressions;
 using System.Text;
 
@@ -265,7 +263,7 @@ namespace AdvertisementWpf
                 .Where(TypeOfActivityInProducts => TypeOfActivityInProducts.ProductTypeID == product.ProductTypeID)
                 .Include(TypeOfActivityInProducts => TypeOfActivityInProducts.TypeOfActivity).ToList();
             List<ProductCost> costs;
-            costs = _context.ProductCosts.Where(ProductCost => ProductCost.ProductID == product.ID).Include(ProductCost => ProductCost.TypeOfActivity).ToList();
+            costs = _context.ProductCosts.Where(ProductCost => ProductCost.ProductID == product.ID).Include(ProductCost => ProductCost.TypeOfActivity).OrderBy(ProductCost => ProductCost.ID).ToList();
             foreach (TypeOfActivityInProduct tainp in typeOfActivityInProduct) //проход по видам деятельности, содержащихся в издеии (его виде)
             {
                 bool lFind = false;
@@ -664,14 +662,17 @@ namespace AdvertisementWpf
                 {
                     try
                     {
+
                         OpenFileDialog openFileDialog = new OpenFileDialog();
+                        openFileDialog.Multiselect = true;
                         if ((bool)openFileDialog.ShowDialog()) // Открываем окно диалога с пользователем
                         {
-                            string fullFileName = openFileDialog.FileName;
-                            operationInWork.FilesList.Add(Path.GetFullPath(fullFileName));
+                            foreach (string fullFileName in openFileDialog.FileNames)
+                            {
+                                operationInWork.FilesList.Add(Path.GetFullPath(fullFileName));
+                            }
                             operationInWork.ListToFiles();
                             OperationInWorkFilesListBox.Items.Refresh();
-                            //CopyFileToPathToFilesOfProduct(fullFileName);
                         }
                     }
                     catch (Exception ex)
@@ -1005,7 +1006,7 @@ namespace AdvertisementWpf
                     {
                         _ = Directory.CreateDirectory(destinationPath);
                     }
-                    string ending = (aFullFileNames.Length > 1 && aFullFileNames.Length < 5 ? "а" : aFullFileNames.Length >= 5 ? "ов" : "");
+                    string ending = aFullFileNames.Length > 1 && aFullFileNames.Length < 5 ? "а" : aFullFileNames.Length >= 5 ? "ов" : "";
                     bool lNeedDeleteFile = MessageBox.Show($"В папку {destinationPath} будет скопировано {aFullFileNames.Length} файл{ending}.\n\n Удалить файл(-ы) в исходной папке?",
                         "Копирование файлов", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes;
                     foreach (string fullFileName in aFullFileNames)
@@ -1671,20 +1672,24 @@ namespace AdvertisementWpf
         {
             if (sender is ComboBox comboBox && comboBox != null)
             {
-                if (accountsViewSource?.View != null && accountsViewSource.View.CurrentItem is Account account) //&& e.AddedItems.Count > 0
+                if (accountsViewSource?.View?.CurrentItem is Account account && context__.Entry(account).State != EntityState.Detached)
                 {
-                    //(accountsViewSource.View.CurrentItem as Account).ContractorInfoForAccount = (e.AddedItems[0] as Contractor).ContractorInfoForAccount;
-                    //(accountsViewSource.View.CurrentItem as Account).ContractorName = (e.AddedItems[0] as Contractor).Name;
-                    context__.Entry(account).Reference(account => account.Contractor).Load();
+                    context__.Entry(account).Reference(account => account.Contractor).Load(); 
                     Contractor contractor = account.Contractor;
-                    context__.Entry(contractor).Reference(contractor => contractor.Bank).Load();
-                    contractor.ContractorInfoForAccount = "";
+                    if (context__.Entry(contractor).State != EntityState.Detached)
+                    {
+                        context__.Entry(contractor).Reference(contractor => contractor.Bank).Load();
+                        contractor.ContractorInfoForAccount = "";
+                        account.ContractorName = contractor.Name;
+                    }
                     if (account.AccountNumber.Count(c => c == '/') > 1) //наименование счета нового формата
                     {
                         string[] s = account.AccountNumber.Split("/");
                         account.AccountNumber = $"{s[0]}/{s[1]}/{account.Contractor.AbbrForAcc}";
                     }
-                    accountsViewSource.View.Refresh();
+                    int nSelectedIndex = ListAccount.SelectedIndex;
+                    ListAccount.SelectedIndex = -1;
+                    ListAccount.SelectedIndex = nSelectedIndex;
                     if (ListAct.Items.Count > 0)
                     {
                         ListAct.Items.Refresh();
@@ -1930,6 +1935,8 @@ namespace AdvertisementWpf
                         Reports.ReportFileName = Path.Combine(_pathToReportTemplate, "UPD.frx");
                         Reports.ReportMode = "UPDForm";
                         Reports.MonthInWords = InWords.Month(ActDate.SelectedDate);
+                        Reports.CargoReleasePostName = MainWindow.Userdata.PostName;
+                        Reports.CargoReleaseName = MainWindow.Userdata.ShortUserName;
                         Reports.ReportDateInWords = InWords.Date(ActDate.SelectedDate);
                         Reports.RunReport();
                     }
@@ -2358,7 +2365,7 @@ namespace AdvertisementWpf
                     ReferencebookID = ParameterInOperation.ReferencebookID,
                     IsRefbookOnRequest = ParameterInOperation.IsRefbookOnRequest
                 })
-                .AsNoTracking().ToList(); //этот запрос заполняет список OperationInWorkParameters пустым шаблоном 
+                .AsNoTracking().OrderBy(opinwp => opinwp.ID).ToList(); //этот запрос заполняет список OperationInWorkParameters пустым шаблоном 
             operationInWork.ParametersToList(); //заполнить пустой шаблон значениями из строки Parameters
             foreach (OperationInWorkParameter operationInWorkParameter in operationInWork.OperationInWorkParameters) //проходим по параметрам для дальнейшей инициализацц
             {

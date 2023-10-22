@@ -39,5 +39,7 @@ namespace AdvertisementWpf.Models
                 NotifyPropertyChanged("OperationInWorks_");
             }
         }
+        [NotMapped]
+        public decimal ProductCost => TechCard?.ProductCost ?? 0;
     }
 }

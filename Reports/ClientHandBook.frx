@@ -1,0 +1,125 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report ScriptLanguage="CSharp" ReportInfo.Created="10/22/2023 11:22:06" ReportInfo.Modified="10/22/2023 12:26:50" ReportInfo.CreatorVersion="2023.3.0.0">
+  <Dictionary>
+    <BusinessObjectDataSource Name="Clients" ReferenceName="Clients" DataType="System.Int32" Enabled="true">
+      <Column Name="ID" DataType="System.Int64"/>
+      <Column Name="Name" DataType="System.String"/>
+      <Column Name="ShortName" DataType="System.String"/>
+      <Column Name="Profile" DataType="System.String"/>
+      <Column Name="FormProperty" DataType="System.Byte"/>
+      <Column Name="DirectorName" DataType="System.String"/>
+      <Column Name="ContactPersonName" DataType="System.String"/>
+      <Column Name="PostalAddress" DataType="System.String"/>
+      <Column Name="BusinessAddress" DataType="System.String"/>
+      <Column Name="ActualAddress" DataType="System.String"/>
+      <Column Name="Consignee" DataType="System.String"/>
+      <Column Name="ConsigneeIsSame" DataType="System.Boolean" BindableControl="CheckBox"/>
+      <Column Name="INN" DataType="System.String"/>
+      <Column Name="KPP" DataType="System.String"/>
+      <Column Name="PersonalAccount" DataType="System.String"/>
+      <Column Name="BankAccount" DataType="System.String"/>
+      <Column Name="BankID" DataType="System.Int32"/>
+      <Column Name="IsActive" DataType="System.Boolean" BindableControl="CheckBox"/>
+      <Column Name="Note" DataType="System.Byte[]" BindableControl="Picture"/>
+      <Column Name="UserID" DataType="System.Int64"/>
+      <Column Name="MobilePhone" DataType="System.String"/>
+      <Column Name="WorkPhone" DataType="System.String"/>
+      <Column Name="Email" DataType="System.String"/>
+      <Column Name="AdditionalInfo" DataType="System.String"/>
+      <Column Name="ConsigneeName" DataType="System.String"/>
+      <Column Name="ConsigneeINN" DataType="System.String"/>
+      <Column Name="ConsigneeKPP" DataType="System.String"/>
+      <Column Name="ConsigneeBusinessAddress" DataType="System.String"/>
+      <Column Name="ConsigneeWorkPhone" DataType="System.String"/>
+      <Column Name="ConsigneeBankAccount" DataType="System.String"/>
+      <Column Name="ConsigneePersonalAccount" DataType="System.String"/>
+      <Column Name="ConsigneeBankID" DataType="System.Int32"/>
+      <Column Name="Bank" DataType="System.Int32">
+        <Column Name="ID" DataType="System.Int64"/>
+        <Column Name="Name" DataType="System.String"/>
+        <Column Name="LocalitiesID" DataType="System.Int64"/>
+        <Column Name="CorrAccount" DataType="System.String"/>
+        <Column Name="BIK" DataType="System.String"/>
+        <Column Name="OKPO" DataType="System.String"/>
+        <Column Name="OKONX" DataType="System.String"/>
+        <Column Name="Localities" DataType="System.Int32"/>
+        <BusinessObjectDataSource Name="Clients1" Alias="Clients" Enabled="false" DataType="System.Int32" PropName="Clients"/>
+        <BusinessObjectDataSource Name="ConsigneeClients" Enabled="false" DataType="System.Int32"/>
+        <BusinessObjectDataSource Name="Contractors" Enabled="false" DataType="System.Int32"/>
+      </Column>
+      <Column Name="ConsigneeBank" DataType="System.Int32">
+        <Column Name="ID" DataType="System.Int64"/>
+        <Column Name="Name" DataType="System.String"/>
+        <Column Name="LocalitiesID" DataType="System.Int64"/>
+        <Column Name="CorrAccount" DataType="System.String"/>
+        <Column Name="BIK" DataType="System.String"/>
+        <Column Name="OKPO" DataType="System.String"/>
+        <Column Name="OKONX" DataType="System.String"/>
+        <Column Name="Localities" DataType="System.Int32"/>
+        <BusinessObjectDataSource Name="Clients2" Alias="Clients" Enabled="false" DataType="System.Int32" PropName="Clients"/>
+        <BusinessObjectDataSource Name="ConsigneeClients1" Alias="ConsigneeClients" Enabled="false" DataType="System.Int32" PropName="ConsigneeClients"/>
+        <BusinessObjectDataSource Name="Contractors1" Alias="Contractors" Enabled="false" DataType="System.Int32" PropName="Contractors"/>
+      </Column>
+      <Column Name="User" DataType="System.Int32">
+        <Column Name="ID" DataType="System.Int64"/>
+        <Column Name="FirstName" DataType="System.String"/>
+        <Column Name="LastName" DataType="System.String"/>
+        <Column Name="MiddleName" DataType="System.String"/>
+        <Column Name="LoginName" DataType="System.String"/>
+        <Column Name="RoleID" DataType="System.Int64"/>
+        <Column Name="Disabled" DataType="System.Boolean" BindableControl="CheckBox"/>
+        <Column Name="CategoryWork" DataType="System.Int16"/>
+        <Column Name="IsAdmin" DataType="System.Boolean" BindableControl="CheckBox"/>
+        <Column Name="IsExternal" DataType="System.Boolean" BindableControl="CheckBox"/>
+        <Column Name="Phone" DataType="System.String"/>
+        <Column Name="Email" DataType="System.String"/>
+        <Column Name="CardNumber" DataType="System.String"/>
+        <Column Name="PostName" DataType="System.String"/>
+        <Column Name="Role" DataType="System.Int32"/>
+        <BusinessObjectDataSource Name="Clients3" Alias="Clients" Enabled="false" DataType="System.Int32" PropName="Clients"/>
+        <BusinessObjectDataSource Name="ProductDesigners" Enabled="false" DataType="System.Int32"/>
+        <BusinessObjectDataSource Name="OrderManagers" Enabled="false" DataType="System.Int32"/>
+        <BusinessObjectDataSource Name="OrderOrderEntereds" Enabled="false" DataType="System.Int32"/>
+        <Column Name="FullUserName" DataType="System.String"/>
+        <Column Name="ShortUserName" DataType="System.String"/>
+      </Column>
+      <BusinessObjectDataSource Name="Orders" DataType="System.Int32" Enabled="true">
+        <Column Name="Value" Enabled="false" DataType="System.RuntimeType"/>
+      </BusinessObjectDataSource>
+      <Column Name="ClientInfoForAccount" DataType="System.String"/>
+      <Column Name="ClientInfoForAct" DataType="System.String"/>
+      <Column Name="ConsigneeForSFUPD" DataType="System.String"/>
+      <Column Name="ConsigneeForTN" DataType="System.String"/>
+      <Column Name="IsPrivate" DataType="System.Boolean" BindableControl="CheckBox"/>
+      <Column Name="IsLegal" DataType="System.Boolean" BindableControl="CheckBox"/>
+      <Column Name="IsIndividual" DataType="System.Boolean" BindableControl="CheckBox"/>
+      <Column Name="IsBudget" DataType="System.Boolean" BindableControl="CheckBox"/>
+    </BusinessObjectDataSource>
+  </Dictionary>
+  <ReportPage Name="Page1" RawPaperSize="9" LeftMargin="5" TopMargin="5" RightMargin="5" BottomMargin="5" Watermark.Font="Arial, 60pt">
+    <ReportTitleBand Name="ReportTitle1" Width="756" Height="18.9">
+      <TextObject Name="Text1" Width="756" Height="18.9" Text="Справочник клиентов" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt"/>
+    </ReportTitleBand>
+    <PageHeaderBand Name="PageHeader1" Top="21.19" Width="756" Height="18.9">
+      <TextObject Name="Text2" Width="179.55" Height="18.9" Border.Lines="All" Border.Width="0.5" Text="Краткое наименование" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
+      <TextObject Name="Text3" Left="179.55" Width="122.85" Height="18.9" Border.Lines="All" Border.Width="0.5" Text="Руководитель" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
+      <TextObject Name="Text4" Left="302.4" Width="122.85" Height="18.9" Border.Lines="All" Border.Width="0.5" Text="Контактное лицо" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
+      <TextObject Name="Text5" Left="425.25" Width="141.75" Height="18.9" Border.Lines="All" Border.Width="0.5" Text="Фактический адрес" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
+      <TextObject Name="Text6" Left="567" Width="94.5" Height="18.9" Border.Lines="All" Border.Width="0.5" Text="Телефоны" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
+      <TextObject Name="Text7" Left="661.5" Width="94.5" Height="18.9" Border.Lines="All" Border.Width="0.5" Text="e-mail" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
+    </PageHeaderBand>
+    <DataBand Name="Data1" Top="42.37" Width="756" Height="18.9" CanGrow="true" CanShrink="true" CanBreak="true" DataSource="Clients">
+      <TextObject Name="Text8" Width="179.55" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" GrowToBottom="true" Text="[Clients.ShortName]" VertAlign="Center" Font="Arial, 8pt"/>
+      <TextObject Name="Text9" Left="179.55" Width="122.85" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" GrowToBottom="true" Text="[Clients.DirectorName]" VertAlign="Center" Font="Arial, 8pt"/>
+      <TextObject Name="Text10" Left="302.4" Width="122.85" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" GrowToBottom="true" Text="[Clients.ContactPersonName]" VertAlign="Center" Font="Arial, 8pt"/>
+      <TextObject Name="Text11" Left="425.25" Width="141.75" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" GrowToBottom="true" Text="[Clients.ActualAddress]" VertAlign="Center" Font="Arial, 8pt"/>
+      <TextObject Name="Text12" Left="567" Width="94.5" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" GrowToBottom="true" Text="мобильные: [Clients.MobilePhone]&#13;&#10;рабочие: [Clients.WorkPhone]" VertAlign="Center" Font="Arial, 8pt">
+        <Formats>
+          <GeneralFormat/>
+          <GeneralFormat/>
+        </Formats>
+      </TextObject>
+      <TextObject Name="Text13" Left="661.5" Width="94.5" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" GrowToBottom="true" Text="[Clients.Email]" VertAlign="Center" Font="Arial, 8pt"/>
+    </DataBand>
+  </ReportPage>
+</Report>

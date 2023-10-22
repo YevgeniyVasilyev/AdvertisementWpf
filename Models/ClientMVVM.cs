@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -163,7 +164,7 @@ namespace AdvertisementWpf.Models
 
     public class ClientViewModel
     {
-        private RelayCommand saveCommand, newCommand, deleteCommand;
+        private RelayCommand saveCommand, newCommand, deleteCommand, printCommand;
         public App.AppDbContext _context = new App.AppDbContext(MainWindow.Connectiondata.Connectionstring);
 
         private ObservableCollection<Client> _Clients { get; set; }
@@ -178,6 +179,32 @@ namespace AdvertisementWpf.Models
             {
                 _filterString = value;
                 Clients.Refresh();
+            }
+        }
+        private bool _filterOnManager { get; set; } = false;
+        public bool FilterOnManager
+        {
+            get => _filterOnManager;
+            set
+            {
+                if (_filterOnManager != value)
+                {
+                    _filterOnManager = value;
+                    Clients.Refresh();
+                }
+            }
+        }
+        private long _filterManagerID { get; set; } = 0;
+        public long FilterManagerID
+        {
+            get => _filterManagerID;
+            set
+            {
+                if (_filterManagerID != value)
+                {
+                    _filterManagerID = value;
+                    Clients.Refresh();
+                }
             }
         }
 
@@ -274,11 +301,49 @@ namespace AdvertisementWpf.Models
             }
         }, null);
 
+        public RelayCommand PrintCommand => printCommand ??= new RelayCommand((o) =>
+        {
+            using App.AppDbContext _reportcontext = new App.AppDbContext(MainWindow.Connectiondata.Connectionstring);
+            try
+            {
+                MainWindow.statusBar.WriteStatus("Получение данных счета ...", Cursors.Wait);
+                string _pathToReportTemplate = _reportcontext.Setting.FirstOrDefault(setting => setting.SettingParameterName == "PathToReportTemplate").SettingParameterValue;
+                if (File.Exists(Path.Combine(_pathToReportTemplate, "ClientHandBook.frx")))
+                {
+                    Reports.ClientsDataSet = new List<Client> { };
+                    foreach (Client client in Clients)
+                    {
+                        Reports.ClientsDataSet.Add(client);
+                    }
+                    Reports.ReportFileName = Path.Combine(_pathToReportTemplate, "ClientHandBook.frx");
+                    Reports.ReportMode = "ClientHandBookForm";
+                    Reports.RunReport();
+                }
+                else
+                {
+                    _ = MessageBox.Show("Не найден файл ClientHandBook.frx !", "Ошибка формирования счета", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                _ = MessageBox.Show(ex.Message + "\n" + ex?.InnerException?.Message, "Ошибка печати данных", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            finally
+            {
+                MainWindow.statusBar.ClearStatus();
+            }
+        }, null);
+
         private bool ClientFilter(object item)
         {
+            bool IsFilter;
             Client client = item as Client;
-            //return client.Name.Contains(_filterString);
-            return string.IsNullOrEmpty(_filterString) || client.Name.IndexOf(_filterString, StringComparison.OrdinalIgnoreCase) >= 0;
+            IsFilter = string.IsNullOrEmpty(_filterString) || client.Name.IndexOf(_filterString, StringComparison.OrdinalIgnoreCase) >= 0;
+            if (FilterOnManager && FilterManagerID > 0)
+            {
+                IsFilter &= client.UserID == FilterManagerID;
+            }
+            return IsFilter;
         }
 
         private bool ValidationCheck(object[] obj)

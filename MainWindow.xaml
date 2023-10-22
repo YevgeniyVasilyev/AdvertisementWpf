@@ -73,7 +73,9 @@
             <RowDefinition Height="Auto" Name="OrderList"/>
             <RowDefinition Height="Auto" Name="TotalOrder"/>
             <RowDefinition Height="Auto" Name="ProductList"/>
+            <RowDefinition Height="Auto" Name="TotalProduct"/>
             <RowDefinition Height="*" Name="ProductionProductList"/>
+            <RowDefinition Height="Auto" Name="TotalProductionProduct"/>
             <!--основной раздел-->
             <RowDefinition Height="Auto"/>
             <!--статус бар-->
@@ -102,7 +104,7 @@
                 <MenuItem Header="Матрица доступа" Name="AccessMatrixItem" Command="{x:Static local:CustomCommands.AccessMatrix}"/>
             </MenuItem>
         </Menu>
-        <Border Grid.Row="1" Grid.Column="0" Grid.RowSpan="5" BorderThickness="4" Background="GhostWhite" BorderBrush="Gainsboro">
+        <Border Grid.Row="1" Grid.Column="0" Grid.RowSpan="7" BorderThickness="4" Background="GhostWhite" BorderBrush="Gainsboro">
             <StackPanel Orientation="Vertical" HorizontalAlignment="Left" Margin="1,1,1,1" Width="65">
                 <Button Name="NewOrderButton" ToolTip="Создать новый заказ" Style="{StaticResource ButtonOnStackPanel}" Command="ApplicationCommands.New">
                     <Button.Content>
@@ -367,7 +369,7 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <StackPanel Grid.Column="0" Orientation="Horizontal">
-                    <TextBlock Margin="10,0,0,0" Text="{Binding ElementName=OrderListView, Path=Items.Count, UpdateSourceTrigger=PropertyChanged, ConverterParameter=OrderCost, StringFormat=Отобрано заказов: {0}}" FontWeight="Bold"/>
+                    <TextBlock Margin="10,0,0,0" Text="{Binding ElementName=OrderListView, Path=Items.Count, UpdateSourceTrigger=PropertyChanged, StringFormat=Отобрано заказов: {0}}" FontWeight="Bold"/>
                     <TextBlock Margin="10,0,0,0" Text="{Binding ElementName=OrderListView, Path=ItemsSource, Converter={StaticResource SumListViewDecimalConverter}, ConverterParameter=OrderCost, StringFormat=К оплате: {0:C}, ConverterCulture='ru-RU'}" HorizontalAlignment="Right" FontWeight="Bold"/>
                     <TextBlock Margin="10,0,0,0" Text="{Binding ElementName=OrderListView, Path=ItemsSource, Converter={StaticResource SumListViewDecimalConverter}, ConverterParameter=OrderPayments, StringFormat=Оплачено: {0:C}, ConverterCulture='ru-RU'}" 
                            HorizontalAlignment="Right" FontWeight="Bold"/>
@@ -376,7 +378,8 @@
         </Border>
         <ListView Grid.Row="4" Grid.Column="1" Name="ProductListView" IsSynchronizedWithCurrentItem="True" 
                   ItemsSource="{Binding Source={StaticResource productsViewSource}}" Visibility="Collapsed"
-                  MouseDoubleClick="OrderListView_MouseDoubleClick" 
+                  MouseDoubleClick="OrderListView_MouseDoubleClick"
+                  ScrollViewer.CanContentScroll="True"
                   ScrollViewer.VerticalScrollBarVisibility="Auto" 
                   IsVisibleChanged="ProductListView_IsVisibleChanged">
             <ListView.View>
@@ -435,7 +438,19 @@
                 </GridView>
             </ListView.View>
         </ListView>
-        <ListView Grid.Row="5" Grid.Column="1" Name="ProductionProductListView" IsSynchronizedWithCurrentItem="True" 
+        <Border Grid.Row="5" Grid.Column="1" BorderThickness="1" BorderBrush="DarkGray" Visibility="{Binding ElementName=ProductListView, Path=Visibility}">
+            <Grid  Background="{Binding ElementName=ProductListView, Path=Background}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions> 
+                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                    <TextBlock Margin="10,0,0,0" Text="{Binding ElementName=ProductListView, Path=Items.Count, UpdateSourceTrigger=PropertyChanged, StringFormat=Отобрано изделий: {0}}" FontWeight="Bold"/>
+                    <TextBlock Margin="10,0,0,0" Text="{Binding ElementName=ProductListView, Path=ItemsSource, Converter={StaticResource SumListViewDecimalConverter}, ConverterParameter=Cost, StringFormat=К оплате: {0:C}, ConverterCulture='ru-RU'}" HorizontalAlignment="Right" FontWeight="Bold"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+        <ListView Grid.Row="6" Grid.Column="1" Name="ProductionProductListView" IsSynchronizedWithCurrentItem="True" 
                   ItemsSource="{Binding Source={StaticResource workInTechCardViewSource}}" Visibility="Collapsed"
                   MouseDoubleClick="OrderListView_MouseDoubleClick" IsVisibleChanged="ProductionProductListView_IsVisibleChanged"
                   ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto">
@@ -509,7 +524,19 @@
                 </GridView>
             </ListView.View>
         </ListView>
-        <DockPanel Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2">
+        <Border Grid.Row="7" Grid.Column="1" BorderThickness="1" BorderBrush="DarkGray" Visibility="{Binding ElementName=ProductionProductListView, Path=Visibility}">
+            <Grid  Background="{Binding ElementName=ProductionProductListView, Path=Background}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                    <TextBlock Margin="10,0,0,0" Text="{Binding ElementName=ProductionProductListView, Path=Items.Count, UpdateSourceTrigger=PropertyChanged, StringFormat=Отобрано изделий: {0}}" FontWeight="Bold"/>
+                    <TextBlock Margin="10,0,0,0" Text="{Binding ElementName=ProductionProductListView, Path=ItemsSource, Converter={StaticResource SumListViewDecimalConverter}, ConverterParameter=ProductCost, StringFormat=К оплате: {0:C}, ConverterCulture='ru-RU'}" HorizontalAlignment="Right" FontWeight="Bold"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+        <DockPanel Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2">
             <StatusBar BorderThickness="2" DockPanel.Dock="Bottom">
                 <StatusBar.ItemsPanel>
                     <ItemsPanelTemplate>

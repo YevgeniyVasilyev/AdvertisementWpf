@@ -410,6 +410,7 @@ namespace AdvertisementWpf
         public static List<WorkInTechCard> WorkInTechCardDataSet = null;
         public static List<ProductCost> ProductCostDataSet = null;
         public static List<Payment> PaymentsDataSet = null;
+        public static List<Client> ClientsDataSet = null;
         public static List<IGrouping<Order, Product>> OrderProductDataSet = null;
         public static DateTime? ReportDate = DateTime.Now;
         public static DateTime BeginPeriod = DateTime.Now;
@@ -494,6 +495,8 @@ namespace AdvertisementWpf
                     report.SetParameterValue("AmountInWords", AmountInWords);
                     report.SetParameterValue("DateInWords", ReportDateInWords);
                     report.SetParameterValue("MonthInWords", MonthInWords);
+                    report.SetParameterValue("CargoReleasePostName", CargoReleasePostName);
+                    report.SetParameterValue("CargoReleaseName", CargoReleaseName);
                     ReadyReportFileName = "UPD.pdf";
                 }
                 else if (ReportMode == "OrderListViewForm")
@@ -582,6 +585,15 @@ namespace AdvertisementWpf
                     report.RegisterData(ObjectDataSet, "dataset", 4);
                     report.SetParameterValue("BeginPeriod", BeginPeriod);
                     report.SetParameterValue("EndPeriod", EndPeriod);
+                    ReportMode = "ReportForm";
+                }
+                else if (ReportMode == "ClientHandBookForm")
+                {
+                    //report.Dictionary.RegisterBusinessObject(ClientsDataSet, "Clients", 2, true);
+                    //report.Save($"{Path.GetFileNameWithoutExtension(ReportFileName)}_data.frx");
+                    //return;
+                    report.Load(ReportFileName);
+                    report.RegisterData(ClientsDataSet, "Clients", 2);
                     ReportMode = "ReportForm";
                 }
 

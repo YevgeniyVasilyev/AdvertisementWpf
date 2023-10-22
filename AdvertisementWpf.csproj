@@ -105,6 +105,7 @@
     <None Remove="~%24военно дизайнером сводный.doc" />
     <None Remove="~%24хгалтерия_правки1.doc" />
     <None Remove="~WRL0001.tmp" />
+    <None Remove="АКТ  А4 вертик.распол..xls" />
     <None Remove="Акт об оказании услуг по РТ.xls" />
     <None Remove="База для вознаграждения с учётом даты оплаты.xls" />
     <None Remove="Бланк-заказ.pdf" />
@@ -123,14 +124,18 @@
     <None Remove="Отбор в производстве правка 1.xlsx" />
     <None Remove="Отбор данных.doc" />
     <None Remove="Отбор данных.docx" />
+    <None Remove="счет А4 вертик.распол..xls" />
     <None Remove="Счет на оплату от РТ.xls" />
     <None Remove="счет фактура бланк.xls" />
+    <None Remove="СЧФ А4гориз.распол.xls" />
     <None Remove="ТЗ электронный бланк заказа.xlsx" />
     <None Remove="ТК печать с правкой 1.doc" />
     <None Remove="ТК печать.doc" />
     <None Remove="ТК эскиз.pdf" />
     <None Remove="ТК.pdf" />
+    <None Remove="ТОВАРКА А4 гориз.распол.xls" />
     <None Remove="Товарная накладная бланк.xls" />
+    <None Remove="УПД А4 гориз.распол.xls" />
     <None Remove="УПД бланк.pdf" />
     <None Remove="Этапы и доработки.xlsx" />
   </ItemGroup>
@@ -142,12 +147,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Extended.Wpf.Toolkit" Version="4.5.0" />
-    <PackageReference Include="FastReport.Localization" Version="2023.2.2" />
-    <PackageReference Include="FastReport.OpenSource" Version="2023.2.2" />
+    <PackageReference Include="Extended.Wpf.Toolkit" Version="4.5.1" />
+    <PackageReference Include="FastReport.Localization" Version="2023.3.7" />
+    <PackageReference Include="FastReport.OpenSource" Version="2023.3.7" />
     <PackageReference Include="FastReport.OpenSource.Data.MsSql" Version="2021.4.0" />
-    <PackageReference Include="FastReport.OpenSource.Export.PdfSimple" Version="2023.2.2" />
-    <PackageReference Include="MailKit" Version="4.0.0" />
+    <PackageReference Include="FastReport.OpenSource.Export.PdfSimple" Version="2023.3.7" />
+    <PackageReference Include="MailKit" Version="4.2.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.17" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.17">
       <PrivateAssets>all</PrivateAssets>

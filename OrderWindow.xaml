@@ -319,8 +319,9 @@
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" Name="LabelAndButtonRow"/>
                                 <RowDefinition Height="Auto" Name="ListBoxTypeOfProductsRow"/>
-                                <RowDefinition Height="Auto" Name="ListViewProductsRow"/>
-                                <RowDefinition Height="Auto" Name="DateRow"/>
+                                <RowDefinition Height="*" Name="ListViewProductsRow"/>
+                                <RowDefinition Height="Auto" Name="TotalProductsRow"/>
+                                <RowDefinition Height="180" Name="DateRow"/>
                             </Grid.RowDefinitions>
                             <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center">
                                 <Label Content="Изделия" FontWeight="Bold" HorizontalContentAlignment="Stretch"/>
@@ -328,7 +329,7 @@
                                         Style="{StaticResource ButtonOfOrder}" Command="ApplicationCommands.New"
                                         Visibility="{Binding ElementName=NewProductGrid, Path=IsVisible, Converter={StaticResource BoolToVisibilityConverter}}"
                                         Margin="10,0,0,0" ToolTip="Добавить изделие (показать список)">
-                                        <Image Source="/Images/free-icon-add-button.png" Width="20" Height="20"/>
+                                    <Image Source="/Images/free-icon-add-button.png" Width="20" Height="20"/>
                                 </Button>
                                 <Button Name="HideNewProductButton" Background="Transparent" BorderBrush="Transparent" 
                                         Visibility="{Binding ElementName=NewProductGrid, Path=Visibility}"
@@ -339,7 +340,7 @@
                                 <Button Name="DeleteProductButton" Background="Transparent" BorderBrush="Transparent" 
                                         Style="{StaticResource ButtonOfOrder}" Command="ApplicationCommands.Delete"
                                         Margin="0,0,0,0" ToolTip="Отметить изделие для удаления">
-                                        <Image Source="/Images/free-icon-bin-Recycler.png" Width="20" Height="20"/>
+                                    <Image Source="/Images/free-icon-bin-Recycler.png" Width="20" Height="20"/>
                                 </Button>
                             </StackPanel>
                             <Grid Grid.Row="1" Name="NewProductGrid" Margin="5,0,5,0" Visibility="Collapsed">
@@ -387,68 +388,37 @@
                                     </ListBox.GroupStyle>
                                 </ListBox>
                             </Grid>
-                            <!--<ListBox Grid.Row="1" Name="NewProductListBox" Visibility="Collapsed"
-                                     ScrollViewer.VerticalScrollBarVisibility="Auto"
-                                     IsSynchronizedWithCurrentItem="true"
-                                     ItemsSource="{Binding Source={StaticResource productTypesViewSource}, Mode=OneTime}"
-                                     DisplayMemberPath="Name" MouseDoubleClick="NewProductListBox_MouseDoubleClick">
-                                <ListBox.GroupStyle>
-                                    <GroupStyle>
-                                        <GroupStyle.ContainerStyle>
-                                            <Style TargetType="{x:Type GroupItem}">
-                                                <Setter Property="Margin" Value="0,0,0,5"/>
-                                                <Setter Property="Template">
-                                                    <Setter.Value>
-                                                        <ControlTemplate TargetType="{x:Type GroupItem}">
-                                                            <Expander IsExpanded="False" BorderBrush="AntiqueWhite" BorderThickness="0,0,0,1">
-                                                                <Expander.Header>
-                                                                    <DockPanel>
-                                                                        <TextBlock FontWeight="Bold" Text="{Binding Path=Name}" Margin="5,0,0,0" Width="300"/>
-                                                                    </DockPanel>
-                                                                </Expander.Header>
-                                                                <Expander.Content>
-                                                                    <ItemsPresenter />
-                                                                </Expander.Content>
-                                                            </Expander>
-                                                        </ControlTemplate>
-                                                    </Setter.Value>
-                                                </Setter>
-                                            </Style>
-                                        </GroupStyle.ContainerStyle>
-                                    </GroupStyle>
-                                </ListBox.GroupStyle>
-                            </ListBox>-->
-                            <StackPanel x:Name="ProductStack" Grid.Row="2" Orientation="Vertical">
-                                <ListView Name="ListProduct" Margin="5" Padding="2" IsSynchronizedWithCurrentItem="True"
+                            <ListView Grid.Row="2" Name="ListProduct" Margin="5" Padding="2" IsSynchronizedWithCurrentItem="True"
                                           ItemsSource="{Binding Source={StaticResource productsViewSource}, 
                                                         ValidatesOnNotifyDataErrors=True, ValidatesOnExceptions=True}"
+                                          ScrollViewer.VerticalScrollBarVisibility="Auto"
                                           PreviewKeyDown="ListViewUpAndDown_PreviewKeyDown">
-                                    <ListView.View>
-                                        <GridView>
-                                            <GridView.Columns>
-                                                <GridViewColumn x:Name="column1" Header=" Наименование " Width="250"
+                                <ListView.View>
+                                    <GridView>
+                                        <GridView.Columns>
+                                            <GridViewColumn x:Name="column1" Header=" Наименование " Width="250"
                                                     DisplayMemberBinding="{Binding Path=ProductTypeName}"
                                                     HeaderTemplate="{StaticResource ListViewHeaderTemplate}"/>
-                                                <GridViewColumn x:Name="column2" Header=" Кол-во " Width="80" HeaderTemplate="{StaticResource ListViewHeaderTemplate}">
-                                                    <GridViewColumn.CellTemplate>
-                                                        <DataTemplate>
-                                                            <TextBox Name="QuantityTextBox" HorizontalContentAlignment="Right" Width="70"
+                                            <GridViewColumn x:Name="column2" Header=" Кол-во " Width="80" HeaderTemplate="{StaticResource ListViewHeaderTemplate}">
+                                                <GridViewColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <TextBox Name="QuantityTextBox" HorizontalContentAlignment="Right" Width="70"
                                                                      Text="{Binding Path=Quantity, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, 
                                                                             ValidatesOnExceptions=True, ValidatesOnNotifyDataErrors=True}" 
                                                                      GotFocus="QuantityTextBox_GotFocus">
-                                                                <TextBox.IsEnabled>
-                                                                    <MultiBinding Converter="{StaticResource AddBoolConverter}" ConverterParameter="True">
-                                                                        <Binding Source="{StaticResource productsViewSource}" Path="DateTransferProduction" Converter="{StaticResource NullDateTimeToBoolConverter}"/>
-                                                                        <Binding RelativeSource="{RelativeSource AncestorType=local:OrderWindow}" Path="DataContext.IsManager"/>
-                                                                    </MultiBinding>
-                                                                </TextBox.IsEnabled>
-                                                            </TextBox>
-                                                        </DataTemplate>
-                                                    </GridViewColumn.CellTemplate>
-                                                </GridViewColumn>
-                                                <GridViewColumn x:Name="column3" Header=" Стоимость " Width="100" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
+                                                            <TextBox.IsEnabled>
+                                                                <MultiBinding Converter="{StaticResource AddBoolConverter}" ConverterParameter="True">
+                                                                    <Binding Source="{StaticResource productsViewSource}" Path="DateTransferProduction" Converter="{StaticResource NullDateTimeToBoolConverter}"/>
+                                                                    <Binding RelativeSource="{RelativeSource AncestorType=local:OrderWindow}" Path="DataContext.IsManager"/>
+                                                                </MultiBinding>
+                                                            </TextBox.IsEnabled>
+                                                        </TextBox>
+                                                    </DataTemplate>
+                                                </GridViewColumn.CellTemplate>
+                                            </GridViewColumn>
+                                            <GridViewColumn x:Name="column3" Header=" Стоимость " Width="100" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
                                                                 DisplayMemberBinding="{Binding Path=Cost, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ConverterCulture=ru-RU, StringFormat={}{0:C}}">
-                                                    <!--<GridViewColumn.CellTemplate>
+                                                <!--<GridViewColumn.CellTemplate>
                                                         <DataTemplate>
                                                             <TextBox Name="CostTextBox" Style="{StaticResource ValidationTemplate}"
                                                                      HorizontalContentAlignment="Right" Width="90" Language="ru-ru" 
@@ -465,38 +435,37 @@
                                                             </TextBox>
                                                         </DataTemplate>
                                                     </GridViewColumn.CellTemplate>-->
-                                                </GridViewColumn>
-                                                <GridViewColumn Header=" Дизайнер " Width="200" HeaderTemplate="{StaticResource ListViewHeaderTemplate}">
-                                                    <GridViewColumn.CellTemplate>
-                                                        <DataTemplate>
-                                                            <ComboBox VerticalAlignment="Center" IsEditable="False" Width="190"
+                                            </GridViewColumn>
+                                            <GridViewColumn Header=" Дизайнер " Width="200" HeaderTemplate="{StaticResource ListViewHeaderTemplate}">
+                                                <GridViewColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <ComboBox VerticalAlignment="Center" IsEditable="False" Width="190"
                                                                       IsEnabled="{Binding Source={StaticResource ViewModel}, Path=OrderCardProductDesigner}"
                                                                       ItemsSource="{Binding Source={StaticResource ViewModel}, Path=DesignerList}" 
                                                                       SelectedValuePath="ID" DisplayMemberPath="FullUserName"
                                                                       SelectedValue="{Binding Path=DesignerID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                                                                       GotFocus="DesignerComboBox_GotFocus">
-                                                            </ComboBox>
-                                                        </DataTemplate>
-                                                    </GridViewColumn.CellTemplate>
-                                                </GridViewColumn>
-                                            </GridView.Columns>
-                                        </GridView>
-                                    </ListView.View>
-                                </ListView>
-                                <Border Margin="5,0,5,0" BorderThickness="1" BorderBrush="DodgerBlue">
-                                    <Grid Margin="2,0,2,2">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="{Binding ElementName=column1, Path=Width}"/>
-                                            <ColumnDefinition Width="{Binding ElementName=column2, Path=Width}"/>
-                                            <ColumnDefinition Width="{Binding ElementName=column3, Path=Width}"/>
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock Grid.Column="0" Text="ИТОГО:" Margin="10,0,0,0" FontWeight="Bold" Grid.ColumnSpan="2"/>
-                                        <TextBlock Name="TotalQuantity" Margin="0,0,5,0" Grid.Column="1" Text="" HorizontalAlignment="Right" FontWeight="Bold"/>
-                                        <TextBlock Name="TotalCost" Grid.Column="2" Text="" Margin="7,0,0,0" HorizontalAlignment="Left" FontWeight="Bold"/>
-                                    </Grid>
-                                </Border>
-                            </StackPanel>
-                            <StackPanel Grid.Row="3">
+                                                        </ComboBox>
+                                                    </DataTemplate>
+                                                </GridViewColumn.CellTemplate>
+                                            </GridViewColumn>
+                                        </GridView.Columns>
+                                    </GridView>
+                                </ListView.View>
+                            </ListView>
+                            <Border Grid.Row="3" Margin="5,0,5,0" BorderThickness="1" BorderBrush="DodgerBlue">
+                                <Grid Margin="2,0,2,2">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="{Binding ElementName=column1, Path=Width}"/>
+                                        <ColumnDefinition Width="{Binding ElementName=column2, Path=Width}"/>
+                                        <ColumnDefinition Width="{Binding ElementName=column3, Path=Width}"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="ИТОГО:" Margin="10,0,0,0" FontWeight="Bold" Grid.ColumnSpan="2"/>
+                                    <TextBlock Name="TotalQuantity" Margin="0,0,5,0" Grid.Column="1" Text="" HorizontalAlignment="Right" FontWeight="Bold"/>
+                                    <TextBlock Name="TotalCost" Grid.Column="2" Text="" Margin="7,0,0,0" HorizontalAlignment="Left" FontWeight="Bold"/>
+                                </Grid>
+                            </Border>
+                            <StackPanel Grid.Row="4">
                                 <Label Content="Даты" FontWeight="Bold" HorizontalAlignment="Center"/>
                                 <Grid Margin="5">
                                     <Grid.ColumnDefinitions>
@@ -1010,14 +979,16 @@
                                                         Visibility="{Binding ElementName=TechCardTreeView, Path=SelectedItem, Converter={StaticResource VisibilitySelector}, ConverterParameter=OperationInWorkAttribute}">
                                                 <Grid ScrollViewer.CanContentScroll="True">
                                                 </Grid>
-                                                --><!--<StackPanel Orientation="Horizontal">
+                                                -->
+                                            <!--<StackPanel Orientation="Horizontal">
                                                     <TextBlock Text="Производственный участок  "/>
                                                     <TextBlock Text="{Binding ElementName=TechCardTreeView, Path=SelectedItem.Operation.ProductionArea.Name}"/>
-                                                </StackPanel>-->                                                
-                                                <!--<Label Content="Описание"/>
+                                                </StackPanel>-->
+                                            <!--<Label Content="Описание"/>
                                                 <TextBox MinHeight="70" BorderThickness="1" BorderBrush="Black" AcceptsReturn="True" TextWrapping="Wrap"
                                                          ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto"
-                                                         Text="{Binding ElementName=TechCardTreeView, Path=SelectedItem.Note, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>--><!--
+                                                         Text="{Binding ElementName=TechCardTreeView, Path=SelectedItem.Note, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>-->
+                                            <!--
                                             </StackPanel>-->
                                         </Grid>
                                         <ListView Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="3" Name="ListOperationInWorkParameters" Margin="2" Padding="1" IsSynchronizedWithCurrentItem="True" 
@@ -1224,74 +1195,77 @@
             </TabItem>
             <TabItem Header="ПУДы">
                 <Border Margin="2" BorderThickness="1" BorderBrush="DarkBlue">
-                    <ScrollViewer CanContentScroll="True" VerticalScrollBarVisibility="Auto">
-                        <Grid Grid.IsSharedSizeScope="True" Name="PADGrid">
-                            <Grid.ColumnDefinitions>
-                                <!--список-->
-                                <ColumnDefinition Width="*"/>
-                                <!--поля для редактирования -->
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
+                    <Grid Name="PADGrid">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="0,5*"/>
+                            <ColumnDefinition Width="0,5*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <!--кнопки-->
+                            <RowDefinition Height="Auto"/>
+                            <!--надпись СЧЕТА-->
+                            <RowDefinition Height="Auto"/>
+                            <!--счета-->
+                            <RowDefinition Height="0,5*"/>
+                            <!--надпись АКТЫ-->
+                            <RowDefinition Height="Auto"/>
+                            <!--акты-->
+                            <RowDefinition Height="0,5*"/>
+                        </Grid.RowDefinitions>
+                        <WrapPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal">
+                            <Button Name="LoadPADButton" Style="{StaticResource ButtonOfOrder}" Command="ApplicationCommands.New"
+                                    ToolTip="Загрузить ПУДы из БД">
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Source="\Images\premium-icon-download.png" Width="25" Height="25"/>
+                                    <Label Content="Загрузить"/>
+                                </StackPanel>
+                            </Button>
+                            <Separator/>
+                            <Button Name="SavePADButton" Style="{StaticResource ButtonOfOrder}" Command="ApplicationCommands.Save"
+                                    ToolTip="Сохранить данные по ПУДам в БД">
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Source="\Images\free-icon-floppy-disk_save.png" Width="25" Height="25"/>
+                                    <Label Content="Сохранить"/>
+                                </StackPanel>
+                            </Button>
+                            <Separator/>
+                            <Button Name="NewAccountButton" Style="{StaticResource ButtonOfOrder}" Command="ApplicationCommands.New"
+                                    ToolTip="Сформировать новый счет">
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Source="\Images\free-icon-account.png" Width="25" Height="25"/>
+                                    <Label Content="Новый счет"/>
+                                </StackPanel>
+                            </Button>
+                            <Separator/>
+                            <Button Name="NewActButton" Style="{StaticResource ButtonOfOrder}" Command="ApplicationCommands.New"
+                                    ToolTip="Сформировать новый акт">
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Source="\Images\free-icon-act.png" Width="25" Height="25"/>
+                                    <Label Content="Новый акт"/>
+                                </StackPanel>
+                            </Button>
+                        </WrapPanel>
+                        <Border Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" Margin="2" BorderThickness="0.5" BorderBrush="Black" CornerRadius="5">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0.5,1" EndPoint="0.5,0">
+                                    <GradientStop Color="LightSkyBlue" Offset="0" />
+                                    <GradientStop Color="White" Offset="1" />
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <TextBlock Text="СЧЕТА" Margin="2" FontWeight="Bold" HorizontalAlignment="Center"/>
+                        </Border>
+                        <Grid Grid.Row="2" Grid.Column="0" Margin="2,0,2,2">
                             <Grid.RowDefinitions>
-                                <!--кнопки-->
-                                <RowDefinition Height="Auto"/> 
-                                <!--счета надпись-->
+                                <!--список счетов-->
+                                <RowDefinition Height="0,5*"/>
+                                <!--список детализации счета-->
+                                <RowDefinition Height="0,5*"/>
+                                <!--итого по счету-->
                                 <RowDefinition Height="Auto"/>
-                                <!--счета список и поля для правки-->
-                                <RowDefinition Height="Auto"/>
-                                <!--детали счета список и поля для правки-->
-                                <RowDefinition Height="Auto"/>
-                                <!--ИТОГО по счету-->
-                                <RowDefinition Height="Auto"/>
-                                <!--акты надпись-->
-                                <RowDefinition Height="Auto"/>
-                                <!--акты список и поля для правки-->
-                                <RowDefinition Height="Auto"/>
-                                <!--детали акта список и поля для правки-->
-                                <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
-                            <WrapPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal">
-                                <Button Name="LoadPADButton" Style="{StaticResource ButtonOfOrder}" Command="ApplicationCommands.New"
-                                            ToolTip="Загрузить ПУДы из БД">
-                                    <StackPanel Orientation="Horizontal">
-                                        <Image Source="\Images\premium-icon-download.png" Width="25" Height="25"/>
-                                        <Label Content="Загрузить"/>
-                                    </StackPanel>
-                                </Button>
-                                <Separator/>
-                                <Button Name="SavePADButton" Style="{StaticResource ButtonOfOrder}" Command="ApplicationCommands.Save"
-                                        ToolTip="Сохранить данные по ПУДам в БД">
-                                    <StackPanel Orientation="Horizontal">
-                                        <Image Source="\Images\free-icon-floppy-disk_save.png" Width="25" Height="25"/>
-                                        <Label Content="Сохранить"/>
-                                    </StackPanel>
-                                </Button>
-                                <Separator/>
-                                <Button Name="NewAccountButton" Style="{StaticResource ButtonOfOrder}" Command="ApplicationCommands.New">
-                                    <StackPanel Orientation="Horizontal">
-                                        <Image Source="\Images\free-icon-account.png" Width="25" Height="25"/>
-                                        <Label Content="Новый счет"/>
-                                    </StackPanel>
-                                </Button>
-                                <Separator/>
-                                <Button Name="NewActButton" Style="{StaticResource ButtonOfOrder}" Command="ApplicationCommands.New">
-                                    <StackPanel Orientation="Horizontal">
-                                        <Image Source="\Images\free-icon-act.png" Width="25" Height="25"/>
-                                        <Label Content="Новый акт"/>
-                                    </StackPanel>
-                                </Button>
-                            </WrapPanel>
-                            <Border Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" Margin="2" BorderThickness="0.5" BorderBrush="Black" CornerRadius="5">
-                                <Border.Background>
-                                    <LinearGradientBrush StartPoint="0.5,1" EndPoint="0.5,0">
-                                        <GradientStop Color="LightSkyBlue" Offset="0" />
-                                        <GradientStop Color="White" Offset="1" />
-                                    </LinearGradientBrush>
-                                </Border.Background>
-                                <TextBlock Text="СЧЕТА" Margin="2" FontWeight="Bold" HorizontalAlignment="Center"/>
-                            </Border>
-                            <ListView Grid.Column="0" Grid.Row="2" Name="ListAccount" IsSynchronizedWithCurrentItem="True" 
+                            <ListView Grid.Row="0" Margin="2" Name="ListAccount" IsSynchronizedWithCurrentItem="True"
                                       ItemsSource="{Binding Source={StaticResource accountsViewSource}, UpdateSourceTrigger=PropertyChanged}" 
+                                      ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto"
                                       KeyDown="ListAccount_KeyDown">
                                 <ListView.View>
                                     <GridView>
@@ -1300,16 +1274,16 @@
                                         <GridViewColumn Header=" Дата счета " DisplayMemberBinding="{Binding Path=AccountDate, ConverterCulture=ru-RU, StringFormat=\{0:dd.MM.yyyy\}}"
                                                 HeaderTemplate="{StaticResource ListViewHeaderTemplate}"/>
                                         <GridViewColumn Header=" Поставщик " 
-                                                        DisplayMemberBinding="{Binding Path=Contractor.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                                        DisplayMemberBinding="{Binding Path=ContractorName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                                                         HeaderTemplate="{StaticResource ListViewHeaderTemplate}" Width="200"/>
                                         <GridViewColumn Header=" Основание " DisplayMemberBinding="{Binding Path=Footing, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="200"
                                                 HeaderTemplate="{StaticResource ListViewHeaderTemplate}"/>
                                     </GridView>
                                 </ListView.View>
                             </ListView>
-                            <ListView Grid.Column="0" Grid.Row="3" Name="ListAccountDetail" IsSynchronizedWithCurrentItem="True"
-                                      ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto"
-                                      ItemsSource="{Binding Source={StaticResource accountsViewSource}, Path=DetailsList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                            <ListView Grid.Row="1" Margin="2" Name="ListAccountDetail" 
+                                      ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                      ItemsSource="{Binding ElementName=ListAccount, Path=SelectedItem.DetailsList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                                       KeyDown="ListAccountDetail_KeyDown">
                                 <ListView.View>
                                     <GridView>
@@ -1326,92 +1300,7 @@
                                     </GridView>
                                 </ListView.View>
                             </ListView>
-                            <Grid Grid.Column="1" Grid.Row="2" Margin="5">
-                                <!--поля для правки счета-->
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" SharedSizeGroup="FieldAccount"/>
-                                    <ColumnDefinition Width="200"/>
-                                    <ColumnDefinition Width="140"/>
-                                    <ColumnDefinition Width="150"/>
-                                </Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="25"/>
-                                    <RowDefinition Height="50"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="50"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
-                                <TextBlock Grid.Column="0" Grid.Row="0" Text="Номер счета: " VerticalAlignment="Center"/>
-                                <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding ElementName=ListAccount, Path=SelectedItem.AccountNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                                         IsEnabled="True" VerticalAlignment="Center"/>
-                                <TextBlock Grid.Column="0" Grid.Row="1" Text="Покупатель: " VerticalAlignment="Center"/>
-                                <TextBox Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="3" IsEnabled="True" ScrollViewer.VerticalScrollBarVisibility="Auto"
-                                         Text="{Binding Source={StaticResource accountsViewSource}, Path=Order.Client.ClientInfoForAccount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap"/>
-                                <TextBlock Grid.Column="0" Grid.Row="2" Text="Поставщик: " VerticalAlignment="Center"/>
-                                <ComboBox Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="3" Margin="0,5,0,0" Name="ContractorNameComboBox" IsEnabled="True" SelectionChanged="ContractorNameComboBox_SelectionChanged"
-                                          ItemsSource="{Binding Source={StaticResource contractorsViewSource}}" 
-                                          DisplayMemberPath="Name" SelectedValuePath="ID" VerticalAlignment="Center"
-                                          SelectedValue="{Binding Source={StaticResource accountsViewSource}, Path=ContractorID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                                <TextBox Grid.Column="1" Grid.Row="3" Grid.ColumnSpan="3" IsEnabled="True" AcceptsReturn="True" AcceptsTab="True" TextWrapping="Wrap"
-                                         ScrollViewer.VerticalScrollBarVisibility="Auto"
-                                         Text="{Binding Source={StaticResource accountsViewSource}, Path=Contractor.ContractorInfoForAccount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                                <TextBlock Grid.Column="0" Grid.Row="4" Text="Основание: " VerticalAlignment="Center"/>
-                                <TextBox Grid.Column="1" Grid.Row="4" IsEnabled="True" Text="{Binding ElementName=ListAccount, Path=SelectedItem.Footing, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center"/>
-                                <Label Name="PayBeforeDateLabel" Grid.Column="2" Grid.Row="4" Content="Оплатить не позднее: " HorizontalContentAlignment="Right" Style="{StaticResource UnderlineLabel}" MouseLeftButtonDown="Label_MouseLeftButtonDown"/>
-                                <DatePicker Name="DatePayBeforeDate" Grid.Column="3" Grid.Row="4" IsTodayHighlighted="True" IsEnabled="True" 
-                                                SelectedDate="{Binding Source={StaticResource accountsViewSource}, 
-                                                Path=PayBeforeDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, 
-                                                ValidatesOnExceptions=True, ValidatesOnNotifyDataErrors=True}"
-                                                VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                            </Grid>
-                            <Grid Grid.Column="1" Grid.Row="3" Margin="5">
-                                <!--поля для правки деталей счета-->
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" SharedSizeGroup="FieldAccount"/>
-                                    <ColumnDefinition Width="150"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
-                                <TextBlock Grid.Column="0" Grid.Row="0" Text="Товары (работы, услуги): "/>
-                                <TextBox Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="2" Margin="0,5,5,5" IsEnabled="True"
-                                         TextWrapping="Wrap" AcceptsReturn="True"  
-                                         Text="{Binding ElementName=ListAccountDetail, Path=SelectedItem.ProductInfoForAccount, Mode=TwoWay, 
-                                         UpdateSourceTrigger=PropertyChanged, NotifyOnSourceUpdated=True}" SourceUpdated="TextBox_SourceUpdated"/>
-                                <CheckBox Grid.Column="3" Grid.Row="0" Name="ManualInput" Margin="5,0,0,0" Content=" ручной ввод" VerticalContentAlignment="Center" 
-                                          IsChecked="{Binding Source={StaticResource accountsViewSource}, Path=IsManual, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnSourceUpdated=True}" 
-                                          Click="ManualInput_Click"/>
-                                <TextBlock Grid.Column="0" Grid.Row="1" Text="Количество: " VerticalAlignment="Center"/>
-                                <TextBox Grid.Column="1" Grid.Row="1" IsEnabled="True" Margin="0,5,5,5" VerticalAlignment="Center"
-                                         Text="{Binding ElementName=ListAccountDetail,Path=SelectedItem.Quantity, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, 
-                                         ValidatesOnExceptions=True, ValidatesOnNotifyDataErrors=True,
-                                         NotifyOnSourceUpdated=True}" SourceUpdated="TextBox_SourceUpdated"/>
-                                <TextBlock Grid.Column="2" Grid.Row="1" Text="  Ед. изм.: " HorizontalAlignment="Right" VerticalAlignment="Center"/>
-                                <TextBox Grid.Column="3" Grid.Row="1" Margin="5,0,0,0" IsEnabled="True" VerticalAlignment="Center" HorizontalAlignment="Left" Width="95"
-                                         Text="{Binding ElementName=ListAccountDetail,Path=SelectedItem.UnitName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, 
-                                         ValidatesOnExceptions=True, ValidatesOnNotifyDataErrors=True,
-                                         NotifyOnSourceUpdated=True}" SourceUpdated="TextBox_SourceUpdated"/>
-                                <StackPanel Grid.Column="0" Grid.Row="3" Orientation="Vertical">
-                                    <Button Margin="4" Name="PrintAccountButton" Style="{StaticResource ButtonOfOrder}" Command="ApplicationCommands.Print">
-                                        <StackPanel Orientation="Horizontal">
-                                            <Image Margin="5,0,0,0" Source="\Images\free-icon-printer.png" Width="25" Height="25"/>
-                                            <StackPanel Orientation="Vertical" Margin="7,0,0,0">
-                                                <Label Content=" Печать на дату "/>
-                                                <DatePicker Name="AccountDate" SelectedDate="{x:Static System:DateTime.Now}" IsTodayHighlighted="True" IsEnabled="True" 
-                                                        VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                                            </StackPanel>
-                                        </StackPanel>
-                                    </Button>
-                                </StackPanel>
-                                <CheckBox Grid.Column="1" Grid.Row="3" Content=" с подписью и печатью" Name="WithSignature" VerticalAlignment="Center"/>
-                            </Grid>
-                            <Border Grid.Column="0" Grid.Row="4" BorderBrush="DeepSkyBlue" BorderThickness="0.5">
+                            <Border Grid.Row="2" BorderBrush="DeepSkyBlue" BorderThickness="0.5">
                                 <Grid Width="{Binding ElementName=ListAccountDetail, Path=ActualWidth}">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="{Binding ElementName=a_col1, Path=ActualWidth}"/>
@@ -1425,17 +1314,99 @@
                                                FontWeight="Bold"/>
                                 </Grid>
                             </Border>
-                            <Border Grid.Column="0" Grid.Row="5" Grid.ColumnSpan="2" Margin="2" BorderThickness="0.5" BorderBrush="Black" CornerRadius="5">
-                                <Border.Background>
-                                    <LinearGradientBrush StartPoint="0.5,1" EndPoint="0.5,0">
-                                        <GradientStop Color="LightSkyBlue" Offset="0" />
-                                        <GradientStop Color="White" Offset="1" />
-                                    </LinearGradientBrush>
-                                </Border.Background>
-                                <TextBlock Text="АКТЫ" Margin="2" FontWeight="Bold" HorizontalAlignment="Center"/>
-                            </Border>
-                            <ListView Grid.Column="0" Grid.Row="6" Name="ListAct" IsSynchronizedWithCurrentItem="True" 
-                                  ItemsSource="{Binding Source={StaticResource accountsViewSource}, Path=Acts}" KeyDown="ListAct_KeyDown">
+                        </Grid>
+                        <ScrollViewer Grid.Row="2" Grid.Column="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                            <Grid Margin="5">
+                                <!--поля для правки счета-->
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" SharedSizeGroup="FieldAccount"/>
+                                    <ColumnDefinition Width="200"/>
+                                    <ColumnDefinition Width="140"/>
+                                    <ColumnDefinition Width="*" SharedSizeGroup="FieldAccount1"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="25"/>
+                                    <RowDefinition Height="50"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="50"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <TextBlock Grid.Column="0" Grid.Row="0" Text="Номер счета: " VerticalAlignment="Center"/>
+                                <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding ElementName=ListAccount, Path=SelectedItem.AccountNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                         IsEnabled="True" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="0" Grid.Row="1" Text="Покупатель: " VerticalAlignment="Center"/>
+                                <TextBox Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="3" IsEnabled="True" ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                         Text="{Binding ElementName=ListAccount, Path=SelectedItem.Order.Client.ClientInfoForAccount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap"/>
+                                <TextBlock Grid.Column="0" Grid.Row="2" Text="Поставщик: " VerticalAlignment="Center"/>
+                                <ComboBox Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="3" Margin="0,5,0,0" Name="ContractorNameComboBox" IsEnabled="True" SelectionChanged="ContractorNameComboBox_SelectionChanged"
+                                          ItemsSource="{Binding Source={StaticResource contractorsViewSource}}" 
+                                          DisplayMemberPath="Name" SelectedValuePath="ID" VerticalAlignment="Center"
+                                          SelectedValue="{Binding ElementName=ListAccount, Path=SelectedItem.ContractorID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                <TextBox Grid.Column="1" Grid.Row="3" Grid.ColumnSpan="3" IsEnabled="True" AcceptsReturn="True" AcceptsTab="True" TextWrapping="Wrap"
+                                         ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                         Text="{Binding ElementName=ListAccount, Path=SelectedItem.Contractor.ContractorInfoForAccount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                <TextBlock Grid.Column="0" Grid.Row="4" Text="Основание: " VerticalAlignment="Center"/>
+                                <TextBox Grid.Column="1" Grid.Row="4" IsEnabled="True" Text="{Binding ElementName=ListAccount, Path=SelectedItem.Footing, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center"/>
+                                <Label Name="PayBeforeDateLabel" Grid.Column="2" Grid.Row="4" Content="Оплатить не позднее: " HorizontalContentAlignment="Right" Style="{StaticResource UnderlineLabel}" MouseLeftButtonDown="Label_MouseLeftButtonDown"/>
+                                <DatePicker Name="DatePayBeforeDate" Grid.Column="3" Grid.Row="4" IsTodayHighlighted="True" IsEnabled="True" 
+                                        SelectedDate="{Binding ElementName=ListAccount, Path=SelectedItem.PayBeforeDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, 
+                                        ValidatesOnExceptions=True, ValidatesOnNotifyDataErrors=True}"
+                                        VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="0,0,0,1"/>
+                                <TextBlock Grid.Column="0" Grid.Row="5" Text="Товары (работы, услуги): " VerticalAlignment="Center"/>
+                                <TextBox Grid.Column="1" Grid.Row="5" Grid.ColumnSpan="2" Margin="0,5,5,5" IsEnabled="True"
+                                     TextWrapping="Wrap" AcceptsReturn="True"  
+                                     Text="{Binding ElementName=ListAccountDetail, Path=SelectedItem.ProductInfoForAccount, Mode=TwoWay, 
+                                     UpdateSourceTrigger=PropertyChanged, NotifyOnSourceUpdated=True}" SourceUpdated="TextBox_SourceUpdated"/>
+                                <CheckBox Grid.Column="3" Grid.Row="5" Name="ManualInput" Margin="1,0,0,0" Content=" ручной ввод" VerticalContentAlignment="Center" 
+                                      IsChecked="{Binding ElementName=ListAccount, Path=SelectedItem.IsManual, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnSourceUpdated=True}" 
+                                      Click="ManualInput_Click"/>
+                                <TextBlock Grid.Column="0" Grid.Row="6" Text="Количество: " VerticalAlignment="Center"/>
+                                <TextBox Grid.Column="1" Grid.Row="6" IsEnabled="True" Margin="0,5,0,5" VerticalAlignment="Center"
+                                     Text="{Binding ElementName=ListAccountDetail,Path=SelectedItem.Quantity, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, 
+                                     ValidatesOnExceptions=True, ValidatesOnNotifyDataErrors=True,
+                                     NotifyOnSourceUpdated=True}" SourceUpdated="TextBox_SourceUpdated"/>
+                                <TextBlock Grid.Column="2" Grid.Row="6" Text="  Ед. изм.: " HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                <TextBox Grid.Column="3" Grid.Row="6" Margin="1,5,0,0" IsEnabled="True" VerticalAlignment="Top" HorizontalAlignment="Left" Width="95"
+                                     Text="{Binding ElementName=ListAccountDetail,Path=SelectedItem.UnitName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, 
+                                     ValidatesOnExceptions=True, ValidatesOnNotifyDataErrors=True,
+                                     NotifyOnSourceUpdated=True}" SourceUpdated="TextBox_SourceUpdated"/>
+                                <StackPanel Grid.Column="0" Grid.Row="7" Orientation="Vertical">
+                                    <Button Margin="4" Name="PrintAccountButton" Style="{StaticResource ButtonOfOrder}" Command="ApplicationCommands.Print">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Image Margin="5,0,0,0" Source="\Images\free-icon-printer.png" Width="25" Height="25"/>
+                                            <StackPanel Orientation="Vertical" Margin="7,0,0,0">
+                                                <Label Content=" Печать на дату "/>
+                                                <DatePicker Name="AccountDate" SelectedDate="{x:Static System:DateTime.Now}" IsTodayHighlighted="True" IsEnabled="True" 
+                                                        VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </Button>
+                                </StackPanel>
+                                <CheckBox Grid.Column="1" Grid.Row="7" Content=" с подписью и печатью" Name="WithSignature" VerticalAlignment="Center"/>
+                            </Grid>
+                        </ScrollViewer>
+                        <Border Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="2" BorderThickness="0.5" BorderBrush="Black" CornerRadius="5">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0.5,1" EndPoint="0.5,0">
+                                    <GradientStop Color="LightSkyBlue" Offset="0" />
+                                    <GradientStop Color="White" Offset="1" />
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <TextBlock Text="АКТЫ" Margin="2" FontWeight="Bold" HorizontalAlignment="Center"/>
+                        </Border>
+                        <Grid Grid.Row="4" Grid.Column="0" Margin="2">
+                            <Grid.RowDefinitions>
+                                <!--список актов-->
+                                <RowDefinition Height="0,5*"/>
+                                <!--список детализации акта-->
+                                <RowDefinition Height="0,5*"/>
+                            </Grid.RowDefinitions>
+                            <ListView Grid.Row="0" Name="ListAct" IsSynchronizedWithCurrentItem="True" 
+                                      ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                      ItemsSource="{Binding ElementName=ListAccount, Path=SelectedItem.Acts}" KeyDown="ListAct_KeyDown">
                                 <ListView.View>
                                     <GridView>
                                         <GridViewColumn Header=" Номер акта " DisplayMemberBinding="{Binding Path=ActNumber}" Width="150"
@@ -1453,12 +1424,11 @@
                                         </GridViewColumn>
                                         <GridViewColumn Header=" Основание " DisplayMemberBinding="{Binding ElementName=ListAccount, Path=SelectedItem.Footing, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                                                 HeaderTemplate="{StaticResource ListViewHeaderTemplate}" Width="200"/>
-                                        <!--DisplayMemberBinding="{Binding Path=Cost, ConverterCulture=ru-RU, StringFormat={}{0:C}}"-->
                                     </GridView>
                                 </ListView.View>
                             </ListView>
-                            <ListView Grid.Column="0" Grid.Row="7" Name="ListActDetail" IsSynchronizedWithCurrentItem="True" 
-                                      ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto"
+                            <ListView Grid.Row="1" Name="ListActDetail" IsSynchronizedWithCurrentItem="True" 
+                                      ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto"
                                       ItemsSource="{Binding ElementName=ListAct, Path=SelectedItem.DetailsList}" KeyDown="ListActDetail_KeyDown">
                                 <ListView.View>
                                     <GridView>
@@ -1475,11 +1445,13 @@
                                     </GridView>
                                 </ListView.View>
                             </ListView>
-                            <Grid Grid.Column="1" Grid.Row="6" Margin="5">
+                        </Grid>
+                        <ScrollViewer Grid.Row="4" Grid.Column="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                            <Grid Margin="5">
                                 <!--поля для правки деталей акта-->
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" SharedSizeGroup="FieldAccount"/>
-                                    <ColumnDefinition Width="490"/>
+                                    <ColumnDefinition Width="*" SharedSizeGroup="FieldAccount1"/>
                                 </Grid.ColumnDefinitions>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
@@ -1492,7 +1464,7 @@
                                 </Grid.RowDefinitions>
                                 <TextBlock Grid.Column="0" Grid.Row="0" Text="Номер акта " VerticalAlignment="Center"/>
                                 <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding ElementName=ListAct, Path=SelectedItem.ActNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                                     Width="150" IsEnabled="True" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                     Width="200" IsEnabled="True" VerticalAlignment="Center" HorizontalAlignment="Left"/>
                                 <TextBlock Grid.Column="0" Grid.Row="1" Text="Исполнитель: " VerticalAlignment="Center"/>
                                 <TextBox Grid.Column="1" Grid.Row="1" Margin="0,5,0,0" IsEnabled="True" TextWrapping="Wrap" AcceptsReturn="True" AcceptsTab="True"
                                          ScrollViewer.VerticalScrollBarVisibility="Auto"
@@ -1501,10 +1473,6 @@
                                 <TextBox Grid.Column="1" Grid.Row="2" Margin="0,5,0,0" IsEnabled="True" TextWrapping="Wrap" AcceptsReturn="True" AcceptsTab="True"
                                          ScrollViewer.VerticalScrollBarVisibility="Auto"
                                          Text="{Binding Source={StaticResource accountsViewSource}, Path=Order.Client.ClientInfoForAct, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                                <!--<TextBlock Grid.Column="0" Grid.Row="3" Text="Грузоотправитель: " VerticalAlignment="Center"/>
-                                <TextBox Grid.Column="1" Grid.Row="3" Margin="0,5,0,0" IsEnabled="True" TextWrapping="Wrap" AcceptsReturn="True" AcceptsTab="True"
-                                         ScrollViewer.VerticalScrollBarVisibility="Auto"
-                                         Text="{Binding Source={StaticResource accountsViewSource}, Path=Contractor.ShipperInfoForSFUPD, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>-->
                                 <TextBlock Grid.Column="0" Grid.Row="4" Text="Грузополучатель (СФ, УПД): " VerticalAlignment="Center"/>
                                 <TextBox Grid.Column="1" Grid.Row="4" Margin="0,5,0,0" TextWrapping="Wrap" AcceptsReturn="True" AcceptsTab="True"
                                          ScrollViewer.VerticalScrollBarVisibility="Auto" 
@@ -1533,8 +1501,8 @@
                                     <RadioButton GroupName="ActTemplate" Name="TemplateUPD" Margin="3,0,0,0" Content=" УПД" VerticalContentAlignment="Center" />
                                 </StackPanel>
                             </Grid>
-                        </Grid>
-                    </ScrollViewer>
+                        </ScrollViewer>
+                    </Grid>
                 </Border>
             </TabItem>
         </TabControl>

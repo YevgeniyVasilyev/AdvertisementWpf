@@ -129,7 +129,7 @@
                         <!--список клиентов и категория-->
                         <RowDefinition Height="*"/>
                         <!--поля редактирования и вклдаки TabComtrol-->
-                        <RowDefinition Height="340"/>
+                        <RowDefinition Height="360"/>
                         <!--кнопка Сохранить-->
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
@@ -160,27 +160,6 @@
                                 </GridView>
                             </ListView.View>
                         </ListView>
-                        <!--<DataGrid Name="ClientsGrid" Grid.Row="0" Grid.Column="0" Margin="10,10,10,10"
-                                  CanUserAddRows="{Binding RelativeSource={RelativeSource AncestorType=local:ClientsAndContractorsHandbook}, Path=DataContext.ClientsHandBookNew}" 
-                                  CanUserDeleteRows="{Binding RelativeSource={RelativeSource AncestorType=local:ClientsAndContractorsHandbook}, Path=DataContext.ClientsHandBookDelete}"                               
-                                  Style="{StaticResource DataGridStyle}" IsSynchronizedWithCurrentItem="True"
-                                  ItemsSource="{Binding Clients}" ScrollViewer.VerticalScrollBarVisibility="Auto"
-                                  InitializingNewItem="ClientsGrid_InitializingNewItem">
-                            <DataGrid.RowValidationRules>
-                                <local:NotNullAndEmptyValidationGroupRule ValidationStep="CommittedValue"/>
-                            </DataGrid.RowValidationRules>
-                            <DataGrid.RowValidationErrorTemplate>
-                                <ControlTemplate>
-                                    <Grid Margin="0,-2,0,-2" ToolTip="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGridRow}}, Path=(Validation.Errors)[0].ErrorContent}">
-                                        <Ellipse StrokeThickness="0" Fill="Red" Width="{TemplateBinding FontSize}" Height="{TemplateBinding FontSize}"/>
-                                        <TextBlock Text="!" FontSize="{TemplateBinding FontSize}" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
-                                    </Grid>
-                                </ControlTemplate>
-                            </DataGrid.RowValidationErrorTemplate>
-                            <DataGrid.Columns>
-                                <DataGridTextColumn Header="Наименование клиента" Binding="{Binding ShortName, UpdateSourceTrigger=PropertyChanged}" Width="Auto"/>
-                            </DataGrid.Columns>
-                        </DataGrid>-->
                         <DockPanel Grid.Row="1" Grid.Column="0" Margin="10,10,10,10" HorizontalAlignment="Left">
                             <TextBlock Text="Фильтр по клиенту(поиск): " DockPanel.Dock="Left"/>
                             <TextBox Name="TextToFilter" BorderThickness="2" Width="900"
@@ -208,6 +187,7 @@
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="25"/>
                                     <RowDefinition Height="40"/>
+                                    <RowDefinition Height="25"/>
                                     <RowDefinition Height="25"/>
                                     <RowDefinition Height="25"/>
                                     <RowDefinition Height="25"/>
@@ -330,11 +310,17 @@
                                           IsEnabled="{Binding Converter={StaticResource BoolNotBoolConverter}, ElementName=ClientsGrid, Path=SelectedItem.IsPrivate}"
                                           IsChecked="{Binding ElementName=ClientsGrid, Path=SelectedItem.ConsigneeIsSame, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center"/>
                                 <TextBlock Grid.Row="10" Grid.Column="3" Text=" Менеджер: " VerticalAlignment="Center"/>
-                                <ComboBox Name="Manager" Grid.Row="10" Grid.Column="4" Grid.ColumnSpan="2" ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=local:ClientsAndContractorsHandbook}, Path=DataContext.UserList}" 
+                                <ComboBox Name="Manager" Grid.Row="10" Grid.Column="4" Grid.ColumnSpan="2" ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=local:ClientsAndContractorsHandbook}, Path=DataContext.ManagerList}" 
                                             SelectedValue="{Binding ElementName=ClientsGrid, Path=SelectedItem.UserID, Mode=TwoWay, 
                                             UpdateSourceTrigger=PropertyChanged}"
                                             SelectedValuePath="ID" DisplayMemberPath="FullUserName" 
                                             VerticalAlignment="Center"/>
+                                <CheckBox Grid.Row="11" Grid.Column="0" Name="FilterManagerCheckBox" Content=" фильтр по менеджеру: " VerticalAlignment="Center"
+                                          IsChecked="{Binding ElementName=Clients_Tab, Path=DataContext.FilterOnManager}"/>
+                                <ComboBox Name="FilterManager" Grid.Row="11" Grid.Column="1" Grid.ColumnSpan="2" ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=local:ClientsAndContractorsHandbook}, Path=DataContext.ManagerList}" 
+                                          IsEnabled="{Binding ElementName=FilterManagerCheckBox, Path=IsChecked}"
+                                          SelectedValue="{Binding ElementName=Clients_Tab, Path=DataContext.FilterManagerID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                          SelectedValuePath="ID" DisplayMemberPath="FullUserName" VerticalAlignment="Center"/>
                             </Grid>
                         </TabItem>
                         <TabItem Header="Грузополучатель">
@@ -396,22 +382,20 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <Button Name="NewClients_Button" Grid.Column="0" HorizontalAlignment="Left" HorizontalContentAlignment="Center"
                                 Command="{Binding NewCommand}"
                                 ToolTip="Добавить нового клиента">
                             <StackPanel>
-                                <Image Source="/Images/free-icon-add-button.png" Width="30" Height="30"/>
+                                <Image Source="/Images/free-icon-add-button.png" Width="{x:Static SystemParameters.IconWidth}" Height="{x:Static SystemParameters.IconHeight}"/>
                                 <TextBlock Text=" Добавить " Width="120" TextAlignment="Center"/>
                             </StackPanel>
-                            <!--<Button.CommandParameter>
-                                <Binding ElementName="Manager" Path="SelectedItem"/>
-                            </Button.CommandParameter>-->
                         </Button>
                         <Button Name="SaveClients_Button" Grid.Column="1" HorizontalAlignment="Left" HorizontalContentAlignment="Center"
                                 Command="{Binding SaveCommand}" ToolTip="Сохранить изменения в базе данных">
                             <StackPanel>
-                                <Image Source="/Images/free-icon-floppy-disk_save.png" Width="30" Height="30"/>
+                                <Image Source="/Images/free-icon-floppy-disk_save.png" Width="{x:Static SystemParameters.IconWidth}" Height="{x:Static SystemParameters.IconHeight}"/>
                                 <TextBlock Text=" Сохранить " Width="120" TextAlignment="Center"/>
                             </StackPanel>
                             <Button.CommandParameter>
@@ -420,6 +404,13 @@
                                     <Binding ElementName="ClientINN"/>
                                 </MultiBinding>
                             </Button.CommandParameter>
+                        </Button>
+                        <Button Name="PrintClients_Button" Grid.Column="2" HorizontalAlignment="Left" HorizontalContentAlignment="Center"
+                                Command="{Binding PrintCommand}" ToolTip="Печать справочника клиентов">
+                            <StackPanel>
+                                <Image Source="/Images/free-icon-printer1.png" Width="{x:Static SystemParameters.IconWidth}" Height="{x:Static SystemParameters.IconHeight}"/>
+                                <TextBlock Text=" Печать " Width="120" TextAlignment="Center"/>
+                            </StackPanel>
                         </Button>
                     </Grid>
                 </Grid>

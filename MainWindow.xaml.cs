@@ -714,7 +714,7 @@ namespace AdvertisementWpf
                 productsViewSource = (CollectionViewSource)FindResource(nameof(productsViewSource));
                 ProductList = _context.Products.FromSqlRaw($"SELECT * FROM Products {WhereCondition}").AsNoTracking()
                     .Include(Products => Products.ProductType).ThenInclude(ProductType => ProductType.CategoryOfProduct)
-                    .Include(Products => Products.Order)
+                    .Include(Products => Products.Order).ThenInclude(Order => Order.Payments)
                     .Include(Products => Products.Designer)
                     .ToList();
                 if (!Userdata.IsAdmin && IGrantAccess.CheckGrantAccess(userIAccessMatrix, Userdata.RoleID, "ListManager")) //роль текущего пользователя относится к Менеджерам
@@ -768,6 +768,10 @@ namespace AdvertisementWpf
             }
             finally
             {
+                if (_context != null)
+                {
+                    _context.Dispose();
+                }
                 statusBar.ClearStatus();
             }
         }
@@ -816,6 +820,8 @@ namespace AdvertisementWpf
             OrderList.Height = new GridLength(1, GridUnitType.Auto);
             ProductionProductList.Height = new GridLength(1, GridUnitType.Auto);
             TotalOrder.Height = new GridLength(1, GridUnitType.Auto);
+            TotalProduct.Height = new GridLength(1, GridUnitType.Auto);
+            TotalProductionProduct.Height = new GridLength(1, GridUnitType.Auto);
             if (!(bool)e.NewValue) //скрытие
             {
                 SaveListViewSetting(sender as ListView);
@@ -828,6 +834,8 @@ namespace AdvertisementWpf
             ProductList.Height = new GridLength(1, GridUnitType.Auto);
             ProductionProductList.Height = new GridLength(1, GridUnitType.Auto);
             TotalOrder.Height = new GridLength(1, GridUnitType.Auto);
+            TotalProduct.Height = new GridLength(1, GridUnitType.Auto);
+            TotalProductionProduct.Height = new GridLength(1, GridUnitType.Auto);
             if (!(bool)e.NewValue) //скрытие
             {
                 SaveListViewSetting(sender as ListView);
@@ -840,6 +848,8 @@ namespace AdvertisementWpf
             ProductList.Height = new GridLength(1, GridUnitType.Auto);
             OrderList.Height = new GridLength(1, GridUnitType.Auto);
             TotalOrder.Height = new GridLength(1, GridUnitType.Auto);
+            TotalProduct.Height = new GridLength(1, GridUnitType.Auto);
+            TotalProductionProduct.Height = new GridLength(1, GridUnitType.Auto);
             if (!(bool)e.NewValue) //скрытие
             {
                 SaveListViewSetting(sender as ListView);

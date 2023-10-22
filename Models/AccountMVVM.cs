@@ -30,7 +30,11 @@ namespace AdvertisementWpf.Models
         public string ContractorName
         {
             get => Contractor != null && Contractor.ID == ContractorID ? Contractor.Name : _contractorName;
-            set => _contractorName = value;
+            set
+            {
+                _contractorName = value;
+                NotifyPropertyChanged("ContractorName");
+            }
         }
 
         private string _contractorInfoForAccount = "";
