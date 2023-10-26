@@ -20,6 +20,7 @@ using System.Collections;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Windows.Markup;
 
 namespace AdvertisementWpf
 {
@@ -1126,6 +1127,25 @@ namespace AdvertisementWpf
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotSupportedException();
+        }
+    }
+
+    public class PercentageConverter : MarkupExtension, IValueConverter
+    {
+        private static PercentageConverter _instance;
+        #region IValueConverter Members
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return System.Convert.ToDouble(value) * System.Convert.ToDouble(parameter);
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+        #endregion
+        public override object ProvideValue(IServiceProvider serviceProvider)
+        {
+            return _instance ?? (_instance = new PercentageConverter());
         }
     }
 

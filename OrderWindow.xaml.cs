@@ -2224,6 +2224,11 @@ namespace AdvertisementWpf
             }
         }
 
+        private void TextBox_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+
+        }
+
         private void TechCardTreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
             NewOperationListBox.Visibility = Visibility.Collapsed;
