@@ -128,7 +128,7 @@
                     <Button.Content>
                         <StackPanel>
                             <Image Source="/Images/free-icon-search.png" Width="25" Height="25"/>
-                            <TextBlock Text="Выбрать заказы ..." TextWrapping="Wrap" TextAlignment="Center" 
+                            <TextBlock Text="Заказы ..." TextWrapping="Wrap" TextAlignment="Center" 
                                        VerticalAlignment="Center" HorizontalAlignment="Center"/>
                         </StackPanel>
                     </Button.Content>
@@ -137,7 +137,7 @@
                     <Button.Content>
                         <StackPanel>
                             <Image Source="/Images/free-icon-search.png" Width="25" Height="25"/>
-                            <TextBlock Text="Выбрать изделия ..." TextWrapping="Wrap" TextAlignment="Center" 
+                            <TextBlock Text="Изделия ..." TextWrapping="Wrap" TextAlignment="Center" 
                                        VerticalAlignment="Center" HorizontalAlignment="Center"/>
                         </StackPanel>
                     </Button.Content>
@@ -147,7 +147,7 @@
                         <StackPanel>
                             <!--<Image Source="/Images/free-icon-search.png" Width="25" Height="25"/>-->
                             <Image Source="\Images\free-icon-factory.png" Width="25" Height="25"/>
-                            <TextBlock Text="Выбрать изделия в производстве..." TextWrapping="Wrap" TextAlignment="Center" 
+                            <TextBlock Text="Изделия по КВД..." TextWrapping="Wrap" TextAlignment="Center" 
                                        VerticalAlignment="Center" HorizontalAlignment="Center"/>
                         </StackPanel>
                     </Button.Content>

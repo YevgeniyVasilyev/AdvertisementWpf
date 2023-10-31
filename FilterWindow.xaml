@@ -314,11 +314,85 @@
                     </TabItem>
                 </TabControl>
             </TabItem>
-            <TabItem Header="Изделия в производстве" Name="ProductionProductsTabItem">
-                <ListBox Name="TypeOfActivityListBox" ItemsSource="{Binding Source={StaticResource typeOfActivityDataSource}}" 
-                         ScrollViewer.VerticalScrollBarVisibility="Auto" 
-                         DisplayMemberPath="Name" Style="{StaticResource CheckBoxListStyle}">
-                </ListBox>
+            <TabItem Header="Изделия по КВД" Name="ProductionProductsTabItem">
+                <TabControl TabStripPlacement="Bottom">
+                    <TabItem Header="Дата">
+                        <GroupBox>
+                            <GroupBox.Header>
+                                <ComboBox Name="kDateName">
+                                    <ComboBoxItem Content="Дата приема заказа" IsSelected="True"/>
+                                    <ComboBoxItem Content="Передано дизайнеру"/>
+                                    <ComboBoxItem Content="Передано на утверждение"/>
+                                    <ComboBoxItem Content="Утверждено"/>
+                                    <ComboBoxItem Content="Передано в производство"/>
+                                    <ComboBoxItem Content="Изготовлено"/>
+                                    <ComboBoxItem Content="Отгружено"/>
+                                </ComboBox>
+                            </GroupBox.Header>
+                            <Grid Margin="0,10,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <RadioButton Grid.Column="0" Grid.Row="0" GroupName="DateK" Content="Без ограничений" Name="kNoDate" VerticalAlignment="Center" IsChecked="True"/>
+                                <RadioButton Grid.Column="0" Grid.Row="1" GroupName="DateK" Content="Год" Name="kYearDate" VerticalAlignment="Center"/>
+                                <xctk:IntegerUpDown Grid.Column="1" Grid.Row="1" Margin="22,0,0,0" Name="kYearUpDown" HorizontalAlignment="Left" Width="{Binding ElementName=kStartDate, Path=ActualWidth}"
+                                                    DefaultValue="2022" DisplayDefaultValueOnEmptyText="True" Minimum="2022" GotFocus="Control_GotFocus"/>
+                                <RadioButton Grid.Column="0" Grid.Row="2" GroupName="DateK" Content="Квартал" Name="kQuarterDate" VerticalAlignment="Center"/>
+                                <ComboBox Grid.Column="1" Grid.Row="2" Name="kQuarterComboBox" Margin="22,0,0,0" HorizontalAlignment="Left" GotFocus="Control_GotFocus" Width="{Binding ElementName=kStartDate, Path=ActualWidth}">
+                                    <ComboBoxItem Content="I квартал" IsSelected="True"/>
+                                    <ComboBoxItem Content="II квартал"/>
+                                    <ComboBoxItem Content="III квартал"/>
+                                    <ComboBoxItem Content="IV квартал"/>
+                                </ComboBox>
+                                <RadioButton Grid.Column="0" Grid.Row="3" GroupName="DateK" Content="Месяц" Name="kMonthDate" VerticalAlignment="Center"/>
+                                <ComboBox Grid.Column="1" Grid.Row="3" Name="kMonthCheckBox" Margin="22,0,0,0" HorizontalAlignment="Left" GotFocus="Control_GotFocus" Width="{Binding ElementName=kStartDate, Path=ActualWidth}">
+                                    <ComboBoxItem Content="Январь" IsSelected="True"/>
+                                    <ComboBoxItem Content="Февраль"/>
+                                    <ComboBoxItem Content="Март"/>
+                                    <ComboBoxItem Content="Апрель"/>
+                                    <ComboBoxItem Content="Май"/>
+                                    <ComboBoxItem Content="Июнь"/>
+                                    <ComboBoxItem Content="Июль"/>
+                                    <ComboBoxItem Content="Август"/>
+                                    <ComboBoxItem Content="Сентябрь"/>
+                                    <ComboBoxItem Content="Октябрь"/>
+                                    <ComboBoxItem Content="Ноябрь"/>
+                                    <ComboBoxItem Content="Декабрь"/>
+                                </ComboBox>
+                                <RadioButton Grid.Column="0" Grid.Row="4" GroupName="DateK" Content="День" Name="kDayDate" VerticalAlignment="Center"/>
+                                <DatePicker Grid.Column="1" Grid.Row="4" Margin="22,0,0,0" Name="kDayDateTime" IsTodayHighlighted="True" HorizontalAlignment="Left" GotFocus="Control_GotFocus"/>
+                                <RadioButton Grid.Column="0" Grid.Row="5" GroupName="DateK" Content="Произвольный интервал" Name="kPeriodDate" VerticalAlignment="Center"/>
+                                <StackPanel Grid.Column="1" Grid.Row="5" Orientation="Horizontal">
+                                    <Label Content=" с "/>
+                                    <DatePicker Name="kStartDate" IsTodayHighlighted="True" GotFocus="Control_GotFocus"/>
+                                    <Label Content=" по "/>
+                                    <DatePicker Name="kEndDate" IsTodayHighlighted="True" GotFocus="Control_GotFocus"/>
+                                </StackPanel>
+                            </Grid>
+                        </GroupBox>
+                    </TabItem>
+                    <TabItem Header="Вид деятельности">
+                        <ListBox Name="TypeOfActivityListBox" ItemsSource="{Binding Source={StaticResource typeOfActivityDataSource}}" 
+                                 ScrollViewer.VerticalScrollBarVisibility="Auto" 
+                                 DisplayMemberPath="Name" Style="{StaticResource CheckBoxListStyle}">
+                        </ListBox>
+                    </TabItem>
+                    <TabItem Header="Состояние изделия">
+                        <ListBox Name="kStateListBox" ItemsSource="{Binding Source={StaticResource productStatesDataSource}}" 
+                                         ScrollViewer.VerticalScrollBarVisibility="Auto" 
+                                         Style="{StaticResource CheckBoxListStyle}">
+                        </ListBox>
+                    </TabItem>
+                </TabControl>
             </TabItem>
         </TabControl>
         <Button Name="ApplyButton" Grid.Row="1" Margin="2" Style="{StaticResource ButtonOfFilter}" 

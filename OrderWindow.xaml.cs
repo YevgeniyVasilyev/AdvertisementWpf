@@ -263,7 +263,7 @@ namespace AdvertisementWpf
                 .Where(TypeOfActivityInProducts => TypeOfActivityInProducts.ProductTypeID == product.ProductTypeID)
                 .Include(TypeOfActivityInProducts => TypeOfActivityInProducts.TypeOfActivity).ToList();
             List<ProductCost> costs;
-            costs = _context.ProductCosts.Where(ProductCost => ProductCost.ProductID == product.ID).Include(ProductCost => ProductCost.TypeOfActivity).OrderBy(ProductCost => ProductCost.ID).ToList();
+            costs = _context.ProductCosts.Where(ProductCost => ProductCost.ProductID == product.ID).Include(ProductCost => ProductCost.TypeOfActivity).ToList();
             foreach (TypeOfActivityInProduct tainp in typeOfActivityInProduct) //проход по видам деятельности, содержащихся в издеии (его виде)
             {
                 bool lFind = false;
@@ -289,6 +289,7 @@ namespace AdvertisementWpf
                     costs.Add(pc);
                 }
             }
+            //product.Costs = costs.OrderBy(cost => cost.TypeOfActivityID).ToList();
             product.Costs = costs;
             if (_isEditMode && product.ID > 0) //отслеживать только для режима правки
             {
@@ -732,7 +733,7 @@ namespace AdvertisementWpf
                 //}
                 if (btn == NewPaymentButton && IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductPaymentsNewChangeDelete"))
                 {
-                    if (context_ != null && currentOrder != null && currentOrder.ID > 0 && paymentsViewSource != null && paymentsViewSource.View != null)
+                    if (context_ != null && currentOrder != null && currentOrder.ID > 0 && paymentsViewSource?.View != null)
                     {
                         e.CanExecute = true;
                         return;
@@ -883,12 +884,25 @@ namespace AdvertisementWpf
 
         private void ListPayments_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Delete && context_ != null && paymentsViewSource != null && paymentsViewSource.View.CurrentItem is Payment payment 
+            if (e.Key == Key.Delete && context_ != null && paymentsViewSource?.View?.CurrentItem is Payment payment 
                 && IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductPaymentsNewChangeDelete"))
             {
+                accountsListViewSource.Filter -= AccountsListViewSource_Filter;
                 _ = context_.Payments.Remove(payment);
+                accountsListViewSource.Filter += AccountsListViewSource_Filter;
+                PaymentSourceUpdated();
             }
         }
+
+        private void PaymentSourceUpdated()
+        {
+            BindingOperations.GetBindingExpression(TotalPaymentsTextBlock, TextBlock.TextProperty).UpdateTarget();
+        }
+        private void PaymentAmountTextBox_SourceUpdated(object sender, DataTransferEventArgs e)
+        {
+            PaymentSourceUpdated();
+        }
+
 
         private List<object> TotalProductCostsList()
         {
@@ -944,7 +958,7 @@ namespace AdvertisementWpf
                 //}
                 if (nAllPaymentOnAccount > 0 && nAllCostOnAccount > 0) //если есть платежи по счету
                 {
-                    if (nAllPaymentOnAccount >= nAllCostOnAccount && account.ID == (paymentsViewSource.View.CurrentItem as Payment).Account?.ID)
+                    if (nAllPaymentOnAccount >= nAllCostOnAccount && account?.ID == (paymentsViewSource?.View?.CurrentItem as Payment).Account?.ID)
                     {
                         e.Accepted = true; //"свой" счет тоже берем 
                     }
@@ -1418,11 +1432,15 @@ namespace AdvertisementWpf
             };
             _ = context__.Accounts.Add(account);
             context__.Entry(account).Reference(account => account.Contractor).Load(); //загрузить через св-во навигации
+            contractor = account.Contractor;
+            context__.Entry(contractor).Reference(contractor => contractor.Bank).Load(); //загрузить через св-во навигации
             context__.Entry(account).Reference(account => account.Order).Load(); //загрузить через св-во навигации
             account.AccountNumber = GetNewAccountNumber(ref account);
             Order order = account.Order;
             context__.Entry(order).Collection(o => o.Products).Load(); //загрузить через св-во навигации
             context__.Entry(order).Reference(o => o.Client).Load(); //загрузить через св-во навигации
+            Client client = order.Client;
+            context__.Entry(client).Reference(client => client.Bank).Load(); //загрузить через св-во навигации
             foreach (Product product in order.Products)
             {
                 context__.Entry(product).Reference(p => p.ProductType).Load(); //загрузить через св-во навигации
@@ -1446,13 +1464,6 @@ namespace AdvertisementWpf
                 _ = context__.Acts.Add(act);
                 context__.Entry(act).Reference(act => act.Account).Load(); //загрузить через св-во навигации                
                 context__.Entry(account).Reference(account => account.Contractor).Load(); //загрузить через св-во навигации
-                Contractor contractor = account.Contractor;
-                context__.Entry(contractor).Reference(contractor => contractor.Bank).Load(); //загрузить через св-во навигации
-                context__.Entry(account).Reference(account => account.Order).Load(); //загрузить через св-во навигации
-                Order order = account.Order;
-                context__.Entry(order).Reference(order => order.Client).Load(); //загрузить через св-во навигации
-                Client client = order.Client;
-                context__.Entry(client).Reference(client => client.Bank).Load(); //загрузить через св-во навигации
                 List<long> listProductID = new List<long> { };
                 foreach (Act a in account.Acts) //получить список всех изделий, уже входящих в акты данного счета
                 {
@@ -1979,12 +1990,9 @@ namespace AdvertisementWpf
                     .Include(TechCard => TechCard.Product.Order.Client)
                     .Include(TechCard => TechCard.Product.Order.Manager)
                     .Include(TechCard => TechCard.Product.Order.OrderEntered)
-                    .Include(TechCard => TechCard.WorkInTechCards)
-                    .ThenInclude(WorkInTechCard => WorkInTechCard.TypeOfActivity)
-                    .Include(TechCard => TechCard.WorkInTechCards)
-                    .ThenInclude(WorkInTechCard => WorkInTechCard.OperationInWorks)
-                    .ThenInclude(OperationInWork => OperationInWork.Operation)
-                    .ThenInclude(Operation => Operation.ProductionArea)
+                    .Include(TechCard => TechCard.WorkInTechCards).ThenInclude(WorkInTechCard => WorkInTechCard.TypeOfActivity)
+                    .Include(TechCard => TechCard.WorkInTechCards).ThenInclude(WorkInTechCard => WorkInTechCard.OperationInWorks)
+                    .ThenInclude(OperationInWork => OperationInWork.Operation).ThenInclude(Operation => Operation.ProductionArea)
                     .Where(TechCard => TechCard.Product.OrderID == currentOrder.ID).Load();
                 techCardsViewSource.Source = _context_.TechCards.Local.ToObservableCollection();
                 foreach (TechCard techCard in techCardsViewSource.View)
@@ -2220,13 +2228,8 @@ namespace AdvertisementWpf
         {
             if (sender is ComboBox comboBox && comboBox != null && comboBox.GetBindingExpression(System.Windows.Controls.Primitives.Selector.SelectedValueProperty).DataItem is WorkInTechCard workInTechCard)
             {
-                workInTechCard.IsSelected = true;
+                workInTechCard.IsSelected = true;                
             }
-        }
-
-        private void TextBox_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-
         }
 
         private void TechCardTreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)

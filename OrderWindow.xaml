@@ -50,6 +50,7 @@
         <local:ObservableCollectionConverter x:Key="ObservableCollectionConverter"/>
         <local:VisibilitySelector x:Key="VisibilitySelector"/>
         <local:ViewModel x:Key="ViewModel"/>
+        <local:SumListViewDecimalConverter x:Key="SumListViewDecimalConverter"/>
         <DataTemplate x:Key="ListViewHeaderTemplate">
             <TextBlock FontWeight="Bold" TextWrapping="Wrap" TextAlignment="Center"
                        HorizontalAlignment="Stretch" VerticalAlignment="Center">
@@ -748,13 +749,13 @@
                                 <Border Margin="2" BorderThickness="1" BorderBrush="DarkBlue">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="0.5*"/>
                                             <ColumnDefinition Width="*"/>
                                         </Grid.ColumnDefinitions>
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="Auto"/>
                                             <RowDefinition Height="*" Name="Row_Tree"/>
-                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="*"/>
                                         </Grid.RowDefinitions>
                                         <WrapPanel Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Margin="3" Orientation="Horizontal">
                                             <Button Name="LoadTechCardButton" Style="{StaticResource ButtonOfOrder}" Command="ApplicationCommands.New"
@@ -890,7 +891,7 @@
                                                 <RowDefinition Height="Auto"/>
                                                 <RowDefinition Height="Auto"/>
                                                 <RowDefinition Height="Auto"/>
-                                                <RowDefinition Height="{Binding ElementName=Row_Tree, Path=Height}"/>
+                                                <RowDefinition Height="Auto"/>
                                             </Grid.RowDefinitions>
                                             <ListBox Grid.Column="0" Grid.Row="0" Grid.RowSpan="5" Name="NewOperationListBox" Visibility="Collapsed"
                                                      ScrollViewer.VerticalScrollBarVisibility="Auto" IsSynchronizedWithCurrentItem="true"
@@ -927,7 +928,7 @@
                                                                         Path=SelectedItem.DateFactCompletion, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, 
                                                                         ValidatesOnExceptions=True, ValidatesOnNotifyDataErrors=True, NotifyOnSourceUpdated=True}" IsTodayHighlighted="True" 
                                                         SourceUpdated="DateFactCompletionDate_SourceUpdated"/>
-                                            <Grid Grid.Column="1" Grid.Row="4" Grid.ColumnSpan="2" Margin="2" 
+                                            <Grid Grid.Column="1" Grid.Row="4" Grid.ColumnSpan="2" Margin="2"
                                                   Visibility="{Binding ElementName=TechCardTreeView, Path=SelectedItem, Converter={StaticResource VisibilitySelector}, ConverterParameter=OperationInWorkAttribute}">
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="Auto"/>
@@ -938,15 +939,15 @@
                                                     <RowDefinition Height="Auto"/>
                                                     <RowDefinition Height="*" Name="Col_Note"/>
                                                     <RowDefinition Height="Auto"/>
-                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="*"/>
                                                 </Grid.RowDefinitions>
                                                 <TextBlock Grid.Row="0" Grid.Column="0" Text="Производственный участок  "/>
                                                 <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding ElementName=TechCardTreeView, Path=SelectedItem.Operation.ProductionArea.Name}"/>
                                                 <TextBlock Grid.Row="1" Grid.Column="0" Text="Описание" Margin="0,5,0,0" VerticalAlignment="Center"/>
                                                 <TextBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,5,0,0" 
                                                          BorderThickness="1" BorderBrush="Black" AcceptsReturn="True" TextWrapping="Wrap"
-                                                         Height="{Binding ElementName=Col_Note, Path=Height}"
-                                                         ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                                         ScrollViewer.VerticalScrollBarVisibility="Auto" 
+                                                         MaxHeight="180"
                                                          Text="{Binding ElementName=TechCardTreeView, Path=SelectedItem.Note, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                                                 <StackPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,5,0,0" Orientation="Horizontal" HorizontalAlignment="Left">
                                                     <Label Content="Файлы и иллюстрации"/>
@@ -992,7 +993,8 @@
                                             </StackPanel>-->
                                         </Grid>
                                         <ListView Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="3" Name="ListOperationInWorkParameters" Margin="2" Padding="1" IsSynchronizedWithCurrentItem="True" 
-                                                  Height="150" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto"                                                  Visibility="{Binding ElementName=TechCardTreeView, Path=SelectedItem, Converter={StaticResource VisibilitySelector}, ConverterParameter=OperationInWorkAttribute}"
+                                                  ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto"                                                  
+                                                  Visibility="{Binding ElementName=TechCardTreeView, Path=SelectedItem, Converter={StaticResource VisibilitySelector}, ConverterParameter=OperationInWorkAttribute}"
                                                   ItemsSource="{Binding ElementName=TechCardTreeView, Path=SelectedItem.OperationInWorkParameters}">
                                             <ListView.Resources>
                                                 <DataTemplate x:Key="CommonTextBox">
@@ -1074,12 +1076,12 @@
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <!--кнопки управлениня платежами-->
-                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
                             <!--список платежей-->
                             <RowDefinition Height="Auto"/>
-                            <!--поля для правки данных платежа-->
+                            <!--ИТОГО платежей-->
                         </Grid.RowDefinitions>
-                        <WrapPanel Grid.Row="0" Orientation="Horizontal" Grid.ColumnSpan="3">
+                        <WrapPanel Grid.Row="0" Orientation="Horizontal" Grid.ColumnSpan="2">
                             <!--<Button Name="LoadPaymentButton" Style="{StaticResource ButtonOfOrder}" Command="ApplicationCommands.New"
                                             ToolTip="Загрузить платежи из БД">
                                 <StackPanel Orientation="Horizontal">
@@ -1103,13 +1105,14 @@
                                 </StackPanel>
                             </Button>
                         </WrapPanel>
-                        <ListView Grid.Column="0" Grid.Row="1" Name="ListPayments" Margin="5,5,5,5" Padding="2" IsSynchronizedWithCurrentItem="True" 
-                                  ItemsSource="{Binding Source={StaticResource paymentsViewSource}}" KeyDown="ListPayments_KeyDown" Grid.ColumnSpan="2">
+                        <ListView Grid.Column="0" Grid.Row="1" Name="ListPayments" Margin="5,5,329,5" Padding="2" IsSynchronizedWithCurrentItem="True" 
+                                  ItemsSource="{Binding Source={StaticResource paymentsViewSource}}" KeyDown="ListPayments_KeyDown"
+                                  ScrollViewer.VerticalScrollBarVisibility="Auto" Grid.ColumnSpan="3">
                             <ListView.View>
                                 <GridView>
-                                    <GridViewColumn Header=" Счёт " DisplayMemberBinding="{Binding Path=Account.AccountNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                    <GridViewColumn x:Name="_paycol0" Header=" Счёт " DisplayMemberBinding="{Binding Path=Account.AccountNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                                                     HeaderTemplate="{StaticResource ListViewHeaderTemplate}" Width="150"/>
-                                    <GridViewColumn Header=" Дата платежа " DisplayMemberBinding="{Binding Path=PaymentDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ConverterCulture=ru-RU, StringFormat=\{0:dd.MM.yyyy\}}" 
+                                    <GridViewColumn x:Name="_paycol1" Header=" Дата платежа " DisplayMemberBinding="{Binding Path=PaymentDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ConverterCulture=ru-RU, StringFormat=\{0:dd.MM.yyyy\}}" 
                                                     HeaderTemplate="{StaticResource ListViewHeaderTemplate}"/>
                                     <GridViewColumn Header=" Сумма платежа "
                                                     DisplayMemberBinding="{Binding Path=PaymentAmount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ConverterCulture=ru-RU, StringFormat={}{0:C}}" 
@@ -1123,7 +1126,20 @@
                                 </GridView>
                             </ListView.View>
                         </ListView>
-                        <Grid Margin="2,2,2,2" Grid.Column="1" Grid.Row="1">
+                        <Border Grid.Column="0" Grid.Row="2" Margin="5,0,329,0" BorderBrush="Black" BorderThickness="0.5" Grid.ColumnSpan="3">
+                            <Grid >
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="{Binding ElementName=_paycol0, Path=ActualWidth}"/>
+                                    <ColumnDefinition Width="{Binding ElementName=_paycol1, Path=ActualWidth}"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="1" Text=" Оплачено:" Margin="2" HorizontalAlignment="Right" VerticalAlignment="Center" FontWeight="Bold"/>
+                                <TextBlock Grid.Column="2" Margin="10,0,0,0" Name="TotalPaymentsTextBlock" Text="{Binding ElementName=ListPayments, Path=ItemsSource, 
+                                           Converter={StaticResource SumListViewDecimalConverter}, ConverterParameter=PaymentAmount, StringFormat={}{0:C}, ConverterCulture='ru-RU'}" 
+                                           HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Bold"/>
+                            </Grid>
+                        </Border>
+                        <Grid Margin="2,2,2,2" Grid.Column="2" Grid.Row="1">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
@@ -1144,26 +1160,25 @@
                                       SelectedValue="{Binding Source={StaticResource paymentsViewSource}, Path=AccountID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                             <Label Name="PaymentDateLabel" Content="Дата платежа" Grid.Column="0" Grid.Row="2" Style="{StaticResource UnderlineLabel}" MouseLeftButtonDown="Label_MouseLeftButtonDown"/>
                             <DatePicker Name="DatePaymentDate" Grid.Column="1" Grid.Row="2" IsEnabled="True" 
-                                        SelectedDate="{Binding Source={StaticResource paymentsViewSource}, 
-                                        Path=PaymentDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, 
+                                        SelectedDate="{Binding ElementName=ListPayments, 
+                                        Path=SelectedItem.PaymentDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, 
                                         ValidatesOnExceptions=True, ValidatesOnNotifyDataErrors=True}" 
                                         IsTodayHighlighted="True"/>
                             <Label Content="Сумма платежа" Grid.Column="0" Grid.Row="3"/>
-                            <TextBox Grid.Column="1" Grid.Row="3" Name="PaymentAmountTextBox" IsEnabled="True"
-                                     Text="{Binding Source={StaticResource paymentsViewSource},
-                                     Path=PaymentAmount, Mode=TwoWay, UpdateSourceTrigger=LostFocus, ConverterCulture=ru-RU, StringFormat={}{0:C}}"/>
+                            <TextBox Grid.Column="1" Grid.Row="3" Name="PaymentAmountTextBox" IsEnabled="True" SourceUpdated="PaymentAmountTextBox_SourceUpdated"
+                                     Text="{Binding ElementName=ListPayments, NotifyOnSourceUpdated=True,
+                                     Path=SelectedItem.PaymentAmount, Mode=TwoWay, UpdateSourceTrigger=LostFocus, ConverterCulture=ru-RU, StringFormat={}{0:C}}"/>
                             <Label Content="Квитанция/П.п." Grid.Column="0" Grid.Row="4"/>
                             <TextBox Grid.Column="1" Grid.Row="4" Width="200" IsEnabled="True" 
-                                     Text="{Binding Source={StaticResource paymentsViewSource}, Path=PaymentDocNumber, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged }"/>
+                                     Text="{Binding ElementName=ListPayments, Path=SelectedItem.PaymentDocNumber, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged }"/>
                             <Label Content="Назначение платежа" Grid.Column="0" Grid.Row="5"/>
                             <ComboBox Grid.Column="1" Grid.Row="5" IsEnabled="True" Width="200"
                                       ItemsSource="{Binding Source={StaticResource purposeOfPaymentsViewSource}}"
-                                      SelectedIndex="{Binding Source={StaticResource paymentsViewSource}, Path=PurposeOfPayment, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                            <!--SelectedValuePath="{Binding RelativeSource={RelativeSource Mode=Self}, Path=SelectedIndex}"-->
+                                      SelectedIndex="{Binding ElementName=ListPayments, Path=SelectedItem.PurposeOfPayment, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                             <Label Content="Вид платежа" Grid.Column="0" Grid.Row="6"/>
                             <ComboBox Grid.Column="1" Grid.Row="6" IsEnabled="True" Width="200"
                                       ItemsSource="{Binding Source={StaticResource typeOfPaymentsViewSource}}"
-                                      SelectedIndex="{Binding Source={StaticResource paymentsViewSource}, Path=TypeOfPayment, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                      SelectedIndex="{Binding ElementName=ListPayments, Path=SelectedItem.TypeOfPayment, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                         </Grid>
                     </Grid>
                 </Border>
