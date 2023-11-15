@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -11,16 +13,37 @@ using System.Windows.Input;
 
 namespace AdvertisementWpf
 {
-    public partial class FilterWindow : Window
+    public partial class FilterWindow : Window, INotifyPropertyChanged
     {
         private CollectionViewSource categoryOfProductsDataSource, clientsDataSource, managersDataSource, designersDataSource, workersDataSource, orderStatesDataSource, productStatesDataSource, typeOfActivityDataSource;
         private App.AppDbContext _context;
         private static short OrderFilterMode;
 
         private string sDateCondition = "", sClientCondition = "", sManagerCondition = "", sStateCondition = "", sNumberCondition = "", sWorkerCondition = ""; //sDesignerCondition = "",
-        private readonly List<string> LCategoryCondition = new List<string> { }, LClientCondition = new List<string> { }, LDesignerCondition = new List<string> { }, LManagerCondition = new List<string> { },
+        private readonly List<string> LProductTypeCondition = new List<string> { }, LClientCondition = new List<string> { }, LDesignerCondition = new List<string> { }, LManagerCondition = new List<string> { },
                          LWorkerCondition = new List<string> { };
         public static List<bool> LPaymentIndicationCondition = new List<bool> { };
+
+        private string _filterString { get; set; } = "";
+        public string FilterString
+        {
+            get => _filterString;
+            set
+            {
+                _filterString = value;
+                if (categoryOfProductsDataSource?.View?.CurrentItem is CategoryOfProduct categoryOfProduct)
+                {
+                    ICollectionView view = CollectionViewSource.GetDefaultView(categoryOfProduct.ProductTypes);
+                    view.Refresh();
+                }
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void NotifyPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
 
         public FilterWindow(short orderFilterMode = 0)
         {
@@ -59,7 +82,9 @@ namespace AdvertisementWpf
             _context = new App.AppDbContext(MainWindow.Connectiondata.Connectionstring);
             try
             {
-                categoryOfProductsDataSource.Source = _context.CategoryOfProducts.AsNoTracking().ToList();
+                categoryOfProductsDataSource.Source = _context.CategoryOfProducts.AsNoTracking()
+                    .Include(Category => Category.ProductTypes).AsNoTracking()
+                    .ToList();
                 typeOfActivityDataSource.Source = _context.TypeOfActivitys.AsNoTracking().ToList();
                 clientsDataSource.Source = _context.Clients.AsNoTracking().ToList();
                 managersDataSource.Source = _context.Users.AsNoTracking().ToList().Where(u => IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, u.RoleID, "ListManager"));  // ListManager
@@ -68,6 +93,9 @@ namespace AdvertisementWpf
                                                                                              !IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, u.RoleID, "ListDesigner"));
                 orderStatesDataSource.Source = OrderProductStates.GetOrderListState();
                 productStatesDataSource.Source = OrderProductStates.GetProductListState();
+
+                categoryOfProductsDataSource.View.CurrentChanged += CategoryOfProductsView_CurrentChanged;
+                CategoryOfProductsView_CurrentChanged(null, null);
 
                 if (OrdersTabItem.IsEnabled)
                 {
@@ -104,6 +132,24 @@ namespace AdvertisementWpf
             finally
             {
                 MainWindow.statusBar.ClearStatus();
+            }
+        }
+
+        private void CategoryOfProductsView_CurrentChanged(object sender, EventArgs e)
+        {
+            if (categoryOfProductsDataSource?.View?.CurrentItem is CategoryOfProduct categoryOfProduct)
+            {
+                ICollectionView view = CollectionViewSource.GetDefaultView(categoryOfProduct.ProductTypes);
+                view.Filter = (item) =>
+                {
+                    bool IsFilter = true;
+                    if (item is ProductType productType)
+                    {
+                        IsFilter = string.IsNullOrWhiteSpace(FilterString) || productType.Name.ToLower(CultureInfo.CurrentCulture).IndexOf(FilterString.ToLower(CultureInfo.CurrentCulture)) >= 0;
+                    }
+                    return IsFilter;
+                };
+                view.Refresh();
             }
         }
 
@@ -321,7 +367,7 @@ namespace AdvertisementWpf
                 DateTime dEndDate = new DateTime(DateTime.Today.Year, 12, 31); //31 декабря текущего года
                 MainWindow.dStartDate = null;
                 MainWindow.dEndDate = null;
-                MainWindow.WhereProductCategoryCondition.Clear();
+                MainWindow.WhereProductTypeCondition.Clear();
                 MainWindow.WhereProductClientCondition.Clear();
                 MainWindow.WhereProductDesignerCondition.Clear();
                 MainWindow.WhereProductManagerCondition.Clear();
@@ -405,16 +451,26 @@ namespace AdvertisementWpf
 
                 dEndDate = new DateTime(dEndDate.Year, dEndDate.Month, dEndDate.Day, 23, 59, 59); //добавить минуты конца дня
 
-                //обработка условия "Категория" 
-                foreach (object categoryOfProduct in CategoryOfProductsListBox.Items)
+                //обработка условия "Изделия в категории" 
+                foreach (object productType in ProductTypesListBox.Items)
                 {
-                    ListBoxItem listBoxitem = (ListBoxItem)CategoryOfProductsListBox.ItemContainerGenerator.ContainerFromItem(categoryOfProduct);
+                    ListBoxItem listBoxitem = (ListBoxItem)ProductTypesListBox.ItemContainerGenerator.ContainerFromItem(productType);
                     if (listBoxitem != null && listBoxitem.IsSelected)
                     {
-                        LCategoryCondition.Add(((CategoryOfProduct)categoryOfProduct).ID.ToString());
+                        LProductTypeCondition.Add(((ProductType)productType).ID.ToString());
                     }
                 }
-                MainWindow.WhereProductCategoryCondition = LCategoryCondition;
+                if (LProductTypeCondition.Count == 0) //если ни одного изделия не выбранто, то добавляем все из данной категории
+                {
+                    if (categoryOfProductsDataSource.View.CurrentItem is CategoryOfProduct categoryOfProduct)
+                    {
+                        foreach (ProductType productType in categoryOfProduct.ProductTypes)
+                        {
+                            LProductTypeCondition.Add(productType.ID.ToString());
+                        }
+                    }
+                }
+                MainWindow.WhereProductTypeCondition = LProductTypeCondition;
                 //обработка условия "Клиент"
                 foreach (object client in pClientsListBox.Items)
                 {

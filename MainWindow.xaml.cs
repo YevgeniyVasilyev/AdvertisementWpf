@@ -15,9 +15,7 @@ using System.Windows.Media;
 using System.Windows.Controls.Primitives;
 using System.Reflection;
 using System.Windows.Documents;
-using System.Windows.Threading;
 using System.Collections;
-using System.Collections.Specialized;
 
 namespace AdvertisementWpf
 {
@@ -38,7 +36,7 @@ namespace AdvertisementWpf
         private CollectionViewSource ordersViewSource, productsViewSource, workInTechCardViewSource;
         private App.AppDbContext _context;
         public static string WhereCondition = "", WhereStateCondition = "";
-        public static List<string> WhereProductCategoryCondition = new List<string> { }, WhereProductClientCondition = new List<string> { },
+        public static List<string> WhereProductTypeCondition = new List<string> { }, WhereProductClientCondition = new List<string> { },
                         WhereProductManagerCondition = new List<string> { }, WhereProductDesignerCondition = new List<string> { }, WhereProductWorkerCondition = new List<string> { };
         public static List<bool> WherePaymentIndicationCondition = new List<bool> { };
         public static List<long> WhereTypeOfActivityCondition = new List<long> { };
@@ -726,10 +724,10 @@ namespace AdvertisementWpf
                 {
                     ProductList = ProductList.Where(Product => Product.Order.DateAdmission >= dStartDate && Product.Order.DateAdmission <= dEndDate).ToList();
                 }
-                //категория
-                if (WhereProductCategoryCondition.Count > 0)
+                //изделия в категории
+                if (WhereProductTypeCondition.Count > 0)
                 {
-                    ProductList = ProductList.Where(Product => WhereProductCategoryCondition.Contains(Product.ProductType.CategoryOfProductID.ToString())).ToList();
+                    ProductList = ProductList.Where(Product => WhereProductTypeCondition.Contains(Product.ProductType.ID.ToString())).ToList();
                 }
                 //клиент
                 if (WhereProductClientCondition.Count > 0)

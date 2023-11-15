@@ -261,11 +261,24 @@
                             </Grid>
                         </GroupBox>
                     </TabItem>
-                    <TabItem Header="Категория">
-                        <ListBox Name="CategoryOfProductsListBox" ItemsSource="{Binding Source={StaticResource categoryOfProductsDataSource}}" 
-                                 ScrollViewer.VerticalScrollBarVisibility="Auto" 
-                                 DisplayMemberPath="Name" Style="{StaticResource CheckBoxListStyle}">
-                        </ListBox>
+                    <TabItem Header="Изделия в категории">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <ComboBox Grid.Row="0" Margin="5,10,5,0" Name="CategoryOfProductComboBox" IsSynchronizedWithCurrentItem="True" 
+                                      ItemsSource="{Binding Source={StaticResource categoryOfProductsDataSource}}" DisplayMemberPath="Name"/>
+                            <ListBox Grid.Row="1" Margin="5,10,5,0" Name="ProductTypesListBox" ItemsSource="{Binding ElementName=CategoryOfProductComboBox, Path=SelectedItem.ProductTypes}" 
+                                     ScrollViewer.VerticalScrollBarVisibility="Auto" 
+                                     DisplayMemberPath="Name" Style="{StaticResource CheckBoxListStyle}">
+                            </ListBox>
+                            <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="5">
+                                <TextBlock Text="Поиск по изделию: "/>
+                                <TextBox Text="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=FilterString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" HorizontalAlignment="Stretch" Width="400"/>
+                            </StackPanel>
+                        </Grid>
                     </TabItem>
                     <TabItem Header="Клиент">
                         <Grid>

@@ -159,7 +159,6 @@ namespace AdvertisementWpf.Models
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-
     }
 
     public class ClientViewModel
