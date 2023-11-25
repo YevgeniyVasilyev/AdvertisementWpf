@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report ScriptLanguage="CSharp" ReportInfo.Created="11/25/2023 20:50:46" ReportInfo.Modified="11/25/2023 21:30:15" ReportInfo.CreatorVersion="2023.3.0.0">
+  <Dictionary>
+    <BusinessObjectDataSource Name="dataset" ReferenceName="dataset" DataType="System.Int32" Enabled="true">
+      <Column Name="OrderID" DataType="System.Int64"/>
+      <Column Name="clientID" DataType="System.Int64"/>
+      <Column Name="number" DataType="System.String"/>
+      <Column Name="cost" DataType="System.Decimal"/>
+      <Column Name="paymentSum" DataType="System.Decimal"/>
+      <Column Name="dateManufactureMax" DataType="System.Int32"/>
+      <Column Name="client" DataType="System.String"/>
+      <Column Name="note" DataType="System.String"/>
+      <Column Name="manager" DataType="System.String"/>
+    </BusinessObjectDataSource>
+    <Total Name="CosrTotal" Expression="[dataset.cost]" Evaluator="Data1" PrintOn="ReportSummary1"/>
+    <Total Name="PaymentSumTotal" Expression="[dataset.paymentSum]" Evaluator="Data1" PrintOn="ReportSummary1" ResetAfterPrint="false"/>
+  </Dictionary>
+  <ReportPage Name="Page1" RawPaperSize="9" LeftMargin="5" TopMargin="5" RightMargin="5" BottomMargin="5" Watermark.Font="Arial, 60pt" UnlimitedHeight="true">
+    <ReportTitleBand Name="ReportTitle1" Width="756" Height="18.9">
+      <TextObject Name="Text1" Top="-66.15" Width="94.5" Height="18.9" Font="Arial, 10pt"/>
+      <TextObject Name="Text2" Width="746.55" Height="18.9" Text="Отчёт по дебиторской задолженности за период с [FormatDateTime([BeginPeriod],&quot;Short Date&quot;)] по [FormatDateTime([EndPeriod],&quot;Short Date&quot;)]" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt, style=Bold">
+        <Formats>
+          <GeneralFormat/>
+          <GeneralFormat/>
+        </Formats>
+      </TextObject>
+    </ReportTitleBand>
+    <PageHeaderBand Name="PageHeader1" Top="21.19" Width="756" Height="37.8">
+      <TextObject Name="Text3" Width="28.35" Height="37.8" Border.Lines="All" Border.Width="0.5" Text="№ п/п" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt, style=Bold"/>
+      <TextObject Name="Text4" Left="28.35" Width="66.15" Height="37.8" Border.Lines="All" Border.Width="0.5" Text="Номер заказа" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt, style=Bold"/>
+      <TextObject Name="Text5" Left="94.5" Width="132.3" Height="37.8" Border.Lines="All" Border.Width="0.5" Text="Клиент" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt, style=Bold"/>
+      <TextObject Name="Text6" Left="226.8" Width="94.5" Height="37.8" Border.Lines="All" Border.Width="0.5" Text="Менеджер" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt, style=Bold"/>
+      <TextObject Name="Text7" Left="321.3" Width="103.95" Height="37.8" Border.Lines="All" Border.Width="0.5" Text="Краткое описание" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt, style=Bold"/>
+      <TextObject Name="Text8" Left="425.25" Width="66.15" Height="37.8" Border.Lines="All" Border.Width="0.5" Text="Дата&#13;&#10;окончания&#13;&#10;работ" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt, style=Bold"/>
+      <TextObject Name="Text9" Left="491.4" Width="75.6" Height="37.8" Border.Lines="All" Border.Width="0.5" Text="К оплате" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt, style=Bold"/>
+      <TextObject Name="Text10" Left="567" Width="85.05" Height="37.8" Border.Lines="All" Border.Width="0.5" Text="Оплачено" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt, style=Bold"/>
+      <TextObject Name="Text11" Left="652.05" Width="94.5" Height="37.8" Border.Lines="All" Border.Width="0.5" Text="Задолженность" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt, style=Bold"/>
+    </PageHeaderBand>
+    <DataBand Name="Data1" Top="61.27" Width="756" Height="18.9" DataSource="dataset">
+      <TextObject Name="Text12" Width="28.35" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" GrowToBottom="true" Text="[Row#]" HorzAlign="Center" VertAlign="Center" Font="Arial, 7pt"/>
+      <TextObject Name="Text13" Left="28.35" Width="66.15" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" GrowToBottom="true" Text="[dataset.number]" HorzAlign="Center" VertAlign="Center" Font="Arial, 7pt"/>
+      <TextObject Name="Text14" Left="94.5" Width="132.3" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" GrowToBottom="true" Text="[dataset.client]" HorzAlign="Center" VertAlign="Center" Font="Arial, 7pt"/>
+      <TextObject Name="Text15" Left="226.8" Width="94.5" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" GrowToBottom="true" Text="[dataset.manager]" HorzAlign="Center" VertAlign="Center" Font="Arial, 7pt"/>
+      <TextObject Name="Text16" Left="321.3" Width="103.95" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" GrowToBottom="true" Text="[dataset.note]" HorzAlign="Center" VertAlign="Center" Font="Arial, 7pt"/>
+      <TextObject Name="Text17" Left="425.25" Width="66.15" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" GrowToBottom="true" Text="[FormatDateTime(ToDateTime([dataset.dateManufactureMax]), &quot;Short Date&quot;)]" HorzAlign="Center" VertAlign="Center" Font="Arial, 7pt"/>
+      <TextObject Name="Text18" Left="491.4" Width="75.6" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" GrowToBottom="true" Text="[dataset.cost]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Center" VertAlign="Center" Font="Arial, 7pt"/>
+      <TextObject Name="Text19" Left="567" Width="85.05" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" GrowToBottom="true" Text="[dataset.paymentSum]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Center" VertAlign="Center" Font="Arial, 7pt"/>
+      <TextObject Name="Text20" Left="652.05" Width="94.5" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" GrowToBottom="true" Text="[[dataset.cost] - [dataset.paymentSum]]" HorzAlign="Center" VertAlign="Center" Font="Arial, 7pt"/>
+    </DataBand>
+    <ReportSummaryBand Name="ReportSummary1" Top="82.46" Width="756" Height="18.9">
+      <TextObject Name="Text21" Width="491.4" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" Text="Итого" HorzAlign="Center" VertAlign="Center" Font="Arial, 7pt, style=Bold"/>
+      <TextObject Name="Text22" Left="491.4" Width="75.6" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" Text="[CosrTotal]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Center" VertAlign="Center" Font="Arial, 7pt, style=Bold"/>
+      <TextObject Name="Text23" Left="567" Width="85.05" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" Text="[PaymentSumTotal]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Center" VertAlign="Center" Font="Arial, 7pt, style=Bold"/>
+      <TextObject Name="Text24" Left="652.05" Width="94.5" Height="18.9" Border.Lines="All" Border.Width="0.5" CanGrow="true" Text="[[CosrTotal] - [PaymentSumTotal]]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Center" VertAlign="Center" Font="Arial, 7pt, style=Bold"/>
+    </ReportSummaryBand>
+  </ReportPage>
+</Report>

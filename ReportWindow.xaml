@@ -11,6 +11,7 @@
     <Window.Resources>
         <CollectionViewSource x:Key="reportsViewSource"/>
         <CollectionViewSource x:Key="usersViewSource"/>
+        <CollectionViewSource x:Key="clientsViewSource"/>
         <local:EnableConverter x:Key="EnableConverter"/>
         <Style x:Key="DropShadow" TargetType="{x:Type FrameworkElement}">
             <Style.Triggers>
@@ -60,8 +61,8 @@
     </Window.CommandBindings>
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="0.5*"/>
+            <ColumnDefinition Width="0.5*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="40"/>
@@ -81,6 +82,7 @@
         </ListBox>
         <Grid Grid.Row="1" Grid.Column="1" Margin="1,0,1,0">
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
@@ -141,6 +143,23 @@
                          ScrollViewer.VerticalScrollBarVisibility="Auto" 
                          DisplayMemberPath="FullUserName" Style="{StaticResource CheckBoxListStyle}">
                 </ListBox>
+            </GroupBox>
+            <GroupBox Grid.Row="2" Name="ClientGroupBox" Header="Клиенты" Margin="2"
+                      IsEnabled="{Binding ElementName=ReportListBox, Path=SelectedItem, Converter={StaticResource EnableConverter}, ConverterParameter=PUC}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/> 
+                        <RowDefinition Height="Auto"/> 
+                    </Grid.RowDefinitions>
+                    <ListBox Grid.Row="0" Name="ClientListBox" ItemsSource="{Binding Source={StaticResource clientsViewSource}}" 
+                         ScrollViewer.VerticalScrollBarVisibility="Auto" 
+                         DisplayMemberPath="ShortName" Style="{StaticResource CheckBoxListStyle}">
+                    </ListBox>
+                    <StackPanel Grid.Row="1" Margin="2" Orientation="Horizontal">
+                        <TextBlock Text="Поиск по клиенту: "/>
+                        <TextBox Text="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=FilterString, UpdateSourceTrigger=PropertyChanged}" Width="250"/>
+                    </StackPanel>
+                </Grid>
             </GroupBox>
         </Grid>
         <Border Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="2" BorderThickness="1" BorderBrush="DeepSkyBlue">

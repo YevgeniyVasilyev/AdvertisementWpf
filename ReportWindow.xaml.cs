@@ -18,10 +18,24 @@ namespace AdvertisementWpf
     /// </summary>
     public partial class ReportWindow : Window
     {
-        private CollectionViewSource reportsViewSource, usersViewSource;
+        private CollectionViewSource reportsViewSource, usersViewSource, clientsViewSource;
         private App.AppDbContext _context;
 
         public List<User> usersList = new List<User> { };
+
+        private string _filterString { get; set; } = "";
+        public string FilterString
+        {
+            get => _filterString;
+            set
+            {
+                _filterString = value;
+                if (clientsViewSource?.View != null)
+                {
+                    clientsViewSource.View.Refresh();
+                }
+            }
+        }
 
         public ReportWindow()
         {
@@ -44,9 +58,12 @@ namespace AdvertisementWpf
                 _context = new App.AppDbContext(MainWindow.Connectiondata.Connectionstring);
                 reportsViewSource = (CollectionViewSource)FindResource(nameof(reportsViewSource));
                 usersViewSource = (CollectionViewSource)FindResource(nameof(usersViewSource));
+                clientsViewSource = (CollectionViewSource)FindResource(nameof(clientsViewSource));
 
                 reportsViewSource.Source = _context.Reports.AsNoTracking().ToList();
                 usersList = _context.Users.AsNoTracking().ToList();
+                clientsViewSource.Source = _context.Clients.AsNoTracking().ToList();
+                clientsViewSource.View.Filter = ClientFilter;
 
                 reportsViewSource.View.CurrentChanged += ReportsViewSource_CurrentChanged;
                 ReportsViewSource_CurrentChanged(null, null);
@@ -65,7 +82,7 @@ namespace AdvertisementWpf
         {
             if (reportsViewSource?.View != null && reportsViewSource.View.CurrentItem is Report report)
             {
-                if (report.Code == "RORW" || report.Code == "BCAFPD")
+                if (report.Code == "RORW" || report.Code == "BCAFPD" || report.Code == "__AR")
                 {
                     usersViewSource.Source = usersList.Where(u => IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, u.RoleID, "ListManager")); //только менеджеры
                 }
@@ -79,6 +96,12 @@ namespace AdvertisementWpf
                 }
                 usersViewSource.View.Refresh();
             }
+        }
+
+        private bool ClientFilter(object item)
+        {
+            Client client = item as Client;
+            return string.IsNullOrEmpty(_filterString) || client.Name.IndexOf(_filterString, StringComparison.OrdinalIgnoreCase) >= 0;
         }
 
         private void Window_Closed(object sender, EventArgs e)
@@ -133,6 +156,7 @@ namespace AdvertisementWpf
                     DateTime dBeginPeriod = new DateTime(DateTime.Today.Year, 1, 1); //01 января текущего года
                     DateTime dEndPeriod = new DateTime(DateTime.Today.Year, 12, 31, 23, 59, 59); //31 декабря текущего года
                     List <User> userList = new List<User> { };
+                    List <long> clientsIDList = new List<long> { };
                     try
                     {
                         if (PeriodGroupBox.IsEnabled) //обработка условия "Дата"
@@ -198,6 +222,17 @@ namespace AdvertisementWpf
                                 userList.AddRange((IEnumerable<User>)usersViewSource.View.SourceCollection);
                             }
                         }
+                        if (ClientGroupBox.IsEnabled) //обработка условия "Клиенты"
+                        {
+                            foreach (object c in ClientListBox.Items)
+                            {
+                                ListBoxItem listBoxitem = (ListBoxItem)ClientListBox.ItemContainerGenerator.ContainerFromItem(c);
+                                if (listBoxitem != null && listBoxitem.IsSelected)
+                                {
+                                    clientsIDList.Add(((Client)c).ID);
+                                }
+                            }
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -206,7 +241,7 @@ namespace AdvertisementWpf
                     finally
                     {
                         MainWindow.statusBar.ClearStatus();
-                        MakeReport(ref report, dBeginPeriod, dEndPeriod, userList);
+                        MakeReport(ref report, dBeginPeriod, dEndPeriod, userList, clientsIDList);
                     }
                 }
             }
@@ -223,7 +258,7 @@ namespace AdvertisementWpf
             }
         }
 
-        private void MakeReport(ref Report report, DateTime beginPeriod, DateTime endPeriod, List<User> usersList) 
+        private void MakeReport(ref Report report, DateTime beginPeriod, DateTime endPeriod, List<User> usersList, List<long> cliensIDtList)
         {
             endPeriod = new DateTime(endPeriod.Year, endPeriod.Month, endPeriod.Day, 23, 59, 59); //добавить минуты конца дня
             using App.AppDbContext _reportcontext = new App.AppDbContext(MainWindow.Connectiondata.Connectionstring);
@@ -364,6 +399,63 @@ namespace AdvertisementWpf
                         Reports.EndPeriod = endPeriod;
                         lCanMakeReport = Reports.ObjectDataSet.Count > 0;
                     }
+                    else if (report.Code == "__AR")
+                    {
+                        var orderPayments = from pay in _report.Payments
+                                            join o in _report.Orders on pay.OrderID equals o.ID
+                                            join c in _report.Clients on o.ClientID equals c.ID
+                                            join m in _report.Users on o.ManagerID equals m.ID
+                                            where o.DateAdmission >= beginPeriod && o.DateAdmission <= endPeriod && usersList.Contains(o.Manager)
+                                            group pay by new { o.ID, o.Number, o.Note, o.ClientID, c.Name, m.FirstName, m.LastName, m.MiddleName } into grp
+                                            select new
+                                            {
+                                                orderID = grp.Key.ID,
+                                                number = grp.Key.Number,
+                                                paymentSum = grp.Sum(pay => pay.PaymentAmount),
+                                                note = grp.Key.Note,
+                                                client = grp.Key.Name,
+                                                clientID = grp.Key.ClientID,
+                                                manager = $"{grp.Key.FirstName} {grp.Key.LastName} {grp.Key.MiddleName}"
+                                            }; //платежи по заказам
+
+                        var productCosts = (from op in orderPayments.ToList()
+                                            join p in _report.Products on op.orderID equals p.OrderID
+                                            join pc in _report.ProductCosts on p.ID equals pc.ProductID
+                                            group pc by new { p.OrderID, op.clientID, op.number, op.paymentSum, op.client, op.note, op.manager } into grp
+                                            select new
+                                            {
+                                                grp.Key.OrderID,
+                                                grp.Key.clientID,
+                                                grp.Key.number,
+                                                cost = grp.Sum(pc => pc.Cost),
+                                                grp.Key.paymentSum,
+                                                dateManufactureMax = grp.Max(pc => pc.Product.DateManufacture),
+                                                grp.Key.client,
+                                                grp.Key.note,
+                                                grp.Key.manager
+                                            }).Where(pc => pc.paymentSum < pc.cost) //выбрать те где сумма оплат меньше стоимости
+                                           .OrderBy(pc => pc.client)
+                                           .ToList(); //оплата, затраты и маржа по заказам
+                        if (cliensIDtList.Count > 0)
+                        {
+                            _ = productCosts.RemoveAll(pc => !cliensIDtList.Contains(pc.clientID)); //удалить все заказы НЕ ВЫБРФННЫХ клиентов
+                        }
+                        Order order;
+                        for (int ind = 0; ind < productCosts.Count; ind++)
+                        {
+                            order = _report.Orders.Include(o => o.Products).First(o => o.ID == productCosts[ind].OrderID);
+                            if (order.State != OrderProductStates.GetOrderState(4) && order.State != OrderProductStates.GetOrderState(3) && order.State != OrderProductStates.GetOrderState(2))
+                            {
+                                _ = productCosts.RemoveAll(pc => pc.OrderID == order.ID); //удалить все ИЗГОТОВЛЕННЫЕ, но НЕ ОПЛАЧЕННЫЕ заказы 
+                            }
+                        }
+                        Reports.ReportMode = report.Code;
+                        Reports.ObjectDataSet = new List<object> { };
+                        Reports.ObjectDataSet.AddRange(productCosts);
+                        Reports.BeginPeriod = beginPeriod;
+                        Reports.EndPeriod = endPeriod;
+                        lCanMakeReport = Reports.ObjectDataSet.Count > 0;
+                    }
                     if (lCanMakeReport)
                     {
                         Reports.RunReport();
@@ -409,6 +501,10 @@ namespace AdvertisementWpf
             else if (report != null && (string)parameter == "PU") //U - User
             {
                 return report.Parameters.Contains("P") && report.Parameters.Contains("U");
+            }
+            else if (report != null && (string)parameter == "PUC") //C - Client
+            {
+                return report.Parameters.Contains("P") && report.Parameters.Contains("U") && report.Parameters.Contains("C");
             }
             return false;
         }

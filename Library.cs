@@ -20,7 +20,6 @@ using System.Collections;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
-using System.Windows.Markup;
 
 namespace AdvertisementWpf
 {
@@ -577,7 +576,7 @@ namespace AdvertisementWpf
                     report.SetParameterValue("EndPeriod", EndPeriod);
                     ReportMode = "ReportForm";
                 }
-                else if (ReportMode == "BCAFPD")
+                else if (ReportMode == "BCAFPD" || ReportMode == "__AR")
                 {
                     //report.Dictionary.RegisterBusinessObject(ObjectDataSet, "dataset", 5, true);
                     //report.Save($"{Path.GetFileNameWithoutExtension(ReportFileName)}_data.frx");
