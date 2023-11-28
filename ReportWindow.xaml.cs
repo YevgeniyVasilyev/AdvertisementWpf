@@ -390,7 +390,8 @@ namespace AdvertisementWpf
                             order = _report.Orders.Include(o => o.Products).First(o => o.ID == productCosts[ind].orderID);
                             if (order.State != OrderProductStates.GetOrderState(4))
                             {
-                                productCosts.RemoveAll(pc => pc.orderID == order.ID); //удалить все заказы НЕ в состоянии ОТГРУЖЕН
+                                productCosts.RemoveAt(ind); //удалить все заказы НЕ в состоянии ОТГРУЖЕН
+                                ind--;
                             }
                         }
                         Reports.ObjectDataSet = new List<object> { };
@@ -401,30 +402,31 @@ namespace AdvertisementWpf
                     }
                     else if (report.Code == "__AR")
                     {
-                        var orderPayments = from pay in _report.Payments
-                                            join o in _report.Orders on pay.OrderID equals o.ID
-                                            join c in _report.Clients on o.ClientID equals c.ID
-                                            join m in _report.Users on o.ManagerID equals m.ID
-                                            where o.DateAdmission >= beginPeriod && o.DateAdmission <= endPeriod && usersList.Contains(o.Manager)
-                                            group pay by new { o.ID, o.Number, o.Note, o.ClientID, c.Name, m.FirstName, m.LastName, m.MiddleName } into grp
-                                            select new
-                                            {
-                                                orderID = grp.Key.ID,
-                                                number = grp.Key.Number,
-                                                paymentSum = grp.Sum(pay => pay.PaymentAmount),
-                                                note = grp.Key.Note,
-                                                client = grp.Key.Name,
-                                                clientID = grp.Key.ClientID,
-                                                manager = $"{grp.Key.FirstName} {grp.Key.LastName} {grp.Key.MiddleName}"
-                                            }; //платежи по заказам
+                        var orders = from o in _report.Orders
+                                     join p in _report.Payments on o.ID equals p.OrderID into pay
+                                     from p in pay.DefaultIfEmpty()
+                                     join c in _report.Clients on o.ClientID equals c.ID
+                                     join m in _report.Users on o.ManagerID equals m.ID
+                                     where o.DateAdmission >= beginPeriod && o.DateAdmission <= endPeriod && usersList.Contains(o.Manager)
+                                     group p by new { o.ID, o.Number, o.Note, o.ClientID, c.Name, m.FirstName, m.LastName, m.MiddleName} into grp
+                                     select new
+                                     {
+                                         orderID = grp.Key.ID,
+                                         number = grp.Key.Number,
+                                         note = grp.Key.Note,
+                                         paymentSum = grp.Sum(p => p.PaymentAmount),
+                                         client = grp.Key.Name,
+                                         clientID = grp.Key.ClientID,
+                                         manager = $"{grp.Key.FirstName} {grp.Key.LastName} {grp.Key.MiddleName}"
+                                     };
 
-                        var productCosts = (from op in orderPayments.ToList()
+                        var productCosts = (from op in orders.ToList()
                                             join p in _report.Products on op.orderID equals p.OrderID
                                             join pc in _report.ProductCosts on p.ID equals pc.ProductID
-                                            group pc by new { p.OrderID, op.clientID, op.number, op.paymentSum, op.client, op.note, op.manager } into grp
+                                            group pc by new { op.orderID, op.clientID, op.number, op.client, op.note, op.manager, op.paymentSum } into grp
                                             select new
                                             {
-                                                grp.Key.OrderID,
+                                                grp.Key.orderID,
                                                 grp.Key.clientID,
                                                 grp.Key.number,
                                                 cost = grp.Sum(pc => pc.Cost),
@@ -435,7 +437,8 @@ namespace AdvertisementWpf
                                                 grp.Key.manager
                                             }).Where(pc => pc.paymentSum < pc.cost) //выбрать те где сумма оплат меньше стоимости
                                            .OrderBy(pc => pc.client)
-                                           .ToList(); //оплата, затраты и маржа по заказам
+                                           .ToList(); 
+
                         if (cliensIDtList.Count > 0)
                         {
                             _ = productCosts.RemoveAll(pc => !cliensIDtList.Contains(pc.clientID)); //удалить все заказы НЕ ВЫБРФННЫХ клиентов
@@ -443,10 +446,11 @@ namespace AdvertisementWpf
                         Order order;
                         for (int ind = 0; ind < productCosts.Count; ind++)
                         {
-                            order = _report.Orders.Include(o => o.Products).First(o => o.ID == productCosts[ind].OrderID);
-                            if (order.State != OrderProductStates.GetOrderState(4) && order.State != OrderProductStates.GetOrderState(3) && order.State != OrderProductStates.GetOrderState(2))
+                            order = _report.Orders.Include(o => o.Products).First(o => o.ID == productCosts[ind].orderID);
+                            if (order.State == OrderProductStates.GetOrderState(0) || order.State == OrderProductStates.GetOrderState(1))
                             {
-                                _ = productCosts.RemoveAll(pc => pc.OrderID == order.ID); //удалить все ИЗГОТОВЛЕННЫЕ, но НЕ ОПЛАЧЕННЫЕ заказы 
+                                productCosts.RemoveAt(ind); //удалить все ИЗГОТОВЛЕННЫЕ, но НЕ ОПЛАЧЕННЫЕ заказы 
+                                ind--;
                             }
                         }
                         Reports.ReportMode = report.Code;

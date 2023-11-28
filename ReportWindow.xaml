@@ -84,7 +84,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <GroupBox Grid.Row="0" Name="PeriodGroupBox" Header="Период" Margin="2" 
                       IsEnabled="{Binding ElementName=ReportListBox, Path=SelectedItem, Converter={StaticResource EnableConverter}, ConverterParameter=P}">
@@ -156,8 +156,8 @@
                          DisplayMemberPath="ShortName" Style="{StaticResource CheckBoxListStyle}">
                     </ListBox>
                     <StackPanel Grid.Row="1" Margin="2" Orientation="Horizontal">
-                        <TextBlock Text="Поиск по клиенту: "/>
-                        <TextBox Text="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=FilterString, UpdateSourceTrigger=PropertyChanged}" Width="250"/>
+                        <TextBlock Text="Поиск по клиенту: " VerticalAlignment="Center"/>
+                        <TextBox Text="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=FilterString, UpdateSourceTrigger=PropertyChanged}" Width="250" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Grid>
             </GroupBox>
