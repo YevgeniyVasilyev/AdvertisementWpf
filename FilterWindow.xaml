@@ -327,9 +327,9 @@
                     </TabItem>
                 </TabControl>
             </TabItem>
-            <TabItem Header="Изделия по КВД" Name="ProductionProductsTabItem">
+            <TabItem Header="Изделия в производстве" Name="ProductionProductsTabItem">
                 <TabControl TabStripPlacement="Bottom">
-                    <TabItem Header="Дата">
+                    <!--<TabItem Header="Дата">
                         <GroupBox>
                             <GroupBox.Header>
                                 <ComboBox Name="kDateName">
@@ -392,19 +392,19 @@
                                 </StackPanel>
                             </Grid>
                         </GroupBox>
-                    </TabItem>
+                    </TabItem>-->
                     <TabItem Header="Вид деятельности">
                         <ListBox Name="TypeOfActivityListBox" ItemsSource="{Binding Source={StaticResource typeOfActivityDataSource}}" 
                                  ScrollViewer.VerticalScrollBarVisibility="Auto" 
                                  DisplayMemberPath="Name" Style="{StaticResource CheckBoxListStyle}">
                         </ListBox>
                     </TabItem>
-                    <TabItem Header="Состояние изделия">
+                    <!--<TabItem Header="Состояние изделия">
                         <ListBox Name="kStateListBox" ItemsSource="{Binding Source={StaticResource productStatesDataSource}}" 
                                          ScrollViewer.VerticalScrollBarVisibility="Auto" 
                                          Style="{StaticResource CheckBoxListStyle}">
                         </ListBox>
-                    </TabItem>
+                    </TabItem>-->
                 </TabControl>
             </TabItem>
         </TabControl>

@@ -217,20 +217,6 @@
                     </ContextMenu>
                 </Button.ContextMenu>
             </Button>
-            <!--<Separator/>
-            <Button Style="{StaticResource ButtonOfOrder}">
-                <StackPanel Orientation="Vertical">
-                    <Image Source="\Images\free-icon-printer-techcard.png" Width="25" Height="25"/>
-                    <Label Content="Карта"/>
-                </StackPanel>
-            </Button>-->
-            <!--<Separator/>
-            <Button Style="{StaticResource ButtonOfOrder}">
-                <StackPanel Orientation="Vertical">
-                    <Image Source="\Images\premium-icon-email-e-mail.png" Width="25" Height="25"/>
-                    <Label Content="Отправить на e-mail"/>
-                </StackPanel>
-            </Button>-->
         </WrapPanel>
         <StackPanel Grid.Column="0" Grid.Row="1" Margin="5">
             <Border Margin="5" BorderThickness="1" BorderBrush="DarkBlue">

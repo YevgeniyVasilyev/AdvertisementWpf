@@ -781,13 +781,15 @@ namespace AdvertisementWpf
             try
             {
                 List<WorkInTechCard> workInTechCards;
-                workInTechCards = _context.WorkInTechCards.FromSqlRaw($"SELECT * FROM WorkInTechCards {WhereCondition}").AsNoTracking()
+                //.FromSqlRaw($"SELECT * FROM WorkInTechCards {WhereCondition}")
+                workInTechCards = _context.WorkInTechCards.AsNoTracking()
                     .Include(WorkInTechCard => WorkInTechCard.TechCard)
                     .Include(WorkInTechCard => WorkInTechCard.TypeOfActivity)
                     .Include(WorkInTechCard => WorkInTechCard.TechCard.Product)
                     .Include(WorkInTechCard => WorkInTechCard.TechCard.Product.ProductType)
                     .Include(WorkInTechCard => WorkInTechCard.TechCard.Product.Order)
                     .Include(WorkInTechCard => WorkInTechCard.TechCard.Product.Order.Client)
+                    .Where(w => !w.DateFactCompletion.HasValue)
                     .ToList();
                 workInTechCardViewSource = (CollectionViewSource)FindResource(nameof(workInTechCardViewSource));
                 if (!Userdata.IsAdmin && IGrantAccess.CheckGrantAccess(userIAccessMatrix, Userdata.RoleID, "ListManager")) //роль текущего пользователя относится к Менеджерам
@@ -795,20 +797,21 @@ namespace AdvertisementWpf
                     workInTechCards = workInTechCards.Where(w => w.TechCard.Product.Order.ManagerID == Userdata.ID).ToList(); //значит текущему пользователю предоставить только его заказы
                 }
                 //дата приема заказа
-                if (dStartDate.HasValue && dEndDate.HasValue)
-                {
-                    workInTechCards = workInTechCards.Where(workInTechCards => workInTechCards.TechCard.Product.Order.DateAdmission >= dStartDate && workInTechCards.TechCard.Product.Order.DateAdmission <= dEndDate).ToList();
-                }
+                //if (dStartDate.HasValue && dEndDate.HasValue)
+                //{
+                //    workInTechCards = workInTechCards.Where(workInTechCards => workInTechCards.TechCard.Product.Order.DateAdmission >= dStartDate && workInTechCards.TechCard.Product.Order.DateAdmission <= dEndDate).ToList();
+                //}
                 //вид деятельности
                 if (WhereTypeOfActivityCondition.Count > 0)
                 {
                     workInTechCards = workInTechCards.Where(WorkInTechCard => WhereTypeOfActivityCondition.Contains(WorkInTechCard.TypeOfActivity.ID)).ToList();
                 }
-                if (WhereStateCondition.Length > 0) //указан отбор по состоянию изделия
-                {
-                    workInTechCards = workInTechCards.Where(workInTechCards => WhereStateCondition.IndexOf(workInTechCards.TechCard.Product.State) >= 0).ToList();
-                }
-                workInTechCardViewSource.Source = workInTechCards.OrderBy(w => w.TechCard.Product.Order.Number);
+                //if (WhereStateCondition.Length > 0) //указан отбор по состоянию изделия
+                //{
+                //    workInTechCards = workInTechCards.Where(workInTechCards => WhereStateCondition.IndexOf(workInTechCards.TechCard.Product.State) >= 0).ToList();
+                //}
+                workInTechCardViewSource.Source = workInTechCards.Where(w => w.TechCard.Product.State == OrderProductStates.GetProductState(3)).OrderBy(w => w.TechCard.Product.Order.Number);
+                // || w.TechCard.Product.State == OrderProductStates.GetProductState(4))
                 OrderListView.Visibility = Visibility.Collapsed;
                 ProductListView.Visibility = Visibility.Collapsed;
                 ProductionProductListView.Visibility = Visibility.Visible;

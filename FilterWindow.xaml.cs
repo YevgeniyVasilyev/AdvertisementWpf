@@ -117,12 +117,12 @@ namespace AdvertisementWpf
                 }
                 else if (ProductionProductsTabItem.IsEnabled)
                 {
-                    kYearUpDown.Value = DateTime.Today.Year;
-                    kQuarterComboBox.SelectedIndex = ((DateTime.Today.Month + 2) / 3) - 1;
-                    kMonthCheckBox.SelectedIndex = DateTime.Today.Month - 1;
-                    kDayDateTime.SelectedDate = DateTime.Today;
-                    kStartDate.SelectedDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
-                    kEndDate.SelectedDate = DateTime.Today;
+                    //kYearUpDown.Value = DateTime.Today.Year;
+                    //kQuarterComboBox.SelectedIndex = ((DateTime.Today.Month + 2) / 3) - 1;
+                    //kMonthCheckBox.SelectedIndex = DateTime.Today.Month - 1;
+                    //kDayDateTime.SelectedDate = DateTime.Today;
+                    //kStartDate.SelectedDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+                    //kEndDate.SelectedDate = DateTime.Today;
                 }
             }
             catch (Exception ex)
@@ -538,92 +538,92 @@ namespace AdvertisementWpf
         {
             try
             {
-                //обработка условия "Дата"
-                string sDateName = "";
-                DateTime dStartDate = new DateTime(DateTime.Today.Year, 1, 1); //01 января текущего года
-                DateTime dEndDate = new DateTime(DateTime.Today.Year, 12, 31); //31 декабря текущего года
-                MainWindow.dStartDate = null;
-                MainWindow.dEndDate = null;
                 MainWindow.WhereTypeOfActivityCondition.Clear();
-                if ((bool)kYearDate.IsChecked) //отбор за "год"
-                {
-                    dStartDate = new DateTime((int)kYearUpDown.Value, 1, 1); //01 января текущего года
-                    dEndDate = new DateTime((int)kYearUpDown.Value, 12, 31); //31 декабря текущего года
-                }
-                if ((bool)kQuarterDate.IsChecked) //отбор за "квартал"
-                {
-                    switch (kQuarterComboBox.SelectedIndex)
-                    {
-                        case 0: //1 квартал
-                            dEndDate = new DateTime(DateTime.Today.Year, 3, 31);
-                            break;
-                        case 1: //2 квартал
-                            dStartDate = new DateTime(DateTime.Today.Year, 4, 1);
-                            dEndDate = new DateTime(DateTime.Today.Year, 6, 30);
-                            break;
-                        case 2: //3 квартал
-                            dStartDate = new DateTime(DateTime.Today.Year, 7, 1);
-                            dEndDate = new DateTime(DateTime.Today.Year, 9, 30);
-                            break;
-                        case 3: //4 квартал
-                            dStartDate = new DateTime(DateTime.Today.Year, 10, 1);
-                            break;
-                    }
-                }
-                if ((bool)kMonthDate.IsChecked) //отбор за "месяц"
-                {
-                    List<byte> nMonth = new List<byte> { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
-                    dStartDate = new DateTime(DateTime.Today.Year, kMonthCheckBox.SelectedIndex + 1, 1);
-                    dEndDate = new DateTime(DateTime.Today.Year, kMonthCheckBox.SelectedIndex + 1, nMonth[kMonthCheckBox.SelectedIndex] + (DateTime.IsLeapYear(DateTime.Today.Year) ? 1 : 0));
-                }
-                if ((bool)kDayDate.IsChecked && kDayDateTime.SelectedDate.HasValue) //отбор за "день"
-                {
-                    dStartDate = kDayDateTime.SelectedDate.Value;
-                    dEndDate = dStartDate;
-                }
-                if ((bool)kPeriodDate.IsChecked && kStartDate.SelectedDate.HasValue && kEndDate.SelectedDate.HasValue) //отбор за "произвольный интервал"
-                {
-                    dStartDate = kStartDate.SelectedDate.Value;
-                    dEndDate = kEndDate.SelectedDate.Value;
-                }
-                if (!(bool)kNoDate.IsChecked)
-                {
-                    switch (kDateName.SelectedIndex)
-                    {
-                        case 0:
-                            sDateName = "Order.DateAdmission";
-                            break;
-                        case 1:
-                            sDateName = "DateTransferDesigner";
-                            break;
-                        case 2:
-                            sDateName = "DateTransferApproval";
-                            break;
-                        case 3:
-                            sDateName = "DateApproval";
-                            break;
-                        case 4:
-                            sDateName = "DateTransferProduction";
-                            break;
-                        case 5:
-                            sDateName = "DateManufacture";
-                            break;
-                        case 6:
-                            sDateName = "DateShipment";
-                            break;
-                    }
-                    if (kDateName.SelectedIndex > 0) //для дат изделия. Дата заказа обрабатывается в MainWindow
-                    {
-                        sDateCondition = $"{sDateName} >= '{dStartDate.Date}' AND {sDateName} <= '{dEndDate.Date}'";
-                    }
-                    else if (kDateName.SelectedIndex == 0)
-                    {
-                        MainWindow.dStartDate = dStartDate.Date;
-                        MainWindow.dEndDate = dEndDate.Date;
-                    }
-                }
+                //обработка условия "Дата"
+                //string sDateName = "";
+                //DateTime dStartDate = new DateTime(DateTime.Today.Year, 1, 1); //01 января текущего года
+                //DateTime dEndDate = new DateTime(DateTime.Today.Year, 12, 31); //31 декабря текущего года
+                //MainWindow.dStartDate = null;
+                //MainWindow.dEndDate = null;
+                //if ((bool)kYearDate.IsChecked) //отбор за "год"
+                //{
+                //    dStartDate = new DateTime((int)kYearUpDown.Value, 1, 1); //01 января текущего года
+                //    dEndDate = new DateTime((int)kYearUpDown.Value, 12, 31); //31 декабря текущего года
+                //}
+                //if ((bool)kQuarterDate.IsChecked) //отбор за "квартал"
+                //{
+                //    switch (kQuarterComboBox.SelectedIndex)
+                //    {
+                //        case 0: //1 квартал
+                //            dEndDate = new DateTime(DateTime.Today.Year, 3, 31);
+                //            break;
+                //        case 1: //2 квартал
+                //            dStartDate = new DateTime(DateTime.Today.Year, 4, 1);
+                //            dEndDate = new DateTime(DateTime.Today.Year, 6, 30);
+                //            break;
+                //        case 2: //3 квартал
+                //            dStartDate = new DateTime(DateTime.Today.Year, 7, 1);
+                //            dEndDate = new DateTime(DateTime.Today.Year, 9, 30);
+                //            break;
+                //        case 3: //4 квартал
+                //            dStartDate = new DateTime(DateTime.Today.Year, 10, 1);
+                //            break;
+                //    }
+                //}
+                //if ((bool)kMonthDate.IsChecked) //отбор за "месяц"
+                //{
+                //    List<byte> nMonth = new List<byte> { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+                //    dStartDate = new DateTime(DateTime.Today.Year, kMonthCheckBox.SelectedIndex + 1, 1);
+                //    dEndDate = new DateTime(DateTime.Today.Year, kMonthCheckBox.SelectedIndex + 1, nMonth[kMonthCheckBox.SelectedIndex] + (DateTime.IsLeapYear(DateTime.Today.Year) ? 1 : 0));
+                //}
+                //if ((bool)kDayDate.IsChecked && kDayDateTime.SelectedDate.HasValue) //отбор за "день"
+                //{
+                //    dStartDate = kDayDateTime.SelectedDate.Value;
+                //    dEndDate = dStartDate;
+                //}
+                //if ((bool)kPeriodDate.IsChecked && kStartDate.SelectedDate.HasValue && kEndDate.SelectedDate.HasValue) //отбор за "произвольный интервал"
+                //{
+                //    dStartDate = kStartDate.SelectedDate.Value;
+                //    dEndDate = kEndDate.SelectedDate.Value;
+                //}
+                //if (!(bool)kNoDate.IsChecked)
+                //{
+                //    switch (kDateName.SelectedIndex)
+                //    {
+                //        case 0:
+                //            sDateName = "Order.DateAdmission";
+                //            break;
+                //        case 1:
+                //            sDateName = "DateTransferDesigner";
+                //            break;
+                //        case 2:
+                //            sDateName = "DateTransferApproval";
+                //            break;
+                //        case 3:
+                //            sDateName = "DateApproval";
+                //            break;
+                //        case 4:
+                //            sDateName = "DateTransferProduction";
+                //            break;
+                //        case 5:
+                //            sDateName = "DateManufacture";
+                //            break;
+                //        case 6:
+                //            sDateName = "DateShipment";
+                //            break;
+                //    }
+                //    if (kDateName.SelectedIndex > 0) //для дат изделия. Дата заказа обрабатывается в MainWindow
+                //    {
+                //        sDateCondition = $"{sDateName} >= '{dStartDate.Date}' AND {sDateName} <= '{dEndDate.Date}'";
+                //    }
+                //    else if (kDateName.SelectedIndex == 0)
+                //    {
+                //        MainWindow.dStartDate = dStartDate.Date;
+                //        MainWindow.dEndDate = dEndDate.Date;
+                //    }
+                //}
 
-                dEndDate = new DateTime(dEndDate.Year, dEndDate.Month, dEndDate.Day, 23, 59, 59); //добавить минуты конца дня
+                //dEndDate = new DateTime(dEndDate.Year, dEndDate.Month, dEndDate.Day, 23, 59, 59); //добавить минуты конца дня
 
                 //обработка условия "КВД" 
                 foreach (object typeOfActivity in TypeOfActivityListBox.Items)
@@ -636,14 +636,14 @@ namespace AdvertisementWpf
                 }
 
                 //обработка условия Состояние изделия
-                foreach (object state in kStateListBox.Items)
-                {
-                    ListBoxItem listBoxitem = (ListBoxItem)kStateListBox.ItemContainerGenerator.ContainerFromItem(state);
-                    if (listBoxitem != null && listBoxitem.IsSelected)
-                    {
-                        sStateCondition += $"{state} ";
-                    }
-                }
+                //foreach (object state in kStateListBox.Items)
+                //{
+                //    ListBoxItem listBoxitem = (ListBoxItem)kStateListBox.ItemContainerGenerator.ContainerFromItem(state);
+                //    if (listBoxitem != null && listBoxitem.IsSelected)
+                //    {
+                //        sStateCondition += $"{state} ";
+                //    }
+                //}
             }
             catch (Exception ex)
             {
@@ -651,9 +651,9 @@ namespace AdvertisementWpf
             }
             finally
             {
-                MainWindow.WhereStateCondition = sStateCondition;
-                MainWindow.WhereCondition = sDateCondition;
-                MainWindow.WhereCondition = string.IsNullOrWhiteSpace(MainWindow.WhereCondition) ? "" : $"WHERE {MainWindow.WhereCondition}";
+                //MainWindow.WhereStateCondition = sStateCondition;
+                //MainWindow.WhereCondition = sDateCondition;
+                //MainWindow.WhereCondition = string.IsNullOrWhiteSpace(MainWindow.WhereCondition) ? "" : $"WHERE {MainWindow.WhereCondition}";
                 DialogResult = true;
                 Close();
                 MainWindow.statusBar.ClearStatus();
@@ -674,7 +674,7 @@ namespace AdvertisementWpf
                 }
                 else if (ProductionProductsTabItem.IsSelected)
                 {
-                    kYearDate.IsChecked = true;
+                    //kYearDate.IsChecked = true;
                 }
                 return;
             }
@@ -688,10 +688,10 @@ namespace AdvertisementWpf
                 {
                     pDayDate.IsChecked = true;
                 }
-                else if (datePicker == kDayDateTime)
-                {
-                    kDayDate.IsChecked = true;
-                }
+                //else if (datePicker == kDayDateTime)
+                //{
+                //    kDayDate.IsChecked = true;
+                //}
                 else if (datePicker == oStartDate || datePicker == oEndDate)
                 {
                     oPeriodDate.IsChecked = true;
@@ -700,10 +700,10 @@ namespace AdvertisementWpf
                 {
                     pPeriodDate.IsChecked = true;
                 }
-                else if (datePicker == kStartDate || datePicker == kEndDate)
-                {
-                    kPeriodDate.IsChecked = true;
-                }
+                //else if (datePicker == kStartDate || datePicker == kEndDate)
+                //{
+                //    kPeriodDate.IsChecked = true;
+                //}
                 return;
             }
             if (e.OriginalSource is ComboBox comboBox)
@@ -716,10 +716,10 @@ namespace AdvertisementWpf
                 {
                     pQuarterDate.IsChecked = true;
                 }
-                else if (comboBox == kQuarterComboBox)
-                {
-                    kQuarterDate.IsChecked = true;
-                }
+                //else if (comboBox == kQuarterComboBox)
+                //{
+                //    kQuarterDate.IsChecked = true;
+                //}
                 else if (comboBox == oMonthCheckBox)
                 {
                     oMonthDate.IsChecked = true;
@@ -728,10 +728,10 @@ namespace AdvertisementWpf
                 {
                     pMonthDate.IsChecked = true;
                 }
-                else if (comboBox == kMonthCheckBox)
-                {
-                    kMonthDate.IsChecked = true;
-                }
+                //else if (comboBox == kMonthCheckBox)
+                //{
+                //    kMonthDate.IsChecked = true;
+                //}
                 return;
             }
         }

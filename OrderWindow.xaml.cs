@@ -1995,11 +1995,24 @@ namespace AdvertisementWpf
                     .ThenInclude(OperationInWork => OperationInWork.Operation).ThenInclude(Operation => Operation.ProductionArea)
                     .Where(TechCard => TechCard.Product.OrderID == currentOrder.ID).Load();
                 techCardsViewSource.Source = _context_.TechCards.Local.ToObservableCollection();
+                Array array; 
                 foreach (TechCard techCard in techCardsViewSource.View)
                 {
+                    array = techCard.WorkInTechCards.OrderBy(w => w.ID).ToArray();
+                    techCard.WorkInTechCards.Clear();
+                    for (int ind = 0; ind < array.Length; ind++)
+                    {
+                        techCard.WorkInTechCards.Add((WorkInTechCard)array.GetValue(ind));
+                    }
                     techCard.WorkInTechCards_ = null; //для инициализации ObservaleCollection()
                     foreach (WorkInTechCard workInTechCard in techCard.WorkInTechCards)
                     {
+                        array = workInTechCard.OperationInWorks.OrderBy(o => o.ID).ToArray();
+                        workInTechCard.OperationInWorks.Clear();
+                        for (int ind = 0; ind < array.Length; ind++)
+                        {
+                            workInTechCard.OperationInWorks.Add((OperationInWork)array.GetValue(ind));
+                        }
                         workInTechCard.OperationInWorks_ = null; //для инициализации ObservaleCollection()
                         foreach (OperationInWork operationInWork in workInTechCard.OperationInWorks)
                         {
