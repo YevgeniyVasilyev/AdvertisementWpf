@@ -1,14 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using AdvertisementWpf.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace AdvertisementWpf
 {
@@ -86,7 +78,9 @@ namespace AdvertisementWpf
                 {
                     _ = o.Property(o => o.DateAdmission).HasColumnType("datetime");
                     _ = o.Property(o => o.DateCompletion).HasColumnType("datetime");
-                });
+                    _ = o.Property(o => o.ID).ValueGeneratedOnAdd();
+                    _ = o.HasKey("ID");
+                }) ;
                 _ = modelBuilder.Entity<Contractor>(c =>
                 {
                     _ = c.Property(c => c.DirectorAttorneyDate).HasColumnType("datetime");
@@ -115,6 +109,15 @@ namespace AdvertisementWpf
                     _ = p.Property(p => p.DateTransferApproval).HasColumnType("datetime");
                     _ = p.Property(p => p.DateTransferDesigner).HasColumnType("datetime");
                     _ = p.Property(p => p.DateTransferProduction).HasColumnType("datetime");
+                    _ = p.Property(p => p.ID).ValueGeneratedOnAdd();
+                    _ = p.HasKey("ID");
+                    _ = p.HasIndex("OrderID");
+                });
+                _ = modelBuilder.Entity<ProductCost>(pc =>
+                {
+                    _ = pc.Property(pc => pc.ID).ValueGeneratedOnAdd();
+                    _ = pc.HasKey("ID");
+                    _ = pc.HasIndex("ProductID");
                 });
                 _ = modelBuilder.Entity<WorkInTechCard>(entity =>
                 {
@@ -134,6 +137,10 @@ namespace AdvertisementWpf
                 _ = modelBuilder.Entity<Client>()
                     .HasOne("ConsigneeBank")
                     .WithMany("ConsigneeClients");
+                _ = modelBuilder.Entity<Order>().Navigation(o => o.OrderEntered).AutoInclude();
+                _ = modelBuilder.Entity<Order>().Navigation(o => o.Manager).AutoInclude();
+                _ = modelBuilder.Entity<Order>().Navigation(o => o.Client).AutoInclude();
+                _ = modelBuilder.Entity<Product>().Navigation(p => p.Designer).AutoInclude();
             }
         }
     }

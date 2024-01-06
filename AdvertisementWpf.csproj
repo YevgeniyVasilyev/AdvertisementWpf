@@ -150,11 +150,11 @@
 
   <ItemGroup>
     <PackageReference Include="Extended.Wpf.Toolkit" Version="4.5.1" />
-    <PackageReference Include="FastReport.Localization" Version="2023.3.7" />
-    <PackageReference Include="FastReport.OpenSource" Version="2023.3.7" />
+    <PackageReference Include="FastReport.Localization" Version="2024.1.2" />
+    <PackageReference Include="FastReport.OpenSource" Version="2024.1.2" />
     <PackageReference Include="FastReport.OpenSource.Data.MsSql" Version="2021.4.0" />
-    <PackageReference Include="FastReport.OpenSource.Export.PdfSimple" Version="2023.3.7" />
-    <PackageReference Include="MailKit" Version="4.2.0" />
+    <PackageReference Include="FastReport.OpenSource.Export.PdfSimple" Version="2024.1.2" />
+    <PackageReference Include="MailKit" Version="4.3.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.17" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.17">
       <PrivateAssets>all</PrivateAssets>
@@ -171,7 +171,7 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0" />
     <PackageReference Include="Microsoft.WindowsAPICodePack-Core" Version="1.1.0.2" />
     <PackageReference Include="Microsoft.WindowsAPICodePack-Shell" Version="1.1.0" />
-    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.77" />
   </ItemGroup>
 
   <ItemGroup>

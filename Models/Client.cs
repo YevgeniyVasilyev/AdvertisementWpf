@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 #nullable disable
 
@@ -11,6 +12,7 @@ namespace AdvertisementWpf.Models
             Orders = new HashSet<Order>();
         }
 
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long ID { get; set; }
         public string Name { get; set; }
         public string ShortName { get; set; }

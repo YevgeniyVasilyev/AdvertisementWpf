@@ -18,6 +18,7 @@ namespace AdvertisementWpf.Models
             OrderOrderEntereds = new HashSet<Order>();
         }
 
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long ID { get; set; }
         public string FirstName { get; set; } = "";
         public string LastName { get; set; } = "";
@@ -41,7 +42,7 @@ namespace AdvertisementWpf.Models
 
         [NotMapped]
         public string FullUserName => $"{FirstName} {LastName} {MiddleName}";
-        [NotMapped]        
+        [NotMapped]
         public string ShortUserName => $"{FirstName} {(LastName.Length > 0 ? LastName.Trim().Substring(0, 1) : "")}.{(MiddleName.Length > 0 ? MiddleName.Trim().Substring(0, 1) : "")}.";
         [NotMapped]
         public string CategoryWorkName = "";

@@ -215,7 +215,15 @@ namespace AdvertisementWpf
                 {
                     List<byte> nMonth = new List<byte> { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
                     dStartDate = new DateTime(DateTime.Today.Year, oMonthCheckBox.SelectedIndex + 1, 1);
-                    dEndDate = new DateTime(DateTime.Today.Year, oMonthCheckBox.SelectedIndex + 1, nMonth[oMonthCheckBox.SelectedIndex] + (DateTime.IsLeapYear(DateTime.Today.Year) ? 1 : 0));
+                    //dEndDate = new DateTime(DateTime.Today.Year, oMonthCheckBox.SelectedIndex + 1, nMonth[oMonthCheckBox.SelectedIndex] + (DateTime.IsLeapYear(DateTime.Today.Year) ? 1 : 0));
+                    if (DateTime.Today.Month == 2 && DateTime.IsLeapYear(DateTime.Today.Year)) //февраль в високосном году
+                    {
+                        dEndDate = new DateTime(DateTime.Today.Year, oMonthCheckBox.SelectedIndex + 1, nMonth[oMonthCheckBox.SelectedIndex] + 1);
+                    }
+                    else
+                    {
+                        dEndDate = new DateTime(DateTime.Today.Year, oMonthCheckBox.SelectedIndex + 1, nMonth[oMonthCheckBox.SelectedIndex]);
+                    }
                 }
                 if ((bool)oDayDate.IsChecked && oDayDateTime.SelectedDate.HasValue) //отбор за "день"
                 {
@@ -400,7 +408,15 @@ namespace AdvertisementWpf
                 {
                     List<byte> nMonth = new List<byte> { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
                     dStartDate = new DateTime(DateTime.Today.Year, pMonthCheckBox.SelectedIndex + 1, 1);
-                    dEndDate = new DateTime(DateTime.Today.Year, pMonthCheckBox.SelectedIndex + 1, nMonth[pMonthCheckBox.SelectedIndex] + (DateTime.IsLeapYear(DateTime.Today.Year) ? 1 : 0));
+                    //dEndDate = new DateTime(DateTime.Today.Year, pMonthCheckBox.SelectedIndex + 1, nMonth[pMonthCheckBox.SelectedIndex] + (DateTime.IsLeapYear(DateTime.Today.Year) ? 1 : 0));
+                    if (DateTime.Today.Month == 2 && DateTime.IsLeapYear(DateTime.Today.Year)) //февраль в високосном году
+                    {
+                        dEndDate = new DateTime(DateTime.Today.Year, pMonthCheckBox.SelectedIndex + 1, nMonth[pMonthCheckBox.SelectedIndex] + 1);
+                    }
+                    else
+                    {
+                        dEndDate = new DateTime(DateTime.Today.Year, pMonthCheckBox.SelectedIndex + 1, nMonth[pMonthCheckBox.SelectedIndex]);
+                    }
                 }
                 if ((bool)pDayDate.IsChecked && pDayDateTime.SelectedDate.HasValue) //отбор за "день"
                 {

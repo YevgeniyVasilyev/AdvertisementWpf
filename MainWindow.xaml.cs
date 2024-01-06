@@ -142,7 +142,14 @@ namespace AdvertisementWpf
                     List<byte> nMonth = new List<byte> { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
                     DateTime dStartDate, dEndDate;
                     dStartDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
-                    dEndDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, nMonth[DateTime.Today.Month - 1] + (DateTime.IsLeapYear(DateTime.Today.Year) ? 1 : 0));
+                    if (DateTime.Today.Month == 2 && DateTime.IsLeapYear(DateTime.Today.Year)) //февраль в високосном году
+                    {
+                        dEndDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, nMonth[DateTime.Today.Month - 1] + 1);
+                    }
+                    else
+                    {
+                        dEndDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, nMonth[DateTime.Today.Month - 1]);
+                    }
                     WhereCondition = $"WHERE DateAdmission >= '{dStartDate.Date}' AND DateAdmission <= '{dEndDate.Date}'";
                     ShowOrders(); //покажем ему сразу его заказы, принятые в текущем месяце
                 }
@@ -418,8 +425,10 @@ namespace AdvertisementWpf
             {
                 if (btn == NewOrderButton || btn == NewOrderButton1)
                 {
-                    OrderWindow order = new OrderWindow(NewOrder: true) { };
-                    _ = order.ShowDialog();
+                    RequestWindow request = new RequestWindow() { };
+                    request.ShowDialog();
+                    //OrderWindow order = new OrderWindow(NewOrder: true) { };
+                    //_ = order.ShowDialog();
                     _ = typeof(ButtonBase).GetMethod("OnClick", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(RefreshOrderButton, new object[0]);
                 }
                 else if (btn == ViewOrderButton || btn == EditOrderButton)
@@ -437,8 +446,10 @@ namespace AdvertisementWpf
                     {
                         nOrderID = workInTechCard.TechCard.Product.OrderID;
                     }
-                    OrderWindow order = new OrderWindow(NewOrder: false, EditMode: btn == EditOrderButton, nOrderID: nOrderID) { };
-                    _ = order.ShowDialog();
+                    RequestWindow request = new RequestWindow(ViewMode: btn == ViewOrderButton, nOrderID: nOrderID) { };
+                    request.ShowDialog();
+                    //OrderWindow order = new OrderWindow(NewOrder: false, EditMode: btn == EditOrderButton, nOrderID: nOrderID) { };
+                    //_ = order.ShowDialog();
                     _ = typeof(ButtonBase).GetMethod("OnClick", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(RefreshOrderButton, new object[0]);
                 }
                 //else if (btn == AllOrdersButton)

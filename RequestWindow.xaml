@@ -1,0 +1,319 @@
+﻿<Window x:Class="AdvertisementWpf.RequestWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"        
+        xmlns:local="clr-namespace:AdvertisementWpf" 
+        mc:Ignorable="d"
+        WindowState="Maximized" MinHeight="700" MinWidth="1400"
+        ResizeMode="CanResizeWithGrip" WindowStyle="SingleBorderWindow">
+    <Window.Style>
+        <Style TargetType="{x:Type Window}">
+            <Setter Property="Title" Value="Заказ"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding ElementName=DateDateAdmission, Path=IsEnabled}" Value="True">
+                    <Setter Property="Title" Value="Заказ (новый)"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding ElementName=SaveRequestButton, Path=IsVisible}" Value="False">
+                    <Setter Property="Title" Value="Заказ (просмотр)"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Style>
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <local:ValueConverterGroup x:Key="BoolToVisibilityConverter">
+            <local:BoolNotBoolConverter/>
+            <BooleanToVisibilityConverter/>
+        </local:ValueConverterGroup>
+        <Style x:Key="DropShadow" TargetType="{x:Type FrameworkElement}">
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Effect">
+                        <Setter.Value>
+                            <DropShadowEffect BlurRadius="8" ShadowDepth="0.5" Opacity="0.5"/>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="ButtonOfOrder" TargetType="{x:Type Button}" BasedOn="{StaticResource DropShadow}">
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Margin" Value="1,1,1,1"/>
+            <Setter Property="Padding" Value="1,1,1,1"/>
+            <Setter Property="Content" Value="{Binding}"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+        <Style x:Key="UnderlineTextBlock" TargetType="TextBlock">
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="ToolTip" Value="Нажмите для установки текущей даты"/>
+                    <!--<Setter Property="Foreground" Value="Red"/>-->
+                    <Setter Property="TextDecorations" Value="Underline"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <DataTemplate x:Key="ListViewHeaderTemplate">
+            <TextBlock FontWeight="Bold" TextWrapping="Wrap" TextAlignment="Center"
+                       HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                <TextBlock.Text>
+                    <Binding/>
+                </TextBlock.Text>
+            </TextBlock>
+        </DataTemplate>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <!--кнопки управления-->
+            <RowDefinition Height="Auto"/>
+            <!--параметры заказа-->
+            <RowDefinition Height="*"/>
+            <!--параметры изделия-->
+        </Grid.RowDefinitions>
+        <WrapPanel Grid.Row="0" Margin="10" Orientation="Horizontal">
+            <Button Name="SaveRequestButton" Style="{StaticResource ButtonOfOrder}" Command="{Binding SaveRequest}" 
+                ToolTip="Сохранить данные по заказу и изделиям в БД" Visibility="{Binding ViewMode, Converter={StaticResource BoolToVisibilityConverter}}">
+                <StackPanel Orientation="Vertical">
+                    <Image Source="\Images\free-icon-floppy-disk_save.png" Width="25" Height="25"/>
+                    <Label Content="Сохранить"/>
+                </StackPanel>
+            </Button>
+            <Separator/>
+            <Button Name="PrintRequestFormButton" Style="{StaticResource ButtonOfOrder}" IsEnabled="{Binding OrderCardPrintOrderForm}">
+                <StackPanel Orientation="Vertical">
+                    <Image Source="\Images\free-icon-printer.png" Width="25" Height="25"/>
+                    <Label Content="Бланк"/>
+                </StackPanel>
+            </Button>
+            <Button Name="PrintRequestFormForDesignerButton" Style="{StaticResource ButtonOfOrder}" IsEnabled="{Binding OrderCardPrintOrderFormForDesigner}">
+                <StackPanel Orientation="Vertical">
+                    <Image Source="\Images\free-icon-printer.png" Width="25" Height="25"/>
+                    <Label Content="Бланк для дизайнера"/>
+                    <Image Source="\Images\downward-arrow.png" Width="15" Height="15"/>
+                </StackPanel>
+                <Button.ContextMenu>
+                    <ContextMenu Visibility="Hidden">
+                    </ContextMenu>
+                </Button.ContextMenu>
+            </Button>
+        </WrapPanel>
+        <StackPanel Grid.Row="1" Margin="5">
+            <Border Margin="5" BorderThickness="1" BorderBrush="DarkSlateGray">
+                <Grid Margin="5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="0.2*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="0.5*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="0.3*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="30"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Column="0" Grid.Row="0" Text=" Номер заказа: " VerticalAlignment="Center"/>
+                    <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Path=CurrentOrder.Number}" FontWeight="Bold" VerticalAlignment="Center"/>
+                    <TextBlock Grid.Column="3" Grid.Row="0" Text=" Заказчик: " VerticalAlignment="Center"/>
+                    <ComboBox  Grid.Column="4" Grid.Row="0" Name="ClientComboBox" VerticalAlignment="Center" IsEditable="False"
+                               ItemsSource="{Binding ClientCollectionView}"
+                               SelectedValue="{Binding Path=CurrentOrder.ClientID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  
+                               SelectedValuePath="ID" DisplayMemberPath="ShortName">
+                    </ComboBox>
+                    <TextBlock  Grid.Column="5" Grid.Row="0" Text=" Поиск: " VerticalAlignment="Center"/>
+                    <TextBox    Grid.Column="6" Grid.Row="0" Margin="0,0,5,0" Text="{Binding Path=SearchClient, UpdateSourceTrigger=PropertyChanged}"  VerticalAlignment="Center"/>
+                    <TextBlock  Grid.Column="0" Grid.Row="1" Text=" Дата приема заказа: " Style="{StaticResource UnderlineTextBlock}" VerticalAlignment="Center">
+                        <TextBlock.InputBindings>
+                            <MouseBinding Command="{Binding TextBlockMouseLeftClick}" CommandParameter="{Binding ElementName=DateDateAdmission}" MouseAction="LeftClick"/>
+                        </TextBlock.InputBindings>
+                    </TextBlock>
+                    <DatePicker Grid.Column="1" Grid.Row="1" Name="DateDateAdmission" SelectedDate="{Binding Path=CurrentOrder.DateAdmission, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, 
+                                ValidatesOnExceptions=True, ValidatesOnNotifyDataErrors=True}"
+                                IsEnabled="{Binding IsNewOrder}"
+                                IsTodayHighlighted="True" VerticalAlignment="Center"/>
+                    <TextBlock  Grid.Column="3" Grid.Row="1" Text=" Краткое описание: " VerticalAlignment="Center"/>
+                    <TextBox    Grid.Column="4" Grid.Row="1" Text="{Binding Path=CurrentOrder.Note, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                AcceptsReturn="True" TextAlignment="Left" TextWrapping="Wrap"
+                                VerticalAlignment="Center" VerticalContentAlignment="Top" HorizontalAlignment="Stretch"/>
+                    <TextBlock  Grid.Column="0" Grid.Row="2" Text=" Состояние заказа: " VerticalAlignment="Center"/>
+                    <TextBlock  Grid.Column="1" Grid.Row="2" TextWrapping="Wrap" Text="{Binding Path=CurrentOrder.State, Mode=TwoWay}" FontWeight="Bold" VerticalAlignment="Center"/>
+                    <TextBlock  Grid.Column="3" Grid.Row="2" Text=" Дата окончания работ(план): " Style="{StaticResource UnderlineTextBlock}" VerticalAlignment="Center">
+                        <TextBlock.InputBindings>
+                            <MouseBinding Command="{Binding TextBlockMouseLeftClick}" CommandParameter="{Binding ElementName=DateDateCompletion}" MouseAction="LeftClick"/>
+                        </TextBlock.InputBindings>
+                    </TextBlock>
+                    <DatePicker Grid.Column="4" Grid.Row="2" Width="110" VerticalAlignment="Center" HorizontalAlignment="Left" 
+                                IsEnabled="{Binding OrderCardDateCompletion}"
+                                SelectedDate="{Binding Path=CurrentOrder.DateCompletion, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, 
+                                ValidatesOnExceptions=True, ValidatesOnNotifyDataErrors=True}" IsTodayHighlighted="True"/>
+                    <TextBlock Grid.Column="0" Grid.Row="3" Text=" Заказ внес в базу: " VerticalAlignment="Center"/>
+                    <TextBlock Grid.Column="1" Grid.Row="3" Text="{Binding CurrentOrder.OrderEntered.FullUserName, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center"/>
+                    <TextBlock Grid.Column="3" Grid.Row="3" Text=" Менеджер: " VerticalAlignment="Center"/>
+                    <ComboBox  Grid.Column="4" Grid.Row="3" Name="ManagerComboBox" VerticalAlignment="Center" IsEditable="False"
+                               ItemsSource="{Binding ManagerList}" 
+                               SelectedValue="{Binding Path=CurrentOrder.ManagerID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  
+                               SelectedValuePath="ID" DisplayMemberPath="FullUserName">
+                    </ComboBox>
+                </Grid>
+            </Border>
+        </StackPanel>
+        <TabControl Grid.Row="2" Margin="10">
+            <TabItem Header="Изделия">
+                <Border BorderThickness="1" BorderBrush="DarkBlue">
+                    <Grid Margin="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="0,5*"/>
+                            <ColumnDefinition Width="0,5*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid Grid.Column="0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" Name="LabelAndButtonRow"/>
+                                <RowDefinition Height="Auto" Name="ListBoxTypeOfProductsRow"/>
+                                <RowDefinition Height="*" Name="ListViewProductsRow"/>
+                                <RowDefinition Height="Auto" Name="TotalProductsRow"/>
+                                <RowDefinition Height="180" Name="DateRow"/>
+                            </Grid.RowDefinitions>
+                            <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center">
+                                <TextBlock Text="Изделия" FontWeight="Bold" VerticalAlignment="Center"/>
+                                <Button Name="NewProductListButton" Background="Transparent" BorderBrush="Transparent" 
+                                        Command="{Binding ShowHideNewProductList}" CommandParameter="{Binding ElementName=NewProductGrid}"
+                                        Style="{StaticResource ButtonOfOrder}" 
+                                        Visibility="{Binding ElementName=NewProductGrid, Path=IsVisible, Converter={StaticResource BoolToVisibilityConverter}}"
+                                        Margin="10,0,0,0" ToolTip="Добавить изделие (показать список)">
+                                    <Image Source="/Images/free-icon-add-button.png" Width="20" Height="20"/>
+                                </Button>
+                                <Button Background="Transparent" BorderBrush="Transparent" 
+                                        Visibility="{Binding ElementName=NewProductGrid, Path=Visibility}"
+                                        Style="{StaticResource ButtonOfOrder}" Command="{Binding ShowHideNewProductList}" CommandParameter="{Binding ElementName=NewProductGrid}"
+                                        Margin="10,0,0,0" ToolTip="Свернуть список изделий">
+                                    <Image Source="/Images/free-icon-minus-button.png" Width="20" Height="20"/>
+                                </Button>
+                                <Button Background="Transparent" BorderBrush="Transparent" 
+                                        Style="{StaticResource ButtonOfOrder}" 
+                                        Margin="0,0,0,0" ToolTip="Отметить изделие для удаления">
+                                    <Image Source="/Images/free-icon-bin-Recycler.png" Width="20" Height="20"/>
+                                </Button>
+                            </StackPanel>
+                            <Grid Grid.Row="1" Name="NewProductGrid" Margin="5,0,5,0" Visibility="Collapsed">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <StackPanel Orientation="Horizontal" Margin="0,5,0,5" HorizontalAlignment="Center">
+                                    <TextBlock Text="Поиск по наименованию изделия: "/>
+                                    <TextBox Name="FindNewProductTextBox" Text="" Width="300"
+                                             ToolTip="Введите фрагмент наименования изделия"/>
+                                </StackPanel>
+                                <ListBox Grid.Row="1" Name="NewProductListBox" IsSynchronizedWithCurrentItem="true"
+                                     ScrollViewer.VerticalScrollBarVisibility="Auto"                                     
+                                     ItemsSource="{Binding ProductTypeCollectionView, Mode=OneTime}"
+                                     DisplayMemberPath="Name">
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="MouseDoubleClick">
+                                            <i:InvokeCommandAction Command="{Binding SelectNewProduct}" CommandParameter="{Binding ElementName=NewProductListBox, Path=SelectedItem}"/>
+                                            <i:InvokeCommandAction Command="{Binding ShowHideNewProductList}" CommandParameter="{Binding ElementName=NewProductGrid}"/>
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+                                    <ListBox.GroupStyle>
+                                        <GroupStyle>
+                                            <GroupStyle.ContainerStyle>
+                                                <Style TargetType="{x:Type GroupItem}">
+                                                    <Setter Property="Margin" Value="0,0,0,5"/>
+                                                    <Setter Property="Template">
+                                                        <Setter.Value>
+                                                            <ControlTemplate TargetType="{x:Type GroupItem}">
+                                                                <Expander Name="GroupProductExpander" BorderBrush="AntiqueWhite" BorderThickness="0,0,0,1"
+                                                                          IsHitTestVisible="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBoxItem}, Path=IsSelected}" 
+                                                                          IsExpanded="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBoxItem}, Path=IsSelected}">
+                                                                    <Expander.Header>
+                                                                        <DockPanel>
+                                                                            <TextBlock FontWeight="Bold" Text="{Binding Path=Name}" Margin="5,0,0,0" Width="300"/>
+                                                                        </DockPanel>
+                                                                    </Expander.Header>
+                                                                    <Expander.Content>
+                                                                        <ItemsPresenter/>
+                                                                    </Expander.Content>
+                                                                </Expander>
+                                                            </ControlTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style>
+                                            </GroupStyle.ContainerStyle>
+                                        </GroupStyle>
+                                    </ListBox.GroupStyle>
+                                </ListBox>
+                            </Grid>
+                            <ListView Grid.Row="2" Name="ListProduct" Margin="5" Padding="2" IsSynchronizedWithCurrentItem="True"
+                                      ItemsSource="{Binding CurrentOrder.Products, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" 
+                                      ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                      PreviewKeyDown="ListViewUpAndDown_PreviewKeyDown">
+                                <ListView.View>
+                                    <GridView>
+                                        <GridView.Columns>
+                                            <GridViewColumn x:Name="column1" Header=" Наименование " Width="250"
+                                                            DisplayMemberBinding="{Binding Path=ProductType.Name}"
+                                                            HeaderTemplate="{StaticResource ListViewHeaderTemplate}"/>
+                                            <!--<GridViewColumn x:Name="column2" Header=" Кол-во " Width="80" HeaderTemplate="{StaticResource ListViewHeaderTemplate}">
+                                                <GridViewColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <TextBox Name="QuantityTextBox" HorizontalContentAlignment="Right" Width="70"
+                                                                     Text="{Binding Path=Quantity, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, 
+                                                                            ValidatesOnExceptions=True, ValidatesOnNotifyDataErrors=True}" 
+                                                                     GotFocus="QuantityTextBox_GotFocus">
+                                                            <TextBox.IsEnabled>
+                                                                <MultiBinding Converter="{StaticResource AddBoolConverter}" ConverterParameter="True">
+                                                                    <Binding Source="{StaticResource productsViewSource}" Path="DateTransferProduction" Converter="{StaticResource NullDateTimeToBoolConverter}"/>
+                                                                    <Binding RelativeSource="{RelativeSource AncestorType=local:OrderWindow}" Path="DataContext.IsManager"/>
+                                                                </MultiBinding>
+                                                            </TextBox.IsEnabled>
+                                                        </TextBox>
+                                                    </DataTemplate>
+                                                </GridViewColumn.CellTemplate>
+                                            </GridViewColumn>
+                                            <GridViewColumn x:Name="column3" Header=" Стоимость " Width="100" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
+                                                                DisplayMemberBinding="{Binding Path=Cost, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ConverterCulture=ru-RU, StringFormat={}{0:C}}">
+                                            </GridViewColumn>
+                                            <GridViewColumn Header=" Дизайнер " Width="200" HeaderTemplate="{StaticResource ListViewHeaderTemplate}">
+                                                <GridViewColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <ComboBox VerticalAlignment="Center" IsEditable="False" Width="190"
+                                                                      IsEnabled="{Binding Source={StaticResource ViewModel}, Path=OrderCardProductDesigner}"
+                                                                      ItemsSource="{Binding Source={StaticResource ViewModel}, Path=DesignerList}" 
+                                                                      SelectedValuePath="ID" DisplayMemberPath="FullUserName"
+                                                                      SelectedValue="{Binding Path=DesignerID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                                                      GotFocus="DesignerComboBox_GotFocus">
+                                                        </ComboBox>
+                                                    </DataTemplate>
+                                                </GridViewColumn.CellTemplate>
+                                            </GridViewColumn>-->
+                                        </GridView.Columns>
+                                    </GridView>
+                                </ListView.View>
+                            </ListView>
+                        </Grid>
+                        <TabControl Grid.Column="1">
+                            <TabItem Header="Описание">
+
+                            </TabItem>
+                        </TabControl>
+                    </Grid>
+                </Border>
+            </TabItem>
+            <TabItem Header="Платежи">
+                
+            </TabItem>
+            <TabItem Header="Стоимость и затраты по КВД">
+
+            </TabItem>
+            <TabItem Header="ПУДы">
+
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Window>

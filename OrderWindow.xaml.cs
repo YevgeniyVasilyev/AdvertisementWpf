@@ -1972,7 +1972,7 @@ namespace AdvertisementWpf
             MainWindow.statusBar.WriteStatus("Загрузка техкарт ...", Cursors.Wait);
             try
             {
-                if (techCardsViewSource != null && techCardsViewSource.View != null)
+                if (techCardsViewSource?.View != null)
                 {
                     foreach (EntityEntry entityEntry in _context_.ChangeTracker.Entries().ToArray()) //для повторной загрузки из БД
                     {

@@ -140,7 +140,8 @@ namespace AdvertisementWpf.Models
 
         public virtual Order Order { get; set; }
         public virtual ICollection<ProductCost> ProductCosts { get; set; }
-        public virtual ProductType ProductType { get; set; }
+        //public virtual ProductType ProductType { get; set; }
+        public ProductType ProductType { get; set; }
         public virtual User Designer { get; set; }
         public virtual TechCard TechCard { get; set; }
 
