@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -13,6 +15,21 @@ namespace AdvertisementWpf.Models
 {
     public partial class Order : INotifyPropertyChanged
     {
+        public Order()
+        {
+            //Products = new HashSet<Product>();
+            Products = new List<Product> { };
+            Payments = new HashSet<Payment>();
+            Accounts = new HashSet<Account>();
+        }
+
+        private ObservableCollection<Product> _products { get; set; }
+        public ICollection<Product> Products
+        {
+            get => _products;
+            set => _products = new ObservableCollection<Product>(value);
+        }
+
         [NotMapped]
         public DateTime? AccountDate => Accounts?.FirstOrDefault()?.AccountDate ?? null;
         [NotMapped]
@@ -121,7 +138,7 @@ namespace AdvertisementWpf.Models
 
     internal class OrderViewModel : ISave, ILoad, IAdd, INotifyPropertyChanged
     {
-        private RelayCommand saveRequest, textBlockMouseLeftClick, showHideNewProductList, selectNewProduct;
+        private RelayCommand saveRequest, textBlockMouseLeftClick, showHideNewProductList, selectNewProduct, deleteProduct;
         private App.AppDbContext _contextOrder_ = CreateDbContext.CreateContext();
         private string _searchClient = "";
         public string SearchClient
@@ -133,6 +150,16 @@ namespace AdvertisementWpf.Models
                 ClientCollectionView.Refresh();
             }
         }
+        private string _searchTypeOfProduct = "";
+        public string SearchTypeOfProduct
+        {
+            get => _searchTypeOfProduct;
+            set
+            {
+                _searchTypeOfProduct = value;
+                ProductTypeCollectionView.Refresh();
+            }
+        }
         public ICollectionView ClientCollectionView { get; set; }       //крллеция "Киенты" AsNoTracking, с фильтрацией
         public ICollectionView ProductTypeCollectionView { get; set; }  //коллекция "Виды изделий" AsNoTracking, с фильтрацией и группировкой
         public List<User> UserList { get; set; }                        //список "Пользователи" AsNoTracking
@@ -140,6 +167,7 @@ namespace AdvertisementWpf.Models
         public List<User> DesignerList { get; set; }                    //список "Дизайнеры" AsNoTracking
         public Order CurrentOrder { get; set; }                         //текущий заказ
         public bool ViewMode { get; set; } = false;                     //режим "просмотр" для карточки заказа
+        public int ErrorsCount = 0;
 
         //определяют доступ к элементам интерфейса
         public bool ProductCostAndCostsKVDCostsChange { get; set; }
@@ -167,7 +195,7 @@ namespace AdvertisementWpf.Models
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        //TO DO: добавление нового изделия, удаление изделия из списка, поиск по списку новых изделий, сохранение заказа(новый номер и проверить)
+         //TO DO: ИТОГО по изделиям (ОБНОВЛЕНИЕ !!!!), даты, "внутренности" изделия
 
         public OrderViewModel(long nOrderID = 0, bool lViewMode = false)
         {
@@ -199,6 +227,7 @@ namespace AdvertisementWpf.Models
                 MainWindow.statusBar.ClearStatus();
             }
         }
+
         ~OrderViewModel()
         {
             if (_contextOrder_ != null)
@@ -212,6 +241,12 @@ namespace AdvertisementWpf.Models
         {
             Client client = item as Client;
             return string.IsNullOrEmpty(_searchClient) || client.Name.IndexOf(_searchClient, StringComparison.OrdinalIgnoreCase) >= 0;
+        }
+
+        private bool TypeOfProductFilter(object item) //поиск(фильтрация) видов изделий
+        {
+            ProductType productType = item as ProductType;
+            return string.IsNullOrEmpty(_searchTypeOfProduct) || productType.Name.IndexOf(_searchTypeOfProduct, StringComparison.OrdinalIgnoreCase) >= 0;
         }
 
         private string GenerateNewOrderNumber(long Number)
@@ -228,7 +263,7 @@ namespace AdvertisementWpf.Models
                 ((ISave)this).SaveContext(ref _contextOrder_, IsMutedMode: true);   //сохранить в "тихом режиме"
                 IsNewOrder = false;
             }
-        }, (o) => _contextOrder_ != null );
+        }, (o) => _contextOrder_ != null && ErrorsCount == 0);
         
         public RelayCommand ShowHideNewProductList => showHideNewProductList ??= new RelayCommand((o) => //команда "отобразить список выбора нового изделия"
         {
@@ -241,13 +276,17 @@ namespace AdvertisementWpf.Models
             {
                 CurrentOrder.Products.Add(product);
                 product.ProductType = ((IAdd)this).AddSingleToContext(ref _contextOrder_, product.ProductType, delegate (ProductType p) { return p.ID == product.ProductTypeID; }); //добавить св-во навигации ProductType
-                ICollectionView view = CollectionViewSource.GetDefaultView(CurrentOrder.Products);
-                view.Refresh();     //обновить представление для Products
                 //_ = CountTotals();
-                //_ = productsViewSource.View.MoveCurrentTo(product);
-                //productsViewSource.View.Refresh();
             };
         }, (o) => _contextOrder_ != null && ProductTypeCollectionView != null);
+
+        public RelayCommand DeleteProduct => deleteProduct ??= new RelayCommand((o) => //команда "отметить изделие для удаления"
+        {
+            if (o is Product product)
+            {
+                _ = CurrentOrder.Products.Remove(product);
+            };
+        }, (o) => _contextOrder_ != null && CurrentOrder?.Products?.Count > 0l);
 
         public RelayCommand TextBlockMouseLeftClick => textBlockMouseLeftClick ??= new RelayCommand((o) => //команда на клик по TextBlock
         {
@@ -290,6 +329,7 @@ namespace AdvertisementWpf.Models
             ProductTypeCollectionView.SortDescriptions.Add(sortDescription);
             sortDescription = new SortDescription("Name", ListSortDirection.Ascending);
             ProductTypeCollectionView.SortDescriptions.Add(sortDescription);
+            ProductTypeCollectionView.Filter = TypeOfProductFilter;
             CurrentOrder = _contextOrder_.Orders
                 .Include(Order => Order.Products)
                 .ThenInclude(Product => Product.ProductType)
@@ -311,3 +351,4 @@ namespace AdvertisementWpf.Models
         }
     }
 }
+

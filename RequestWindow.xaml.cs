@@ -1,6 +1,7 @@
 ﻿using AdvertisementWpf.Models;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -122,6 +123,37 @@ namespace AdvertisementWpf
                 }
             }
             return foundElement;
+        }
+
+        private void QuantityTextBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            if (sender is TextBox txtBox)
+            {
+                _ = ListProduct.Items.MoveCurrentTo(txtBox.GetBindingExpression(TextBox.TextProperty).DataItem);
+            }
+        }
+
+        private void DesignerComboBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            if (sender is ComboBox comboBox)
+            {                
+                _ = ListProduct.Items.MoveCurrentTo(comboBox.GetBindingExpression(System.Windows.Controls.Primitives.Selector.SelectedValueProperty).DataItem);
+            }
+        }
+
+        private void TextBoxError(object sender, ValidationErrorEventArgs e)
+        {
+            FieldInfo fieldInfo = DataContext.GetType().GetField("ErrorsCount"); //получить поле ErrorsCount из DataContext
+            int ErrorsCount = (int)fieldInfo.GetValue(DataContext);
+            if (e.Action == ValidationErrorEventAction.Added)
+            {
+                ErrorsCount++; //увеличить счетчик кол-ва ошибок
+            }
+            else
+            {
+                ErrorsCount--; //уменьшить счетчик кол-ва ошибок
+            }
+            fieldInfo.SetValue(DataContext, ErrorsCount); //изменить счетчик кол-ва ошибок
         }
     }
 }

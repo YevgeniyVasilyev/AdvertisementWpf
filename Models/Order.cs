@@ -9,14 +9,6 @@ namespace AdvertisementWpf.Models
 {
     public partial class Order
     {
-        public Order()
-        {
-            //Products = new HashSet<Product>();
-            Products = new List<Product> { };
-            Payments = new HashSet<Payment>();
-            Accounts = new HashSet<Account>();
-        }
-
         //[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long ID { get; set; }
         private string _number = "";
@@ -44,7 +36,7 @@ namespace AdvertisementWpf.Models
         //public virtual User Manager { get; set; }
         public User OrderEntered { get; set; }
         //public virtual User OrderEntered { get; set; }
-        public virtual ICollection<Product> Products { get; set; }
+        //public virtual ICollection<Product> Products { get; set; }
         public virtual ICollection<Payment> Payments { get; set; }
         public virtual ICollection<Account> Accounts { get; set; }
     }

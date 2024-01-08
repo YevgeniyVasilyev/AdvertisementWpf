@@ -27,6 +27,9 @@
             <local:BoolNotBoolConverter/>
             <BooleanToVisibilityConverter/>
         </local:ValueConverterGroup>
+        <local:AddBoolConverter x:Key="AddBoolConverter"/>
+        <local:NullDateTimeToBoolConverter x:Key="NullDateTimeToBoolConverter"/>
+        <local:SumListViewDecimalConverter x:Key="SumListViewDecimalConverter"/>
         <Style x:Key="DropShadow" TargetType="{x:Type FrameworkElement}">
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
@@ -80,7 +83,7 @@
                     <Image Source="\Images\free-icon-floppy-disk_save.png" Width="25" Height="25"/>
                     <Label Content="Сохранить"/>
                 </StackPanel>
-            </Button>
+             </Button>
             <Separator/>
             <Button Name="PrintRequestFormButton" Style="{StaticResource ButtonOfOrder}" IsEnabled="{Binding OrderCardPrintOrderForm}">
                 <StackPanel Orientation="Vertical">
@@ -195,7 +198,7 @@
                                     <Image Source="/Images/free-icon-minus-button.png" Width="20" Height="20"/>
                                 </Button>
                                 <Button Background="Transparent" BorderBrush="Transparent" 
-                                        Style="{StaticResource ButtonOfOrder}" 
+                                        Style="{StaticResource ButtonOfOrder}" Command="{Binding DeleteProduct}" CommandParameter="{Binding ElementName=ListProduct, Path=SelectedItem}"
                                         Margin="0,0,0,0" ToolTip="Отметить изделие для удаления">
                                     <Image Source="/Images/free-icon-bin-Recycler.png" Width="20" Height="20"/>
                                 </Button>
@@ -207,7 +210,7 @@
                                 </Grid.RowDefinitions>
                                 <StackPanel Orientation="Horizontal" Margin="0,5,0,5" HorizontalAlignment="Center">
                                     <TextBlock Text="Поиск по наименованию изделия: "/>
-                                    <TextBox Name="FindNewProductTextBox" Text="" Width="300"
+                                    <TextBox Text="{Binding Path=SearchTypeOfProduct, UpdateSourceTrigger=PropertyChanged}" Width="300"
                                              ToolTip="Введите фрагмент наименования изделия"/>
                                 </StackPanel>
                                 <ListBox Grid.Row="1" Name="NewProductListBox" IsSynchronizedWithCurrentItem="true"
@@ -259,17 +262,17 @@
                                             <GridViewColumn x:Name="column1" Header=" Наименование " Width="250"
                                                             DisplayMemberBinding="{Binding Path=ProductType.Name}"
                                                             HeaderTemplate="{StaticResource ListViewHeaderTemplate}"/>
-                                            <!--<GridViewColumn x:Name="column2" Header=" Кол-во " Width="80" HeaderTemplate="{StaticResource ListViewHeaderTemplate}">
+                                            <GridViewColumn x:Name="column2" Header=" Кол-во " Width="80" HeaderTemplate="{StaticResource ListViewHeaderTemplate}">
                                                 <GridViewColumn.CellTemplate>
                                                     <DataTemplate>
                                                         <TextBox Name="QuantityTextBox" HorizontalContentAlignment="Right" Width="70"
-                                                                     Text="{Binding Path=Quantity, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, 
-                                                                            ValidatesOnExceptions=True, ValidatesOnNotifyDataErrors=True}" 
-                                                                     GotFocus="QuantityTextBox_GotFocus">
+                                                                 Text="{Binding Path=Quantity, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, 
+                                                                        NotifyOnValidationError=True, NotifyOnSourceUpdated=True}" Validation.Error="TextBoxError" 
+                                                                 GotFocus="QuantityTextBox_GotFocus">
                                                             <TextBox.IsEnabled>
                                                                 <MultiBinding Converter="{StaticResource AddBoolConverter}" ConverterParameter="True">
-                                                                    <Binding Source="{StaticResource productsViewSource}" Path="DateTransferProduction" Converter="{StaticResource NullDateTimeToBoolConverter}"/>
-                                                                    <Binding RelativeSource="{RelativeSource AncestorType=local:OrderWindow}" Path="DataContext.IsManager"/>
+                                                                    <Binding Path="DateTransferProduction" Converter="{StaticResource NullDateTimeToBoolConverter}"/>
+                                                                    <Binding RelativeSource="{RelativeSource AncestorType=local:RequestWindow}" Path="DataContext.IsManager"/>
                                                                 </MultiBinding>
                                                             </TextBox.IsEnabled>
                                                         </TextBox>
@@ -277,25 +280,109 @@
                                                 </GridViewColumn.CellTemplate>
                                             </GridViewColumn>
                                             <GridViewColumn x:Name="column3" Header=" Стоимость " Width="100" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
-                                                                DisplayMemberBinding="{Binding Path=Cost, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ConverterCulture=ru-RU, StringFormat={}{0:C}}">
+                                                            DisplayMemberBinding="{Binding Path=Cost, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ConverterCulture=ru-RU, StringFormat={}{0:C}}">
                                             </GridViewColumn>
                                             <GridViewColumn Header=" Дизайнер " Width="200" HeaderTemplate="{StaticResource ListViewHeaderTemplate}">
                                                 <GridViewColumn.CellTemplate>
                                                     <DataTemplate>
                                                         <ComboBox VerticalAlignment="Center" IsEditable="False" Width="190"
-                                                                      IsEnabled="{Binding Source={StaticResource ViewModel}, Path=OrderCardProductDesigner}"
-                                                                      ItemsSource="{Binding Source={StaticResource ViewModel}, Path=DesignerList}" 
-                                                                      SelectedValuePath="ID" DisplayMemberPath="FullUserName"
-                                                                      SelectedValue="{Binding Path=DesignerID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                                                                      GotFocus="DesignerComboBox_GotFocus">
+                                                                  IsEnabled="{Binding RelativeSource={RelativeSource AncestorType=local:RequestWindow}, Path=DataContext.OrderCardProductDesigner}"
+                                                                  ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=local:RequestWindow}, Path=DataContext.DesignerList}" 
+                                                                  SelectedValuePath="ID" DisplayMemberPath="FullUserName"
+                                                                  SelectedValue="{Binding Path=DesignerID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                                                  GotFocus="DesignerComboBox_GotFocus">
                                                         </ComboBox>
                                                     </DataTemplate>
                                                 </GridViewColumn.CellTemplate>
-                                            </GridViewColumn>-->
+                                            </GridViewColumn>
                                         </GridView.Columns>
                                     </GridView>
                                 </ListView.View>
                             </ListView>
+                            <Border Grid.Row="3" Margin="5,0,5,0" BorderThickness="1" BorderBrush="DodgerBlue">
+                                <Grid Margin="2,0,2,2">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="{Binding ElementName=column1, Path=Width}"/>
+                                        <ColumnDefinition Width="{Binding ElementName=column2, Path=Width}"/>
+                                        <ColumnDefinition Width="{Binding ElementName=column3, Path=Width}"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="ИТОГО:" Margin="10,0,0,0" FontWeight="Bold" Grid.ColumnSpan="2"/>
+                                    <TextBlock Margin="0,0,5,0" Grid.Column="1" Text="{Binding ElementName=ListProduct,Path=Items.Count, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Right" FontWeight="Bold"/>
+                                    <TextBlock Grid.Column="2" Text="{Binding ElementName=ListProduct, Path=ItemsSource, Converter={StaticResource SumListViewDecimalConverter}, ConverterParameter=Cost, StringFormat={}{0:C}, ConverterCulture='ru-RU'}" 
+                                               Margin="7,0,0,0" HorizontalAlignment="Left" FontWeight="Bold"/>
+                                </Grid>
+                            </Border>
+                            <StackPanel Grid.Row="4">
+                                <Label Content="Даты" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                <Grid Margin="5">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition Width="10"/>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                    <TextBlock Grid.Column="0" Grid.Row="0" Text="Сдать изделие (план): " Style="{StaticResource UnderlineTextBlock}" VerticalAlignment="Center">
+                                        <TextBlock.InputBindings>
+                                            <MouseBinding Command="{Binding TextBlockMouseLeftClick}" CommandParameter="{Binding ElementName=DateDeliveryPlan}" MouseAction="LeftClick"/>
+                                        </TextBlock.InputBindings>
+                                    </TextBlock>
+                                    <DatePicker Grid.Column="1" Grid.Row="0" Name="DateDeliveryPlan" IsEnabled="{Binding OrderCardProductDateProductionLayout}"
+                                                SelectedDate="{Binding ElementName=ListProduct, Path=SelectedItem.DateDeliveryPlan, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                IsTodayHighlighted="True"/>
+                                    <TextBlock Grid.Column="0" Grid.Row="1" Text="Сдать макет: " Style="{StaticResource UnderlineTextBlock}" VerticalAlignment="Center">
+                                        <TextBlock.InputBindings>
+                                            <MouseBinding Command="{Binding TextBlockMouseLeftClick}" CommandParameter="{Binding ElementName=DateProductionLayout}" MouseAction="LeftClick"/>
+                                        </TextBlock.InputBindings>
+                                    </TextBlock>
+                                    <DatePicker Grid.Column="1" Grid.Row="1" Name="DateProductionLayout" IsEnabled="{Binding OrderCardProductDateTransferDesigner}"
+                                                SelectedDate="{Binding ElementName=ListProduct, Path=SelectedItem.DateProductionLayout, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                                IsTodayHighlighted="True"/>
+                                    <TextBlock Grid.Column="0" Grid.Row="2" Text="Передано дизайнеру: " Style="{StaticResource UnderlineTextBlock}" VerticalAlignment="Center">
+                                        <TextBlock.InputBindings>
+                                            <MouseBinding Command="{Binding TextBlockMouseLeftClick}" CommandParameter="{Binding ElementName=DateProductionLayout}" MouseAction="LeftClick"/>
+                                        </TextBlock.InputBindings>
+                                    </TextBlock>
+                                    <!--<DatePicker Grid.Column="1" Grid.Row="2" Name="DateTransferDesignerDate" SelectedDate="{Binding Source={StaticResource productsViewSource}, 
+                                                Path=DateTransferDesigner, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, 
+                                                NotifyOnSourceUpdated=True,
+                                                ValidatesOnExceptions=True, ValidatesOnNotifyDataErrors=True}" 
+                                                IsTodayHighlighted="True" SourceUpdated="DatePicker_SourceUpdated"/>
+                                    <Label Name="DateTransferApprovalLabel" Content="Передано на утверждение: " Grid.Column="0" Grid.Row="3" Style="{StaticResource UnderlineLabel}" MouseLeftButtonDown="Label_MouseLeftButtonDown"/>
+                                    <DatePicker Name="DateTransferApprovalDate" Grid.Column="1" Grid.Row="3" SelectedDate="{Binding Source={StaticResource productsViewSource}, 
+                                                Path=DateTransferApproval, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, 
+                                                NotifyOnSourceUpdated=True,
+                                                IsTodayHighlighted="True" 
+                                                SourceUpdated="DatePicker_SourceUpdated"/>
+                                    <Label Name="DateApprovalLabel" Content="Утверждено: " Grid.Column="0" Grid.Row="4" Style="{StaticResource UnderlineLabel}" MouseLeftButtonDown="Label_MouseLeftButtonDown"/>
+                                    <DatePicker Name="DateApprovalDate" Grid.Column="1" Grid.Row="4" SelectedDate="{Binding Source={StaticResource productsViewSource}, 
+                                                Path=DateApproval, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, 
+                                                NotifyOnSourceUpdated=True,
+                                                ValidatesOnExceptions=True, ValidatesOnNotifyDataErrors=True}" IsTodayHighlighted="True" 
+                                                SourceUpdated="DatePicker_SourceUpdated"/>                                    
+                                    <Label Name="DateTransferProductionLabel" Content="Передано в производство: " Grid.Column="3" Grid.Row="0" VerticalContentAlignment="Center"/>
+                                    <TextBlock Grid.Column="4" Grid.Row="0" Text="{Binding Source={StaticResource productsViewSource}, Path=DateTransferProduction, StringFormat=\{0:dd.MM.yyyy\}}" VerticalAlignment="Center"/>
+                                    <Label Name="DateManufactureLabel" Content="Изготовлено: " Grid.Column="3" Grid.Row="1"/>
+                                    <TextBlock Grid.Column="4" Grid.Row="1" Text="{Binding Source={StaticResource productsViewSource}, Path=DateManufacture, StringFormat=\{0:dd.MM.yyyy\}}" VerticalAlignment="Center"/>
+                                    <Label Name="DateShipmentLabel" Content="Отгружено: " Grid.Column="3" Grid.Row="2" Style="{StaticResource UnderlineLabel}" MouseLeftButtonDown="Label_MouseLeftButtonDown"/>
+                                    <DatePicker Name="DateShipmentDate" Grid.Column="4" Grid.Row="2" SelectedDate="{Binding Source={StaticResource productsViewSource}, 
+                                                Path=DateShipment, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, 
+                                                NotifyOnSourceUpdated=True,
+                                                ValidatesOnExceptions=True, ValidatesOnNotifyDataErrors=True}" IsTodayHighlighted="True" 
+                                                SourceUpdated="DatePicker_SourceUpdated" IsEnabled="{Binding Source={StaticResource productsViewSource}, Path=DateManufacture, Converter={StaticResource NullDateTimeToBoolConverter}}"/>
+                                    <Label Content="Состояние изделия: " Grid.Column="3" Grid.Row="3"/>
+                                    <TextBlock x:Name="ProductState" TextWrapping="Wrap" VerticalAlignment="Center"
+                                                Text="{Binding Source={StaticResource productsViewSource}, 
+                                                Path=State, Mode=TwoWay}" FontWeight="Bold" Grid.Column="4" Grid.Row="3"/>-->
+                                </Grid>
+                            </StackPanel>
                         </Grid>
                         <TabControl Grid.Column="1">
                             <TabItem Header="Описание">

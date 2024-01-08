@@ -75,8 +75,8 @@ namespace AdvertisementWpf
 
         private void BankComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            PropertyInfo bankList = DataContext.GetType().GetProperty("BankList", BindingFlags.Public | BindingFlags.Instance); //получить Свойство UserList из DataContext
-            ICollectionView collectionView = bankList.GetValue(DataContext) as ICollectionView; //получить значение этого свойства в DataContext
+            //PropertyInfo bankList = DataContext.GetType().GetProperty("BankList", BindingFlags.Public | BindingFlags.Instance); //получить Свойство UserList из DataContext
+            //ICollectionView collectionView = bankList.GetValue(DataContext) as ICollectionView; //получить значение этого свойства в DataContext
             ClientViewModel clientViewModel = (ClientViewModel)Clients_Tab.DataContext; //БОЛЕЕ ПРОСТОЙ СПОСОБ ДОБРАТЬСЯ ДО DataContext
             if (sender is ComboBox && clientViewModel?.Clients?.CurrentItem is Client client && clientViewModel?._context != null)
             {
