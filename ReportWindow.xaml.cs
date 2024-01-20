@@ -82,7 +82,7 @@ namespace AdvertisementWpf
         {
             if (reportsViewSource?.View != null && reportsViewSource.View.CurrentItem is Report report)
             {
-                if (report.Code == "RORW" || report.Code == "BCAFPD" || report.Code == "__AR")
+                if (report.Code == "RORW" || report.Code == "RORWRP" ||  report.Code == "BCAFPD" || report.Code == "__AR")
                 {
                     usersViewSource.Source = usersList.Where(u => IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, u.RoleID, "ListManager")); //только менеджеры
                 }
@@ -188,19 +188,19 @@ namespace AdvertisementWpf
                             }
                             if ((bool)MonthDate.IsChecked) //отбор за "месяц"
                             {
-                                List<byte> nMonth = new List<byte> { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
                                 dBeginPeriod = new DateTime(DateTime.Today.Year, MonthCheckBox.SelectedIndex + 1, 1);
-                                dEndPeriod = new DateTime(DateTime.Today.Year, MonthCheckBox.SelectedIndex + 1, nMonth[MonthCheckBox.SelectedIndex] + (DateTime.IsLeapYear(DateTime.Today.Year) ? 1 : 0), 23, 59, 59);
+                                dEndPeriod = new DateTime(DateTime.Today.Year, MonthCheckBox.SelectedIndex + 1, DateTime.DaysInMonth(DateTime.Today.Year, MonthCheckBox.SelectedIndex + 1), 23, 59, 59);
                             }
                             if ((bool)DayDate.IsChecked && DayDateTime.SelectedDate.HasValue) //отбор за "день"
                             {
                                 dBeginPeriod = DayDateTime.SelectedDate.Value;
-                                dEndPeriod = dBeginPeriod;
+                                dEndPeriod = new DateTime(dBeginPeriod.Year, dBeginPeriod.Month, dBeginPeriod.Day, 23, 59, 59);
                             }
                             if ((bool)PeriodDate.IsChecked && StartDate.SelectedDate.HasValue && EndDate.SelectedDate.HasValue) //отбор за "произвольный интервал"
                             {
                                 dBeginPeriod = StartDate.SelectedDate.Value;
                                 dEndPeriod = EndDate.SelectedDate.Value;
+                                dEndPeriod = new DateTime(dEndPeriod.Year, dEndPeriod.Month, dEndPeriod.Day, 23, 59, 59);
                             }
                         }
                         if (UserGroupBox.IsEnabled) //обработка условия "Сотрудники"
@@ -328,16 +328,41 @@ namespace AdvertisementWpf
                     else if (report.Code == "RORW")
                     {
                         Reports.ReportMode = report.Code;
-                        Reports.ProductCostDataSet = _report.ProductCosts.AsNoTracking()
-                            .Include(ProductCost => ProductCost.Product)
-                            .Include(ProductCost => ProductCost.Product.ProductType)
-                            .Include(ProductCost => ProductCost.Product.Order)
-                            .Include(ProductCost => ProductCost.Product.Order.Manager)
-                            .Where(ProductCost => ProductCost.Product.DateManufacture >= beginPeriod && ProductCost.Product.DateManufacture <= endPeriod && usersList.Contains(ProductCost.Product.Order.Manager))
-                            .ToList();
+
+                        var orders = from o in _report.Orders
+                                     join m in _report.Users on o.ManagerID equals m.ID
+                                     where usersList.Contains(o.Manager)
+                                     group o by new { o.ID, o.Number, m.FirstName, m.LastName, m.MiddleName } into grp
+                                     select new
+                                     {
+                                         orderID = grp.Key.ID,
+                                         number = grp.Key.Number,
+                                         manager = $"{grp.Key.FirstName} {grp.Key.LastName} {grp.Key.MiddleName}"
+                                     };
+
+                        var products = (from op in orders.ToList()
+                                        join p in _report.Products on op.orderID equals p.OrderID
+                                        join pt in _report.ProductTypes on p.ProductTypeID equals pt.ID
+                                        join pc in _report.ProductCosts on p.ID equals pc.ProductID
+                                        where p.DateManufacture >= beginPeriod && p.DateManufacture <= endPeriod
+                                        group p by new { op.orderID, p.Quantity, op.number, op.manager } into grp
+                                        select new
+                                        {
+                                            id = grp.Key.orderID,
+                                            grp.Key.number,
+                                            Name = grp.First().ProductType.Name,
+                                            cost = grp.First().ProductCosts.Sum(pc => pc.Cost),
+                                            outlay = grp.First().ProductCosts.Sum(pc => pc.Outlay),
+                                            quantity = grp.Key.Quantity,
+                                            DateManufacture = grp.First().DateManufacture,
+                                            grp.Key.manager
+                                        }).OrderBy(p => p.id);
+
+                        Reports.ObjectDataSet = new List<object> { };
+                        Reports.ObjectDataSet.AddRange(products);
                         Reports.BeginPeriod = beginPeriod;
                         Reports.EndPeriod = endPeriod;
-                        lCanMakeReport = Reports.ProductCostDataSet.Count > 0;
+                        lCanMakeReport = Reports.ObjectDataSet.Count > 0;
                     }
                     else if (report.Code == "BCAFPD" && usersList.Count > 0)
                     {
@@ -459,6 +484,26 @@ namespace AdvertisementWpf
                         Reports.BeginPeriod = beginPeriod;
                         Reports.EndPeriod = endPeriod;
                         lCanMakeReport = Reports.ObjectDataSet.Count > 0;
+                    }
+                    else if (report.Code == "RORWRP")
+                    {
+                        Reports.ReportMode = report.Code;
+                        Reports.OrderDataSet = _report.Orders
+                            .Include(Order => Order.Products).ThenInclude(Product => Product.ProductCosts)
+                            .Include(Order => Order.Products).ThenInclude(Product => Product.ProductCosts).ThenInclude(ProductCost => ProductCost.TypeOfActivity)
+                            .Include(Order => Order.Products).ThenInclude(Product => Product.ProductType)
+                            .Where(Order => usersList.Contains(Order.Manager) && Order.Products.Any(Product => Product.DateManufacture >= beginPeriod && Product.DateManufacture <= endPeriod))
+                            .AsNoTracking()
+                            .OrderBy(Order => Order.ID)
+                            .ToList();
+                        foreach (Order order in Reports.OrderDataSet)
+                        {
+                            order.Products = order.Products.Where(product => product.DateManufacture >= beginPeriod && product.DateManufacture <= endPeriod).ToArray();
+                        }
+
+                        Reports.BeginPeriod = beginPeriod;
+                        Reports.EndPeriod = endPeriod;
+                        lCanMakeReport = Reports.OrderDataSet.Count > 0;
                     }
                     if (lCanMakeReport)
                     {

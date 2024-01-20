@@ -50,7 +50,11 @@ namespace AdvertisementWpf.Models
         [NotMapped]
         public string State
         {
+#if NEWORDER
+            get => Products != null ? OrderState(Products) : _state;
+#else
             get => Products != null && string.IsNullOrWhiteSpace(_state) ? OrderState(Products) : _state;
+#endif
             set
             {
                 _state = value;
@@ -195,7 +199,8 @@ namespace AdvertisementWpf.Models
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-         //TO DO: ИТОГО по изделиям (ОБНОВЛЕНИЕ !!!!), даты, "внутренности" изделия
+        // AddBoolConverter убрать!!! Переделать доступ в разметке 
+        //TO DO: ИТОГО по изделиям (ОБНОВЛЕНИЕ !!!!), даты, "внутренности" изделия        
 
         public OrderViewModel(long nOrderID = 0, bool lViewMode = false)
         {
@@ -263,8 +268,8 @@ namespace AdvertisementWpf.Models
                 ((ISave)this).SaveContext(ref _contextOrder_, IsMutedMode: true);   //сохранить в "тихом режиме"
                 IsNewOrder = false;
             }
-        }, (o) => _contextOrder_ != null && ErrorsCount == 0);
-        
+        }, (o) => _contextOrder_ != null && ErrorsCount == 0 && !CurrentOrder.Products.Any(p => p.HasError));
+
         public RelayCommand ShowHideNewProductList => showHideNewProductList ??= new RelayCommand((o) => //команда "отобразить список выбора нового изделия"
         {
             ((FrameworkElement)o).Visibility = ((FrameworkElement)o).Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
@@ -286,7 +291,7 @@ namespace AdvertisementWpf.Models
             {
                 _ = CurrentOrder.Products.Remove(product);
             };
-        }, (o) => _contextOrder_ != null && CurrentOrder?.Products?.Count > 0l);
+        }, (o) => _contextOrder_ != null && CurrentOrder?.Products?.Count > 0);
 
         public RelayCommand TextBlockMouseLeftClick => textBlockMouseLeftClick ??= new RelayCommand((o) => //команда на клик по TextBlock
         {
@@ -308,7 +313,7 @@ namespace AdvertisementWpf.Models
             product.FilesToList();
             //GetProductParameters(product);
             //GetProductCosts(product);
-            //currentOrder.State = currentOrder.OrderState(productsViewSource);
+            CurrentOrder.State = CurrentOrder.OrderState(CurrentOrder.Products);
             return product;
         }
 

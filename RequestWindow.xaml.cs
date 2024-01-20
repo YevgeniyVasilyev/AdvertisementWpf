@@ -155,5 +155,10 @@ namespace AdvertisementWpf
             }
             fieldInfo.SetValue(DataContext, ErrorsCount); //изменить счетчик кол-ва ошибок
         }
+
+        private void DatePicker_SourceUpdated(object sender, DataTransferEventArgs e)
+        {
+            BindingOperations.GetBindingExpression(OrderStateTextBlock, TextBlock.TextProperty).UpdateTarget();
+        }
     }
 }

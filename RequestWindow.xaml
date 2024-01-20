@@ -136,8 +136,7 @@
                             <MouseBinding Command="{Binding TextBlockMouseLeftClick}" CommandParameter="{Binding ElementName=DateDateAdmission}" MouseAction="LeftClick"/>
                         </TextBlock.InputBindings>
                     </TextBlock>
-                    <DatePicker Grid.Column="1" Grid.Row="1" Name="DateDateAdmission" SelectedDate="{Binding Path=CurrentOrder.DateAdmission, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, 
-                                ValidatesOnExceptions=True, ValidatesOnNotifyDataErrors=True}"
+                    <DatePicker Grid.Column="1" Grid.Row="1" Name="DateDateAdmission" SelectedDate="{Binding Path=CurrentOrder.DateAdmission, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                 IsEnabled="{Binding IsNewOrder}"
                                 IsTodayHighlighted="True" VerticalAlignment="Center"/>
                     <TextBlock  Grid.Column="3" Grid.Row="1" Text=" Краткое описание: " VerticalAlignment="Center"/>
@@ -145,7 +144,7 @@
                                 AcceptsReturn="True" TextAlignment="Left" TextWrapping="Wrap"
                                 VerticalAlignment="Center" VerticalContentAlignment="Top" HorizontalAlignment="Stretch"/>
                     <TextBlock  Grid.Column="0" Grid.Row="2" Text=" Состояние заказа: " VerticalAlignment="Center"/>
-                    <TextBlock  Grid.Column="1" Grid.Row="2" TextWrapping="Wrap" Text="{Binding Path=CurrentOrder.State, Mode=TwoWay}" FontWeight="Bold" VerticalAlignment="Center"/>
+                    <TextBlock  Grid.Column="1" Grid.Row="2" Name="OrderStateTextBlock" TextWrapping="Wrap" Text="{Binding Path=CurrentOrder.State, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" FontWeight="Bold" VerticalAlignment="Center"/>
                     <TextBlock  Grid.Column="3" Grid.Row="2" Text=" Дата окончания работ(план): " Style="{StaticResource UnderlineTextBlock}" VerticalAlignment="Center">
                         <TextBlock.InputBindings>
                             <MouseBinding Command="{Binding TextBlockMouseLeftClick}" CommandParameter="{Binding ElementName=DateDateCompletion}" MouseAction="LeftClick"/>
@@ -153,8 +152,7 @@
                     </TextBlock>
                     <DatePicker Grid.Column="4" Grid.Row="2" Width="110" VerticalAlignment="Center" HorizontalAlignment="Left" 
                                 IsEnabled="{Binding OrderCardDateCompletion}"
-                                SelectedDate="{Binding Path=CurrentOrder.DateCompletion, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, 
-                                ValidatesOnExceptions=True, ValidatesOnNotifyDataErrors=True}" IsTodayHighlighted="True"/>
+                                SelectedDate="{Binding Path=CurrentOrder.DateCompletion, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsTodayHighlighted="True"/>
                     <TextBlock Grid.Column="0" Grid.Row="3" Text=" Заказ внес в базу: " VerticalAlignment="Center"/>
                     <TextBlock Grid.Column="1" Grid.Row="3" Text="{Binding CurrentOrder.OrderEntered.FullUserName, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center"/>
                     <TextBlock Grid.Column="3" Grid.Row="3" Text=" Менеджер: " VerticalAlignment="Center"/>
@@ -266,8 +264,8 @@
                                                 <GridViewColumn.CellTemplate>
                                                     <DataTemplate>
                                                         <TextBox Name="QuantityTextBox" HorizontalContentAlignment="Right" Width="70"
-                                                                 Text="{Binding Path=Quantity, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, 
-                                                                        NotifyOnValidationError=True, NotifyOnSourceUpdated=True}" Validation.Error="TextBoxError" 
+                                                                 Text="{Binding Path=Quantity, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True, ValidatesOnDataErrors=True}" 
+                                                                 Validation.Error="TextBoxError"
                                                                  GotFocus="QuantityTextBox_GotFocus">
                                                             <TextBox.IsEnabled>
                                                                 <MultiBinding Converter="{StaticResource AddBoolConverter}" ConverterParameter="True">
@@ -347,21 +345,21 @@
                                                 IsTodayHighlighted="True"/>
                                     <TextBlock Grid.Column="0" Grid.Row="2" Text="Передано дизайнеру: " Style="{StaticResource UnderlineTextBlock}" VerticalAlignment="Center">
                                         <TextBlock.InputBindings>
-                                            <MouseBinding Command="{Binding TextBlockMouseLeftClick}" CommandParameter="{Binding ElementName=DateProductionLayout}" MouseAction="LeftClick"/>
+                                            <MouseBinding Command="{Binding TextBlockMouseLeftClick}" CommandParameter="{Binding ElementName=DateTransferDesigner}" MouseAction="LeftClick"/>
                                         </TextBlock.InputBindings>
                                     </TextBlock>
-                                    <!--<DatePicker Grid.Column="1" Grid.Row="2" Name="DateTransferDesignerDate" SelectedDate="{Binding Source={StaticResource productsViewSource}, 
-                                                Path=DateTransferDesigner, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, 
-                                                NotifyOnSourceUpdated=True,
-                                                ValidatesOnExceptions=True, ValidatesOnNotifyDataErrors=True}" 
+                                    <DatePicker Grid.Column="1" Grid.Row="2" Name="DateTransferDesigner" 
+                                                SelectedDate="{Binding ElementName=ListProduct, Path=SelectedItem.DateTransferDesigner, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnSourceUpdated=True}" 
                                                 IsTodayHighlighted="True" SourceUpdated="DatePicker_SourceUpdated"/>
-                                    <Label Name="DateTransferApprovalLabel" Content="Передано на утверждение: " Grid.Column="0" Grid.Row="3" Style="{StaticResource UnderlineLabel}" MouseLeftButtonDown="Label_MouseLeftButtonDown"/>
-                                    <DatePicker Name="DateTransferApprovalDate" Grid.Column="1" Grid.Row="3" SelectedDate="{Binding Source={StaticResource productsViewSource}, 
-                                                Path=DateTransferApproval, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, 
-                                                NotifyOnSourceUpdated=True,
-                                                IsTodayHighlighted="True" 
-                                                SourceUpdated="DatePicker_SourceUpdated"/>
-                                    <Label Name="DateApprovalLabel" Content="Утверждено: " Grid.Column="0" Grid.Row="4" Style="{StaticResource UnderlineLabel}" MouseLeftButtonDown="Label_MouseLeftButtonDown"/>
+                                    <TextBlock Grid.Column="0" Grid.Row="3" Text="Передано на утверждение: " Style="{StaticResource UnderlineTextBlock}" VerticalAlignment="Center">
+                                        <TextBlock.InputBindings>
+                                            <MouseBinding Command="{Binding TextBlockMouseLeftClick}" CommandParameter="{Binding ElementName=DateTransferApproval}" MouseAction="LeftClick"/>
+                                        </TextBlock.InputBindings>
+                                    </TextBlock>
+                                    <DatePicker Grid.Column="1" Grid.Row="3" Name="DateTransferApproval" 
+                                                SelectedDate="{Binding ElementName=ListProduct, Path=SelectedItem.DateTransferApproval, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnSourceUpdated=True}" 
+                                                IsTodayHighlighted="True" SourceUpdated="DatePicker_SourceUpdated"/>
+                                    <!--<Label Name="DateApprovalLabel" Content="Утверждено: " Grid.Column="0" Grid.Row="4" Style="{StaticResource UnderlineLabel}" MouseLeftButtonDown="Label_MouseLeftButtonDown"/>
                                     <DatePicker Name="DateApprovalDate" Grid.Column="1" Grid.Row="4" SelectedDate="{Binding Source={StaticResource productsViewSource}, 
                                                 Path=DateApproval, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, 
                                                 NotifyOnSourceUpdated=True,

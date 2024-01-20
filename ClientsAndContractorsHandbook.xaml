@@ -695,6 +695,8 @@
                             <RowDefinition Height="Auto"/>
                             <!--наименование подрядчика-->
                             <RowDefinition Height="Auto"/>
+                            <!--наименование подрядчика в интерфейсе-->
+                            <RowDefinition Height="Auto"/>
                             <!--руководитель-->
                             <RowDefinition Height="Auto"/>
                             <!--руководитель должность-->
@@ -737,6 +739,8 @@
                         <TextBlock Grid.Row="0" Grid.Column="1" VerticalAlignment="Center"
                                    Text="{Binding Path=SelectedItem.Name, ElementName=ContractorsGrid}">
                         </TextBlock>
+                        <Label Content="Наименование в интерфейсе: " Grid.Row="1" Grid.Column="0"/>
+                        <TextBox Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" Text="{Binding Path=SelectedItem.NameForUI, ElementName=ContractorsGrid, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                         <!--<TextBox  Grid.Row="0" Grid.Column="1" VerticalAlignment="Top" Style="{StaticResource ValidationTemplate}">
                             <TextBox.Text>
                                 <Binding Path="SelectedItem.Name" ElementName="ContractorsGrid"
@@ -748,47 +752,39 @@
                                 </Binding>
                             </TextBox.Text>
                         </TextBox>-->
-                        <Label Content="Руководитель: " Grid.Row="1" Grid.Column="0"/>
-                        <TextBlock Grid.Row="1" Grid.Column="1" VerticalAlignment="Center"
+                        <Label Content="Руководитель: " Grid.Row="2" Grid.Column="0"/>
+                        <TextBlock Grid.Row="2" Grid.Column="1" VerticalAlignment="Center"
                                    Text="{Binding Path=SelectedItem.DirectorName, ElementName=ContractorsGrid}"> 
                         </TextBlock>
-                        <Label Content="должность: " Grid.Row="2" Grid.Column="0" HorizontalContentAlignment="Right"/>
-                        <TextBox Grid.Row="2" Grid.Column="1" VerticalAlignment="Center"
+                        <Label Content="должность: " Grid.Row="3" Grid.Column="0" HorizontalContentAlignment="Right"/>
+                        <TextBox Grid.Row="3" Grid.Column="1" VerticalAlignment="Center"
                                  Text="{Binding Path=SelectedItem.DirectorPostName, ElementName=ContractorsGrid, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                         </TextBox>
-                        <Label Content="доверенность №: " Grid.Row="3" Grid.Column="0" HorizontalContentAlignment="Right"/>
-                        <TextBox Grid.Row="3" Grid.Column="1" VerticalAlignment="Center"
+                        <Label Content="доверенность №: " Grid.Row="4" Grid.Column="0" HorizontalContentAlignment="Right"/>
+                        <TextBox Grid.Row="4" Grid.Column="1" VerticalAlignment="Center"
                                    Text="{Binding Path=SelectedItem.DirectorAttorneyNumber, ElementName=ContractorsGrid, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                         </TextBox>
-                        <Label Content="доверенность дата: " Grid.Row="4" Grid.Column="0" HorizontalContentAlignment="Right"/>
-                        <DatePicker Grid.Row="4" Grid.Column="1" VerticalAlignment="Center" IsTodayHighlighted="True"
+                        <Label Content="доверенность дата: " Grid.Row="5" Grid.Column="0" HorizontalContentAlignment="Right"/>
+                        <DatePicker Grid.Row="5" Grid.Column="1" VerticalAlignment="Center" IsTodayHighlighted="True"
                                    SelectedDate="{Binding Path=SelectedItem.DirectorAttorneyDate, ElementName=ContractorsGrid, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                         </DatePicker>
-                        <!--<TextBox Grid.Row="1" Grid.Column="1" Text="{Binding ElementName=ContractorsGrid, 
-                                Path=SelectedItem.DirectorName, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged, 
-                                NotifyOnValidationError=true, ValidatesOnExceptions=true}" 
-                                VerticalAlignment="Center"/>-->
-                        <Label Content="Главный бухгалтер: " Grid.Row="5" Grid.Column="0"/>
-                        <TextBlock Grid.Row="5" Grid.Column="1" VerticalAlignment="Center"
+                        <Label Content="Главный бухгалтер: " Grid.Row="6" Grid.Column="0"/>
+                        <TextBlock Grid.Row="6" Grid.Column="1" VerticalAlignment="Center"
                                    Text="{Binding Path=SelectedItem.ChiefAccountant, ElementName=ContractorsGrid}">
                         </TextBlock>
-                        <Label Content="должность: " Grid.Row="6" Grid.Column="0" HorizontalContentAlignment="Right"/>
-                        <TextBox Grid.Row="6" Grid.Column="1" VerticalAlignment="Center"
+                        <Label Content="должность: " Grid.Row="7" Grid.Column="0" HorizontalContentAlignment="Right"/>
+                        <TextBox Grid.Row="7" Grid.Column="1" VerticalAlignment="Center"
                                  Text="{Binding Path=SelectedItem.ChiefAccountantPostName, ElementName=ContractorsGrid, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                         </TextBox>
-                        <Label Content="доверенность №: " Grid.Row="7" Grid.Column="0" HorizontalContentAlignment="Right"/>
-                        <TextBox Grid.Row="7" Grid.Column="1" VerticalAlignment="Center"
+                        <Label Content="доверенность №: " Grid.Row="8" Grid.Column="0" HorizontalContentAlignment="Right"/>
+                        <TextBox Grid.Row="8" Grid.Column="1" VerticalAlignment="Center"
                                    Text="{Binding Path=SelectedItem.ChiefAccountantAttorneyNumber, ElementName=ContractorsGrid, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                         </TextBox>
-                        <Label Content="доверенность дата: " Grid.Row="8" Grid.Column="0" HorizontalContentAlignment="Right"/>
-                        <DatePicker Grid.Row="8" Grid.Column="1" VerticalAlignment="Center" IsTodayHighlighted="True"
+                        <Label Content="доверенность дата: " Grid.Row="9" Grid.Column="0" HorizontalContentAlignment="Right"/>
+                        <DatePicker Grid.Row="9" Grid.Column="1" VerticalAlignment="Center" IsTodayHighlighted="True"
                                    SelectedDate="{Binding Path=SelectedItem.ChiefAccountantAttorneyDate, ElementName=ContractorsGrid, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                         </DatePicker>
-                        <!--<TextBox Grid.Row="2" Grid.Column="1" Text="{Binding ElementName=ContractorsGrid, 
-                                Path=SelectedItem.ChiefAccountant, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, 
-                                NotifyOnValidationError=true, ValidatesOnExceptions=true}" 
-                                 VerticalAlignment="Center"/>-->
-                        <StackPanel Orientation="Horizontal" Grid.Row="9" Grid.Column="0">
+                        <StackPanel Orientation="Horizontal" Grid.Row="10" Grid.Column="0">
                             <Label Content="ИНН: "/>
                             <TextBox Name="INN" VerticalAlignment="Center" Style="{StaticResource ValidationTemplate}" Width="110">
                                 <TextBox.Text>
@@ -802,50 +798,50 @@
                                 </TextBox.Text>
                             </TextBox>
                         </StackPanel>
-                        <StackPanel Orientation="Horizontal" Grid.Row="9" Grid.Column="1">
+                        <StackPanel Orientation="Horizontal" Grid.Row="10" Grid.Column="1">
                             <Label Content="КПП: "/>
                             <TextBox Text="{Binding ElementName=ContractorsGrid, 
                                 Path=SelectedItem.KPP, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged,
                                 NotifyOnValidationError=true, ValidatesOnExceptions=true}" 
                                 VerticalAlignment="Center"  Width="110"/>
                         </StackPanel>
-                        <StackPanel Orientation="Horizontal" Grid.Row="10" Grid.Column="0">
+                        <StackPanel Orientation="Horizontal" Grid.Row="11" Grid.Column="0">
                             <Label Content="ОКПО: "/>
                             <TextBox Text="{Binding ElementName=ContractorsGrid, 
                                 Path=SelectedItem.OKPO, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged,
                                 NotifyOnValidationError=true, ValidatesOnExceptions=true}" 
                                 VerticalAlignment="Center"  Width="110"/>
                         </StackPanel>
-                        <StackPanel Orientation="Horizontal" Grid.Row="10" Grid.Column="1">
+                        <StackPanel Orientation="Horizontal" Grid.Row="11" Grid.Column="1">
                             <Label Content="ОГРН: "/>
                             <TextBox Text="{Binding ElementName=ContractorsGrid, 
                                 Path=SelectedItem.OGRN, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged,
                                 NotifyOnValidationError=true, ValidatesOnExceptions=true}" 
                                 VerticalAlignment="Center"  Width="110"/>
                         </StackPanel>
-                        <Label Content="Юридический адрес: " Grid.Row="11" Grid.Column="0"/>
-                        <TextBox Grid.Row="11" Grid.Column="1" Text="{Binding ElementName=ContractorsGrid, 
+                        <Label Content="Юридический адрес: " Grid.Row="12" Grid.Column="0"/>
+                        <TextBox Grid.Row="12" Grid.Column="1" Text="{Binding ElementName=ContractorsGrid, 
                                 Path=SelectedItem.BusinessAddress, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged,
                                 NotifyOnValidationError=true, ValidatesOnExceptions=true}"
                                 VerticalAlignment="Center"/>
-                        <Label Content="Расчетный счет: " Grid.Row="12" Grid.Column="0"/>
-                        <TextBox Grid.Row="12" Grid.Column="1" Text="{Binding ElementName=ContractorsGrid, 
+                        <Label Content="Расчетный счет: " Grid.Row="13" Grid.Column="0"/>
+                        <TextBox Grid.Row="13" Grid.Column="1" Text="{Binding ElementName=ContractorsGrid, 
                                 Path=SelectedItem.BankAccount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged,
                                 NotifyOnValidationError=true, ValidatesOnExceptions=true}" 
                                 VerticalAlignment="Center"/>
-                        <Label Content="Банк: " Grid.Row="13" Grid.Column="0"/>
-                        <ComboBox Grid.Row="13" Grid.Column="1" ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=local:ClientsAndContractorsHandbook}, Path=DataContext.BankList}" 
+                        <Label Content="Банк: " Grid.Row="14" Grid.Column="0"/>
+                        <ComboBox Grid.Row="14" Grid.Column="1" ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=local:ClientsAndContractorsHandbook}, Path=DataContext.BankList}" 
                                   SelectedValue="{Binding ElementName=ContractorsGrid, Path=SelectedItem.BankID, Mode=TwoWay, 
                                   UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=true, ValidatesOnExceptions=true}" 
                                   SelectedValuePath="ID" DisplayMemberPath="Name"
                                   VerticalAlignment="Center"/>
-                        <Label Content="Аббревиатура для счета: " Grid.Row="14" Grid.Column="0"/>
-                        <TextBox Grid.Row="14" Grid.Column="1" Text="{Binding ElementName=ContractorsGrid, 
+                        <Label Content="Аббревиатура для счета: " Grid.Row="15" Grid.Column="0"/>
+                        <TextBox Grid.Row="15" Grid.Column="1" Text="{Binding ElementName=ContractorsGrid, 
                                 Path=SelectedItem.AbbrForAcc, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged,
                                 NotifyOnValidationError=true, ValidatesOnExceptions=true}" 
                                 VerticalAlignment="Center"/>
-                        <Label Content="Шаблон счета на оплату: " Grid.Row="15" Grid.Column="0"/>
-                        <StackPanel Grid.Row="15" Grid.Column="1" Orientation="Horizontal">
+                        <Label Content="Шаблон счета на оплату: " Grid.Row="16" Grid.Column="0"/>
+                        <StackPanel Grid.Row="16" Grid.Column="1" Orientation="Horizontal">
                             <TextBlock Name="AccountFileTemplateTextBlock" Text="{Binding ElementName=ContractorsGrid, Path=SelectedItem.AccountFileTemplate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                                        VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
                             <Button Name="OpenDialogButton" Background="Transparent" BorderBrush="Transparent" 
@@ -853,7 +849,7 @@
                                 <Image Source="\Images\free-icon-folder_open.png" Width="20" Height="20"/>
                             </Button>
                         </StackPanel>
-                        <Grid Grid.Row="17" Grid.ColumnSpan="2">
+                        <Grid Grid.Row="18" Grid.ColumnSpan="2">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition/>
                                 <ColumnDefinition/>

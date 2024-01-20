@@ -1,12 +1,14 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 using System.Windows;
 
 namespace AdvertisementWpf.Models
 {
-    public partial class Product : INotifyPropertyChanged
+    public partial class Product : INotifyPropertyChanged, IDataErrorInfo
     {
         public Product()
         {
@@ -194,6 +196,24 @@ namespace AdvertisementWpf.Models
         protected void NotifyPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        [NotMapped]
+        public bool HasError { get; set; }
+
+        public string Error => throw new NotImplementedException();
+
+        public string this[string columnName]
+        {
+            get
+            {
+                HasError = false;
+                HasError = columnName switch
+                {
+                    _ => false,
+                };
+                return ""; //текст сообщения об ошибке не гененрировать
+            }
         }
     }
 

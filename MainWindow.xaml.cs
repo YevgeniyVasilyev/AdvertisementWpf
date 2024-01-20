@@ -425,10 +425,13 @@ namespace AdvertisementWpf
             {
                 if (btn == NewOrderButton || btn == NewOrderButton1)
                 {
+#if NEWORDER
                     RequestWindow request = new RequestWindow() { };
                     request.ShowDialog();
-                    //OrderWindow order = new OrderWindow(NewOrder: true) { };
-                    //_ = order.ShowDialog();
+#else
+                    OrderWindow order = new OrderWindow(NewOrder: true) { };
+                    _ = order.ShowDialog();
+#endif
                     _ = typeof(ButtonBase).GetMethod("OnClick", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(RefreshOrderButton, new object[0]);
                 }
                 else if (btn == ViewOrderButton || btn == EditOrderButton)
@@ -446,10 +449,13 @@ namespace AdvertisementWpf
                     {
                         nOrderID = workInTechCard.TechCard.Product.OrderID;
                     }
+#if NEWORDER
                     RequestWindow request = new RequestWindow(ViewMode: btn == ViewOrderButton, nOrderID: nOrderID) { };
                     request.ShowDialog();
-                    //OrderWindow order = new OrderWindow(NewOrder: false, EditMode: btn == EditOrderButton, nOrderID: nOrderID) { };
-                    //_ = order.ShowDialog();
+#else
+                    OrderWindow order = new OrderWindow(NewOrder: false, EditMode: btn == EditOrderButton, nOrderID: nOrderID) { };
+                    _ = order.ShowDialog();
+#endif
                     _ = typeof(ButtonBase).GetMethod("OnClick", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(RefreshOrderButton, new object[0]);
                 }
                 //else if (btn == AllOrdersButton)

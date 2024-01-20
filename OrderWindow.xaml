@@ -44,11 +44,12 @@
             <BooleanToVisibilityConverter/>
         </local:ValueConverterGroup>
         <local:CostConverter x:Key="CostConverter"/>
-        <local:AddBoolConverter x:Key="AddBoolConverter"/>
+        <!--<local:AddBoolConverter x:Key="AddBoolConverter"/>-->
         <local:NullDateTimeToBoolConverter x:Key="NullDateTimeToBoolConverter"/>
         <local:BoolNotBoolConverter x:Key="BoolNotBoolConverter"/>
         <local:ObservableCollectionConverter x:Key="ObservableCollectionConverter"/>
         <local:VisibilitySelector x:Key="VisibilitySelector"/>
+        <local:IsCanEditAfterSendToProdToBoolConverter x:Key="IsCanEditAfterSendToProdToBoolConverter"/>
         <local:ViewModel x:Key="ViewModel"/>
         <local:SumListViewDecimalConverter x:Key="SumListViewDecimalConverter"/>
         <DataTemplate x:Key="ListViewHeaderTemplate">
@@ -390,15 +391,21 @@
                                                 <GridViewColumn.CellTemplate>
                                                     <DataTemplate>
                                                         <TextBox Name="QuantityTextBox" HorizontalContentAlignment="Right" Width="70"
-                                                                     Text="{Binding Path=Quantity, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, 
-                                                                            ValidatesOnExceptions=True, ValidatesOnNotifyDataErrors=True}" 
-                                                                     GotFocus="QuantityTextBox_GotFocus">
+                                                                 Text="{Binding Path=Quantity, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, 
+                                                                        ValidatesOnExceptions=True, ValidatesOnNotifyDataErrors=True}" 
+                                                                 GotFocus="QuantityTextBox_GotFocus">
                                                             <TextBox.IsEnabled>
-                                                                <MultiBinding Converter="{StaticResource AddBoolConverter}" ConverterParameter="True">
+                                                                <MultiBinding Converter="{StaticResource IsCanEditAfterSendToProdToBoolConverter}">
                                                                     <Binding Source="{StaticResource productsViewSource}" Path="DateTransferProduction" Converter="{StaticResource NullDateTimeToBoolConverter}"/>
-                                                                    <Binding RelativeSource="{RelativeSource AncestorType=local:OrderWindow}" Path="DataContext.IsManager"/>
+                                                                    <Binding RelativeSource="{RelativeSource AncestorType=local:OrderWindow}" Path="DataContext.OrderCardProductQuantityAndCost"/>
                                                                 </MultiBinding>
                                                             </TextBox.IsEnabled>
+                                                            <!--<TextBox.IsEnabled>
+                                                                <MultiBinding Converter="{StaticResource AddBoolConverter}" ConverterParameter="False">
+                                                                    <Binding Source="{StaticResource productsViewSource}" Path="DateTransferProduction" Converter="{StaticResource NullDateTimeToBoolConverter}"/>
+                                                                    <Binding RelativeSource="{RelativeSource AncestorType=local:OrderWindow}" Path="DataContext.OrderCardProductQuantityAndCost"/>
+                                                                </MultiBinding>
+                                                            </TextBox.IsEnabled>-->
                                                         </TextBox>
                                                     </DataTemplate>
                                                 </GridViewColumn.CellTemplate>
@@ -684,10 +691,14 @@
                                                                     </Binding>
                                                                 </TextBox.Text>
                                                                 <TextBox.IsEnabled>
-                                                                    <MultiBinding Converter="{StaticResource AddBoolConverter}" ConverterParameter="True">
+                                                                    <MultiBinding Converter="{StaticResource IsCanEditAfterSendToProdToBoolConverter}">
+                                                                        <Binding Source="{StaticResource productsViewSource}" Path="DateTransferProduction" Converter="{StaticResource NullDateTimeToBoolConverter}"/>
+                                                                        <Binding RelativeSource="{RelativeSource AncestorType=local:OrderWindow}" Path="DataContext.OrderCardProductQuantityAndCost"/>
+                                                                    </MultiBinding>
+                                                                    <!--<MultiBinding Converter="{StaticResource AddBoolConverter}" ConverterParameter="True">
                                                                         <Binding Source="{StaticResource productsViewSource}" Path="DateTransferProduction" Converter="{StaticResource NullDateTimeToBoolConverter}"/>
                                                                         <Binding RelativeSource="{RelativeSource AncestorType=local:OrderWindow}" Path="DataContext.IsManager"/>
-                                                                    </MultiBinding>
+                                                                    </MultiBinding>-->
                                                                 </TextBox.IsEnabled>
                                                             </TextBox>
                                                         </DataTemplate>
@@ -1343,7 +1354,7 @@
                                 <TextBlock Grid.Column="0" Grid.Row="2" Text="Поставщик: " VerticalAlignment="Center"/>
                                 <ComboBox Grid.Column="1" Grid.Row="2" Margin="0,5,0,0" Name="ContractorNameComboBox" IsEnabled="True" SelectionChanged="ContractorNameComboBox_SelectionChanged"
                                       ItemsSource="{Binding Source={StaticResource contractorsViewSource}}" 
-                                      DisplayMemberPath="Name" SelectedValuePath="ID" VerticalAlignment="Center"
+                                      DisplayMemberPath="NameForUI" SelectedValuePath="ID" VerticalAlignment="Center"
                                       SelectedValue="{Binding ElementName=ListAccount, Path=SelectedItem.ContractorID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                                 <TextBox Grid.Column="1" Grid.Row="3" IsEnabled="True" AcceptsReturn="True" AcceptsTab="True" TextWrapping="Wrap"
                                      ScrollViewer.VerticalScrollBarVisibility="Auto"

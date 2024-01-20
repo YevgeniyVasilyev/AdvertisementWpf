@@ -16,6 +16,7 @@ namespace AdvertisementWpf.Models
 
         public long ID { get; set; }
         public string Name { get; set; }
+        public string NameForUI { get; set; }
         public string DirectorName { get; set; }
         public string DirectorPostName { get; set; }
         public string DirectorAttorneyNumber { get; set; }

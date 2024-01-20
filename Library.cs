@@ -567,11 +567,22 @@ namespace AdvertisementWpf
                 }
                 else if (ReportMode == "RORW")
                 {
-                    //report.Dictionary.RegisterBusinessObject(ProductCostDataSet, "ProductCost", 4, true);
+                    //report.Dictionary.RegisterBusinessObject(ObjectDataSet, "dataset", 4, true);
                     //report.Save($"{Path.GetFileNameWithoutExtension(ReportFileName)}_data.frx");
                     //return;
                     report.Load(ReportFileName);
-                    report.RegisterData(ProductCostDataSet, "ProductCost", 3);
+                    report.RegisterData(ObjectDataSet, "dataset", 3);
+                    report.SetParameterValue("BeginPeriod", BeginPeriod);
+                    report.SetParameterValue("EndPeriod", EndPeriod);
+                    ReportMode = "ReportForm";
+                }
+                else if (ReportMode == "RORWRP")
+                {
+                    //report.Dictionary.RegisterBusinessObject(OrderDataSet, "Order", 4, true);
+                    //report.Save($"{Path.GetFileNameWithoutExtension(ReportFileName)}_data.frx");
+                    //return;
+                    report.Load(ReportFileName);
+                    report.RegisterData(OrderDataSet, "Order", 3);
                     report.SetParameterValue("BeginPeriod", BeginPeriod);
                     report.SetParameterValue("EndPeriod", EndPeriod);
                     ReportMode = "ReportForm";
