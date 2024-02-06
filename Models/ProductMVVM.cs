@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -42,8 +43,18 @@ namespace AdvertisementWpf.Models
         public ICollection<ProductCost> Costs { get; set; }
         [NotMapped]
         public List<string> FilesList { get; set; } = new List<string> { };
+        
+        private List<ProductParameters> _productParameter { get; set; } = new List<ProductParameters>();
         [NotMapped]
-        public List<ProductParameters> ProductParameter { get; set; }
+        public List<ProductParameters> ProductParameter
+        {
+            get => _productParameter;
+            set
+            {
+                _productParameter = value;
+                NotifyPropertyChanged("ProductParameter");
+            }
+        }
 
         private string _state = "";
         [NotMapped]

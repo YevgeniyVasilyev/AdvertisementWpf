@@ -160,5 +160,29 @@ namespace AdvertisementWpf
         {
             BindingOperations.GetBindingExpression(OrderStateTextBlock, TextBlock.TextProperty).UpdateTarget();
         }
+
+        private void ValueTextBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            if (sender is TextBox txtBox)
+            {
+                _ = ListParametersInProduct.Items.MoveCurrentTo(txtBox.GetBindingExpression(TextBox.TextProperty).DataItem);
+            }
+            else if (sender is ComboBox comboBox)
+            {
+                _ = ListParametersInProduct.Items.MoveCurrentTo(comboBox.GetBindingExpression(System.Windows.Controls.Primitives.Selector.SelectedValueProperty).DataItem);
+            }
+        }
+
+        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            MethodInfo methodInfo = DataContext.GetType().GetMethod("ReferencebookListSelectionChanged");
+            _ = methodInfo?.Invoke(DataContext, new object[] { (sender as ComboBox).GetBindingExpression(System.Windows.Controls.Primitives.Selector.SelectedValueProperty).DataItem });
+        }
+
+        private void ValueTextBox_SourceUpdated(object sender, DataTransferEventArgs e)
+        {
+            MethodInfo methodInfo = DataContext.GetType().GetMethod("ProductParametersSourceUpdated");
+            _ = methodInfo?.Invoke(DataContext, new object[] { ListProduct.SelectedItem });
+        }
     }
 }

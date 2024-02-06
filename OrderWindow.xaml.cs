@@ -2985,13 +2985,13 @@ namespace AdvertisementWpf
     {
         public object Convert(object[] value, Type targetType, object parameter, CultureInfo culture)
         {
-            bool SendToProdaction = value[0] is bool && (bool)value[0];
+            bool SendToProduction = value[0] is bool && (bool)value[0];
             bool HasAccess = value[1] is bool && (bool)value[1];
-            if (SendToProdaction && HasAccess) //если дата установлена и есть доступ
+            if (SendToProduction && HasAccess) //если дата установлена и есть доступ
             {
                 return true;
             }
-            else if (SendToProdaction && !HasAccess) //если дата установлена и НЕТ доступа
+            else if (SendToProduction && !HasAccess) //если дата установлена и НЕТ доступа
             {
                 return false;
             }

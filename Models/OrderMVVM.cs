@@ -164,13 +164,16 @@ namespace AdvertisementWpf.Models
                 ProductTypeCollectionView.Refresh();
             }
         }
-        public ICollectionView ClientCollectionView { get; set; }       //крллеция "Киенты" AsNoTracking, с фильтрацией
-        public ICollectionView ProductTypeCollectionView { get; set; }  //коллекция "Виды изделий" AsNoTracking, с фильтрацией и группировкой
-        public List<User> UserList { get; set; }                        //список "Пользователи" AsNoTracking
-        public List<User> ManagerList { get; set; }                     //список "Менеджеры" AsNoTracking
-        public List<User> DesignerList { get; set; }                    //список "Дизайнеры" AsNoTracking
-        public Order CurrentOrder { get; set; }                         //текущий заказ
-        public bool ViewMode { get; set; } = false;                     //режим "просмотр" для карточки заказа
+        public ICollectionView ClientCollectionView { get; set; }                               //крллеция "Киенты" AsNoTracking, с фильтрацией
+        public ICollectionView ProductTypeCollectionView { get; set; }                          //коллекция "Виды изделий" AsNoTracking, с фильтрацией и группировкой
+        public List<User> UserList { get; set; }                                                //список "Пользователи" AsNoTracking
+        public List<User> ManagerList { get; set; }                                             //список "Менеджеры" AsNoTracking
+        public List<User> DesignerList { get; set; }                                            //список "Дизайнеры" AsNoTracking
+        public List<Referencebook> ReferencebookList { get; set; }                              //список "Справочники" AsNoTracking
+        public List<ReferencebookApplicability> ReferencebookApplicabilityList { get; set; }    //список "Применимость справочника" AsNoTracking
+        public List<ReferencebookParameter> ReferencebookParameterList { get; set; }            //список "Справочник параметров изделий" AsNoTracking
+        public Order CurrentOrder { get; set; }                                                 //текущий заказ
+        public bool ViewMode { get; set; } = false;                                             //режим "просмотр" для карточки заказа
         public int ErrorsCount = 0;
 
         //определяют доступ к элементам интерфейса
@@ -181,6 +184,7 @@ namespace AdvertisementWpf.Models
         public bool OrderCardProductDesigner { get; set; }
         public bool OrderCardProductDateProductionLayout { get; set; }
         public bool OrderCardProductDateTransferDesigner { get; set; }
+        public bool OrderCardProductQuantityAndCost { get; set; }
         public bool IsManager { get; set; }
         private bool _IsNewOrder;
         public bool IsNewOrder
@@ -199,8 +203,7 @@ namespace AdvertisementWpf.Models
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        // AddBoolConverter убрать!!! Переделать доступ в разметке 
-        //TO DO: ИТОГО по изделиям (ОБНОВЛЕНИЕ !!!!), даты, "внутренности" изделия        
+        //TO DO: ИТОГО по изделиям (ОБНОВЛЕНИЕ СТОИМОСТИ !!!!), "внутренности" изделия        
 
         public OrderViewModel(long nOrderID = 0, bool lViewMode = false)
         {
@@ -221,6 +224,12 @@ namespace AdvertisementWpf.Models
                         ManagerID = MainWindow.Userdata.ID,
                     };
                     ((IAdd)this).AddToContext(ref _contextOrder_, CurrentOrder);
+                }
+                foreach (Product product in CurrentOrder.Products)                                                                                  //инициализация изделий
+                {
+                    GetProductParameters(product);                                                                                                  //развернуть параметры изделия
+                    product.FilesToList();
+                    //GetProductCosts(product);
                 }
             }
             catch (Exception ex)
@@ -298,6 +307,22 @@ namespace AdvertisementWpf.Models
             ((DatePicker)o).SelectedDate = DateTime.Now;
         }, (o) => ((DatePicker)o).IsEnabled);
 
+        public void ReferencebookListSelectionChanged(object sender)
+        {
+            if (sender is ProductParameters productParameter)
+            {   //установить набор параметров для вновь  выбранного справочника
+                productParameter.ReferencebookParametersList = ReferencebookParameterList.Where(refbookParameters => refbookParameters.ReferencebookID == productParameter.ReferencebookID).ToList();
+            }
+        }
+
+        public void ProductParametersSourceUpdated(object sender)
+        {
+            if (sender is Product product)
+            {
+                product.ListToParameters(); //свернуть список параметров в строку
+            }
+        }
+
         private Product CreateNewProduct(ProductType productType)
         {
             Product product = new Product
@@ -311,7 +336,7 @@ namespace AdvertisementWpf.Models
                 ProductCosts = new List<ProductCost> { }        //создать пустой список стоимостей изделия
             };
             product.FilesToList();
-            //GetProductParameters(product);
+            GetProductParameters(product);
             //GetProductCosts(product);
             CurrentOrder.State = CurrentOrder.OrderState(CurrentOrder.Products);
             return product;
@@ -335,12 +360,57 @@ namespace AdvertisementWpf.Models
             sortDescription = new SortDescription("Name", ListSortDirection.Ascending);
             ProductTypeCollectionView.SortDescriptions.Add(sortDescription);
             ProductTypeCollectionView.Filter = TypeOfProductFilter;
+            ReferencebookList = _contextOrder_.Referencebook.AsNoTracking().ToList();                                                           //список "Справочники"
+            ReferencebookApplicabilityList = _contextOrder_.ReferencebookApplicability.AsNoTracking().ToList();                                 //список "Применимость справочника" AsNoTracking
+            ReferencebookParameterList = _contextOrder_.ReferencebookParameter.AsNoTracking().ToList();                                         //список "Справочник параметров изделий" AsNoTracking
             CurrentOrder = _contextOrder_.Orders
-                .Include(Order => Order.Products)
-                .ThenInclude(Product => Product.ProductType)
-                .Include(Order => Order.Products)
-                .ThenInclude(Product => Product.ProductCosts)
-                .FirstOrDefault(Order => Order.ID == nOrderID);                                                                                 //получить текущий заказ (или null для нового)
+                    .Include(Order => Order.Products)
+                    .ThenInclude(Product => Product.ProductType)
+                    .Include(Order => Order.Products)
+                    .ThenInclude(Product => Product.ProductCosts)
+                    .FirstOrDefault(Order => Order.ID == nOrderID);                                                                             //получить текущий заказ (или null для нового)
+        }
+
+        private void GetProductParameters(Product product)
+        {
+            IQueryable<ProductParameters> parameterQuery;
+            parameterQuery = from pinpt in _contextOrder_.ParameterInProductTypes
+                             where pinpt.ProductTypeID == product.ProductTypeID
+                             join u in _contextOrder_.Units on pinpt.UnitID equals u.ID
+                             select new ProductParameters
+                             {
+                                 ID = pinpt.ID,
+                                 Name = pinpt.Name,
+                                 IsRequired = pinpt.IsRequired,
+                                 UnitName = u.Name,
+                                 ReferencebookID = pinpt.ReferencebookID,
+                                 IsRefbookOnRequest = pinpt.IsRefbookOnRequest
+                             };
+            product.ProductParameter = parameterQuery.AsNoTracking().ToList();          //заполнить список параметров изделия пустым списком из справочника параметров изделий
+            product.ParametersToList();                                                 //заполнить список параметров фактическими значениями из строки свойства Parameters
+            foreach (ProductParameters productParameter in product.ProductParameter)    //проход по параметрам
+            {
+                if (productParameter.IsRefbookOnRequest) //задан параметр "выбор справочника по запросу"
+                {
+                    long categoryOfProductID = _contextOrder_.ProductTypes.FirstOrDefault(pt => pt.ID == product.ProductTypeID).CategoryOfProductID ?? 0;
+                    //if (categoryOfProductID is null)
+                    //{
+                    //    categoryOfProductID = 0;
+                    //}
+                    //IEnumerable<ReferencebookApplicability> enumerable = ReferencebookApplicabilityList.Where(refApp => refApp.CategoryOfProductID == categoryOfProductID);
+                    productParameter.ReferencebookList = ReferencebookList.FindAll(
+                        delegate (Referencebook referencebook)
+                        {
+                            return ReferencebookApplicabilityList.Where(refApp => refApp.CategoryOfProductID == categoryOfProductID)
+                            .Any(e => e.ReferencebookID == referencebook.ID); //найти в Referencebooks все ID (справочники), которые применяются для CategoryOfProduct
+                        }
+                        );
+                }
+                if (productParameter.ReferencebookID > 0) //для параметра установлено брать значение из справочника 
+                {
+                    productParameter.ReferencebookParametersList = ReferencebookParameterList.Where(refbookParameters => refbookParameters.ReferencebookID == productParameter.ReferencebookID).ToList();
+                }
+            }
         }
 
         private void SetModelAccess() //установить режимы доступа к элементам модели (интерфейса)
@@ -352,7 +422,46 @@ namespace AdvertisementWpf.Models
             OrderCardProductDesigner = IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductDesigner");
             OrderCardProductDateProductionLayout = IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductDateProductionLayout");
             OrderCardProductDateTransferDesigner = IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductDateTransferDesigner");
+            OrderCardProductQuantityAndCost = IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductQuantityAndCostChngeAfterSetToProd");
             IsManager = !MainWindow.Userdata.IsAdmin && IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "ListManager");
+        }
+    }
+
+    public class CostTemplateSelector : DataTemplateSelector
+    {
+        public DataTemplate CommonTextBox { get; set; }
+        public DataTemplate ComboboxTextBox { get; set; }
+
+        public override DataTemplate SelectTemplate(object item, DependencyObject container)
+        {
+            if (item is ProductParameters productParameter)
+            {
+                return (productParameter.ReferencebookID > 0 || productParameter.IsRefbookOnRequest) ? ComboboxTextBox : CommonTextBox;
+            }
+            else if (item is OperationInWorkParameter operationInWorkParameter)
+            {
+                return (operationInWorkParameter.ReferencebookID > 0 || operationInWorkParameter.IsRefbookOnRequest) ? ComboboxTextBox : CommonTextBox;
+            }
+            return null;
+        }
+    }
+
+    public class ReferencebookTemplateSelector : DataTemplateSelector
+    {
+        public DataTemplate CommonTextBlock { get; set; }
+        public DataTemplate ComboboxRefbookRequestTextBox { get; set; }
+
+        public override DataTemplate SelectTemplate(object item, DependencyObject container)
+        {
+            if (item is ProductParameters productParameter)
+            {
+                return productParameter.IsRefbookOnRequest ? ComboboxRefbookRequestTextBox : CommonTextBlock;
+            }
+            else if (item is OperationInWorkParameter operationInWorkParameter)
+            {
+                return operationInWorkParameter.IsRefbookOnRequest ? ComboboxRefbookRequestTextBox : CommonTextBlock;
+            }
+            return null;
         }
     }
 }
