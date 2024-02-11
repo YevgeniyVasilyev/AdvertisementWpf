@@ -293,8 +293,6 @@
                                                     </DataTemplate>
                                                 </GridViewColumn.CellTemplate>
                                             </GridViewColumn>
-                                            <GridViewColumn Header=" Параметры " Width="200" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
-                                                            DisplayMemberBinding="{Binding Path=Parameters, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                                         </GridView.Columns>
                                     </GridView>
                                 </ListView.View>
@@ -417,10 +415,9 @@
                                                 </DataTemplate>
                                                 <DataTemplate x:Key="ComboboxTextBox">
                                                     <ComboBox ItemsSource="{Binding Path=ReferencebookParametersList}"
-                                                              SelectedValue="{Binding Path=ParameterID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                                              SelectedValue="{Binding Path=ParameterID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnSourceUpdated=True}" 
                                                               SelectedValuePath="ID" DisplayMemberPath="Value"                                                               
-                                                              GotFocus="ValueTextBox_GotFocus" MinWidth="90">
-                                                        <!--SourceUpdated="ValueTextBox_SourceUpdated" , NotifyOnSourceUpdated=True-->
+                                                              GotFocus="ValueTextBox_GotFocus" MinWidth="90" SourceUpdated="ValueTextBox_SourceUpdated">
                                                     </ComboBox>
                                                 </DataTemplate>
                                                 <DataTemplate x:Key="CommonTextBlock">
@@ -428,10 +425,9 @@
                                                 </DataTemplate>
                                                 <DataTemplate x:Key="ComboboxRefbookRequestTextBox">
                                                     <ComboBox ItemsSource="{Binding Path=ReferencebookList}" Name="ReferencebookList" ToolTip="Справочник по выбору"
-                                                              SelectedValue="{Binding Path=ReferencebookID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                                              SelectedValue="{Binding Path=ReferencebookID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnSourceUpdated=True}" 
                                                               SelectedValuePath="ID" DisplayMemberPath="Name" SelectionChanged="ComboBox_SelectionChanged"
-                                                              GotFocus="ValueTextBox_GotFocus" Width="90">
-                                                        <!--SourceUpdated="ValueTextBox_SourceUpdated"  , NotifyOnSourceUpdated=True-->
+                                                              GotFocus="ValueTextBox_GotFocus" Width="90" SourceUpdated="ValueTextBox_SourceUpdated">
                                                     </ComboBox>
                                                 </DataTemplate>
                                             </ListView.Resources>
@@ -467,37 +463,128 @@
                                                 </GridView>
                                             </ListView.View>
                                         </ListView>
-                                        <!--<Label Grid.Row="2" Content="Описание изделия" FontWeight="Bold" HorizontalAlignment="Center"/>
-                                        <TextBox Grid.Row="3" Margin="5" Text="{Binding Source={StaticResource productsViewSource}, Path=Note}" 
-                                                 MinHeight="50" AcceptsReturn="True" TextWrapping="Wrap" 
-                                                 HorizontalContentAlignment="Left" VerticalContentAlignment="Top"/>
-                                        <StackPanel Margin="5" Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Center">
-                                            <Label Content="Файлы и иллюстрации" FontWeight="Bold" HorizontalAlignment="Stretch"/>
+                                        <TextBlock Grid.Row="2" Text="Описание изделия" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        <TextBox Grid.Row="3" Margin="5" Text="{Binding ElementName=ListProduct, Path=SelectedItem.Note}" 
+                                                 MinHeight="50" AcceptsReturn="True" TextWrapping="Wrap" HorizontalContentAlignment="Left" VerticalContentAlignment="Top"/>
+                                        <StackPanel Grid.Row="4" Margin="5" Orientation="Horizontal" HorizontalAlignment="Center">
+                                            <TextBlock Text="Файлы и иллюстрации" FontWeight="Bold" HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
                                             <Button Name="NewFileButton" Background="Transparent" BorderBrush="Transparent" 
-                                                Style="{StaticResource ButtonOfOrder}" Command="ApplicationCommands.New"
-                                                Margin="10,0,0,0" ToolTip="Добавить файл">
-                                                <Image Source="/Images/free-icon-add-button.png" Width="20" Height="20"/>
+                                                    Style="{StaticResource ButtonOfOrder}" Command="{Binding NewFileToProduct}" CommandParameter="{Binding ElementName=ListProduct, Path=SelectedItem}"
+                                                    Margin="10,0,0,0" ToolTip="Добавить файл">
+                                                    <Image Source="/Images/free-icon-add-button.png" Width="20" Height="20"/>
                                             </Button>
                                             <Button Name="DeleteFileButton" Background="Transparent" BorderBrush="Transparent" 
-                                                Style="{StaticResource ButtonOfOrder}" Command="ApplicationCommands.Delete"
-                                                ToolTip="Удалить файл из списка и отметить для удаления">
-                                                <Image Source="/Images/free-icon-bin-Recycler.png" Width="20" Height="20"/>
+                                                    Style="{StaticResource ButtonOfOrder}" Command="{Binding DeleteFileFromProduct}"
+                                                    ToolTip="Удалить файл из списка и отметить для удаления">
+                                                    <Image Source="/Images/free-icon-bin-Recycler.png" Width="20" Height="20"/>
+                                                <Button.CommandParameter>
+                                                    <MultiBinding Converter="{StaticResource MultiValueConverter}">
+                                                        <Binding ElementName="ListProduct" Path="SelectedItem"/>
+                                                        <Binding ElementName="FilesListBox" Path="SelectedItem"/>
+                                                    </MultiBinding>
+                                                </Button.CommandParameter>
                                             </Button>
                                             <Button Name="OpenFolderButton" Background="Transparent" BorderBrush="Transparent" 
-                                                Style="{StaticResource ButtonOfOrder}"
-                                                ToolTip="Открыть папку с файлами" Click="OpenFolderButton_Click">
-                                                <Image Source="/Images/free-icon-folder_open.png" Width="20" Height="20"/>
+                                                    Style="{StaticResource ButtonOfOrder}" Command="{Binding OpenFolderWithFileProduct}"
+                                                    ToolTip="Открыть папку с файлами">
+                                                    <Image Source="/Images/free-icon-folder_open.png" Width="20" Height="20"/>
                                             </Button>
                                         </StackPanel>
-                                        <ListBox Margin="5"  Grid.Row="5" Name="FilesListBox" 
+                                        <ListBox Grid.Row="5" Margin="5" Name="FilesListBox" 
                                                  ScrollViewer.VerticalScrollBarVisibility="Auto" MinHeight="80" 
-                                                 IsSynchronizedWithCurrentItem="true"
+                                                 IsSynchronizedWithCurrentItem="True"
                                                  ToolTip="Двойной щелчок - открыть файл во внешней программе"
-                                                 ItemsSource="{Binding Source={StaticResource filesListViewSource}, Mode=OneWay}"
-                                                 MouseDoubleClick="FilesListBox_MouseDoubleClick">
-                                        </ListBox>-->
+                                                 ItemsSource="{Binding ElementName=ListProduct, Path=SelectedItem.FilesList, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                                            <i:Interaction.Triggers>
+                                                <i:EventTrigger EventName="MouseDoubleClick">
+                                                    <i:InvokeCommandAction Command="{Binding OpenFileProductInShell}" CommandParameter="{Binding ElementName=FilesListBox, Path=SelectedItem}"/>
+                                                </i:EventTrigger>
+                                            </i:Interaction.Triggers>
+                                        </ListBox>
                                     </Grid>
                                 </ScrollViewer>
+                            </TabItem>
+                            <TabItem Header="Стоимость и затраты по КВД">
+                                <StackPanel>
+                                    <ListView Name="CostOfProduct" Margin="5" Padding="2" IsSynchronizedWithCurrentItem="True" 
+                                              ItemsSource="{Binding Source={StaticResource productCostsViewSource}}" PreviewKeyDown="ListViewUpAndDown_PreviewKeyDown">
+                                        <ListView.View>
+                                            <GridView>
+                                                <GridViewColumn Header=" Код " Width="Auto"
+                                                        HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
+                                                        DisplayMemberBinding="{Binding Path=Code}"/>
+                                                <GridViewColumn Header=" Вид деятельности " Width="Auto"
+                                                        HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
+                                                        DisplayMemberBinding="{Binding Path=Name}"/>
+                                                <GridViewColumn Header=" Стоимость " Width="100"
+                                                        HeaderTemplate="{StaticResource ListViewHeaderTemplate}">
+                                                    <GridViewColumn.CellTemplate>
+                                                        <DataTemplate>
+                                                            <DataTemplate.Triggers>
+                                                                <DataTrigger Binding="{Binding ElementName=SaveOrderButton, Path=Tag}" Value="True">
+                                                                    <Setter Property="IsEnabled" Value="False"/>
+                                                                </DataTrigger>
+                                                            </DataTemplate.Triggers>
+                                                            <TextBox Name="TypeOfActivityCostTextBox" Style="{StaticResource ValidationTemplate}"
+                                                                     HorizontalContentAlignment="Right" Width="90" Language="ru-RU"
+                                                                     SourceUpdated="TypeOfActivityCostTextBox_SourceUpdated"
+                                                                     GotFocus="TypeOfActivityCostTextBox_GotFocus">
+                                                                <TextBox.Text>
+                                                                    <Binding Path="Cost" Mode="TwoWay" UpdateSourceTrigger="LostFocus"
+                                                                             NotifyOnSourceUpdated="True" ValidatesOnExceptions="True" 
+                                                                             ValidatesOnNotifyDataErrors="True" 
+                                                                             Converter="{StaticResource CostConverter}">
+                                                                        <Binding.ValidationRules>
+                                                                            <local:CostValidationRule/>
+                                                                        </Binding.ValidationRules>
+                                                                    </Binding>
+                                                                </TextBox.Text>
+                                                                <TextBox.IsEnabled>
+                                                                    <MultiBinding Converter="{StaticResource IsCanEditAfterSendToProdToBoolConverter}">
+                                                                        <Binding Source="{StaticResource productsViewSource}" Path="DateTransferProduction" Converter="{StaticResource NullDateTimeToBoolConverter}"/>
+                                                                        <Binding RelativeSource="{RelativeSource AncestorType=local:OrderWindow}" Path="DataContext.OrderCardProductQuantityAndCost"/>
+                                                                    </MultiBinding>
+                                                                    <!--<MultiBinding Converter="{StaticResource AddBoolConverter}" ConverterParameter="True">
+                                                                        <Binding Source="{StaticResource productsViewSource}" Path="DateTransferProduction" Converter="{StaticResource NullDateTimeToBoolConverter}"/>
+                                                                        <Binding RelativeSource="{RelativeSource AncestorType=local:OrderWindow}" Path="DataContext.IsManager"/>
+                                                                    </MultiBinding>-->
+                                                                </TextBox.IsEnabled>
+                                                            </TextBox>
+                                                        </DataTemplate>
+                                                    </GridViewColumn.CellTemplate>
+                                                </GridViewColumn>
+                                                <GridViewColumn Header=" Затраты " Width="100"
+                                                        HeaderTemplate="{StaticResource ListViewHeaderTemplate}">
+                                                    <GridViewColumn.CellTemplate>
+                                                        <DataTemplate>
+                                                            <DataTemplate.Triggers>
+                                                                <DataTrigger Binding="{Binding ElementName=SaveOrderButton, Path=Tag}" Value="True">
+                                                                    <Setter Property="IsEnabled" Value="False"/>
+                                                                </DataTrigger>
+                                                            </DataTemplate.Triggers>
+                                                            <TextBox Name="TypeOfActivityOutlayTextBox" Style="{StaticResource ValidationTemplate}"
+                                                                     HorizontalContentAlignment="Right" Width="90" Language="ru-RU"
+                                                                     IsEnabled="{Binding Source={StaticResource ViewModel}, Path=ProductCostAndCostsKVDCostsChange}"
+                                                                     SourceUpdated="TypeOfActivityCostTextBox_SourceUpdated"
+                                                                     GotFocus="TypeOfActivityCostTextBox_GotFocus">
+                                                                <TextBox.Text>
+                                                                    <Binding Path="Outlay" Mode="TwoWay" UpdateSourceTrigger="LostFocus"
+                                                                     NotifyOnSourceUpdated="True" ValidatesOnExceptions="True" 
+                                                                     ValidatesOnNotifyDataErrors="True" 
+                                                                     Converter="{StaticResource CostConverter}">
+                                                                        <Binding.ValidationRules>
+                                                                            <local:CostValidationRule/>
+                                                                        </Binding.ValidationRules>
+                                                                    </Binding>
+                                                                </TextBox.Text>
+                                                            </TextBox>
+                                                        </DataTemplate>
+                                                    </GridViewColumn.CellTemplate>
+                                                </GridViewColumn>
+                                            </GridView>
+                                        </ListView.View>
+                                    </ListView>
+                                </StackPanel>
                             </TabItem>
                         </TabControl>
                     </Grid>

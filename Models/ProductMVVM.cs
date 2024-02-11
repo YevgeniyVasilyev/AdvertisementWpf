@@ -16,6 +16,7 @@ namespace AdvertisementWpf.Models
             //TechCards = new HashSet<TechCard>();
             //Costs = new HashSet<ProductCost>();
             ProductCosts = new HashSet<ProductCost>();
+            FilesList = new List<string>();
         }
 
         private short _quantity;
@@ -31,6 +32,9 @@ namespace AdvertisementWpf.Models
         public ProductType ProductType { get; set; }
 
         [NotMapped]
+        public bool DateManufactureHasValue => DateManufacture.HasValue;
+            
+        [NotMapped]
         public string KVDForReport { get; set; }
         private string _productTypeName = "";
         [NotMapped]
@@ -41,9 +45,19 @@ namespace AdvertisementWpf.Models
         }
         [NotMapped]
         public ICollection<ProductCost> Costs { get; set; }
+
+        private ObservableCollection<string> _filesList { get; set; } = new ObservableCollection<string>();
         [NotMapped]
-        public List<string> FilesList { get; set; } = new List<string> { };
-        
+#if NEWORDER
+        public ICollection<string> FilesList
+        {
+            get => _filesList;
+            set => _filesList = new ObservableCollection<string>(value);
+        }
+#else
+        public List<string> FilesList { get; set; }
+#endif
+
         private List<ProductParameters> _productParameter { get; set; } = new List<ProductParameters>();
         [NotMapped]
         public List<ProductParameters> ProductParameter
@@ -187,6 +201,7 @@ namespace AdvertisementWpf.Models
                         MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
                 Files = sFiles;
+                NotifyPropertyChanged("FilesList");
             }
         }
 

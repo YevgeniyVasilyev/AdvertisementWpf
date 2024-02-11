@@ -90,6 +90,7 @@ namespace AdvertisementWpf.Models
                 {
                     dateManufacture = value;
                     NotifyPropertyChanged("DateManufacture");
+                    NotifyPropertyChanged("DateManufactureHasValue");          
                     State = ""; //для переинициализации
                 }
             }

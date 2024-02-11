@@ -22,6 +22,8 @@ namespace AdvertisementWpf.Models
         public List<long> ListProductInAct { get; set; } = new List<long> { };
         [NotMapped]
         public List<AccountDetail> DetailsList { get; set; } = new List<AccountDetail> { };
+        [NotMapped]
+        public string UPDState { get; set; } = "2";
 
         public void ProductInActToList()
         {

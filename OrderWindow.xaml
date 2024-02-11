@@ -574,6 +574,16 @@
                                                         ValidatesOnNotifyDataErrors=True, ValidatesOnExceptions=True}"
                                           ScrollViewer.VerticalScrollBarVisibility="Auto"
                                           PreviewKeyDown="ListViewUpAndDown_PreviewKeyDown">
+                                <ListView.ItemContainerStyle>
+                                    <Style TargetType="ListViewItem">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Path=DateManufactureHasValue}" Value="True">
+                                                <Setter Property="BorderBrush" Value="Red"/>
+                                                <Setter Property="BorderThickness" Value="3"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </ListView.ItemContainerStyle>
                                 <ListView.View>
                                     <GridView>
                                         <GridView.Columns>
@@ -630,12 +640,14 @@
                                                                       IsEnabled="{Binding Source={StaticResource ViewModel}, Path=OrderCardProductDesigner}"
                                                                       ItemsSource="{Binding Source={StaticResource ViewModel}, Path=DesignerList}" 
                                                                       SelectedValuePath="ID" DisplayMemberPath="FullUserName"
-                                                                      SelectedValue="{Binding Path=DesignerID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                                                       SelectedValue="{Binding Path=DesignerID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                                                                       GotFocus="DesignerComboBox_GotFocus">
                                                         </ComboBox>
                                                     </DataTemplate>
                                                 </GridViewColumn.CellTemplate>
                                             </GridViewColumn>
+                                            <GridViewColumn Header=" Состояние " Width="150" HeaderTemplate="{StaticResource ListViewHeaderTemplate}" 
+                                                            DisplayMemberBinding="{Binding Path=State, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
                                         </GridView.Columns>
                                     </GridView>
                                 </ListView.View>
@@ -720,10 +732,10 @@
                                                 NotifyOnSourceUpdated=True,
                                                 ValidatesOnExceptions=True, ValidatesOnNotifyDataErrors=True}" IsTodayHighlighted="True" 
                                                 SourceUpdated="DatePicker_SourceUpdated" IsEnabled="{Binding Source={StaticResource productsViewSource}, Path=DateManufacture, Converter={StaticResource NullDateTimeToBoolConverter}}"/>
-                                    <Label Content="Состояние изделия: " Grid.Column="3" Grid.Row="3"/>
+                                    <!--<Label Content="Состояние изделия: " Grid.Column="3" Grid.Row="3"/>
                                     <TextBlock x:Name="ProductState" TextWrapping="Wrap" VerticalAlignment="Center"
                                                 Text="{Binding Source={StaticResource productsViewSource}, 
-                                                Path=State, Mode=TwoWay}" FontWeight="Bold" Grid.Column="4" Grid.Row="3"/>
+                                                Path=State, Mode=TwoWay}" FontWeight="Bold" Grid.Column="4" Grid.Row="3"/>-->
                                 </Grid>
                             </StackPanel>
                         </Grid>
@@ -1684,6 +1696,8 @@
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
                                 <TextBlock Grid.Column="0" Grid.Row="0" Text="Номер акта " VerticalAlignment="Center"/>
                                 <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding ElementName=ListAct, Path=SelectedItem.ActNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
@@ -1698,18 +1712,26 @@
                                      ScrollViewer.VerticalScrollBarVisibility="Auto"
                                      MaxLines="3" MinLines="3"
                                      Text="{Binding Source={StaticResource accountsViewSource}, Path=Order.Client.ClientInfoForAct, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                                <TextBlock Grid.Column="0" Grid.Row="4" Text="Грузополучатель (СФ, УПД): " VerticalAlignment="Center"/>
-                                <TextBox Grid.Column="1" Grid.Row="4" Margin="0,5,0,0" TextWrapping="Wrap" AcceptsReturn="True" AcceptsTab="True"
+                                <TextBlock Grid.Column="0" Grid.Row="4" Text="Статус (УПД): " VerticalAlignment="Center"/>
+                                <TextBox Grid.Column="1" Grid.Row="4" Margin="0,5,0,0" Width="20" HorizontalAlignment="Left" VerticalAlignment="Center"
+                                     Text="{Binding ElementName=ListAct, Path=SelectedItem.UPDState, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                <TextBlock Grid.Column="0" Grid.Row="5" Text="Грузоотправитель (УПД): " VerticalAlignment="Center"/>
+                                <TextBox Grid.Column="1" Grid.Row="5" Margin="0,5,0,0" TextWrapping="Wrap" AcceptsReturn="True" AcceptsTab="True"
+                                     ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                     MaxLines="3" MinLines="3"
+                                     Text="{Binding Source={StaticResource accountsViewSource}, Path=Contractor.ShipperInfoForSFUPD, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                <TextBlock Grid.Column="0" Grid.Row="6" Text="Грузополучатель (СФ, УПД): " VerticalAlignment="Center"/>
+                                <TextBox Grid.Column="1" Grid.Row="6" Margin="0,5,0,0" TextWrapping="Wrap" AcceptsReturn="True" AcceptsTab="True"
                                      ScrollViewer.VerticalScrollBarVisibility="Auto"
                                      IsEnabled="{Binding Converter={StaticResource BoolNotBoolConverter}, Source={StaticResource accountsViewSource}, Path=Order.Client.ConsigneeIsSame}"
                                      Text="{Binding Source={StaticResource accountsViewSource}, Path=Order.Client.ConsigneeForSFUPD, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                                <TextBlock Grid.Column="0" Grid.Row="5" Text="Грузополучатель (ТН): " VerticalAlignment="Center"/>
-                                <TextBox Grid.Column="1" Grid.Row="5" Margin="0,5,0,0" TextWrapping="Wrap" AcceptsReturn="True" AcceptsTab="True"
+                                <TextBlock Grid.Column="0" Grid.Row="7" Text="Грузополучатель (ТН): " VerticalAlignment="Center"/>
+                                <TextBox Grid.Column="1" Grid.Row="7" Margin="0,5,0,0" TextWrapping="Wrap" AcceptsReturn="True" AcceptsTab="True"
                                      ScrollViewer.VerticalScrollBarVisibility="Auto"
                                      MaxLines="3" MinLines="3"
                                      IsEnabled="{Binding Converter={StaticResource BoolNotBoolConverter}, Source={StaticResource accountsViewSource}, Path=Order.Client.ConsigneeIsSame}"
                                      Text="{Binding Source={StaticResource accountsViewSource}, Path=Order.Client.ConsigneeForTN, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                                <StackPanel Grid.Column="0" Grid.Row="6" Orientation="Vertical">
+                                <StackPanel Grid.Column="0" Grid.Row="8" Orientation="Vertical">
                                     <Button Margin="4" Name="PrintActButton" Style="{StaticResource ButtonOfOrder}" Command="ApplicationCommands.Print">
                                         <StackPanel Orientation="Horizontal">
                                             <Image Margin="5,0,0,0" Source="\Images\free-icon-printer.png" Width="25" Height="25"/>
@@ -1721,7 +1743,7 @@
                                         </StackPanel>
                                     </Button>
                                 </StackPanel>
-                                <StackPanel Grid.Column="1" Grid.Row="6" Orientation="Horizontal" Margin="3,0,0,0">
+                                <StackPanel Grid.Column="1" Grid.Row="8" Orientation="Horizontal" Margin="3,0,0,0">
                                     <RadioButton GroupName="ActTemplate" Name="TemplateAct" IsChecked="True" Content=" Акт" VerticalContentAlignment="Center"/>
                                     <RadioButton GroupName="ActTemplate" Name="TemplateSFTN" Margin="3,0,0,0" Content=" СФ и ТН" VerticalContentAlignment="Center" />
                                     <RadioButton GroupName="ActTemplate" Name="TemplateUPD" Margin="3,0,0,0" Content=" УПД" VerticalContentAlignment="Center" />

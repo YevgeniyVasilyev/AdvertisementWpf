@@ -1,15 +1,18 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Win32;
+using Microsoft.VisualBasic.FileIO;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Diagnostics;
 
 namespace AdvertisementWpf.Models
 {
@@ -142,8 +145,9 @@ namespace AdvertisementWpf.Models
 
     internal class OrderViewModel : ISave, ILoad, IAdd, INotifyPropertyChanged
     {
-        private RelayCommand saveRequest, textBlockMouseLeftClick, showHideNewProductList, selectNewProduct, deleteProduct;
+        private RelayCommand saveRequest, textBlockMouseLeftClick, showHideNewProductList, selectNewProduct, deleteProduct, newFileToProduct, deleteFileFromProduct, openFolderWithFileProduct, openFileProductInShell;
         private App.AppDbContext _contextOrder_ = CreateDbContext.CreateContext();
+        private string _pathToFilesOfProduct = "";                                              //путь к уелевой папке хранения файлов иллюстраций изделия
         private string _searchClient = "";
         public string SearchClient
         {
@@ -277,7 +281,7 @@ namespace AdvertisementWpf.Models
                 ((ISave)this).SaveContext(ref _contextOrder_, IsMutedMode: true);   //сохранить в "тихом режиме"
                 IsNewOrder = false;
             }
-        }, (o) => _contextOrder_ != null && ErrorsCount == 0 && !CurrentOrder.Products.Any(p => p.HasError));
+        }, (o) => CanSaveOrder());
 
         public RelayCommand ShowHideNewProductList => showHideNewProductList ??= new RelayCommand((o) => //команда "отобразить список выбора нового изделия"
         {
@@ -306,6 +310,113 @@ namespace AdvertisementWpf.Models
         {
             ((DatePicker)o).SelectedDate = DateTime.Now;
         }, (o) => ((DatePicker)o).IsEnabled);
+
+        public RelayCommand NewFileToProduct => newFileToProduct ??= new RelayCommand((o) => //команда добавления нового файла иллюстраций в описание изделия
+        {
+            if (o is Product product)
+            {
+                try
+                {
+                    OpenFileDialog openFileDialog = new OpenFileDialog();
+                    openFileDialog.Multiselect = true;
+                    if ((bool)openFileDialog.ShowDialog()) // Открываем окно диалога с пользователем
+                    {
+                        foreach (string fullFileName in openFileDialog.FileNames)   //проход по всем выделенным файлам
+                        {
+                            product.FilesList.Add(Path.GetFileName(fullFileName));  //добавляем в список
+                        }
+                        product.ListToFiles();                                      //свернуть список файлов в строку
+                        CopyFileToPathToFilesOfProduct(openFileDialog.FileNames);   //копируем файл в целевую папку
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _ = MessageBox.Show(ex.Message + "\n" + ex?.InnerException?.Message ?? "", "Ошибка выбора папки", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            };
+        }, (o) => _contextOrder_ != null && CurrentOrder?.ID > 0); //добавление возможно только для сохраненного заказа, т.к. его номер участвует в формированиия пути к целевой папке
+
+        private void CopyFileToPathToFilesOfProduct(string[] aFullFileNames)
+        {
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(_pathToFilesOfProduct) && Directory.Exists(_pathToFilesOfProduct))
+                {
+                    string destinationPath = Path.Combine(_pathToFilesOfProduct, CurrentOrder.Number);
+                    //string destinationPath = System.IO.Path.Combine(_pathToFilesOfProduct, "0000000001");
+                    if (!Directory.Exists(destinationPath))
+                    {
+                        _ = Directory.CreateDirectory(destinationPath);
+                    }
+                    string ending = aFullFileNames.Length > 1 && aFullFileNames.Length < 5 ? "а" : aFullFileNames.Length >= 5 ? "ов" : "";
+                    bool lNeedDeleteFile = MessageBox.Show($"В папку {destinationPath} будет скопировано {aFullFileNames.Length} файл{ending}.\n\n Удалить файл(-ы) в исходной папке?",
+                        "Копирование файлов", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes;
+                    foreach (string fullFileName in aFullFileNames)
+                    {
+                        FileSystem.CopyFile(fullFileName, Path.Combine(destinationPath, Path.GetFileName(fullFileName)), UIOption.AllDialogs, UICancelOption.DoNothing);
+                        if (lNeedDeleteFile)
+                        {
+                            FileSystem.DeleteFile(fullFileName, UIOption.OnlyErrorDialogs, RecycleOption.DeletePermanently);
+                        }
+                    }
+                }
+                else
+                {
+                    _ = MessageBox.Show("Не задан путь к папке размещения файлов заказа или папка не существует!" + "\n" + "Копирование файла не возможно!",
+                        "Ошибка копирования файла", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+            }
+            catch (OperationCanceledException ex)
+            {
+                _ = MessageBox.Show("Копирование отменено или возникла неопределенная ошибка ввода-вывода!" + "\n" + ex.Message + "\n" + ex?.InnerException?.Message ?? "",
+                    "Ошибка копирования файла", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            catch (Exception ex)
+            {
+                _ = MessageBox.Show(ex.Message + "\n" + ex?.InnerException?.Message ?? "", "Ошибка копирования файла", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        public RelayCommand DeleteFileFromProduct => deleteFileFromProduct ??= new RelayCommand((o) => //команда удаления файла иллюстраций в описании изделия
+        {
+            Product product = ((object[])o)[0] as Product;
+            string File = ((object[])o)[1] as string;
+            product?.FilesList?.Remove(File);
+        }, (o) => ((object[])o)?[0] is Product product && product?.FilesList?.Count > 0);
+
+        public RelayCommand OpenFolderWithFileProduct => openFolderWithFileProduct ??= new RelayCommand((o) => //команда открытия папки с файлами иллюстраций изделия
+        {
+            _ = Process.Start(new ProcessStartInfo { FileName = "explorer.exe", Arguments = $"/n, {Path.Combine(_pathToFilesOfProduct, CurrentOrder.Number)}" });
+        }, (o) => CurrentOrder?.ID > 0 && Directory.Exists(Path.Combine(_pathToFilesOfProduct, CurrentOrder.Number)));
+
+        public RelayCommand OpenFileProductInShell => openFileProductInShell ??= new RelayCommand((o) => //команда открытия файла иллюстраций изделия во внешней программе
+        {
+            string fileName = (string)o;
+            OpenFileInOSShell.OpenFile(Path.Combine(Path.Combine(_pathToFilesOfProduct, CurrentOrder.Number), fileName));
+        }, (o) => CurrentOrder?.ID > 0);
+
+        private bool CanSaveOrder()
+        {
+            bool CanSaveOrder = _contextOrder_ != null && ErrorsCount == 0 && !CurrentOrder.Products.Any(p => p.HasError);
+            foreach (Product product in CurrentOrder?.Products)
+            {
+                foreach (ProductParameters productParameter in product?.ProductParameter)                                           //проход по параметра каждого продукта
+                {
+                    if (productParameter.IsRequired)                                                                                //параметр обязательный к заполнению
+                    {
+                        if (productParameter.ReferencebookID > 0 && productParameter.ParameterID is null)                           //выбран справочник, но параметр из справочника не выбран
+                        {
+                            return false;
+                        }
+                        if (productParameter.ReferencebookID is null && string.IsNullOrWhiteSpace(productParameter.ParameterValue)) //параметр не справочный и не заполнен
+                        {
+                            return false;
+                        }
+                    }
+                }
+            }
+            return CanSaveOrder;
+        }
 
         public void ReferencebookListSelectionChanged(object sender)
         {
@@ -344,6 +455,7 @@ namespace AdvertisementWpf.Models
 
         public void LoadContext(long nOrderID)
         {
+            _pathToFilesOfProduct = _contextOrder_.Setting.AsNoTracking().Where(Setting => Setting.SettingParameterName == "PathToFilesOfProduct").FirstOrDefault().SettingParameterValue;
             ClientCollectionView = CollectionViewSource.GetDefaultView(_contextOrder_.Clients.AsNoTracking().ToList());                         //инициализация коллекции "Клиенты"
             ClientCollectionView.Filter = ClientFilter;                                                                                         //установка обработчика для фильтрации
             ClientCollectionView.MoveCurrentToFirst();                                                                                          //переход на первую запись в коллекции
