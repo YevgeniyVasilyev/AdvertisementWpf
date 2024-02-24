@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:System="clr-namespace:System;assembly=mscorlib"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"        
         xmlns:local="clr-namespace:AdvertisementWpf" 
         mc:Ignorable="d"
@@ -22,6 +23,199 @@
         </Style>
     </Window.Style>
     <Window.Resources>
+        <ControlTemplate x:Key="SpecialTreeViewItemTemplate" TargetType="TreeViewItem">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" MinWidth="19" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <ToggleButton IsChecked="False" ClickMode="Press" Name="Expander">
+                    <ToggleButton.Style>
+                        <Style TargetType="ToggleButton">
+                            <Style.Resources>
+                                <ResourceDictionary />
+                            </Style.Resources>
+                            <Setter Property="UIElement.Focusable">
+                                <Setter.Value>
+                                    <System:Boolean>False</System:Boolean>
+                                </Setter.Value>
+                            </Setter>
+                            <Setter Property="FrameworkElement.Width">
+                                <Setter.Value>
+                                    <System:Double>16</System:Double>
+                                </Setter.Value>
+                            </Setter>
+                            <Setter Property="FrameworkElement.Height">
+                                <Setter.Value>
+                                    <System:Double>16</System:Double>
+                                </Setter.Value>
+                            </Setter>
+                            <Setter Property="Control.Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="ToggleButton">
+                                        <Border Padding="5,5,5,5" Background="#00FFFFFF" Width="16" Height="16">
+                                            <Path Fill="#00FFFFFF" Stroke="#FF989898" Name="ExpandPath">
+                                                <Path.Data>
+                                                    <PathGeometry Figures="M0,0L0,6L6,0z" />
+                                                </Path.Data>
+                                                <Path.RenderTransform>
+                                                    <RotateTransform Angle="135" CenterX="3" CenterY="3" />
+                                                </Path.RenderTransform>
+                                            </Path>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="ToggleButton.IsChecked">
+                                                <Setter Property="UIElement.RenderTransform" TargetName="ExpandPath">
+                                                    <Setter.Value>
+                                                        <RotateTransform Angle="180" CenterX="3" CenterY="3" />
+                                                    </Setter.Value>
+                                                </Setter>
+                                                <Setter Property="Shape.Fill" TargetName="ExpandPath">
+                                                    <Setter.Value>
+                                                        <SolidColorBrush>#FF595959</SolidColorBrush>
+                                                    </Setter.Value>
+                                                </Setter>
+                                                <Setter Property="Shape.Stroke" TargetName="ExpandPath">
+                                                    <Setter.Value>
+                                                        <SolidColorBrush>#FF262626</SolidColorBrush>
+                                                    </Setter.Value>
+                                                </Setter>
+                                                <Trigger.Value>
+                                                    <System:Boolean>True</System:Boolean>
+                                                </Trigger.Value>
+                                            </Trigger>
+                                            <Trigger Property="UIElement.IsMouseOver">
+                                                <Setter Property="Shape.Stroke" TargetName="ExpandPath">
+                                                    <Setter.Value>
+                                                        <SolidColorBrush>#FF1BBBFA</SolidColorBrush>
+                                                    </Setter.Value>
+                                                </Setter>
+                                                <Setter Property="Shape.Fill" TargetName="ExpandPath">
+                                                    <Setter.Value>
+                                                        <SolidColorBrush>#00FFFFFF</SolidColorBrush>
+                                                    </Setter.Value>
+                                                </Setter>
+                                                <Trigger.Value>
+                                                    <System:Boolean>True</System:Boolean>
+                                                </Trigger.Value>
+                                            </Trigger>
+                                            <MultiTrigger>
+                                                <MultiTrigger.Conditions>
+                                                    <Condition Property="UIElement.IsMouseOver">
+                                                        <Condition.Value>
+                                                            <System:Boolean>True</System:Boolean>
+                                                        </Condition.Value>
+                                                    </Condition>
+                                                    <Condition Property="ToggleButton.IsChecked">
+                                                        <Condition.Value>
+                                                            <System:Boolean>True</System:Boolean>
+                                                        </Condition.Value>
+                                                    </Condition>
+                                                </MultiTrigger.Conditions>
+                                                <Setter Property="Shape.Stroke" TargetName="ExpandPath">
+                                                    <Setter.Value>
+                                                        <SolidColorBrush>#FF262626</SolidColorBrush>
+                                                    </Setter.Value>
+                                                </Setter>
+                                                <Setter Property="Shape.Fill" TargetName="ExpandPath">
+                                                    <Setter.Value>
+                                                        <SolidColorBrush>#FF595959</SolidColorBrush>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </MultiTrigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ToggleButton.Style>
+                </ToggleButton>
+                <Border BorderThickness="{TemplateBinding Border.BorderThickness}" Padding="{TemplateBinding Control.Padding}" BorderBrush="{TemplateBinding Border.BorderBrush}" Background="{TemplateBinding Panel.Background}" Name="Bd" SnapsToDevicePixels="True" Grid.Column="1">
+                    <ContentPresenter Content="{TemplateBinding HeaderedContentControl.Header}" ContentTemplate="{TemplateBinding HeaderedContentControl.HeaderTemplate}" ContentStringFormat="{TemplateBinding HeaderedItemsControl.HeaderStringFormat}" ContentSource="Header" Name="PART_Header" HorizontalAlignment="{TemplateBinding Control.HorizontalContentAlignment}" SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}" />
+                </Border>
+                <ItemsPresenter Name="ItemsHost" Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2" />
+            </Grid>
+            <ControlTemplate.Triggers>
+                <Trigger Property="TreeViewItem.IsExpanded">
+                    <Setter Property="UIElement.Visibility" TargetName="ItemsHost">
+                        <Setter.Value>
+                            <x:Static Member="Visibility.Collapsed" />
+                        </Setter.Value>
+                    </Setter>
+                    <Trigger.Value>
+                        <System:Boolean>False</System:Boolean>
+                    </Trigger.Value>
+                </Trigger>
+                <Trigger Property="ItemsControl.HasItems">
+                    <Setter Property="UIElement.Visibility" TargetName="Expander">
+                        <Setter.Value>
+                            <x:Static Member="Visibility.Hidden" />
+                        </Setter.Value>
+                    </Setter>
+                    <Trigger.Value>
+                        <System:Boolean>False</System:Boolean>
+                    </Trigger.Value>
+                </Trigger>
+                <Trigger Property="TreeViewItem.IsSelected">
+                    <Setter Property="Panel.Background" TargetName="Bd">
+                        <Setter.Value>
+                            <DynamicResource ResourceKey="{x:Static SystemColors.HighlightBrushKey}" />
+                        </Setter.Value>
+                    </Setter>
+                    <Setter Property="TextElement.Foreground">
+                        <Setter.Value>
+                            <DynamicResource ResourceKey="{x:Static SystemColors.HighlightTextBrushKey}" />
+                        </Setter.Value>
+                    </Setter>
+                    <Trigger.Value>
+                        <System:Boolean>True</System:Boolean>
+                    </Trigger.Value>
+                </Trigger>
+                <MultiTrigger>
+                    <MultiTrigger.Conditions>
+                        <Condition Property="TreeViewItem.IsSelected">
+                            <Condition.Value>
+                                <System:Boolean>True</System:Boolean>
+                            </Condition.Value>
+                        </Condition>
+                        <Condition Property="Selector.IsSelectionActive">
+                            <Condition.Value>
+                                <System:Boolean>False</System:Boolean>
+                            </Condition.Value>
+                        </Condition>
+                    </MultiTrigger.Conditions>
+                    <Setter Property="Panel.Background" TargetName="Bd">
+                        <Setter.Value>
+                            <DynamicResource ResourceKey="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" />
+                        </Setter.Value>
+                    </Setter>
+                    <Setter Property="TextElement.Foreground">
+                        <Setter.Value>
+                            <DynamicResource ResourceKey="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" />
+                        </Setter.Value>
+                    </Setter>
+                </MultiTrigger>
+                <Trigger Property="UIElement.IsEnabled">
+                    <Setter Property="TextElement.Foreground">
+                        <Setter.Value>
+                            <DynamicResource ResourceKey="{x:Static SystemColors.GrayTextBrushKey}" />
+                        </Setter.Value>
+                    </Setter>
+                    <Trigger.Value>
+                        <System:Boolean>False</System:Boolean>
+                    </Trigger.Value>
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+        <Style TargetType="TreeViewItem" x:Key="SpecialTreeViewItem">
+            <Setter Property="Template" Value="{DynamicResource SpecialTreeViewItemTemplate}"/>
+        </Style>
+        <local:CostConverter x:Key="CostConverter"/>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <local:ValueConverterGroup x:Key="BoolToVisibilityConverter">
             <local:BoolNotBoolConverter/>
@@ -67,6 +261,29 @@
                 </TextBlock.Text>
             </TextBlock>
         </DataTemplate>
+        <Style TargetType="{x:Type TextBox}" x:Key="ValidationTemplate">
+            <Setter Property="Validation.ErrorTemplate">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <DockPanel LastChildFill="True">
+                            <Grid Margin="0,-2,0,-2">
+                                <Ellipse StrokeThickness="0" Fill="Red" Width="{TemplateBinding FontSize}" Height="{TemplateBinding FontSize}"/>
+                                <TextBlock Text="!" FontSize="{TemplateBinding FontSize}" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
+                            </Grid>
+                            <Border BorderBrush="Red" BorderThickness="1">
+                                <AdornedElementPlaceholder/>
+                            </Border>
+                        </DockPanel>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="Validation.HasError" Value="True">
+                    <Setter Property="ToolTip"
+                            Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)[0].ErrorContent}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -86,18 +303,26 @@
                 </StackPanel>
              </Button>
             <Separator/>
-            <Button Name="PrintRequestFormButton" Style="{StaticResource ButtonOfOrder}" IsEnabled="{Binding OrderCardPrintOrderForm}">
+            <Button Name="PrintRequestFormButton" Style="{StaticResource ButtonOfOrder}" IsEnabled="{Binding OrderCardPrintOrderForm}" 
+                    Command="{Binding PrintOrderForm}" CommandParameter="{Binding ElementName=ListProduct}">
                 <StackPanel Orientation="Vertical">
                     <Image Source="\Images\free-icon-printer.png" Width="25" Height="25"/>
                     <Label Content="Бланк"/>
                 </StackPanel>
             </Button>
-            <Button Name="PrintRequestFormForDesignerButton" Style="{StaticResource ButtonOfOrder}" IsEnabled="{Binding OrderCardPrintOrderFormForDesigner}">
+            <Button Name="PrintRequestFormForDesignerButton" Style="{StaticResource ButtonOfOrder}" IsEnabled="{Binding OrderCardPrintOrderFormForDesigner}" 
+                    Command="{Binding PrintOrderFormForDesigner}">
                 <StackPanel Orientation="Vertical">
                     <Image Source="\Images\free-icon-printer.png" Width="25" Height="25"/>
                     <Label Content="Бланк для дизайнера"/>
                     <Image Source="\Images\downward-arrow.png" Width="15" Height="15"/>
                 </StackPanel>
+                <Button.CommandParameter>
+                    <MultiBinding Converter="{StaticResource MultiValueConverter}">
+                        <Binding ElementName="PrintRequestFormForDesignerButton"/>
+                        <Binding ElementName="ListProduct"/>
+                    </MultiBinding>
+                </Button.CommandParameter>
                 <Button.ContextMenu>
                     <ContextMenu Visibility="Hidden">
                     </ContextMenu>
@@ -184,7 +409,7 @@
                             <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center">
                                 <TextBlock Text="Изделия" FontWeight="Bold" VerticalAlignment="Center"/>
                                 <Button Name="NewProductListButton" Background="Transparent" BorderBrush="Transparent" 
-                                        Command="{Binding ShowHideNewProductList}" CommandParameter="{Binding ElementName=NewProductGrid}"
+                                        Command="{Binding ShowHideFrameworkElement}" CommandParameter="{Binding ElementName=NewProductGrid}"
                                         Style="{StaticResource ButtonOfOrder}" 
                                         Visibility="{Binding ElementName=NewProductGrid, Path=IsVisible, Converter={StaticResource BoolToVisibilityConverter}}"
                                         Margin="10,0,0,0" ToolTip="Добавить изделие (показать список)">
@@ -192,7 +417,7 @@
                                 </Button>
                                 <Button Background="Transparent" BorderBrush="Transparent" 
                                         Visibility="{Binding ElementName=NewProductGrid, Path=Visibility}"
-                                        Style="{StaticResource ButtonOfOrder}" Command="{Binding ShowHideNewProductList}" CommandParameter="{Binding ElementName=NewProductGrid}"
+                                        Style="{StaticResource ButtonOfOrder}" Command="{Binding ShowHideFrameworkElement}" CommandParameter="{Binding ElementName=NewProductGrid}"
                                         Margin="10,0,0,0" ToolTip="Свернуть список изделий">
                                     <Image Source="/Images/free-icon-minus-button.png" Width="20" Height="20"/>
                                 </Button>
@@ -219,7 +444,7 @@
                                     <i:Interaction.Triggers>
                                         <i:EventTrigger EventName="MouseDoubleClick">
                                             <i:InvokeCommandAction Command="{Binding SelectNewProduct}" CommandParameter="{Binding ElementName=NewProductListBox, Path=SelectedItem}"/>
-                                            <i:InvokeCommandAction Command="{Binding ShowHideNewProductList}" CommandParameter="{Binding ElementName=NewProductGrid}"/>
+                                            <i:InvokeCommandAction Command="{Binding ShowHideFrameworkElement}" CommandParameter="{Binding ElementName=NewProductGrid}"/>
                                         </i:EventTrigger>
                                     </i:Interaction.Triggers>
                                     <ListBox.GroupStyle>
@@ -255,6 +480,24 @@
                                       ItemsSource="{Binding CurrentOrder.Products, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" 
                                       ScrollViewer.VerticalScrollBarVisibility="Auto"
                                       PreviewKeyDown="ListViewUpAndDown_PreviewKeyDown">
+                                <ListView.ItemContainerStyle>
+                                    <Style TargetType="ListViewItem">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Path=ProductBlueBorder}" Value="True">
+                                                <Setter Property="BorderBrush" Value="Blue"/>
+                                                <Setter Property="BorderThickness" Value="3"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Path=ProductRedBorder}" Value="True">
+                                                <Setter Property="BorderBrush" Value="Red"/>
+                                                <Setter Property="BorderThickness" Value="3"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Path=ProductGreenBorder}" Value="True">
+                                                <Setter Property="BorderBrush" Value="Green"/>
+                                                <Setter Property="BorderThickness" Value="3"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </ListView.ItemContainerStyle>
                                 <ListView.View>
                                     <GridView>
                                         <GridView.Columns>
@@ -293,6 +536,8 @@
                                                     </DataTemplate>
                                                 </GridViewColumn.CellTemplate>
                                             </GridViewColumn>
+                                            <GridViewColumn Header=" Состояние " Width="150" HeaderTemplate="{StaticResource ListViewHeaderTemplate}" 
+                                                            DisplayMemberBinding="{Binding Path=State, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
                                         </GridView.Columns>
                                     </GridView>
                                 </ListView.View>
@@ -304,10 +549,10 @@
                                         <ColumnDefinition Width="{Binding ElementName=column2, Path=Width}"/>
                                         <ColumnDefinition Width="{Binding ElementName=column3, Path=Width}"/>
                                     </Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Column="0" Text="ИТОГО:" Margin="10,0,0,0" FontWeight="Bold" Grid.ColumnSpan="2"/>
-                                    <TextBlock Margin="0,0,5,0" Grid.Column="1" Text="{Binding ElementName=ListProduct,Path=Items.Count, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Right" FontWeight="Bold"/>
-                                    <TextBlock Grid.Column="2" Text="{Binding ElementName=ListProduct, Path=ItemsSource, Converter={StaticResource SumListViewDecimalConverter}, ConverterParameter=Cost, StringFormat={}{0:C}, ConverterCulture='ru-RU'}" 
-                                               Margin="7,0,0,0" HorizontalAlignment="Left" FontWeight="Bold"/>
+                                    <TextBlock Grid.Column="0" Margin="10,0,0,0" Text="ИТОГО:" FontWeight="Bold" Grid.ColumnSpan="2"/>
+                                    <TextBlock Grid.Column="1" Margin="0,0,5,0"  Text="{Binding ElementName=ListProduct,Path=Items.Count, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Right" FontWeight="Bold"/>
+                                    <TextBlock Grid.Column="2" Margin="7,0,0,0"  Text="{Binding ElementName=ListProduct, Path=ItemsSource, Converter={StaticResource SumListViewDecimalConverter}, ConverterParameter=Cost, StringFormat={}{0:C}, ConverterCulture='ru-RU', UpdateSourceTrigger=PropertyChanged}" 
+                                               Name="OrderTotalCosts" HorizontalAlignment="Left" FontWeight="Bold"/>
                                 </Grid>
                             </Border>
                             <StackPanel Grid.Row="4">
@@ -381,9 +626,6 @@
                                                 IsTodayHighlighted="True" SourceUpdated="DatePicker_SourceUpdated" 
                                                 IsEnabled="{Binding ElementName=ListProduct, Path=SelectedItem.DateManufacture, Converter={StaticResource NullDateTimeToBoolConverter}}">
                                     </DatePicker>
-                                    <TextBlock Grid.Column="3" Grid.Row="3" Text="Состояние изделия: " VerticalAlignment="Center"/>
-                                    <TextBlock Grid.Column="4" Grid.Row="3" TextWrapping="Wrap" VerticalAlignment="Center" FontWeight="Bold"
-                                               Text="{Binding ElementName=ListProduct, Path=SelectedItem.State, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
                                 </Grid>
                             </StackPanel>
                         </Grid>
@@ -507,32 +749,25 @@
                             <TabItem Header="Стоимость и затраты по КВД">
                                 <StackPanel>
                                     <ListView Name="CostOfProduct" Margin="5" Padding="2" IsSynchronizedWithCurrentItem="True" 
-                                              ItemsSource="{Binding Source={StaticResource productCostsViewSource}}" PreviewKeyDown="ListViewUpAndDown_PreviewKeyDown">
+                                              ItemsSource="{Binding ElementName=ListProduct, Path=SelectedItem.ProductCosts}" PreviewKeyDown="ListViewUpAndDown_PreviewKeyDown">
                                         <ListView.View>
                                             <GridView>
-                                                <GridViewColumn Header=" Код " Width="Auto"
-                                                        HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
+                                                <GridViewColumn Header=" Код " Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
                                                         DisplayMemberBinding="{Binding Path=Code}"/>
-                                                <GridViewColumn Header=" Вид деятельности " Width="Auto"
-                                                        HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
+                                                <GridViewColumn Header=" Вид деятельности " Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
                                                         DisplayMemberBinding="{Binding Path=Name}"/>
-                                                <GridViewColumn Header=" Стоимость " Width="100"
-                                                        HeaderTemplate="{StaticResource ListViewHeaderTemplate}">
+                                                <GridViewColumn Header=" Стоимость " Width="100" HeaderTemplate="{StaticResource ListViewHeaderTemplate}">
                                                     <GridViewColumn.CellTemplate>
                                                         <DataTemplate>
-                                                            <DataTemplate.Triggers>
-                                                                <DataTrigger Binding="{Binding ElementName=SaveOrderButton, Path=Tag}" Value="True">
-                                                                    <Setter Property="IsEnabled" Value="False"/>
-                                                                </DataTrigger>
-                                                            </DataTemplate.Triggers>
                                                             <TextBox Name="TypeOfActivityCostTextBox" Style="{StaticResource ValidationTemplate}"
-                                                                     HorizontalContentAlignment="Right" Width="90" Language="ru-RU"
+                                                                     HorizontalContentAlignment="Right" Width="90" Language="ru-RU"                                                                     
+                                                                     Validation.Error="TextBoxError"
                                                                      SourceUpdated="TypeOfActivityCostTextBox_SourceUpdated"
                                                                      GotFocus="TypeOfActivityCostTextBox_GotFocus">
                                                                 <TextBox.Text>
                                                                     <Binding Path="Cost" Mode="TwoWay" UpdateSourceTrigger="LostFocus"
-                                                                             NotifyOnSourceUpdated="True" ValidatesOnExceptions="True" 
-                                                                             ValidatesOnNotifyDataErrors="True" 
+                                                                             NotifyOnSourceUpdated="True" 
+                                                                             ValidatesOnNotifyDataErrors="True" NotifyOnValidationError="True" 
                                                                              Converter="{StaticResource CostConverter}">
                                                                         <Binding.ValidationRules>
                                                                             <local:CostValidationRule/>
@@ -541,36 +776,27 @@
                                                                 </TextBox.Text>
                                                                 <TextBox.IsEnabled>
                                                                     <MultiBinding Converter="{StaticResource IsCanEditAfterSendToProdToBoolConverter}">
-                                                                        <Binding Source="{StaticResource productsViewSource}" Path="DateTransferProduction" Converter="{StaticResource NullDateTimeToBoolConverter}"/>
-                                                                        <Binding RelativeSource="{RelativeSource AncestorType=local:OrderWindow}" Path="DataContext.OrderCardProductQuantityAndCost"/>
+                                                                        <Binding Path="DateTransferProduction" Converter="{StaticResource NullDateTimeToBoolConverter}"/>
+                                                                        <Binding RelativeSource="{RelativeSource AncestorType=local:RequestWindow}" Path="DataContext.OrderCardProductQuantityAndCost"/>
                                                                     </MultiBinding>
-                                                                    <!--<MultiBinding Converter="{StaticResource AddBoolConverter}" ConverterParameter="True">
-                                                                        <Binding Source="{StaticResource productsViewSource}" Path="DateTransferProduction" Converter="{StaticResource NullDateTimeToBoolConverter}"/>
-                                                                        <Binding RelativeSource="{RelativeSource AncestorType=local:OrderWindow}" Path="DataContext.IsManager"/>
-                                                                    </MultiBinding>-->
                                                                 </TextBox.IsEnabled>
                                                             </TextBox>
                                                         </DataTemplate>
                                                     </GridViewColumn.CellTemplate>
                                                 </GridViewColumn>
-                                                <GridViewColumn Header=" Затраты " Width="100"
-                                                        HeaderTemplate="{StaticResource ListViewHeaderTemplate}">
+                                                <GridViewColumn Header=" Затраты " Width="100" HeaderTemplate="{StaticResource ListViewHeaderTemplate}">
                                                     <GridViewColumn.CellTemplate>
                                                         <DataTemplate>
-                                                            <DataTemplate.Triggers>
-                                                                <DataTrigger Binding="{Binding ElementName=SaveOrderButton, Path=Tag}" Value="True">
-                                                                    <Setter Property="IsEnabled" Value="False"/>
-                                                                </DataTrigger>
-                                                            </DataTemplate.Triggers>
                                                             <TextBox Name="TypeOfActivityOutlayTextBox" Style="{StaticResource ValidationTemplate}"
                                                                      HorizontalContentAlignment="Right" Width="90" Language="ru-RU"
-                                                                     IsEnabled="{Binding Source={StaticResource ViewModel}, Path=ProductCostAndCostsKVDCostsChange}"
+                                                                     IsEnabled="{Binding Path=ProductCostAndCostsKVDCostsChange}"
+                                                                     Validation.Error="TextBoxError"
                                                                      SourceUpdated="TypeOfActivityCostTextBox_SourceUpdated"
                                                                      GotFocus="TypeOfActivityCostTextBox_GotFocus">
                                                                 <TextBox.Text>
                                                                     <Binding Path="Outlay" Mode="TwoWay" UpdateSourceTrigger="LostFocus"
-                                                                     NotifyOnSourceUpdated="True" ValidatesOnExceptions="True" 
-                                                                     ValidatesOnNotifyDataErrors="True" 
+                                                                     NotifyOnSourceUpdated="True" 
+                                                                     ValidatesOnNotifyDataErrors="True" NotifyOnValidationError="True" 
                                                                      Converter="{StaticResource CostConverter}">
                                                                         <Binding.ValidationRules>
                                                                             <local:CostValidationRule/>
@@ -594,7 +820,27 @@
                 
             </TabItem>
             <TabItem Header="Стоимость и затраты по КВД">
-
+                <Border Margin="2" BorderThickness="1" BorderBrush="DarkBlue">
+                    <ListView Margin="5" Padding="2" IsSynchronizedWithCurrentItem="True" ItemsSource="{Binding TotalProductCosts}">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header=" Код " DisplayMemberBinding="{Binding Path=Code}" 
+                                                HeaderTemplate="{StaticResource ListViewHeaderTemplate}"/>
+                                <GridViewColumn Header=" Наименование " DisplayMemberBinding="{Binding Path=Name}" 
+                                                HeaderTemplate="{StaticResource ListViewHeaderTemplate}" Width="200"/>
+                                <GridViewColumn Header=" Стоимость "
+                                                DisplayMemberBinding="{Binding Path=Cost, ConverterCulture=ru-RU, StringFormat={}{0:C}}" 
+                                                HeaderTemplate="{StaticResource ListViewHeaderTemplate}"/>
+                                <GridViewColumn Header=" Затраы "
+                                                DisplayMemberBinding="{Binding Path=Outlay, ConverterCulture=ru-RU, StringFormat={}{0:C}}" 
+                                                HeaderTemplate="{StaticResource ListViewHeaderTemplate}"/>
+                                <GridViewColumn Header=" Маржа "
+                                                DisplayMemberBinding="{Binding Path=Margin, ConverterCulture=ru-RU, StringFormat={}{0:C}}" 
+                                                HeaderTemplate="{StaticResource ListViewHeaderTemplate}"/>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                </Border>
             </TabItem>
             <TabItem Header="ПУДы">
 

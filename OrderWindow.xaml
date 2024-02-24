@@ -577,8 +577,16 @@
                                 <ListView.ItemContainerStyle>
                                     <Style TargetType="ListViewItem">
                                         <Style.Triggers>
-                                            <DataTrigger Binding="{Binding Path=DateManufactureHasValue}" Value="True">
+                                            <DataTrigger Binding="{Binding Path=ProductBlueBorder}" Value="True">
+                                                <Setter Property="BorderBrush" Value="Blue"/>
+                                                <Setter Property="BorderThickness" Value="3"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Path=ProductRedBorder}" Value="True">
                                                 <Setter Property="BorderBrush" Value="Red"/>
+                                                <Setter Property="BorderThickness" Value="3"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Path=ProductGreenBorder}" Value="True">
+                                                <Setter Property="BorderBrush" Value="Green"/>
                                                 <Setter Property="BorderThickness" Value="3"/>
                                             </DataTrigger>
                                         </Style.Triggers>

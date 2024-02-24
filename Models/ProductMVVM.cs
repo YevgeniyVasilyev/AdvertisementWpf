@@ -15,10 +15,115 @@ namespace AdvertisementWpf.Models
         {
             //TechCards = new HashSet<TechCard>();
             //Costs = new HashSet<ProductCost>();
-            ProductCosts = new HashSet<ProductCost>();
+            ProductCosts = new List<ProductCost>();
             FilesList = new List<string>();
         }
-
+        private decimal _cost { get; set; }
+        public decimal Cost
+        {
+            get => _cost;
+            set
+            {
+                _cost = value;
+                NotifyPropertyChanged("Cost");
+            }
+        }
+        [Column(TypeName = "datetime")]
+        public DateTime? DateDeliveryPlan { get; set; }
+        [Column(TypeName = "datetime")]
+        public DateTime? DateProductionLayout { get; set; }
+        private DateTime? dateTransferDesigner { get; set; }
+        [Column(TypeName = "datetime")]
+        public DateTime? DateTransferDesigner
+        {
+            get => dateTransferDesigner;
+            set
+            {
+                if (dateTransferDesigner is null || !dateTransferDesigner.Equals(value))
+                {
+                    dateTransferDesigner = value;
+                    NotifyPropertyChanged("DateTransferDesigner");
+                    State = ""; //для переинициализации
+                }
+            }
+        }
+        private DateTime? dateTransferApproval { get; set; }
+        [Column(TypeName = "datetime")]
+        public DateTime? DateTransferApproval
+        {
+            get => dateTransferApproval;
+            set
+            {
+                if (dateTransferApproval is null || !dateTransferApproval.Equals(value))
+                {
+                    dateTransferApproval = value;
+                    NotifyPropertyChanged("DateTransferApproval");
+                    State = ""; //для переинициализации
+                }
+            }
+        }
+        private DateTime? dateApproval { get; set; }
+        [Column(TypeName = "datetime")]
+        public DateTime? DateApproval
+        {
+            get => dateApproval;
+            set
+            {
+                if (dateApproval is null || !dateApproval.Equals(value))
+                {
+                    dateApproval = value;
+                    NotifyPropertyChanged("DateApproval");
+                    State = ""; //для переинициализации
+                }
+            }
+        }
+        private DateTime? dateTransferProduction { get; set; }
+        [Column(TypeName = "datetime")]
+        public DateTime? DateTransferProduction
+        {
+            get => dateTransferProduction;
+            set
+            {
+                if (dateTransferProduction is null || !dateTransferProduction.Equals(value))
+                {
+                    dateTransferProduction = value;
+                    NotifyPropertyChanged("DateTransferProduction");
+                    NotifyPropertyChanged("DateTransferProductionAsString");
+                    State = ""; //для переинициализации
+                }
+            }
+        }
+        private DateTime? dateManufacture { get; set; }
+        [Column(TypeName = "datetime")]
+        public DateTime? DateManufacture
+        {
+            get => dateManufacture;
+            set
+            {
+                if (dateManufacture is null || !dateManufacture.Equals(value))
+                {
+                    dateManufacture = value;
+                    NotifyPropertyChanged("DateManufacture");
+                    NotifyPropertyChanged("DateManufactureHasValue");
+                    State = ""; //для переинициализации
+                }
+            }
+        }
+        private DateTime? dateShipment { get; set; }
+        [Column(TypeName = "datetime")]
+        public DateTime? DateShipment
+        {
+            get => dateShipment;
+            set
+            {
+                if (dateShipment is null || !dateShipment.Equals(value))
+                {
+                    dateShipment = value;
+                    NotifyPropertyChanged("DateShipment");
+                    State = ""; //для переинициализации
+                }
+            }
+        }
         private short _quantity;
         public short Quantity
         {
@@ -29,11 +134,39 @@ namespace AdvertisementWpf.Models
                 NotifyPropertyChanged("Quantity");
             }
         }
+        private bool isHasTechcard { get; set; }
+        public bool IsHasTechcard
+        {
+            get => isHasTechcard;
+            set
+            {
+                if (!isHasTechcard.Equals(value))
+                {
+                    isHasTechcard = value;
+                    NotifyPropertyChanged("IsHasTechcard");
+                    State = "";
+                }
+            }
+        }
         public ProductType ProductType { get; set; }
+        private ObservableCollection<ProductCost> _productCosts { get; set; }
+        public ICollection<ProductCost> ProductCosts
+        {
+            get => _productCosts;
+            set
+            {
+                _productCosts = new ObservableCollection<ProductCost>(value);
+                NotifyPropertyChanged("ProductCosts");
+            }
+        }
 
         [NotMapped]
-        public bool DateManufactureHasValue => DateManufacture.HasValue;
-            
+        public bool ProductBlueBorder => DateTransferProduction.HasValue && !DateManufacture.HasValue && !DateShipment.HasValue;
+        [NotMapped]
+        public bool ProductRedBorder => DateTransferProduction.HasValue && DateManufacture.HasValue && !DateShipment.HasValue;
+        [NotMapped]
+        public bool ProductGreenBorder => DateTransferProduction.HasValue && DateManufacture.HasValue && DateShipment.HasValue;
+
         [NotMapped]
         public string KVDForReport { get; set; }
         private string _productTypeName = "";
@@ -79,6 +212,9 @@ namespace AdvertisementWpf.Models
             {
                 _state = value;
                 NotifyPropertyChanged("State");
+                NotifyPropertyChanged("ProductBlueBorder");
+                NotifyPropertyChanged("ProductRedBorder");
+                NotifyPropertyChanged("ProductGreenBorder");
             }
         }
 
@@ -123,6 +259,7 @@ namespace AdvertisementWpf.Models
             {
                 nState = 7; // "В разработке";
             }
+
             return OrderProductStates.GetProductState(nState);
         }
 

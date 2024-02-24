@@ -184,5 +184,20 @@ namespace AdvertisementWpf
             MethodInfo methodInfo = DataContext.GetType().GetMethod("ProductParametersSourceUpdated");
             _ = methodInfo?.Invoke(DataContext, new object[] { ListProduct.SelectedItem });
         }
+
+        private void TypeOfActivityCostTextBox_SourceUpdated(object sender, DataTransferEventArgs e)
+        {
+            MethodInfo methodInfo = DataContext.GetType().GetMethod("TypeOfActivityCostSourceUpdated");
+            _ = methodInfo?.Invoke(DataContext, new object[] { ListProduct.SelectedItem });
+            BindingOperations.GetBindingExpression(OrderTotalCosts, TextBlock.TextProperty).UpdateTarget();
+        }
+
+        private void TypeOfActivityCostTextBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            if (sender is TextBox txtBox)
+            {
+                _ = CostOfProduct.Items.MoveCurrentTo(txtBox.GetBindingExpression(TextBox.TextProperty).DataItem);
+            }
+        }
     }
 }

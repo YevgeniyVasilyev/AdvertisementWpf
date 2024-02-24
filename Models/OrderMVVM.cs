@@ -145,7 +145,8 @@ namespace AdvertisementWpf.Models
 
     internal class OrderViewModel : ISave, ILoad, IAdd, INotifyPropertyChanged
     {
-        private RelayCommand saveRequest, textBlockMouseLeftClick, showHideNewProductList, selectNewProduct, deleteProduct, newFileToProduct, deleteFileFromProduct, openFolderWithFileProduct, openFileProductInShell;
+        private RelayCommand saveRequest, textBlockMouseLeftClick, showHideFrameworkElement, selectNewProduct, deleteProduct, newFileToProduct, deleteFileFromProduct, 
+                             openFolderWithFileProduct, openFileProductInShell, printOrderForm, printOrderFormForDesigner;
         private App.AppDbContext _contextOrder_ = CreateDbContext.CreateContext();
         private string _pathToFilesOfProduct = "";                                              //путь к уелевой папке хранения файлов иллюстраций изделия
         private string _searchClient = "";
@@ -176,6 +177,7 @@ namespace AdvertisementWpf.Models
         public List<Referencebook> ReferencebookList { get; set; }                              //список "Справочники" AsNoTracking
         public List<ReferencebookApplicability> ReferencebookApplicabilityList { get; set; }    //список "Применимость справочника" AsNoTracking
         public List<ReferencebookParameter> ReferencebookParameterList { get; set; }            //список "Справочник параметров изделий" AsNoTracking
+        public List<object> TotalProductCosts { get; set; } = new List<object>();               //список стоимостей, затрат и маржи по заказу
         public Order CurrentOrder { get; set; }                                                 //текущий заказ
         public bool ViewMode { get; set; } = false;                                             //режим "просмотр" для карточки заказа
         public int ErrorsCount = 0;
@@ -232,9 +234,10 @@ namespace AdvertisementWpf.Models
                 foreach (Product product in CurrentOrder.Products)                                                                                  //инициализация изделий
                 {
                     GetProductParameters(product);                                                                                                  //развернуть параметры изделия
-                    product.FilesToList();
-                    //GetProductCosts(product);
+                    product.FilesToList();                                                                                                          //развернуть список файлов изделия
+                    GetProductCosts(product);                                                                                                       //сформировать список стоимостей изделия
                 }
+                TotalProductCostsList();                                                                                                            //список на вкладке "Стоимость и затраты по КВД"
             }
             catch (Exception ex)
             {
@@ -283,7 +286,7 @@ namespace AdvertisementWpf.Models
             }
         }, (o) => CanSaveOrder());
 
-        public RelayCommand ShowHideNewProductList => showHideNewProductList ??= new RelayCommand((o) => //команда "отобразить список выбора нового изделия"
+        public RelayCommand ShowHideFrameworkElement => showHideFrameworkElement ??= new RelayCommand((o) => //команда "отобразить/скрыть элемент"
         {
             ((FrameworkElement)o).Visibility = ((FrameworkElement)o).Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
         }, null);
@@ -336,6 +339,70 @@ namespace AdvertisementWpf.Models
             };
         }, (o) => _contextOrder_ != null && CurrentOrder?.ID > 0); //добавление возможно только для сохраненного заказа, т.к. его номер участвует в формированиия пути к целевой папке
 
+        public RelayCommand DeleteFileFromProduct => deleteFileFromProduct ??= new RelayCommand((o) => //команда удаления файла иллюстраций в описании изделия
+        {
+            Product product = ((object[])o)[0] as Product;
+            string File = ((object[])o)[1] as string;
+            product?.FilesList?.Remove(File);
+        }, (o) => ((object[])o)?[0] is Product product && product?.FilesList?.Count > 0);
+
+        public RelayCommand OpenFolderWithFileProduct => openFolderWithFileProduct ??= new RelayCommand((o) => //команда открытия папки с файлами иллюстраций изделия
+        {
+            _ = Process.Start(new ProcessStartInfo { FileName = "explorer.exe", Arguments = $"/n, {Path.Combine(_pathToFilesOfProduct, CurrentOrder.Number)}" });
+        }, (o) => CurrentOrder?.ID > 0 && Directory.Exists(Path.Combine(_pathToFilesOfProduct, CurrentOrder.Number)));
+
+        public RelayCommand OpenFileProductInShell => openFileProductInShell ??= new RelayCommand((o) => //команда открытия файла иллюстраций изделия во внешней программе
+        {
+            string fileName = (string)o;
+            OpenFileInOSShell.OpenFile(Path.Combine(Path.Combine(_pathToFilesOfProduct, CurrentOrder.Number), fileName));
+        }, (o) => CurrentOrder?.ID > 0);
+
+        public RelayCommand PrintOrderForm => printOrderForm ??= new RelayCommand((o) => //команда печати бланка заказа
+        {
+            OrderFormSendToPrint(o as ListView);
+        }, (o) => CurrentOrder?.ID > 0);
+
+        public RelayCommand PrintOrderFormForDesigner => printOrderFormForDesigner ??= new RelayCommand((o) => //команда печати бланка заказа для конкретного дизайнера(-ов)
+        {
+            List<long> designerIDList = new List<long> { };
+            Button button = ((object[])o)[0] as Button;
+            ListView listView = ((object[])o)[1] as ListView;
+            button.ContextMenu.Items.Clear();
+            foreach (Product product in CurrentOrder.Products)
+            {
+                if (!(product.DesignerID is null) && !designerIDList.Contains((long)product.DesignerID))
+                {
+                    foreach (User designer in DesignerList)
+                    {
+                        if (designer.ID == product.DesignerID)
+                        {
+                            MenuItem menuItem = new MenuItem { Header = designer.FullUserName, Tag = (long)product.DesignerID, IsCheckable = false };
+                            menuItem.Click += DesignerContextMenuItem_Click;
+                            _ = button.ContextMenu.Items.Add(menuItem);
+                            designerIDList.Add((long)product.DesignerID);
+                        }
+                    }
+                }
+            }
+            if (designerIDList.Count > 0)
+            {
+                button.ContextMenu.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
+                button.ContextMenu.PlacementTarget = button;
+                button.ContextMenu.Visibility = Visibility.Visible;
+                button.ContextMenu.IsOpen = true;
+            }
+            else
+            {
+                OrderFormSendToPrint(listView);
+            }
+
+            void DesignerContextMenuItem_Click(object sender, RoutedEventArgs e)
+            {
+                button.ContextMenu.Visibility = Visibility.Hidden;
+                OrderFormSendToPrint(listView, (long)(sender as MenuItem).Tag);
+            }
+        }, (o) => CurrentOrder?.ID > 0);
+
         private void CopyFileToPathToFilesOfProduct(string[] aFullFileNames)
         {
             try
@@ -377,24 +444,6 @@ namespace AdvertisementWpf.Models
             }
         }
 
-        public RelayCommand DeleteFileFromProduct => deleteFileFromProduct ??= new RelayCommand((o) => //команда удаления файла иллюстраций в описании изделия
-        {
-            Product product = ((object[])o)[0] as Product;
-            string File = ((object[])o)[1] as string;
-            product?.FilesList?.Remove(File);
-        }, (o) => ((object[])o)?[0] is Product product && product?.FilesList?.Count > 0);
-
-        public RelayCommand OpenFolderWithFileProduct => openFolderWithFileProduct ??= new RelayCommand((o) => //команда открытия папки с файлами иллюстраций изделия
-        {
-            _ = Process.Start(new ProcessStartInfo { FileName = "explorer.exe", Arguments = $"/n, {Path.Combine(_pathToFilesOfProduct, CurrentOrder.Number)}" });
-        }, (o) => CurrentOrder?.ID > 0 && Directory.Exists(Path.Combine(_pathToFilesOfProduct, CurrentOrder.Number)));
-
-        public RelayCommand OpenFileProductInShell => openFileProductInShell ??= new RelayCommand((o) => //команда открытия файла иллюстраций изделия во внешней программе
-        {
-            string fileName = (string)o;
-            OpenFileInOSShell.OpenFile(Path.Combine(Path.Combine(_pathToFilesOfProduct, CurrentOrder.Number), fileName));
-        }, (o) => CurrentOrder?.ID > 0);
-
         private bool CanSaveOrder()
         {
             bool CanSaveOrder = _contextOrder_ != null && ErrorsCount == 0 && !CurrentOrder.Products.Any(p => p.HasError);
@@ -434,6 +483,15 @@ namespace AdvertisementWpf.Models
             }
         }
 
+        public void TypeOfActivityCostSourceUpdated(object sender)
+        {
+            if (sender is Product product)
+            {
+                product.Cost = product.ProductCosts.Sum(c => c.Cost);
+                TotalProductCostsList();
+            }
+        }
+
         private Product CreateNewProduct(ProductType productType)
         {
             Product product = new Product
@@ -443,14 +501,52 @@ namespace AdvertisementWpf.Models
                 Cost = 0.00M,
                 Note = "",
                 Files = "",
-                Quantity = 1,
-                ProductCosts = new List<ProductCost> { }        //создать пустой список стоимостей изделия
+                Quantity = 1
             };
             product.FilesToList();
             GetProductParameters(product);
-            //GetProductCosts(product);
+            GetProductCosts(product);
             CurrentOrder.State = CurrentOrder.OrderState(CurrentOrder.Products);
             return product;
+        }
+
+        private void GetProductCosts(Product product)
+        {
+            List<TypeOfActivityInProduct> typeOfActivityInProduct;
+            typeOfActivityInProduct = _contextOrder_.TypeOfActivityInProducts.AsNoTracking()
+                .Where(TypeOfActivityInProducts => TypeOfActivityInProducts.ProductTypeID == product.ProductTypeID)
+                .Include(TypeOfActivityInProducts => TypeOfActivityInProducts.TypeOfActivity).ToList();                 //получить список кодов видов деятельности (КВД) для изделия 
+            product.ProductCosts = _contextOrder_.ProductCosts.Where(ProductCost => ProductCost.ProductID == product.ID).Include(ProductCost => ProductCost.TypeOfActivity).ToList(); //список уже сохраненных данных по стоимости по каждому КВД
+            foreach (TypeOfActivityInProduct tainp in typeOfActivityInProduct) //проход по видам деятельности, содержащихся в издеии (его виде)
+            {
+                if (!product.ProductCosts.Any(c => c.TypeOfActivityID == tainp.TypeOfActivityID)) //КВД еще нет в списке
+                {
+                    ProductCost pc = new ProductCost
+                    {
+                        ID = 0,
+                        ProductID = product.ID,
+                        TypeOfActivityID = tainp.TypeOfActivityID,
+                        Cost = 0,
+                        Name = tainp.TypeOfActivity.Name,
+                        Code = tainp.TypeOfActivity.Code
+                    };
+                    product.ProductCosts.Add(pc);
+                }
+            }
+        }
+
+        private void TotalProductCostsList()
+        {
+            TotalProductCosts.Clear();
+            List<ProductCost> productCost = new List<ProductCost>();
+            productCost = (from p in CurrentOrder.Products
+                           from pc in p.ProductCosts
+                           select pc).ToList();
+            var grouping = from pc in productCost
+                           group pc by pc.Code into grp
+                           select new { Code = grp.Key, Name = grp.Select(pc => pc.Name).FirstOrDefault(), Cost = grp.Sum(pc => pc.Cost), Outlay = grp.Sum(pc => pc.Outlay), Margin = grp.Sum(pc => pc.Margin) };
+            TotalProductCosts.AddRange(grouping.OrderBy(grp => grp.Code));
+            TotalProductCosts.Add(new { Code = "", Name = "Итого по заказу ", Cost = grouping.Sum(grp => grp.Cost), Outlay = grouping.Sum(grp => grp.Outlay), Margin = grouping.Sum(grp => grp.Margin) });
         }
 
         public void LoadContext(long nOrderID)
@@ -521,6 +617,79 @@ namespace AdvertisementWpf.Models
                 if (productParameter.ReferencebookID > 0) //для параметра установлено брать значение из справочника 
                 {
                     productParameter.ReferencebookParametersList = ReferencebookParameterList.Where(refbookParameters => refbookParameters.ReferencebookID == productParameter.ReferencebookID).ToList();
+                }
+            }
+        }
+
+        private void OrderFormSendToPrint(ListView listView, long designerID = 0)
+        {
+            List<long> listProductID = new List<long> { };
+            foreach (Product product in listView.SelectedItems)
+            {
+                listProductID.Add(product.ID);
+            }
+            if (listProductID.Count == 0) //ничего не было выбрано
+            {
+                foreach (Product product in CurrentOrder.Products) //добавить ВСЕ
+                {
+                    listProductID.Add(product.ID);
+                }
+            }
+            using App.AppDbContext _reportcontext = new App.AppDbContext(MainWindow.Connectiondata.Connectionstring);
+            {
+                try
+                {
+                    MainWindow.statusBar.WriteStatus("Получение данных заказа ...", Cursors.Wait);
+                    string _pathToReportTemplate = _reportcontext.Setting.FirstOrDefault(setting => setting.SettingParameterName == "PathToReportTemplate").SettingParameterValue;
+                    Order orderToPrint = _reportcontext.Orders.AsNoTracking().Where(Order => Order.ID == CurrentOrder.ID)
+                        .Include(Order => Order.Products).ThenInclude(Products => Products.ProductType)
+                        .FirstOrDefault();
+                    Array array = orderToPrint.Products.ToArray();
+                    for (int ind = 0; ind < array.Length; ind++)
+                    {
+                        if (!listProductID.Contains(((Product)array.GetValue(ind)).ID)) //если изделия нет в писке требующихся для печати, то удалить
+                        {
+                            _ = orderToPrint.Products.Remove((Product)array.GetValue(ind));
+                        }
+                    }
+                    foreach (Product product in orderToPrint.Products)
+                    {
+                        GetProductParameters(product);
+                        product.FilesToList();
+                        foreach (ProductParameters productParameter in product.ProductParameter)
+                        {
+                            if (productParameter.ReferencebookID > 0) //если параметр должен заполниться из справочника
+                            {
+                                productParameter.ParameterValue = ReferencebookParameterList.Find(rp => rp.ReferencebookID == productParameter.ReferencebookID && rp.ID == productParameter.ParameterID)?.Value ?? "";
+                            }
+                        }
+                        product.ProductCosts = _reportcontext.ProductCosts.AsNoTracking().Where(ProductCost => ProductCost.ProductID == product.ID).Include(ProductCost => ProductCost.TypeOfActivity).ToList();
+                        product.KVDForReport = string.Join(",", product.ProductCosts.Where(c => c.Cost != 0).Select(c => c.Code.Trim()).ToList());
+                    }
+                    if (File.Exists(Path.Combine(_pathToReportTemplate, "OrderForm.frx")))
+                    {
+                        Reports.OrderDataSet = new List<Order> { orderToPrint };
+                        Reports.ReportFileName = Path.Combine(_pathToReportTemplate, "OrderForm.frx");
+                        Reports.ReportMode = "OrderForm";
+                        Reports.designerID = designerID;
+                        Reports.RunReport();
+                    }
+                    else
+                    {
+                        _ = MessageBox.Show("Не найден файл OrderForm.frx !", "Ошибка формирования бланка заказа", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _ = MessageBox.Show(ex.Message + "\n" + ex?.InnerException?.Message ?? "", "Ошибка получения данных", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+                finally
+                {
+                    if (_reportcontext != null)
+                    {
+                        _reportcontext.Dispose();
+                    }
+                    MainWindow.statusBar.ClearStatus();
                 }
             }
         }
