@@ -199,5 +199,32 @@ namespace AdvertisementWpf
                 _ = CostOfProduct.Items.MoveCurrentTo(txtBox.GetBindingExpression(TextBox.TextProperty).DataItem);
             }
         }
+
+        private void ListPayments_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Delete && IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductPaymentsNewChangeDelete"))
+            {
+                MethodInfo methodInfo = DataContext.GetType().GetMethod("DeletePayment");
+                _ = methodInfo?.Invoke(DataContext, new object[] { ListPayments.SelectedItem });
+                PaymentSourceUpdated();
+            }
+        }
+
+        private void PaymentSourceUpdated()
+        {
+            BindingOperations.GetBindingExpression(TotalPaymentsTextBlock, TextBlock.TextProperty).UpdateTarget();
+        }
+
+        private void PaymentAmountTextBox_SourceUpdated(object sender, DataTransferEventArgs e)
+        {
+            PaymentSourceUpdated();
+        }
+
+        private void AccountsListComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            MethodInfo methodInfo = DataContext.GetType().GetMethod("AccountsListComboBoxSelectionChanged");
+            _ = methodInfo?.Invoke(DataContext, new object[] { ListPayments.SelectedItem });
+            ListPayments.Items.Refresh();
+        }
     }
 }

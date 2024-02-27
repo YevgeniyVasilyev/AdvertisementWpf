@@ -301,7 +301,7 @@
                     <Image Source="\Images\free-icon-floppy-disk_save.png" Width="25" Height="25"/>
                     <Label Content="Сохранить"/>
                 </StackPanel>
-             </Button>
+            </Button>
             <Separator/>
             <Button Name="PrintRequestFormButton" Style="{StaticResource ButtonOfOrder}" IsEnabled="{Binding OrderCardPrintOrderForm}" 
                     Command="{Binding PrintOrderForm}" CommandParameter="{Binding ElementName=ListProduct}">
@@ -713,12 +713,12 @@
                                             <Button Name="NewFileButton" Background="Transparent" BorderBrush="Transparent" 
                                                     Style="{StaticResource ButtonOfOrder}" Command="{Binding NewFileToProduct}" CommandParameter="{Binding ElementName=ListProduct, Path=SelectedItem}"
                                                     Margin="10,0,0,0" ToolTip="Добавить файл">
-                                                    <Image Source="/Images/free-icon-add-button.png" Width="20" Height="20"/>
+                                                <Image Source="/Images/free-icon-add-button.png" Width="20" Height="20"/>
                                             </Button>
                                             <Button Name="DeleteFileButton" Background="Transparent" BorderBrush="Transparent" 
                                                     Style="{StaticResource ButtonOfOrder}" Command="{Binding DeleteFileFromProduct}"
                                                     ToolTip="Удалить файл из списка и отметить для удаления">
-                                                    <Image Source="/Images/free-icon-bin-Recycler.png" Width="20" Height="20"/>
+                                                <Image Source="/Images/free-icon-bin-Recycler.png" Width="20" Height="20"/>
                                                 <Button.CommandParameter>
                                                     <MultiBinding Converter="{StaticResource MultiValueConverter}">
                                                         <Binding ElementName="ListProduct" Path="SelectedItem"/>
@@ -729,7 +729,7 @@
                                             <Button Name="OpenFolderButton" Background="Transparent" BorderBrush="Transparent" 
                                                     Style="{StaticResource ButtonOfOrder}" Command="{Binding OpenFolderWithFileProduct}"
                                                     ToolTip="Открыть папку с файлами">
-                                                    <Image Source="/Images/free-icon-folder_open.png" Width="20" Height="20"/>
+                                                <Image Source="/Images/free-icon-folder_open.png" Width="20" Height="20"/>
                                             </Button>
                                         </StackPanel>
                                         <ListBox Grid.Row="5" Margin="5" Name="FilesListBox" 
@@ -817,7 +817,118 @@
                 </Border>
             </TabItem>
             <TabItem Header="Платежи">
-                
+                <Border Margin="2" BorderThickness="1" BorderBrush="DarkBlue">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <!--список платежей-->
+                            <ColumnDefinition Width="Auto"/>
+                            <!--поля для редактирования-->
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <!--кнопки управлениня платежами-->
+                            <RowDefinition Height="Auto"/>
+                            <!--список платежей-->
+                            <RowDefinition Height="Auto"/>
+                            <!--ИТОГО платежей-->
+                        </Grid.RowDefinitions>
+                        <WrapPanel Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Margin="2" Orientation="Horizontal">
+                            <Button Style="{StaticResource ButtonOfOrder}" Command="{Binding SavePayment}"
+                                            ToolTip="Сохранить данные по платежам в БД">
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Source="\Images\free-icon-floppy-disk_save.png" Width="25" Height="25"/>
+                                    <Label Content="Сохранить"/>
+                                </StackPanel>
+                            </Button>
+                            <Separator/>
+                            <Button Style="{StaticResource ButtonOfOrder}" Command="{Binding NewPayment}">
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Source="\Images\premium-icon-payment.png" Width="25" Height="25"/>
+                                    <Label Content="Новый платеж"/>
+                                </StackPanel>
+                            </Button>
+                        </WrapPanel>
+                        <ListView Grid.Column="0" Grid.Row="1" Name="ListPayments" Margin="3" Padding="2"
+                                  ItemsSource="{Binding CurrentOrder.Payments, UpdateSourceTrigger=PropertyChanged}" KeyDown="ListPayments_KeyDown"
+                                  ScrollViewer.VerticalScrollBarVisibility="Auto" HorizontalContentAlignment="Stretch">
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn x:Name="_paycol0" Header=" Счёт " DisplayMemberBinding="{Binding Path=Account.AccountNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                                    HeaderTemplate="{StaticResource ListViewHeaderTemplate}" Width="150"/>
+                                    <GridViewColumn x:Name="_paycol1" Header=" Дата платежа " DisplayMemberBinding="{Binding Path=PaymentDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ConverterCulture=ru-RU, StringFormat=\{0:dd.MM.yyyy\}}" 
+                                                    HeaderTemplate="{StaticResource ListViewHeaderTemplate}"/>
+                                    <GridViewColumn Header=" Сумма платежа "
+                                                    DisplayMemberBinding="{Binding Path=PaymentAmount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ConverterCulture=ru-RU, StringFormat={}{0:C}}" 
+                                                    HeaderTemplate="{StaticResource ListViewHeaderTemplate}"/>
+                                    <GridViewColumn Header=" Квитанция/П.п. " DisplayMemberBinding="{Binding Path=PaymentDocNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                                    HeaderTemplate="{StaticResource ListViewHeaderTemplate}"/>
+                                    <GridViewColumn Header=" Назначение платежа " DisplayMemberBinding="{Binding Path=PurposeOfPaymentName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" 
+                                                    HeaderTemplate="{StaticResource ListViewHeaderTemplate}" Width="200"/>
+                                    <GridViewColumn Header=" Вид платежа " DisplayMemberBinding="{Binding Path=TypeOfPaymentName, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" 
+                                                    HeaderTemplate="{StaticResource ListViewHeaderTemplate}"/>
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+                        <Border Grid.Column="0" Grid.Row="2" Margin="3" BorderBrush="Black" BorderThickness="0.5">
+                            <Grid >
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="{Binding ElementName=_paycol0, Path=ActualWidth}"/>
+                                    <ColumnDefinition Width="{Binding ElementName=_paycol1, Path=ActualWidth}"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="1" Text=" Оплачено:" Margin="2" HorizontalAlignment="Right" VerticalAlignment="Center" FontWeight="Bold"/>
+                                <TextBlock Grid.Column="2" Margin="10,0,0,0" Name="TotalPaymentsTextBlock" Text="{Binding ElementName=ListPayments, Path=ItemsSource, 
+                                           Converter={StaticResource SumListViewDecimalConverter}, ConverterParameter=PaymentAmount, StringFormat={}{0:C}, ConverterCulture='ru-RU'}" 
+                                           HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Bold"/>
+                            </Grid>
+                        </Border>
+                        <Grid Grid.Column="1" Grid.Row="1" Margin="2,2,5,2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="20"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Column="0" Grid.Row="1" Text="Платеж по счету: " VerticalAlignment="Center"/>
+                            <ComboBox  Grid.Column="1" Grid.Row="1" Margin="2" Name="AccountsListComboBox" Width="200"
+                                       ItemsSource="{Binding CurrentOrder.Accounts}" SelectionChanged="AccountsListComboBox_SelectionChanged"
+                                       SelectedValuePath="ID" DisplayMemberPath="AccountNumber"
+                                       SelectedValue="{Binding ElementName=ListPayments, Path=SelectedItem.AccountID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                            <TextBlock Grid.Column="0" Grid.Row="2" Name="PaymentDateLabel" Text="Дата платежа: " Style="{StaticResource UnderlineTextBlock}" VerticalAlignment="Center">
+                                <TextBlock.InputBindings>
+                                    <MouseBinding Command="{Binding TextBlockMouseLeftClick}" CommandParameter="{Binding ElementName=DatePayment}" MouseAction="LeftClick"/>
+                                </TextBlock.InputBindings>
+                            </TextBlock>
+                            <DatePicker Grid.Column="1" Grid.Row="2"  Margin="2"  Name="DatePayment" 
+                                        SelectedDate="{Binding ElementName=ListPayments, Path=SelectedItem.PaymentDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                        IsTodayHighlighted="True"/>
+                            <TextBlock Grid.Column="0" Grid.Row="3" Text="Сумма платежа: " VerticalAlignment="Center"/>
+                            <TextBox Grid.Column="1" Grid.Row="3"  Margin="2" SourceUpdated="PaymentAmountTextBox_SourceUpdated"
+                                     Validation.Error="TextBoxError"
+                                     Text="{Binding ElementName=ListPayments, NotifyOnSourceUpdated=True, NotifyOnValidationError=True,
+                                     Path=SelectedItem.PaymentAmount, Mode=TwoWay, UpdateSourceTrigger=LostFocus, ConverterCulture=ru-RU, StringFormat={}{0:C}}"/>
+                            <TextBlock Grid.Column="0" Grid.Row="4" Text="Квитанция/П.п.: " VerticalAlignment="Center"/>
+                            <TextBox Grid.Column="1" Grid.Row="4"  Margin="2"  Width="200"
+                                     Text="{Binding ElementName=ListPayments, Path=SelectedItem.PaymentDocNumber, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged }"/>
+                            <TextBlock Grid.Column="0" Grid.Row="5" Text="Назначение платежа: "  VerticalAlignment="Center"/>
+                            <ComboBox Grid.Column="1" Grid.Row="5" Margin="2" 
+                                      ItemsSource="{Binding ElementName=ListPayments, Path=SelectedItem.ListPurposeOfPayment}"
+                                      SelectedIndex="{Binding ElementName=ListPayments, Path=SelectedItem.PurposeOfPayment, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                            <TextBlock Grid.Column="0" Grid.Row="6" Text="Вид платежа: "  VerticalAlignment="Center"/>
+                            <ComboBox Grid.Column="1" Grid.Row="6"  Margin="2" 
+                                      ItemsSource="{Binding ElementName=ListPayments, Path=SelectedItem.ListTypeOfPayment}"
+                                      SelectedIndex="{Binding ElementName=ListPayments, Path=SelectedItem.TypeOfPayment, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        </Grid>
+                    </Grid>
+                </Border>
             </TabItem>
             <TabItem Header="Стоимость и затраты по КВД">
                 <Border Margin="2" BorderThickness="1" BorderBrush="DarkBlue">

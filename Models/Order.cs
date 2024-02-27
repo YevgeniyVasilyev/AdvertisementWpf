@@ -37,7 +37,7 @@ namespace AdvertisementWpf.Models
         public User OrderEntered { get; set; }
         //public virtual User OrderEntered { get; set; }
         //public virtual ICollection<Product> Products { get; set; }
-        public virtual ICollection<Payment> Payments { get; set; }
-        public virtual ICollection<Account> Accounts { get; set; }
+        //public virtual ICollection<Payment> Payments { get; set; }
+        //public virtual ICollection<Account> Accounts { get; set; }
     }
 }

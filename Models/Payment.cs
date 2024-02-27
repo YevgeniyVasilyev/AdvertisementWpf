@@ -64,13 +64,20 @@ namespace AdvertisementWpf.Models
             }
         }
         public long? AccountID { get; set; }
+
         public virtual Order Order { get; set; }
         public virtual Account Account { get; set; }
-
+        
         [NotMapped]
-        public List<string> ListPurposeOfPayment = new List<string> { "предоплата", "доплата", "окончательный расчёт", "возврат" };
+        public List<string> ListPurposeOfPayment
+        {
+            get => new List<string> { "предоплата", "доплата", "окончательный расчёт", "возврат" };
+        }
         [NotMapped]
-        public List<string> ListTypeOfPayment = new List<string> { "безналичный", "наличный", "взаимозачёт", "другое" };
+        public List<string> ListTypeOfPayment
+        {
+            get => new List<string> { "безналичный", "наличный", "взаимозачёт", "другое" };
+        }
         [NotMapped]
         public string PurposeOfPaymentName
         {

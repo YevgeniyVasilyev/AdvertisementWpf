@@ -89,11 +89,15 @@ namespace AdvertisementWpf
                 _ = modelBuilder.Entity<Payment>(p =>
                 {
                     _ = p.Property(p => p.PaymentDate).HasColumnType("datetime");
+                    _ = p.HasOne("Order");
+                    _ = p.HasOne("Account");
                 });
                 _ = modelBuilder.Entity<Account>(a =>
                 {
                     _ = a.Property(a => a.AccountDate).HasColumnType("datetime");
                     _ = a.Property(a => a.PayBeforeDate).HasColumnType("datetime");
+                    _ = a.HasKey("ID");
+                    _ = a.HasMany("Payments");
                 });
                 _ = modelBuilder.Entity<Act>(a =>
                 {

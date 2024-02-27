@@ -22,8 +22,8 @@ namespace AdvertisementWpf.Models
         {
             //Products = new HashSet<Product>();
             Products = new List<Product> { };
-            Payments = new HashSet<Payment>();
-            Accounts = new HashSet<Account>();
+            Payments = new List<Payment> { };
+            Accounts = new List<Account> { };
         }
 
         private ObservableCollection<Product> _products { get; set; }
@@ -31,6 +31,20 @@ namespace AdvertisementWpf.Models
         {
             get => _products;
             set => _products = new ObservableCollection<Product>(value);
+        }
+
+        private ObservableCollection<Payment> _payments { get; set; }
+        public ICollection<Payment> Payments
+        {
+            get => _payments;
+            set => _payments = new ObservableCollection<Payment>(value);
+        }
+
+        private ObservableCollection<Account> _accounts { get; set; }
+        public ICollection<Account> Accounts
+        {
+            get => _accounts;
+            set => _accounts = new ObservableCollection<Account>(value);
         }
 
         [NotMapped]
@@ -146,8 +160,9 @@ namespace AdvertisementWpf.Models
     internal class OrderViewModel : ISave, ILoad, IAdd, INotifyPropertyChanged
     {
         private RelayCommand saveRequest, textBlockMouseLeftClick, showHideFrameworkElement, selectNewProduct, deleteProduct, newFileToProduct, deleteFileFromProduct, 
-                             openFolderWithFileProduct, openFileProductInShell, printOrderForm, printOrderFormForDesigner;
-        private App.AppDbContext _contextOrder_ = CreateDbContext.CreateContext();
+                             openFolderWithFileProduct, openFileProductInShell, printOrderForm, printOrderFormForDesigner, newPayment, savePayment;
+        private App.AppDbContext _contextOrder_ = CreateDbContext.CreateContext();              //контекст для заказа
+        private App.AppDbContext _contextPayment_ = CreateDbContext.CreateContext();            //контекст для платежей Заказа
         private string _pathToFilesOfProduct = "";                                              //путь к уелевой папке хранения файлов иллюстраций изделия
         private string _searchClient = "";
         public string SearchClient
@@ -238,6 +253,7 @@ namespace AdvertisementWpf.Models
                     GetProductCosts(product);                                                                                                       //сформировать список стоимостей изделия
                 }
                 TotalProductCostsList();                                                                                                            //список на вкладке "Стоимость и затраты по КВД"
+                LoadOrderPayments();                                                                                                                //загрузить платежи на вкладке "Платежи"
             }
             catch (Exception ex)
             {
@@ -255,6 +271,11 @@ namespace AdvertisementWpf.Models
             {
                 _contextOrder_.Dispose();
                 _contextOrder_ = null;
+            }
+            if (_contextPayment_ != null)
+            {
+                _contextPayment_.Dispose();
+                _contextPayment_ = null;
             }
         }
 
@@ -297,7 +318,6 @@ namespace AdvertisementWpf.Models
             {
                 CurrentOrder.Products.Add(product);
                 product.ProductType = ((IAdd)this).AddSingleToContext(ref _contextOrder_, product.ProductType, delegate (ProductType p) { return p.ID == product.ProductTypeID; }); //добавить св-во навигации ProductType
-                //_ = CountTotals();
             };
         }, (o) => _contextOrder_ != null && ProductTypeCollectionView != null);
 
@@ -403,6 +423,25 @@ namespace AdvertisementWpf.Models
             }
         }, (o) => CurrentOrder?.ID > 0);
 
+        public RelayCommand NewPayment => newPayment ??= new RelayCommand((o) => //команда создания нового платежа
+        {
+            Payment payment = new Payment
+            {
+                OrderID = CurrentOrder.ID,
+                PaymentAmount = 0,
+                PaymentDocNumber = "",
+                PurposeOfPayment = 0,
+                TypeOfPayment = 0
+            };
+            _contextPayment_.Entry(payment).State = EntityState.Added;
+            CurrentOrder.Payments.Add(payment);
+        }, (o) => CurrentOrder?.ID > 0);
+
+        public RelayCommand SavePayment => savePayment ??= new RelayCommand((o) => //команда сохранения платежей
+        {
+            ((ISave)this).SaveContext(ref _contextPayment_);
+        }, (o) => _contextPayment_ != null && CurrentOrder?.ID > 0 && ErrorsCount == 0);
+
         private void CopyFileToPathToFilesOfProduct(string[] aFullFileNames)
         {
             try
@@ -492,6 +531,23 @@ namespace AdvertisementWpf.Models
             }
         }
 
+        public void AccountsListComboBoxSelectionChanged(object sender)
+        {
+            if (sender is Payment payment)
+            {
+                ((IAdd)this).AddReferenceToContext(ref _contextPayment_, payment, "Account"); //добавить св-во навигации Account
+            }
+        }
+
+        public void DeletePayment(object sender)
+        {
+            if (sender is Payment payment)
+            {
+                _ = CurrentOrder.Payments.Remove(payment);
+                _contextPayment_.Entry(payment).State = EntityState.Deleted;
+            }
+        }
+
         private Product CreateNewProduct(ProductType productType)
         {
             Product product = new Product
@@ -538,10 +594,9 @@ namespace AdvertisementWpf.Models
         private void TotalProductCostsList()
         {
             TotalProductCosts.Clear();
-            List<ProductCost> productCost = new List<ProductCost>();
-            productCost = (from p in CurrentOrder.Products
-                           from pc in p.ProductCosts
-                           select pc).ToList();
+            List<ProductCost> productCost = (from p in CurrentOrder.Products
+                                             from pc in p.ProductCosts
+                                             select pc).ToList();
             var grouping = from pc in productCost
                            group pc by pc.Code into grp
                            select new { Code = grp.Key, Name = grp.Select(pc => pc.Name).FirstOrDefault(), Cost = grp.Sum(pc => pc.Cost), Outlay = grp.Sum(pc => pc.Outlay), Margin = grp.Sum(pc => pc.Margin) };
@@ -576,6 +631,7 @@ namespace AdvertisementWpf.Models
                     .ThenInclude(Product => Product.ProductType)
                     .Include(Order => Order.Products)
                     .ThenInclude(Product => Product.ProductCosts)
+                    .Include(Order => Order.Accounts)
                     .FirstOrDefault(Order => Order.ID == nOrderID);                                                                             //получить текущий заказ (или null для нового)
         }
 
@@ -691,6 +747,24 @@ namespace AdvertisementWpf.Models
                     }
                     MainWindow.statusBar.ClearStatus();
                 }
+            }
+        }
+
+        private void LoadOrderPayments()
+        {
+            MainWindow.statusBar.WriteStatus("Загрузка платежей ...", Cursors.Wait);
+            try
+            {
+                //ВАЖНО !!! Новые элементы будут NoTracking !!!  Изменять Entry.State при добавлении и удалении !!!
+                CurrentOrder.Payments = _contextPayment_.Payments.Include(pay => pay.Account).Where(pay => pay.OrderID == CurrentOrder.ID).AsTracking().ToList();
+            }
+            catch (Exception ex)
+            {
+                _ = MessageBox.Show(ex.Message + "\n" + ex?.InnerException?.Message, "Ошибка загрузки платежей", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            finally
+            {
+                MainWindow.statusBar.ClearStatus();
             }
         }
 
