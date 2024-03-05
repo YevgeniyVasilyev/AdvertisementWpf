@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Windows;
 
@@ -7,7 +9,7 @@ using System.Windows;
 
 namespace AdvertisementWpf.Models
 {
-    public partial class Act
+    public partial class Act : INotifyPropertyChanged
     {
         public long ID { get; set; }
         public long AccountID { get; set; }
@@ -20,8 +22,31 @@ namespace AdvertisementWpf.Models
 
         [NotMapped]
         public List<long> ListProductInAct { get; set; } = new List<long> { };
+#if NEWORDER
+        private ObservableCollection<AccountDetail> _detailsList;
         [NotMapped]
-        public List<AccountDetail> DetailsList { get; set; } = new List<AccountDetail> { };
+        public ObservableCollection<AccountDetail> DetailsList
+        {
+            get => _detailsList;
+            set
+            {
+                _detailsList = new ObservableCollection<AccountDetail>(value);
+                NotifyPropertyChanged("DetailsList");
+            }
+        }
+#else
+        private List<AccountDetail> _detailsList = new List<AccountDetail> { };
+        [NotMapped]
+        public List<AccountDetail> DetailsList
+        { 
+            get => _detailsList;
+            set
+            {
+                _detailsList = value;
+                NotifyPropertyChanged("DetailsList");
+            }
+        }
+#endif
         [NotMapped]
         public string UPDState { get; set; } = "2";
 
@@ -60,13 +85,21 @@ namespace AdvertisementWpf.Models
         public void CreateDetailsList(Account acnt = null)
         {
             ProductInActToList();
+#if NEWORDER
+            ObservableCollection<AccountDetail> detailList = new ObservableCollection<AccountDetail> { };
+#else
             List<AccountDetail> detailList = new List<AccountDetail> { };
+#endif
             Account account = Account ?? acnt;
             if (account != null)
             {
                 if (account.IsManual) //для ручного счета
                 {
+#if NEWORDER
                     detailList = account.DetailsList; //добавить единственную детализацию
+#else
+                    detailList = account.DetailsList; //добавить единственную детализацию
+#endif
                 }
                 else
                 {
@@ -80,6 +113,12 @@ namespace AdvertisementWpf.Models
                 }
             }
             DetailsList = detailList;
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void NotifyPropertyChanged(string propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

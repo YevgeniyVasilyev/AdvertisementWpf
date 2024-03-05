@@ -13,6 +13,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Diagnostics;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace AdvertisementWpf.Models
 {
@@ -157,12 +158,13 @@ namespace AdvertisementWpf.Models
         }
     }
 
-    internal class OrderViewModel : ISave, ILoad, IAdd, INotifyPropertyChanged
+    internal class OrderViewModel : INotifyPropertyChanged
     {
         private RelayCommand saveRequest, textBlockMouseLeftClick, showHideFrameworkElement, selectNewProduct, deleteProduct, newFileToProduct, deleteFileFromProduct, 
-                             openFolderWithFileProduct, openFileProductInShell, printOrderForm, printOrderFormForDesigner, newPayment, savePayment;
+                             openFolderWithFileProduct, openFileProductInShell, printOrderForm, printOrderFormForDesigner, newPayment, savePayment, loadAccount, saveAccount,  newAccount, newAct;
         private App.AppDbContext _contextOrder_ = CreateDbContext.CreateContext();              //контекст для заказа
         private App.AppDbContext _contextPayment_ = CreateDbContext.CreateContext();            //контекст для платежей Заказа
+        private App.AppDbContext _contextAccount_ = CreateDbContext.CreateContext();            //контекст для ПУД Заказа
         private string _pathToFilesOfProduct = "";                                              //путь к уелевой папке хранения файлов иллюстраций изделия
         private string _searchClient = "";
         public string SearchClient
@@ -193,6 +195,28 @@ namespace AdvertisementWpf.Models
         public List<ReferencebookApplicability> ReferencebookApplicabilityList { get; set; }    //список "Применимость справочника" AsNoTracking
         public List<ReferencebookParameter> ReferencebookParameterList { get; set; }            //список "Справочник параметров изделий" AsNoTracking
         public List<object> TotalProductCosts { get; set; } = new List<object>();               //список стоимостей, затрат и маржи по заказу
+        public ObservableCollection<Payment> ListPayment { get; set; }                          //список платежей
+        private ObservableCollection<Account> _listPAD { get; set; }
+        public ObservableCollection<Account> ListPAD
+        {
+            get => _listPAD;
+            set
+            {
+                _listPAD = value;
+                NotifyPropertyChanged("ListPAD");
+            }
+        }                                         //список ПУД
+        public List<Account> AccountForPayment { get; set; }                                    //список счетов для Payment
+        private List<Contractor> _listContractor;
+        public List<Contractor> ListContractor
+        { 
+            get => _listContractor;
+            set
+            {
+                _listContractor = value;
+                NotifyPropertyChanged("ListContractor");
+            }
+        }                                               //список контрагентов для ПУДов
         public Order CurrentOrder { get; set; }                                                 //текущий заказ
         public bool ViewMode { get; set; } = false;                                             //режим "просмотр" для карточки заказа
         public int ErrorsCount = 0;
@@ -224,15 +248,13 @@ namespace AdvertisementWpf.Models
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        //TO DO: ИТОГО по изделиям (ОБНОВЛЕНИЕ СТОИМОСТИ !!!!), "внутренности" изделия        
-
         public OrderViewModel(long nOrderID = 0, bool lViewMode = false)
         {
             try
             {
                 MainWindow.statusBar.WriteStatus("Загрузка данных по заказу ...", Cursors.Wait);
                 ViewMode = lViewMode;
-                LoadContext(nOrderID);  //загрузить данные в контекст
+                LoadOrderContext(nOrderID);  //загрузить данные в контекст
                 SetModelAccess();       //установить режимы доступа к элементам интерфейса
                 if (CurrentOrder is null) //новый
                 {
@@ -244,7 +266,7 @@ namespace AdvertisementWpf.Models
                         OrderEnteredID = MainWindow.Userdata.ID,
                         ManagerID = MainWindow.Userdata.ID,
                     };
-                    ((IAdd)this).AddToContext(ref _contextOrder_, CurrentOrder);
+                    _contextOrder_.AddToContext(CurrentOrder);
                 }
                 foreach (Product product in CurrentOrder.Products)                                                                                  //инициализация изделий
                 {
@@ -253,7 +275,7 @@ namespace AdvertisementWpf.Models
                     GetProductCosts(product);                                                                                                       //сформировать список стоимостей изделия
                 }
                 TotalProductCostsList();                                                                                                            //список на вкладке "Стоимость и затраты по КВД"
-                LoadOrderPayments();                                                                                                                //загрузить платежи на вкладке "Платежи"
+                LoadPaymentContext();                                                                                                               //загрузить платежи на вкладке "Платежи"
             }
             catch (Exception ex)
             {
@@ -277,6 +299,11 @@ namespace AdvertisementWpf.Models
                 _contextPayment_.Dispose();
                 _contextPayment_ = null;
             }
+            if (_contextAccount_ != null)
+            {
+                _contextAccount_.Dispose();
+                _contextAccount_ = null;
+            }
         }
 
         private bool ClientFilter(object item) //поиск(фильтрация) клиентов
@@ -298,13 +325,14 @@ namespace AdvertisementWpf.Models
 
         public RelayCommand SaveRequest => saveRequest ??= new RelayCommand((o) =>  // команда сохранения Заказа
         {
-            ((ISave)this).SaveContext(ref _contextOrder_);
+            _contextOrder_.SaveContext();
             if (IsNewOrder)
             {
                 CurrentOrder.Number = GenerateNewOrderNumber(CurrentOrder.ID);
-                ((ISave)this).SaveContext(ref _contextOrder_, IsMutedMode: true);   //сохранить в "тихом режиме"
+                _contextOrder_.SaveContext(IsMutedMode: true);   //сохранить в "тихом режиме"
                 IsNewOrder = false;
             }
+            MainWindow.statusBar.ClearStatus();
         }, (o) => CanSaveOrder());
 
         public RelayCommand ShowHideFrameworkElement => showHideFrameworkElement ??= new RelayCommand((o) => //команда "отобразить/скрыть элемент"
@@ -317,7 +345,7 @@ namespace AdvertisementWpf.Models
             if (CreateNewProduct((ProductType)o) is Product product)
             {
                 CurrentOrder.Products.Add(product);
-                product.ProductType = ((IAdd)this).AddSingleToContext(ref _contextOrder_, product.ProductType, delegate (ProductType p) { return p.ID == product.ProductTypeID; }); //добавить св-во навигации ProductType
+                product.ProductType = _contextOrder_.AddSingleToContext(product.ProductType, delegate (ProductType p) { return p.ID == product.ProductTypeID; }); //добавить св-во навигации ProductType
             };
         }, (o) => _contextOrder_ != null && ProductTypeCollectionView != null);
 
@@ -433,15 +461,34 @@ namespace AdvertisementWpf.Models
                 PurposeOfPayment = 0,
                 TypeOfPayment = 0
             };
-            _contextPayment_.Entry(payment).State = EntityState.Added;
-            CurrentOrder.Payments.Add(payment);
-        }, (o) => CurrentOrder?.ID > 0);
+            ListPayment.Add(payment);
+            _contextPayment_.AddToContext(payment);
+        }, (o) => _contextPayment_ != null && CurrentOrder?.ID > 0);
 
         public RelayCommand SavePayment => savePayment ??= new RelayCommand((o) => //команда сохранения платежей
         {
-            ((ISave)this).SaveContext(ref _contextPayment_);
+            _contextPayment_.SaveContext();
+            MainWindow.statusBar.ClearStatus();
         }, (o) => _contextPayment_ != null && CurrentOrder?.ID > 0 && ErrorsCount == 0);
 
+        public RelayCommand LoadAccount => loadAccount ??= new RelayCommand((o) => //команда загрузки ПУД
+        {
+            LoadAccountContext();
+        }, (o) => _contextAccount_ != null && CurrentOrder?.ID > 0);
+
+        public RelayCommand SaveAccount => saveAccount ??= new RelayCommand((o) => //команда сохранения ПУД
+        {
+            _contextAccount_.SaveContext();
+        }, (o) => _contextAccount_ != null && CurrentOrder?.ID > 0);
+
+        public RelayCommand NewAccount => newAccount ??= new RelayCommand((o) => //команда создания нового Счета
+        {
+        }, (o) => _contextAccount_ != null && CurrentOrder?.ID > 0);
+
+        public RelayCommand NewAct => newAct ??= new RelayCommand((o) => //команда создания нового Акта
+        {
+        }, (o) => _contextAccount_ != null && CurrentOrder?.ID > 0);
+        
         private void CopyFileToPathToFilesOfProduct(string[] aFullFileNames)
         {
             try
@@ -533,9 +580,10 @@ namespace AdvertisementWpf.Models
 
         public void AccountsListComboBoxSelectionChanged(object sender)
         {
-            if (sender is Payment payment)
+            Payment payment = sender as Payment;
+            if (payment != null)
             {
-                ((IAdd)this).AddReferenceToContext(ref _contextPayment_, payment, "Account"); //добавить св-во навигации Account
+                _contextPayment_.AddReferenceToContext(payment, "Account");
             }
         }
 
@@ -543,8 +591,111 @@ namespace AdvertisementWpf.Models
         {
             if (sender is Payment payment)
             {
-                _ = CurrentOrder.Payments.Remove(payment);
-                _contextPayment_.Entry(payment).State = EntityState.Deleted;
+                _ = ListPayment.Remove(payment);
+                _contextPayment_.DeleteFromContext(payment);
+            }
+        }
+
+        public void DeleteAccount(object sender)
+        {
+            if (sender is Account account)
+            {
+                _ = ListPAD.Remove(account);
+                _contextAccount_.DeleteFromContext(account);
+            }
+        }
+
+        public void DeleteAccountDetail(object sender1, object sender2)
+        {
+            Account account = sender1 as Account;
+            if (sender2 is AccountDetail accountDetail)
+            {
+                _ = account.DetailsList.Remove(accountDetail);
+                account.ListToDetails();
+            }
+        }
+
+        public void AccountDetailTextBoxChanged(object sender)
+        {
+            Account account = sender as Account;
+            account.ListToDetails();            //свернуть детали счета
+            foreach (Act act in account.Acts)
+            {
+                act.CreateDetailsList();        //создать детали Актов для обновления
+            }
+        }
+
+        public void DeleteAct(object sender1, object sender2)
+        {
+            Account account = sender1 as Account;
+            Act act = sender2 as Act;
+            _ = account.Acts.Remove(act);
+            _contextAccount_.DeleteFromContext(act);
+        }
+
+        public void DeleteActDetail(object sender1, object sender2, object sender3)
+        {
+            try
+            {
+                Account account = sender1 as Account;
+                Act act = sender2 as Act;
+                AccountDetail accountDetail = sender3 as AccountDetail;
+                _ = act.ListProductInAct.Remove(accountDetail.ProductID);
+                act.ListToProductInAct();
+                act.CreateDetailsList(account); //лучше использовать account, т.к. Account для Act может быть пустым для нового и не сохраненного счета
+                foreach (Act a in account.Acts)
+                {
+                    a.ActNumber = GetNewActNumber(a, account); //перенумерация актов
+                }
+            }
+            catch (Exception ex)
+            {
+                _ = MessageBox.Show(ex.Message + "\n" + ex?.InnerException?.Message, "Ошибка загрузки счетов", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private string GetNewActNumber(Act act, Account account)    //создать Акт для Счета
+        {
+            string sNewActNumber;
+            if (account.IsManual)
+            {
+                sNewActNumber = account.AccountNumber;
+            }
+            else
+            {
+                if (act.DetailsList.Count < account.DetailsList.Count) //если количество изделий в счете(заказе) больше чем в текущем Акте, то это означает частичная отгрузка
+                {
+                    //string sLastActNumber = account.Acts.Last().ActNumber;
+                    short nNumber = 1;
+                    foreach (Act a in account.Acts)
+                    {
+                        string[] s = a.ActNumber.Split('-');
+                        if (s.Length > 1 && short.TryParse(s[1], out short nMax))
+                        {
+                            nNumber = (short)Math.Max(nMax + 1, nNumber);
+                        }
+                    }
+                    sNewActNumber = $"{account.AccountNumber} - {nNumber}";
+                }
+                else
+                {
+                    sNewActNumber = account.AccountNumber;
+                }
+            }
+            return sNewActNumber;
+        }
+
+        public void ComntactorNameComboBoxSelectionChanged(object sender1, object sender2)
+        {
+            Contractor contractor = sender1 as Contractor;
+            Account account = sender2 as Account;
+            account.Contractor = _contextAccount_.AddSingleToContext(account.Contractor, delegate (Contractor c) { return c.ID == account.ContractorID; }); //добавить св-во навигации Contractor
+            contractor.Bank = _contextAccount_.AddSingleToContext(contractor.Bank, delegate (Bank b) { return b.ID == contractor.BankID; }); //добавить св-во навигации Bank
+            account.NotifyPropertyChanged("ContractorName");
+            if (account.AccountNumber.Count(c => c == '/') > 1) //наименование счета нового формата
+            {
+                string[] s = account.AccountNumber.Split("/");
+                account.AccountNumber = $"{s[0]}/{s[1]}/{account.Contractor.AbbrForAcc}";
             }
         }
 
@@ -604,7 +755,7 @@ namespace AdvertisementWpf.Models
             TotalProductCosts.Add(new { Code = "", Name = "Итого по заказу ", Cost = grouping.Sum(grp => grp.Cost), Outlay = grouping.Sum(grp => grp.Outlay), Margin = grouping.Sum(grp => grp.Margin) });
         }
 
-        public void LoadContext(long nOrderID)
+        public void LoadOrderContext(long nOrderID)
         {
             _pathToFilesOfProduct = _contextOrder_.Setting.AsNoTracking().Where(Setting => Setting.SettingParameterName == "PathToFilesOfProduct").FirstOrDefault().SettingParameterValue;
             ClientCollectionView = CollectionViewSource.GetDefaultView(_contextOrder_.Clients.AsNoTracking().ToList());                         //инициализация коллекции "Клиенты"
@@ -631,7 +782,6 @@ namespace AdvertisementWpf.Models
                     .ThenInclude(Product => Product.ProductType)
                     .Include(Order => Order.Products)
                     .ThenInclude(Product => Product.ProductCosts)
-                    .Include(Order => Order.Accounts)
                     .FirstOrDefault(Order => Order.ID == nOrderID);                                                                             //получить текущий заказ (или null для нового)
         }
 
@@ -750,17 +900,64 @@ namespace AdvertisementWpf.Models
             }
         }
 
-        private void LoadOrderPayments()
+        private void LoadPaymentContext()
         {
             MainWindow.statusBar.WriteStatus("Загрузка платежей ...", Cursors.Wait);
             try
             {
-                //ВАЖНО !!! Новые элементы будут NoTracking !!!  Изменять Entry.State при добавлении и удалении !!!
-                CurrentOrder.Payments = _contextPayment_.Payments.Include(pay => pay.Account).Where(pay => pay.OrderID == CurrentOrder.ID).AsTracking().ToList();
+                _contextPayment_.Payments.Include(pay => pay.Account).Where(pay => pay.OrderID == CurrentOrder.ID).Load();
+                ListPayment = _contextPayment_.Payments.Local.ToObservableCollection();
+                AccountForPayment = _contextPayment_.Accounts.Where(acc => acc.OrderID == CurrentOrder.ID).AsNoTracking().ToList();
             }
             catch (Exception ex)
             {
                 _ = MessageBox.Show(ex.Message + "\n" + ex?.InnerException?.Message, "Ошибка загрузки платежей", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            finally
+            {
+                MainWindow.statusBar.ClearStatus();
+            }
+        }
+
+        private void LoadAccountContext(bool lShowMessage = true)
+        {
+            MainWindow.statusBar.WriteStatus("Загрузка счетов ...", Cursors.Wait);
+            try
+            {
+                foreach (EntityEntry entityEntry in _contextAccount_.ChangeTracker.Entries().ToArray()) //для повторной загрузки из БД
+                {
+                    if (entityEntry.Entity != null)
+                    {
+                        entityEntry.State = EntityState.Detached;
+                    }
+                }
+                _contextAccount_.Accounts
+                    .Include(Account => Account.Acts)
+                    .Include(Account => Account.Order)
+                    .Include(Account => Account.Contractor).ThenInclude(Contractor => Contractor.Bank).ThenInclude(Bank => Bank.Localities)
+                    .Include(Account => Account.Order.Client).ThenInclude(Client => Client.Bank).ThenInclude(Bank => Bank.Localities)
+                    .Include(Account => Account.Order.Client).ThenInclude(Client => Client.ConsigneeBank).ThenInclude(ConsigneeBank => ConsigneeBank.Localities)
+                    .Include(Account => Account.Order.Products).ThenInclude(Product => Product.ProductType)
+                    .Where(Account => Account.OrderID == CurrentOrder.ID)
+                    .Load();
+                ListPAD = _contextAccount_.Accounts.Local.ToObservableCollection();                     //спиок счетов и связанных сущностей
+                foreach (Account account in ListPAD)
+                {
+                    account.DetailsToList();                //распаковать детали счета
+                    foreach (Act act in account.Acts)
+                    {
+                        act.CreateDetailsList();            //распаковать детали акта
+                    }
+                }
+                ListContractor = _contextAccount_.Contractors.AsNoTracking().ToList();                  //список пордрядчиков
+                if (lShowMessage)
+                {
+                    _ = MessageBox.Show("   Все счета загружены успешно!   ", "Загрузка счетов");
+                }
+            }
+            catch (Exception ex)
+            {
+                _ = MessageBox.Show(ex.Message + "\n" + ex?.InnerException?.Message, "Ошибка загрузки счетов", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             finally
             {

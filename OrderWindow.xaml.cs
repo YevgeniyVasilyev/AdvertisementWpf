@@ -1446,7 +1446,9 @@ namespace AdvertisementWpf
                 context__.Entry(product).Reference(p => p.ProductType).Load(); //загрузить через св-во навигации
             }
             _ = accountsViewSource.View.MoveCurrentTo(account);
+#if !NEWORDER
             account.DetailsList = CreateNewAccountDetails();
+#endif
             account.ListToDetails();
              accountsViewSource.View.Refresh();
             _ = accountsViewSource.View.MoveCurrentTo(account);
@@ -1773,7 +1775,9 @@ namespace AdvertisementWpf
         {
             if (accountsViewSource != null && accountsViewSource.View != null && accountsViewSource.View.CurrentItem is Account account)
             {
+#if !NEWORDER
                 account.DetailsList = CreateNewAccountDetails((bool)(sender as CheckBox).IsChecked);
+#endif
                 accountsViewSource.View.Refresh();
                 _ = accountsViewSource.View.MoveCurrentTo(account);
                 account.ListToDetails(); //свернуть детали счета

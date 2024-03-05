@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -9,7 +10,35 @@ namespace AdvertisementWpf.Models
 {
     public partial class Account : INotifyPropertyChanged
     {
-        private List<AccountDetail> _detailsList { get; set; } = new List<AccountDetail> { };
+        private long? _contractorID = 0;
+        public long? ContractorID
+        {
+            get => _contractorID;
+            set
+            {
+                if (_contractorID != value)
+                {
+                    _contractorID = value;
+                    NotifyPropertyChanged("ContractorName");
+                }
+            }
+        }
+
+#if NEWORDER
+        private ObservableCollection<AccountDetail> _detailsList { get; set; }
+        [NotMapped]
+        public ObservableCollection<AccountDetail> DetailsList
+        {
+            get => _detailsList;
+            set
+            {
+                _detailsList = value;
+                NotifyPropertyChanged("DetailsList");
+                NotifyPropertyChanged("TotalCost");
+            }
+        }
+#else
+        private List<AccountDetail> _detailsList { get; set; }
         [NotMapped]
         public List<AccountDetail> DetailsList
         {
@@ -23,13 +52,18 @@ namespace AdvertisementWpf.Models
                     NotifyPropertyChanged("TotalCost");
                 }
             }
-        } 
+        }
+#endif
 
         private string _contractorName = "";
         [NotMapped]
         public string ContractorName
         {
+#if NEWORDER
+            get => Contractor?.Name;
+#else
             get => Contractor != null && Contractor.ID == ContractorID ? Contractor.Name : _contractorName;
+#endif
             set
             {
                 _contractorName = value;
@@ -57,7 +91,8 @@ namespace AdvertisementWpf.Models
 
         public void DetailsToList()
         {
-            List<AccountDetail> detailList = new List<AccountDetail> { };
+            ObservableCollection<AccountDetail> detailList = new ObservableCollection<AccountDetail> { };
+            List<AccountDetail> detailLst = new List<AccountDetail> { };
             if (Details != null)
             {
                 string[] aDetails = Details.Split('&', StringSplitOptions.RemoveEmptyEntries);
@@ -71,10 +106,15 @@ namespace AdvertisementWpf.Models
                     //else
                     //{
                     //}
+                    detailLst.Add(new AccountDetail { ProductID = Convert.ToInt64(pD[0]), ProductInfoForAccount = pD[1], Quantity = Convert.ToInt16(pD[2]), UnitName = pD[3], Cost = Convert.ToDecimal(pD[4]) });
                     detailList.Add(new AccountDetail { ProductID = Convert.ToInt64(pD[0]), ProductInfoForAccount = pD[1], Quantity = Convert.ToInt16(pD[2]), UnitName = pD[3], Cost = Convert.ToDecimal(pD[4]) });
                 }
             }
+#if !NEWORDER
+            DetailsList = detailLst;
+#else
             DetailsList = detailList;
+#endif
         }
 
         public void ListToDetails()
@@ -98,7 +138,7 @@ namespace AdvertisementWpf.Models
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-        protected void NotifyPropertyChanged(string propertyName = "")
+        public void NotifyPropertyChanged(string propertyName = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

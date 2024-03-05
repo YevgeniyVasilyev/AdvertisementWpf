@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using System;
+using System.Linq;
+using System.Windows;
 using AdvertisementWpf.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,43 +11,43 @@ namespace AdvertisementWpf
     /// </summary>
     public partial class App : Application
     {
+
         public class AppDbContext : DbContext
         {
             private readonly string _connectionString;
 
-            public virtual DbSet<NoTable> NoTable { get; }
-            public virtual DbSet<Bank> Banks { get; set; }
-            public virtual DbSet<Client> Clients { get; set; }
-            public virtual DbSet<Contractor> Contractors { get; set; }
-            public virtual DbSet<Locality> Localities { get; set; }
-            public virtual DbSet<Order> Orders { get; set; }
-            public virtual DbSet<ParameterInProductType> ParameterInProductTypes { get; set; }
-            public virtual DbSet<Product> Products { get; set; }
-            public virtual DbSet<ProductCost> ProductCosts { get; set; }
-            public virtual DbSet<ProductType> ProductTypes { get; set; }
-            public virtual DbSet<Role> Roles { get; set; }
-            public virtual DbSet<TypeOfActivity> TypeOfActivitys { get; set; }
-            public virtual DbSet<TypeOfActivityInProduct> TypeOfActivityInProducts { get; set; }
-            public virtual DbSet<Unit> Units { get; set; }
-            public virtual DbSet<User> Users { get; set; }
-            public virtual DbSet<CategoryOfProduct> CategoryOfProducts { get; set; }
-            public virtual DbSet<Setting> Setting { get; set; }
-            public virtual DbSet<IAccessMatrix> IAccessMatrix { get; set; }
-            public virtual DbSet<Referencebook> Referencebook { get; set; }
-            public virtual DbSet<ReferencebookParameter> ReferencebookParameter { get; set; }
-            public virtual DbSet<ReferencebookApplicability> ReferencebookApplicability { get; set; }
-            public virtual DbSet<Payment> Payments { get; set; }
-            public virtual DbSet<Account> Accounts { get; set; }
-            public virtual DbSet<Act> Acts { get; set; }
-            public virtual DbSet<Report> Reports { get; set; }
-            public virtual DbSet<ProductionArea> ProductionAreas { get; set; }
-            public virtual DbSet<TypeOfActivityInProdArea> TypeOfActivityInProdAreas { get; set; }
-            public virtual DbSet<Operation> Operations { get; set; }
-            public virtual DbSet<TypeOfActivityInOperation> TypeOfActivityInOperations { get; set; }
-            public virtual DbSet<ParameterInOperation> ParameterInOperations { get; set; }
-            public virtual DbSet<OperationInWork> OperationInWorks { get; set; }
-            public virtual DbSet<TechCard> TechCards { get; set; }
-            public virtual DbSet<WorkInTechCard> WorkInTechCards { get; set; }
+            public DbSet<Bank> Banks { get; set; }
+            public DbSet<Client> Clients { get; set; }
+            public DbSet<Contractor> Contractors { get; set; }
+            public DbSet<Locality> Localities { get; set; }
+            public DbSet<Order> Orders { get; set; }
+            public DbSet<ParameterInProductType> ParameterInProductTypes { get; set; }
+            public DbSet<Product> Products { get; set; }
+            public DbSet<ProductCost> ProductCosts { get; set; }
+            public DbSet<ProductType> ProductTypes { get; set; }
+            public DbSet<Role> Roles { get; set; }
+            public DbSet<TypeOfActivity> TypeOfActivitys { get; set; }
+            public DbSet<TypeOfActivityInProduct> TypeOfActivityInProducts { get; set; }
+            public DbSet<Unit> Units { get; set; }
+            public DbSet<User> Users { get; set; }
+            public DbSet<CategoryOfProduct> CategoryOfProducts { get; set; }
+            public DbSet<Setting> Setting { get; set; }
+            public DbSet<IAccessMatrix> IAccessMatrix { get; set; }
+            public DbSet<Referencebook> Referencebook { get; set; }
+            public DbSet<ReferencebookParameter> ReferencebookParameter { get; set; }
+            public DbSet<ReferencebookApplicability> ReferencebookApplicability { get; set; }
+            public DbSet<Payment> Payments { get; set; }
+            public DbSet<Account> Accounts { get; set; }
+            public DbSet<Act> Acts { get; set; }
+            public DbSet<Report> Reports { get; set; }
+            public DbSet<ProductionArea> ProductionAreas { get; set; }
+            public DbSet<TypeOfActivityInProdArea> TypeOfActivityInProdAreas { get; set; }
+            public DbSet<Operation> Operations { get; set; }
+            public DbSet<TypeOfActivityInOperation> TypeOfActivityInOperations { get; set; }
+            public DbSet<ParameterInOperation> ParameterInOperations { get; set; }
+            public DbSet<OperationInWork> OperationInWorks { get; set; }
+            public DbSet<TechCard> TechCards { get; set; }
+            public DbSet<WorkInTechCard> WorkInTechCards { get; set; }
 
             public AppDbContext(string cs)
             {
@@ -69,11 +71,6 @@ namespace AdvertisementWpf
 
             protected override void OnModelCreating(ModelBuilder modelBuilder)
             {
-                _ = modelBuilder.Entity<NoTable>(pc =>
-                {
-                    pc.HasNoKey();
-                    //pc.ToView("");
-                });
                 _ = modelBuilder.Entity<Order>(o =>
                 {
                     _ = o.Property(o => o.DateAdmission).HasColumnType("datetime");
@@ -145,6 +142,44 @@ namespace AdvertisementWpf
                 _ = modelBuilder.Entity<Order>().Navigation(o => o.Manager).AutoInclude();
                 _ = modelBuilder.Entity<Order>().Navigation(o => o.Client).AutoInclude();
                 _ = modelBuilder.Entity<Product>().Navigation(p => p.Designer).AutoInclude();
+            }
+
+            public void SaveContext(bool IsMutedMode = false)
+            {
+                try
+                {
+                    _ = SaveChanges();
+                    if (!IsMutedMode)
+                    {
+                        _ = MessageBox.Show("   Сохранено успешно!   ", "Сохранение данных");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _ = MessageBox.Show(ex.Message + "\n" + ex?.InnerException?.Message, "Ошибка сохранения данных", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+
+            public void AddToContext<T>(T _object) where T : class
+            {
+                _ = Set<T>().Add(_object);
+                Entry(_object).State = EntityState.Added;
+            }
+            public void AddReferenceToContext(object _parentObject, string _referenceObject)
+            {
+                Entry(_parentObject).Reference(_referenceObject).Load();
+            }
+            public T AddSingleToContext<T>(T _parentObject, Func<T, bool> expression) where T : class
+            {
+                return Set<T>().SingleOrDefault(expression);
+            }
+            public void AddCollectionToContext(object _parentObject, string _collectionObject)
+            {
+                Entry(_parentObject).Collection(_collectionObject).Load();
+            }
+            public void DeleteFromContext<T>(T _object) where T : class
+            {
+                _ = Set<T>().Remove(_object);
             }
         }
     }

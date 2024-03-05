@@ -18,19 +18,6 @@ namespace AdvertisementWpf.Models
         public string AccountNumber { get; set; } = "";
         [Column(TypeName = "datetime")]
         public DateTime? AccountDate { get; set; } = DateTime.Now;
-        private long? _contractorID = 0;
-        public long? ContractorID 
-        {
-            get => _contractorID;
-            set
-            {
-                if (_contractorID != value)
-                {
-                    _contractorID = value;
-                    NotifyPropertyChanged("ContractorName");
-                }
-            }
-        }
         public string Footing { get; set; } = "";
         public bool IsManual { get; set; } = false;
         public string Details { get; set; } = "";
