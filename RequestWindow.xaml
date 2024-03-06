@@ -999,7 +999,8 @@
                                 </StackPanel>
                             </Button>
                             <Separator/>
-                            <Button Name="NewActButton" Style="{StaticResource ButtonOfOrder}" Command="{Binding NewAct}"
+                            <Button Name="NewActButton" Style="{StaticResource ButtonOfOrder}" 
+                                    Command="{Binding NewAct}" CommandParameter="{Binding ElementName=ListAccount, Path=SelectedItem}"
                                     ToolTip="Сформировать новый акт">
                                 <StackPanel Orientation="Horizontal">
                                     <Image Source="\Images\free-icon-act.png" Width="25" Height="25"/>
@@ -1027,8 +1028,10 @@
                             </Grid.RowDefinitions>
                             <ListView Grid.Row="0" Margin="2" Name="ListAccount"
                                       ItemsSource="{Binding ListPAD, UpdateSourceTrigger=PropertyChanged}" 
-                                      ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                                      KeyDown="ListAccount_KeyDown">
+                                      ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto">
+                                <ListView.InputBindings>
+                                    <KeyBinding Key="Delete" Command="{Binding DeleteAccount}" CommandParameter="{Binding ElementName=ListAccount, Path=SelectedItem}"/>
+                                </ListView.InputBindings>
                                 <ListView.View>
                                     <GridView>
                                         <GridViewColumn Header=" Номер счета " DisplayMemberBinding="{Binding Path=AccountNumber}" Width="150"
@@ -1045,8 +1048,17 @@
                             </ListView>
                             <ListView Grid.Row="1" Margin="2" Name="ListAccountDetail" 
                                       ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                                      ItemsSource="{Binding ElementName=ListAccount, Path=SelectedItem.DetailsList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                                      KeyDown="ListAccountDetail_KeyDown">
+                                      ItemsSource="{Binding ElementName=ListAccount, Path=SelectedItem.DetailsList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                <ListView.InputBindings>
+                                    <KeyBinding Key="Delete" Command="{Binding DeleteAccountDetail}">
+                                        <KeyBinding.CommandParameter>
+                                            <MultiBinding Converter="{StaticResource MultiValueConverter}">
+                                                <Binding ElementName="ListAccount" Path="SelectedItem"/>
+                                                <Binding ElementName="ListAccountDetail" Path="SelectedItem"/>
+                                            </MultiBinding>
+                                        </KeyBinding.CommandParameter>
+                                    </KeyBinding>
+                                </ListView.InputBindings>
                                 <ListView.View>
                                     <GridView>
                                         <GridViewColumn x:Name="a_col1" Header=" Товары (работы, услуги) " DisplayMemberBinding="{Binding Path=ProductInfoForAccount}" 
@@ -1143,7 +1155,8 @@
                                              UpdateSourceTrigger=PropertyChanged, NotifyOnSourceUpdated=True}" SourceUpdated="TextBox_SourceUpdated"/>
                                     <CheckBox Grid.Column="1" Name="ManualInput" Margin="1,0,0,0" Content=" ручной ввод" VerticalContentAlignment="Center" 
                                               IsChecked="{Binding ElementName=ListAccount, Path=SelectedItem.IsManual, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnSourceUpdated=True}" 
-                                              Click="ManualInput_Click"/>
+                                              Command="{Binding ManualInputAccount}" CommandParameter="{Binding ElementName=ListAccount, Path=SelectedItem}">
+                                    </CheckBox>
                                 </Grid>
                                 <TextBlock Grid.Column="0" Grid.Row="6" Text="Количество: " VerticalAlignment="Center"/>
                                 <StackPanel Grid.Column="1" Grid.Row="6" Orientation="Horizontal" HorizontalAlignment="Left">
@@ -1158,7 +1171,14 @@
                                          SourceUpdated="TextBox_SourceUpdated"/>
                                 </StackPanel>
                                 <StackPanel Grid.Column="0" Grid.Row="7" Orientation="Vertical">
-                                    <Button Margin="4" Name="PrintAccountButton" Style="{StaticResource ButtonOfOrder}" Command="ApplicationCommands.Print">
+                                    <Button Margin="4" Name="PrintAccountButton" Style="{StaticResource ButtonOfOrder}" Command="{Binding PrintAccount}">
+                                        <Button.CommandParameter>
+                                            <MultiBinding Converter="{StaticResource MultiValueConverter}">
+                                                <Binding ElementName="ListAccount" Path="SelectedItem"/>
+                                                <Binding ElementName="AccountDate" Path="SelectedDate"/>
+                                                <Binding ElementName="WithSignature" Path="IsChecked"/>
+                                            </MultiBinding>
+                                        </Button.CommandParameter>
                                         <StackPanel Orientation="Horizontal">
                                             <Image Margin="5,0,0,0" Source="\Images\free-icon-printer.png" Width="25" Height="25"/>
                                             <StackPanel Orientation="Vertical" Margin="7,0,0,0">
@@ -1213,7 +1233,18 @@
                             </ListView>
                             <ListView Grid.Row="1" Name="ListActDetail"
                                       ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                                      ItemsSource="{Binding ElementName=ListAct, Path=SelectedItem.DetailsList}" KeyDown="ListActDetail_KeyDown">
+                                      ItemsSource="{Binding ElementName=ListAct, Path=SelectedItem.DetailsList}">
+                                <ListView.InputBindings>
+                                    <KeyBinding Key="Delete" Command="{Binding DeleteActDetail}">
+                                        <KeyBinding.CommandParameter>
+                                            <MultiBinding Converter="{StaticResource MultiValueConverter}">
+                                                <Binding ElementName="ListAccount" Path="SelectedItem"/>
+                                                <Binding ElementName="ListAct" Path="SelectedItem"/>
+                                                <Binding ElementName="ListActDetail" Path="SelectedItem"/>
+                                            </MultiBinding>
+                                        </KeyBinding.CommandParameter>
+                                    </KeyBinding>
+                                </ListView.InputBindings>
                                 <ListView.View>
                                     <GridView>
                                         <GridViewColumn Header=" Наименование работ, услуг " DisplayMemberBinding="{Binding Path=ProductInfoForAccount, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
@@ -1281,7 +1312,17 @@
                                          IsEnabled="{Binding Converter={StaticResource BoolNotBoolConverter}, ElementName=ListAccount, Path=SelectedItem.Order.Client.ConsigneeIsSame}"
                                          Text="{Binding ElementName=ListAccount, Path=SelectedItem.Order.Client.ConsigneeForTN, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                                 <StackPanel Grid.Column="0" Grid.Row="8" Orientation="Vertical">
-                                    <Button Margin="4" Name="PrintActButton" Style="{StaticResource ButtonOfOrder}" Command="ApplicationCommands.Print">
+                                    <Button Margin="4" Name="PrintActButton" Style="{StaticResource ButtonOfOrder}" Command="{Binding PrintAct}">
+                                        <Button.CommandParameter>
+                                            <MultiBinding Converter="{StaticResource MultiValueConverter}">
+                                                <Binding ElementName="ListAccount" Path="SelectedItem"/>
+                                                <Binding ElementName="ListAct" Path="SelectedItem"/>
+                                                <Binding ElementName="ActDate" Path="SelectedDate"/>
+                                                <Binding ElementName="TemplateAct" Path="IsChecked"/>
+                                                <Binding ElementName="TemplateSFTN" Path="IsChecked"/>
+                                                <Binding ElementName="TemplateUPD" Path="IsChecked"/>
+                                            </MultiBinding>
+                                        </Button.CommandParameter>
                                         <StackPanel Orientation="Horizontal">
                                             <Image Margin="5,0,0,0" Source="\Images\free-icon-printer.png" Width="25" Height="25"/>
                                             <StackPanel Orientation="Vertical" Margin="7,0,0,0">

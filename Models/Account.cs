@@ -26,7 +26,7 @@ namespace AdvertisementWpf.Models
 
         public virtual Order Order { get; set; }
         public virtual Contractor Contractor { get; set; }
-        public virtual ICollection<Act> Acts { get; set; }
+        //public virtual ICollection<Act> Acts { get; set; }
         public virtual ICollection<Payment> Payments { get; set; }
     }
 }

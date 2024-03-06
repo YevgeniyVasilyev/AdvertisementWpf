@@ -24,8 +24,19 @@ namespace AdvertisementWpf.Models
             }
         }
 
+        private ObservableCollection<Act> _acts = new ObservableCollection<Act>();
+        public ICollection<Act> Acts
+        { 
+            get => _acts;
+            set
+            {
+                _acts = new ObservableCollection<Act>(value);
+                NotifyPropertyChanged("Acts");
+            }
+        }
+
 #if NEWORDER
-        private ObservableCollection<AccountDetail> _detailsList { get; set; }
+        private ObservableCollection<AccountDetail> _detailsList = new ObservableCollection<AccountDetail>();
         [NotMapped]
         public ObservableCollection<AccountDetail> DetailsList
         {
@@ -45,12 +56,9 @@ namespace AdvertisementWpf.Models
             get => _detailsList;
             set
             {
-                if (!_detailsList.Equals(value))
-                {
-                    _detailsList = value;
-                    NotifyPropertyChanged("DetailsList");
-                    NotifyPropertyChanged("TotalCost");
-                }
+                _detailsList = value;
+                NotifyPropertyChanged("DetailsList"); 
+                NotifyPropertyChanged("TotalCost");
             }
         }
 #endif

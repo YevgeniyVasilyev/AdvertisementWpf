@@ -23,7 +23,7 @@ namespace AdvertisementWpf.Models
         [NotMapped]
         public List<long> ListProductInAct { get; set; } = new List<long> { };
 #if NEWORDER
-        private ObservableCollection<AccountDetail> _detailsList;
+        private ObservableCollection<AccountDetail> _detailsList = new ObservableCollection<AccountDetail>();
         [NotMapped]
         public ObservableCollection<AccountDetail> DetailsList
         {
@@ -43,7 +43,7 @@ namespace AdvertisementWpf.Models
             set
             {
                 _detailsList = value;
-                NotifyPropertyChanged("DetailsList");
+                NotifyPropertyChanged("DetailsList"); //???????
             }
         }
 #endif
@@ -85,18 +85,15 @@ namespace AdvertisementWpf.Models
         public void CreateDetailsList(Account acnt = null)
         {
             ProductInActToList();
-#if NEWORDER
-            ObservableCollection<AccountDetail> detailList = new ObservableCollection<AccountDetail> { };
-#else
+            ObservableCollection<AccountDetail> detailLst = new ObservableCollection<AccountDetail> { };
             List<AccountDetail> detailList = new List<AccountDetail> { };
-#endif
             Account account = Account ?? acnt;
             if (account != null)
             {
                 if (account.IsManual) //для ручного счета
                 {
 #if NEWORDER
-                    detailList = account.DetailsList; //добавить единственную детализацию
+                    detailLst = account.DetailsList; //добавить единственную детализацию
 #else
                     detailList = account.DetailsList; //добавить единственную детализацию
 #endif
@@ -108,11 +105,16 @@ namespace AdvertisementWpf.Models
                         if (ListProductInAct.Contains(accountDetail.ProductID)) //да, продукт включен в акт
                         {
                             detailList.Add(accountDetail);
+                            detailLst.Add(accountDetail);
                         }
                     }
                 }
             }
+#if NEWORDER
+            DetailsList = detailLst;
+#else
             DetailsList = detailList;
+#endif
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

@@ -1473,7 +1473,7 @@ namespace AdvertisementWpf
                 }
                 act.ListProductInAct = account.DetailsList.Select(d => d.ProductID).Except(listProductID).ToList(); //список productID 
                 act.ListToProductInAct(); //свернуть список productID в строку
-                account.Acts.Add(act);
+                //account.Acts.Add(act);
                 act.CreateDetailsList(account);
                 act.ActNumber = GetNewActNumber(act);
                 if (ListAct.Items.Count > 0)

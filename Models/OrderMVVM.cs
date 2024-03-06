@@ -14,6 +14,9 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Diagnostics;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using System.Collections;
+using System.Text.RegularExpressions;
+using System.Text;
 
 namespace AdvertisementWpf.Models
 {
@@ -161,7 +164,8 @@ namespace AdvertisementWpf.Models
     internal class OrderViewModel : INotifyPropertyChanged
     {
         private RelayCommand saveRequest, textBlockMouseLeftClick, showHideFrameworkElement, selectNewProduct, deleteProduct, newFileToProduct, deleteFileFromProduct, 
-                             openFolderWithFileProduct, openFileProductInShell, printOrderForm, printOrderFormForDesigner, newPayment, savePayment, loadAccount, saveAccount,  newAccount, newAct;
+                             openFolderWithFileProduct, openFileProductInShell, printOrderForm, printOrderFormForDesigner, newPayment, savePayment, loadAccount, saveAccount,  newAccount, newAct,
+                             manualInputAccount, deleteAccount, deleteAccountDetail, deleteActDetail, printAccount, printAct;
         private App.AppDbContext _contextOrder_ = CreateDbContext.CreateContext();              //контекст для заказа
         private App.AppDbContext _contextPayment_ = CreateDbContext.CreateContext();            //контекст для платежей Заказа
         private App.AppDbContext _contextAccount_ = CreateDbContext.CreateContext();            //контекст для ПУД Заказа
@@ -463,7 +467,7 @@ namespace AdvertisementWpf.Models
             };
             ListPayment.Add(payment);
             _contextPayment_.AddToContext(payment);
-        }, (o) => _contextPayment_ != null && CurrentOrder?.ID > 0);
+        }, (o) => _contextPayment_ != null && CurrentOrder?.ID > 0 && IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductPaymentsNewChangeDelete"));
 
         public RelayCommand SavePayment => savePayment ??= new RelayCommand((o) => //команда сохранения платежей
         {
@@ -479,16 +483,78 @@ namespace AdvertisementWpf.Models
         public RelayCommand SaveAccount => saveAccount ??= new RelayCommand((o) => //команда сохранения ПУД
         {
             _contextAccount_.SaveContext();
-        }, (o) => _contextAccount_ != null && CurrentOrder?.ID > 0);
+        }, (o) => _contextAccount_ != null && CurrentOrder?.ID > 0 && ListPAD?.Count > 0 && IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductPADNewChangeDelete"));
 
         public RelayCommand NewAccount => newAccount ??= new RelayCommand((o) => //команда создания нового Счета
         {
-        }, (o) => _contextAccount_ != null && CurrentOrder?.ID > 0);
+            CreateNewAccount();
+        }, (o) => _contextAccount_ != null && CurrentOrder?.ID > 0 && IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductPADNewChangeDelete"));
 
         public RelayCommand NewAct => newAct ??= new RelayCommand((o) => //команда создания нового Акта
         {
+            CreateNewAct(o as Account);
+        }, (o) => _contextAccount_ != null && CurrentOrder?.ID > 0 && (o as Account)?.ID > 0 && CanCreateNewAct(o as Account) && IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductPADNewChangeDelete"));
+
+        public RelayCommand DeleteAccount => deleteAccount ??= new RelayCommand((o) => //команда удалить Счет
+        {
+            Account account = o as Account;
+            _ = ListPAD.Remove(account);
+            _contextAccount_.DeleteFromContext(account);
+        }, (o) => _contextAccount_ != null && CurrentOrder?.ID > 0 && IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductPADNewChangeDelete"));
+
+        public RelayCommand DeleteAccountDetail => deleteAccountDetail ??= new RelayCommand((o) => //команда удалить детализацию Счета
+        {
+            Account account = ((object[])o)[0] as Account;
+            AccountDetail accountDetail = ((object[])o)[1] as AccountDetail;
+            if (accountDetail != null)
+            {
+                _ = account.DetailsList.Remove(accountDetail);
+                account.ListToDetails();
+            }
+        }, (o) => _contextAccount_ != null && CurrentOrder?.ID > 0 && o != null && (((object[])o)[0] as Account).Acts.Count == 0 && IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductPADNewChangeDelete"));
+
+        public RelayCommand DeleteActDetail => deleteActDetail ??= new RelayCommand((o) => //команда удалить детализацию Счета
+        {
+            Account account = ((object[])o)[0] as Account;
+            Act act = ((object[])o)[1] as Act;
+            AccountDetail accountDetail = ((object[])o)[2] as AccountDetail;
+            _ = act.ListProductInAct.Remove(accountDetail.ProductID);
+            act.ListToProductInAct();
+            act.CreateDetailsList(account); //лучше использовать account, т.к. Account для Act может быть пустым для нового и не сохраненного счета
+            foreach (Act a in account.Acts)
+            {
+                a.ActNumber = GetNewActNumber(a, account); //перенумерация актов
+            }
+        }, (o) => _contextAccount_ != null && CurrentOrder?.ID > 0 && IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductPADNewChangeDelete"));
+
+        public RelayCommand ManualInputAccount => manualInputAccount ??= new RelayCommand((o) => //команда приустановке признака "ручной ввод счета"
+        {
+            Account account = o as Account;
+#if NEWORDER
+            account.DetailsList = CreateNewAccountDetails(account);
+#endif
+            account.ListToDetails(); //свернуть детали счета
         }, (o) => _contextAccount_ != null && CurrentOrder?.ID > 0);
-        
+
+        public RelayCommand PrintAccount => printAccount ??= new RelayCommand((o) => //команда Печать счета
+        {
+            Account account = ((object[])o)[0] as Account;
+            DateTime dateTime = (DateTime)((object[])o)[1];
+            bool withSignature = (bool)((object[])o)[2];
+            AccountPrint(account, dateTime, withSignature);
+        }, (o) => _contextAccount_ != null && CurrentOrder?.ID > 0 && o != null && (((object[])o)[0] as Account)?.ID > 0);
+
+        public RelayCommand PrintAct => printAct ??= new RelayCommand((o) => //команда Печать счета
+        {
+            Account account = ((object[])o)[0] as Account;
+            Act act = ((object[])o)[1] as Act;
+            DateTime dateTime = (DateTime)((object[])o)[2];
+            bool templateAct = (bool)((object[])o)[3];
+            bool templateSFTN = (bool)((object[])o)[4];
+            bool templateUPD = (bool)((object[])o)[5];
+            ActPrint(account, act, dateTime, templateAct, templateSFTN, templateUPD);
+        }, (o) => _contextAccount_ != null && CurrentOrder?.ID > 0 && o != null && (((object[])o)[1] as Act)?.ID > 0);
+
         private void CopyFileToPathToFilesOfProduct(string[] aFullFileNames)
         {
             try
@@ -596,25 +662,6 @@ namespace AdvertisementWpf.Models
             }
         }
 
-        public void DeleteAccount(object sender)
-        {
-            if (sender is Account account)
-            {
-                _ = ListPAD.Remove(account);
-                _contextAccount_.DeleteFromContext(account);
-            }
-        }
-
-        public void DeleteAccountDetail(object sender1, object sender2)
-        {
-            Account account = sender1 as Account;
-            if (sender2 is AccountDetail accountDetail)
-            {
-                _ = account.DetailsList.Remove(accountDetail);
-                account.ListToDetails();
-            }
-        }
-
         public void AccountDetailTextBoxChanged(object sender)
         {
             Account account = sender as Account;
@@ -633,24 +680,157 @@ namespace AdvertisementWpf.Models
             _contextAccount_.DeleteFromContext(act);
         }
 
-        public void DeleteActDetail(object sender1, object sender2, object sender3)
+        private string GetNewAccountNumber(ref Account account)
+        {
+            short nMaxAccountNumber = 1;
+            foreach (Account acc in ListPAD)
+            {
+                string[] s = acc.AccountNumber.Split('/');
+                if (s.Length > 1 && short.TryParse(s[1], out short nMax))
+                {
+                    nMaxAccountNumber = (short)Math.Max(nMax + 1, nMaxAccountNumber);
+                }
+            }
+            return $"{CurrentOrder.Number.TrimStart('0')}/{nMaxAccountNumber}/{account.Contractor.AbbrForAcc}";
+        }
+
+        private void CreateNewAccount()
         {
             try
             {
-                Account account = sender1 as Account;
-                Act act = sender2 as Act;
-                AccountDetail accountDetail = sender3 as AccountDetail;
-                _ = act.ListProductInAct.Remove(accountDetail.ProductID);
-                act.ListToProductInAct();
-                act.CreateDetailsList(account); //лучше использовать account, т.к. Account для Act может быть пустым для нового и не сохраненного счета
-                foreach (Act a in account.Acts)
+                if (ListPAD is null || ListPAD.Count == 0)            //счета еще не загружены
                 {
-                    a.ActNumber = GetNewActNumber(a, account); //перенумерация актов
+                    LoadAccountContext(false);      //грузим "молча"
                 }
+                Contractor contractor = ListContractor.FirstOrDefault();
+                Account account = new Account
+                {
+                    OrderID = CurrentOrder.ID,
+                    IsManual = false,
+                    ContractorID = contractor.ID,
+                    ContractorInfoForAccount = contractor.ContractorInfoForAccount,
+                    ContractorName = contractor.Name,
+                    AccountNumber = ""
+                };
+                _contextAccount_.AddToContext(account);
+                _contextAccount_.AddReferenceToContext(account, "Contractor");
+                contractor = account.Contractor;
+                _contextAccount_.AddReferenceToContext(contractor, "Bank");     //загрузить св-во навигации Bank
+                account.AccountNumber = GetNewAccountNumber(ref account);       //сформировать номер счета
+                _contextAccount_.AddReferenceToContext(account, "Order");       //загрузить св-во навигации Order
+                Order order = account.Order;
+                _contextAccount_.AddCollectionToContext(order, "Products");     //загрузить коллекцию навигации Products
+                _contextAccount_.AddReferenceToContext(order, "Client");        //загрузить св-во навигации Client
+                Client client = order.Client;
+                _contextAccount_.AddReferenceToContext(client, "Bank");         //загрузить св-во навигации Bank
+                foreach (Product product in order.Products)
+                {
+                    _contextAccount_.AddReferenceToContext(product, "ProductType"); //загрузить св-во навигации ProductType
+                }
+#if NEWORDER
+                account.DetailsList = CreateNewAccountDetails(account);
+#endif
+                account.ListToDetails();
             }
             catch (Exception ex)
             {
-                _ = MessageBox.Show(ex.Message + "\n" + ex?.InnerException?.Message, "Ошибка загрузки счетов", MessageBoxButton.OK, MessageBoxImage.Error);
+                _ = MessageBox.Show(ex.Message + "\n" + ex?.InnerException?.Message, "Ошибка формирования счета", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private ObservableCollection<AccountDetail> CreateNewAccountDetails(Account account)
+        {
+            ObservableCollection<AccountDetail> accountDetails = new ObservableCollection<AccountDetail> { };
+            if (account.IsManual) //ручной ввод деталей счета
+            {
+                accountDetails.Add(new AccountDetail { ProductID = 0, ProductInfoForAccount = "Оплата по договору № ...", Quantity = 1, UnitName = "шт.", Cost = account.Order?.OrderCost ?? 
+                                   account.Order.Products.Sum(p => p.Cost) });
+            }
+            else //загрузка из номенклатуры изделий заказа. Грузим только не включенные в другой счет
+            {
+                bool lIncluded;
+                foreach (Product product in account.Order.Products)
+                {
+                    lIncluded = false;
+                    foreach (Account a in ListPAD) //проходим по счетам
+                    {
+                        if ((bool)(a.DetailsList?.Any(ad => ad.ProductID.Equals(product.ID))))
+                        {
+                            lIncluded = true;
+                            break; //выход во внешний цикл "по счетам"
+                        }
+                    }
+                    if (!lIncluded) //в итоге ни в одном из счетов изделия нет
+                    {
+                        accountDetails.Add(new AccountDetail { ProductID = product.ID, ProductInfoForAccount = product.ProductType.Name, Quantity = product.Quantity, UnitName = "шт.", Cost = product.Cost });
+                    }
+                }
+            }
+            return accountDetails;
+        }
+
+        private bool CanCreateNewAct(Account account)
+        {
+            if (account is null)
+            {
+                return false;
+            }
+            return account.IsManual ? account.Acts?.Count == 0 : (account.Acts?.Count < account.DetailsList?.Count && GetProductsInAct(account).Count > 0); //в счете кол-во актов д.б. меньше кол-ва изделий в счете
+        }
+
+        private List<long> GetProductsInAct(Account account)
+        {
+            List<long> listProductsID = new List<long> { };
+            if (!account.IsManual) //счет создан НЕ вручную, для ручного возврат пустого списка
+            {
+                listProductsID = account.Order.Products.Select(product => product.ID).ToList(); //список всех изделий заказа
+                foreach (Account acc in ListPAD) //проверяем было ли изделие уже отгружено в другом акте любого счета
+                {
+                    if (acc != account)   //выполнить для всех счетов, кроме заданного
+                    {
+                        listProductsID = listProductsID.Except(acc.DetailsList.Select(dl => dl.ProductID).ToList()).ToList(); //исключаем изделия, включенные в другие счета, кроме заданного
+                    }
+                    if (acc.Acts != null)
+                    {
+                        foreach (Act act in acc.Acts)
+                        {
+                            _ = listProductsID.RemoveAll(delegate (long productInAct)  //в сухом остатке останутся только изделия не входящие ни в один акт, либо пустой список
+                            {
+                                return act.ListProductInAct.Contains(productInAct);
+                            });
+                        }
+                    }
+                }
+            }
+            return listProductsID;  //список изделий, не включенных ни в один акт
+        }
+
+        private void CreateNewAct(Account account)
+        {
+            try
+            {
+                Act act = new Act
+                {
+                    ActDate = DateTime.Now,
+                    AccountID = account.ID,
+                };
+                _contextAccount_.AddToContext(act);
+                _contextAccount_.AddReferenceToContext(act, "Account");             //загрузить св-во навигации Account
+                Contractor contractor = act.Account.Contractor;
+                _contextAccount_.AddReferenceToContext(account, "Contractor");      //загрузить св-во навигации Contractor
+                List<long> listProductID = new List<long> { };
+                foreach (Act a in account.Acts)                                     //получить список всех изделий, уже входящих в акты данного счета
+                {
+                    listProductID.AddRange(a.DetailsList?.Select(d => d.ProductID));
+                }
+                act.ListProductInAct = account.DetailsList.Select(d => d.ProductID).Except(listProductID).ToList(); //список productID не входящих в другие акты
+                act.ListToProductInAct();                                           //свернуть список productID входящих в акт изделий в строку
+                act.CreateDetailsList(account);
+                act.ActNumber = GetNewActNumber(act, account);                      //сформировать новые номер акта для заданного счета
+            }
+            catch (Exception ex)
+            {
+                _ = MessageBox.Show(ex.Message + "\n" + ex?.InnerException?.Message, "Ошибка формирования актв", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -689,13 +869,16 @@ namespace AdvertisementWpf.Models
         {
             Contractor contractor = sender1 as Contractor;
             Account account = sender2 as Account;
-            account.Contractor = _contextAccount_.AddSingleToContext(account.Contractor, delegate (Contractor c) { return c.ID == account.ContractorID; }); //добавить св-во навигации Contractor
-            contractor.Bank = _contextAccount_.AddSingleToContext(contractor.Bank, delegate (Bank b) { return b.ID == contractor.BankID; }); //добавить св-во навигации Bank
-            account.NotifyPropertyChanged("ContractorName");
-            if (account.AccountNumber.Count(c => c == '/') > 1) //наименование счета нового формата
+            if (account != null)
             {
-                string[] s = account.AccountNumber.Split("/");
-                account.AccountNumber = $"{s[0]}/{s[1]}/{account.Contractor.AbbrForAcc}";
+                account.Contractor = _contextAccount_.AddSingleToContext(account.Contractor, delegate (Contractor c) { return c.ID == account.ContractorID; }); //добавить св-во навигации Contractor
+                contractor.Bank = _contextAccount_.AddSingleToContext(contractor.Bank, delegate (Bank b) { return b.ID == contractor.BankID; }); //добавить св-во навигации Bank
+                account.NotifyPropertyChanged("ContractorName");
+                if (account.AccountNumber.Count(c => c == '/') > 1) //наименование счета нового формата
+                {
+                    string[] s = account.AccountNumber.Split("/");
+                    account.AccountNumber = $"{s[0]}/{s[1]}/{account.Contractor.AbbrForAcc}";
+                }
             }
         }
 
@@ -977,6 +1160,142 @@ namespace AdvertisementWpf.Models
             OrderCardProductQuantityAndCost = IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductQuantityAndCostChngeAfterSetToProd");
             IsManager = !MainWindow.Userdata.IsAdmin && IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "ListManager");
         }
+
+        private void AccountPrint(Account account, DateTime dateTime, bool withSignature)
+        {
+            using App.AppDbContext _reportcontext = new App.AppDbContext(MainWindow.Connectiondata.Connectionstring);
+            {
+                try
+                {
+                    MainWindow.statusBar.WriteStatus("Получение данных счета ...", Cursors.Wait);
+                    string AccountFileTemplate = account.Contractor?.AccountFileTemplate ?? "";
+                    string _pathToReportTemplate = _reportcontext.Setting.FirstOrDefault(setting => setting.SettingParameterName == "PathToReportTemplate").SettingParameterValue;
+                    if (File.Exists(Path.Combine(_pathToReportTemplate, AccountFileTemplate)))
+                    {
+                        List<Account> accounts = new List<Account> { account };
+                        Reports.AccountDataSet = accounts;
+                        Reports.ReportFileName = Path.Combine(_pathToReportTemplate, AccountFileTemplate);
+                        Reports.ReportDate = dateTime;
+                        Reports.ReportMode = "AccountForm";
+                        Reports.WithSignature = withSignature;
+                        Reports.AmountInWords = InWords.Amount(account.DetailsList.Sum(c => c.Cost));
+                        Reports.RunReport();
+                    }
+                    else
+                    {
+                        _ = MessageBox.Show($"Не найден файл {AccountFileTemplate} !", "Ошибка формирования счета", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _ = MessageBox.Show(ex.Message + "\n" + ex?.InnerException?.Message ?? "", "Ошибка формирования счета", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+                finally
+                {
+                    MainWindow.statusBar.ClearStatus();
+                }
+            }
+        }
+
+        private void ActPrint(Account account, Act act, DateTime dateTime, bool templateAct, bool templateSFTN, bool templateUPD)
+        {
+            using App.AppDbContext _reportcontext = new App.AppDbContext(MainWindow.Connectiondata.Connectionstring);
+            {
+                try
+                {
+                    MainWindow.statusBar.WriteStatus("Получение данных ...", Cursors.Wait);
+                    string _pathToReportTemplate = _reportcontext.Setting.FirstOrDefault(setting => setting.SettingParameterName == "PathToReportTemplate").SettingParameterValue;
+                    List<Account> accounts = new List<Account> { account };
+                    Reports.AccountDataSet = accounts;
+                    Reports.ActDataSet = new List<Act> { };
+                    if (act != null) //фиксируем акт, который выбран для печати
+                    {
+                        Reports.ActDataSet = new List<Act> { act };
+                    }
+                    Reports.AmountInWords = InWords.Amount(Reports.ActDataSet[0].DetailsList.Sum(a => a.Cost));
+                    Reports.ReportDate = dateTime;
+                    if (templateAct)
+                    {
+                        if (File.Exists(Path.Combine(_pathToReportTemplate, "Act.frx")))
+                        {
+                            Reports.ReportFileName = Path.Combine(_pathToReportTemplate, "Act.frx");
+                            Reports.ReportMode = "ActForm";
+                            Reports.RunReport();
+                        }
+                        else
+                        {
+                            _ = MessageBox.Show("Не найден файл Act.frx !", "Ошибка формирования акта", MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                    }
+                    else if (templateSFTN)
+                    {
+                        if (File.Exists(Path.Combine(_pathToReportTemplate, "SF.frx")))
+                        {
+                            Reports.ReportFileName = Path.Combine(_pathToReportTemplate, "SF.frx");
+                            Reports.ReportDateInWords = InWords.Date(dateTime);
+                            Reports.ReportMode = "SFForm";
+                            Reports.RunReport();
+                        }
+                        else
+                        {
+                            _ = MessageBox.Show("Не найден файл SF.frx !", "Ошибка формирования СФ", MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                        if (File.Exists(Path.Combine(_pathToReportTemplate, "TN.frx")))
+                        {
+                            Reports.ReportFileName = Path.Combine(_pathToReportTemplate, "TN.frx");
+                            Reports.ReportMode = "TNForm";
+                            Reports.NumberInWords = InWords.Number(Reports.ActDataSet[0].DetailsList.Count);
+                            Reports.CargoReleasePostName = MainWindow.Userdata.PostName;
+                            Reports.CargoReleaseName = MainWindow.Userdata.ShortUserName;
+                            Reports.ReportDateInWords = InWords.Date(dateTime);
+                            Reports.FreeValue = new List<string> { "", "" };
+                            MatchCollection matchCollection = Regex.Matches(account.Footing, @"(№|N)?(\s*\w*-?\w*\s*)от(\s*\d{2}.\d{2}.\d{2,4})", RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.CultureInvariant, TimeSpan.FromMilliseconds(200));
+                            if (matchCollection.Count > 0)
+                            {
+                                StringBuilder stringBuilder = new StringBuilder(matchCollection[0].Value.ToLower());
+                                _ = stringBuilder.Replace("№", ""); //убрать лишнее
+                                _ = stringBuilder.Replace("N", "");
+                                _ = stringBuilder.Replace(" ", "");
+                                string str = stringBuilder.ToString();
+                                Reports.FreeValue[0] = str.Substring(0, str.IndexOf("от"));
+                                Reports.FreeValue[1] = str[(str.IndexOf("от") + 2)..];
+                            }
+                            Reports.RunReport();
+                        }
+                        else
+                        {
+                            _ = MessageBox.Show("Не найден файл TN.frx !", "Ошибка формирования ТН", MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                    }
+                    else if (templateUPD)
+                    {
+                        if (File.Exists(Path.Combine(_pathToReportTemplate, "UPD.frx")))
+                        {
+                            Reports.ReportFileName = Path.Combine(_pathToReportTemplate, "UPD.frx");
+                            Reports.ReportMode = "UPDForm";
+                            Reports.MonthInWords = InWords.Month(dateTime);
+                            Reports.CargoReleasePostName = MainWindow.Userdata.PostName;
+                            Reports.CargoReleaseName = MainWindow.Userdata.ShortUserName;
+                            Reports.ReportDateInWords = InWords.Date(dateTime);
+                            Reports.RunReport();
+                        }
+                        else
+                        {
+                            _ = MessageBox.Show("Не найден файл UPD.frx !", "Ошибка формирования УПД", MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _ = MessageBox.Show(ex.Message + "\n" + ex?.InnerException?.Message ?? "", "Ошибка формирования документа", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+                finally
+                {
+                    MainWindow.statusBar.ClearStatus();
+                }
+            }
+        }
+
     }
 
     public class CostTemplateSelector : DataTemplateSelector

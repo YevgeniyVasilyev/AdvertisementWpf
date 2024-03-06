@@ -227,31 +227,13 @@ namespace AdvertisementWpf
             ListPayments.Items.Refresh();
         }
 
-        private void ListAccount_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Delete && IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductPADNewChangeDelete"))
-            {
-                MethodInfo methodInfo = DataContext.GetType().GetMethod("DeleteAccount");
-                _ = methodInfo?.Invoke(DataContext, new object[] { ListAccount.SelectedItem });
-            }
-        }
-
         private void ContractorNameComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             MethodInfo methodInfo = DataContext.GetType().GetMethod("ComntactorNameComboBoxSelectionChanged");
             _ = methodInfo?.Invoke(DataContext, new object[] { ContractorNameComboBox.SelectedItem, ListAccount.SelectedItem });
             int nSelectedIndex = ListAccount.SelectedIndex;
-            ListAccount.SelectedIndex = 0;
+            ListAccount.SelectedIndex = -1;
             ListAccount.SelectedIndex = nSelectedIndex;             //имитация изменения SelectedItem
-        }
-
-        private void ListAccountDetail_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Delete && IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductPADNewChangeDelete")) //при наличии актов не удалять
-            {
-                MethodInfo methodInfo = DataContext.GetType().GetMethod("DeleteAccountDetail");
-                _ = methodInfo?.Invoke(DataContext, new object[] { ListAccount.SelectedItem, ListAccountDetail.SelectedItem });
-            }
         }
 
         private void ListAct_KeyDown(object sender, KeyEventArgs e)
@@ -266,30 +248,11 @@ namespace AdvertisementWpf
             }
         }
 
-        private void ListActDetail_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Delete && IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductPADNewChangeDelete"))
-            {
-                MethodInfo methodInfo = DataContext.GetType().GetMethod("DeleteActDetail");
-                _ = methodInfo?.Invoke(DataContext, new object[] { ListAccount.SelectedItem, ListAct.SelectedItem, ListActDetail.SelectedItem });
-            }
-        }
-
         private void TextBox_SourceUpdated(object sender, DataTransferEventArgs e)
         {
             MethodInfo methodInfo = DataContext.GetType().GetMethod("AccountDetailTextBoxChanged");
             _ = methodInfo?.Invoke(DataContext, new object[] { ListAccount.SelectedItem });
         }
 
-        private void ManualInput_Click(object sender, RoutedEventArgs e)
-        {
-            //if (accountsViewSource != null && accountsViewSource.View != null && accountsViewSource.View.CurrentItem is Account account)
-            //{
-            //    account.DetailsList = CreateNewAccountDetails((bool)(sender as CheckBox).IsChecked);
-            //    accountsViewSource.View.Refresh();
-            //    _ = accountsViewSource.View.MoveCurrentTo(account);
-            //    account.ListToDetails(); //свернуть детали счета
-            //}
-        }
     }
 }
