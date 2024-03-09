@@ -17,6 +17,7 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.Collections;
 using System.Text.RegularExpressions;
 using System.Text;
+using System.Globalization;
 
 namespace AdvertisementWpf.Models
 {
@@ -165,10 +166,12 @@ namespace AdvertisementWpf.Models
     {
         private RelayCommand saveRequest, textBlockMouseLeftClick, showHideFrameworkElement, selectNewProduct, deleteProduct, newFileToProduct, deleteFileFromProduct, 
                              openFolderWithFileProduct, openFileProductInShell, printOrderForm, printOrderFormForDesigner, newPayment, savePayment, loadAccount, saveAccount,  newAccount, newAct,
-                             manualInputAccount, deleteAccount, deleteAccountDetail, deleteActDetail, printAccount, printAct;
+                             manualInputAccount, deleteAccount, deleteAccountDetail, deleteActDetail, printAccount, printAct, 
+                             loadTechCard, saveTechCard, deleteTechCard, newTechCard, newTechCardWork, newTechCardWorkOperation;
         private App.AppDbContext _contextOrder_ = CreateDbContext.CreateContext();              //контекст для заказа
         private App.AppDbContext _contextPayment_ = CreateDbContext.CreateContext();            //контекст для платежей Заказа
         private App.AppDbContext _contextAccount_ = CreateDbContext.CreateContext();            //контекст для ПУД Заказа
+        private App.AppDbContext _contextTechCard_ = CreateDbContext.CreateContext();           //контекст для Техкарт
         private string _pathToFilesOfProduct = "";                                              //путь к уелевой папке хранения файлов иллюстраций изделия
         private string _searchClient = "";
         public string SearchClient
@@ -210,6 +213,16 @@ namespace AdvertisementWpf.Models
                 NotifyPropertyChanged("ListPAD");
             }
         }                                         //список ПУД
+        private ObservableCollection<TechCard> _listTechCard { get; set; }
+        public ObservableCollection<TechCard> ListTechCard
+        {
+            get => _listTechCard;
+            set
+            {
+                _listTechCard = new ObservableCollection<TechCard>(value);
+                NotifyPropertyChanged("ListTechCard");
+            }
+        }                                   //список Техкард заказа
         public List<Account> AccountForPayment { get; set; }                                    //список счетов для Payment
         private List<Contractor> _listContractor;
         public List<Contractor> ListContractor
@@ -280,6 +293,7 @@ namespace AdvertisementWpf.Models
                 }
                 TotalProductCostsList();                                                                                                            //список на вкладке "Стоимость и затраты по КВД"
                 LoadPaymentContext();                                                                                                               //загрузить платежи на вкладке "Платежи"
+                LoadTechCardContext(false);                                                                                                         //загрузить техкарты в "тихом" режиме
             }
             catch (Exception ex)
             {
@@ -307,6 +321,11 @@ namespace AdvertisementWpf.Models
             {
                 _contextAccount_.Dispose();
                 _contextAccount_ = null;
+            }
+            if (_contextTechCard_ != null)
+            {
+                _contextTechCard_.Dispose();
+                _contextTechCard_ = null;
             }
         }
 
@@ -473,7 +492,7 @@ namespace AdvertisementWpf.Models
         {
             _contextPayment_.SaveContext();
             MainWindow.statusBar.ClearStatus();
-        }, (o) => _contextPayment_ != null && CurrentOrder?.ID > 0 && ErrorsCount == 0);
+        }, (o) => _contextPayment_ != null && CurrentOrder?.ID > 0 && ErrorsCount == 0 && IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductPaymentsNewChangeDelete"));
 
         public RelayCommand LoadAccount => loadAccount ??= new RelayCommand((o) => //команда загрузки ПУД
         {
@@ -554,6 +573,69 @@ namespace AdvertisementWpf.Models
             bool templateUPD = (bool)((object[])o)[5];
             ActPrint(account, act, dateTime, templateAct, templateSFTN, templateUPD);
         }, (o) => _contextAccount_ != null && CurrentOrder?.ID > 0 && o != null && (((object[])o)[1] as Act)?.ID > 0);
+
+        public RelayCommand LoadTechCard => loadTechCard ??= new RelayCommand((o) => //команда Загрузить техкарты
+        {
+            LoadTechCardContext(true);
+        }, (o) => _contextTechCard_ != null && CurrentOrder?.ID > 0);
+
+        public RelayCommand SaveTechCard => saveTechCard ??= new RelayCommand((o) => //команда Загрузить техкарты
+        {
+            MessageBox.Show("SAVE TECHCARD");
+            //формируем номера для использования при печати техкарты
+            //«номер заказа».«порядковый номер изделия в заказе».«КВД».«порядковый номер операции»
+            short nTechCard = 1;
+            short nOperationInWork = 1;
+            //foreach (TechCard techCard in techCardsViewSource.View)
+            //{
+            //    techCard.Number = $"{currentOrder.Number.TrimStart('0')}.{nTechCard++}";
+            //    foreach (WorkInTechCard workInTechCard in techCard.WorkInTechCards)
+            //    {
+            //        workInTechCard.Number = $"{techCard.Number}.{workInTechCard.TypeOfActivity.Code.Trim()}";
+            //        nOperationInWork = 1;
+            //        foreach (OperationInWork operationInWork in workInTechCard.OperationInWorks)
+            //        {
+            //            operationInWork.Number = $"{workInTechCard.Number}.{nOperationInWork++}";
+            //        }
+            //    }
+            //}
+            //_ = _contextTechCard_.SaveContext();
+        }, (o) => _contextTechCard_ != null && CurrentOrder?.ID > 0 && IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductTechCardNewChangeDelete"));
+
+        public RelayCommand NewTechCard => newTechCard ??= new RelayCommand((o) => //команда Добавить техкарту
+        {
+            MessageBox.Show("NEW TECHCARD");
+        }, (o) => _contextTechCard_ != null && CurrentOrder?.ID > 0 && IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductTechCardNewChangeDelete"));
+
+        public RelayCommand NewTechCardWork => newTechCardWork ??= new RelayCommand((o) => //команда Добавить работу в техкарту
+        {
+            MessageBox.Show("NEW WORJ IN TECHCARD");
+        }, (o) => _contextTechCard_ != null && CurrentOrder?.ID > 0 && IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductTechCardNewChangeDelete"));
+
+        public RelayCommand NewTechCardWorkOperation => newTechCardWorkOperation ??= new RelayCommand((o) => //команда Добавить операцию в работу
+        {
+            MessageBox.Show("NEW OPERATION IN WORK");
+        }, (o) => _contextTechCard_ != null && CurrentOrder?.ID > 0 && IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductTechCardNewChangeDelete"));
+
+        public RelayCommand DeleteTechCard => deleteTechCard ??= new RelayCommand((o) => //команда Загрузить техкарты
+        {
+            if (o is TechCard techCard)
+            {
+                //_ = ListTechCard.Remove(techCard);
+                //_contextTechCard_.DeleteFromContext(techCard);
+                MessageBox.Show("KILL TECHCARD");
+            }
+            else if (o is WorkInTechCard workInTechCard)
+            {
+                MessageBox.Show("KILL WORKINTECHCARD");
+
+            }
+            else if (o is OperationInWork operationInWork)
+            {
+                MessageBox.Show("KILL OPERATIONINWORK");
+
+            }
+        }, (o) => _contextTechCard_ != null && CurrentOrder?.ID > 0 && IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductTechCardNewChangeDelete"));
 
         private void CopyFileToPathToFilesOfProduct(string[] aFullFileNames)
         {
@@ -669,6 +751,74 @@ namespace AdvertisementWpf.Models
             foreach (Act act in account.Acts)
             {
                 act.CreateDetailsList();        //создать детали Актов для обновления
+            }
+        }
+
+        public bool CheckTechCard(object sender) //команда отметить/снять отметку с техкарты
+        {
+            if (sender is TechCard techCard && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control) //при щелчке мышью был нажат Ctrl
+            {
+                techCard.IsChecked = !techCard.IsChecked;
+                techCard.IsPrinted = techCard.IsChecked;
+                return true;
+            }
+            return false;
+        }
+
+        public bool CheckWorkInTechCard(object sender, int ClickCount) //команда отметить/снять отметку с техкарты
+        {
+            TextBlock textBlock = sender as TextBlock;
+            if (ClickCount >= 2 && textBlock?.DataContext is WorkInTechCard workInTC && workInTC.OperationInWorks.Count == 0)
+            {
+                textBlock.Visibility = Visibility.Collapsed; //скрыть самого себя
+            }
+            if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control && textBlock?.DataContext is WorkInTechCard workInTechCard) //при щелчке мышью был нажат Ctrl
+            {
+                workInTechCard.IsChecked = !workInTechCard.IsChecked;
+                workInTechCard.IsPrinted = workInTechCard.IsChecked; //отмечен, значит печатается
+                //TechCard tc = (TechCard)GetParentTreeViewItem(workInTechCard, 0);
+                //if (tc != null) //для родителя установить/снять отметку
+                //{
+                //    tc.IsChecked = tc.WorkInTechCards.Any(w => w.IsChecked); //если хоть один из дочерних отмечен
+                //    tc.IsPrinted = tc.IsChecked; //отмечен, значит печатается
+                //}
+                return true;
+            }
+            return false;
+        }
+
+        public void WorkTypeOfActivityComboBoxSelectionChanged(object sender)
+        {
+            if (sender is WorkInTechCard workInTechCard)
+            {
+                _contextTechCard_.AddReferenceToContext(workInTechCard, "TypeOfActivity");
+                workInTechCard.IsSelected = true;
+                workInTechCard.NotifyPropertyChanged("TypeOfActivity_CodeName");
+            }
+        }
+
+        public void WorkTypeOfActivityComboBoxGotFocus(object sender)
+        {
+            if (sender is WorkInTechCard workInTechCard)
+            {
+                workInTechCard.IsSelected = true;
+            }
+        }
+
+        public void WorkInTechCardComboBoxDropDownClosed(object sender)
+        {
+            if (sender is WorkInTechCard workInTechCard)
+            {
+                workInTechCard.IsSelected = true;
+                workInTechCard.NotifyPropertyChanged("TypeOfActivity_CodeName");
+            }
+        }
+
+        public void WorkInTechCardSetSelected(object sender)
+        {
+            if (sender is WorkInTechCard workInTechCard)
+            {
+                workInTechCard.IsSelected = true;
             }
         }
 
@@ -1148,17 +1298,135 @@ namespace AdvertisementWpf.Models
             }
         }
 
-        private void SetModelAccess() //установить режимы доступа к элементам модели (интерфейса)
+        private void LoadTechCardContext(bool lShowMsg = false)
         {
-            ProductCostAndCostsKVDCostsChange = IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductCostAndCostsKVDCostsChange");
-            OrderCardDateCompletion = IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardDateCompletion");
-            OrderCardPrintOrderForm = IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardPrintOrderForm");
-            OrderCardPrintOrderFormForDesigner = IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardPrintOrderFormForDesigner");
-            OrderCardProductDesigner = IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductDesigner");
-            OrderCardProductDateProductionLayout = IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductDateProductionLayout");
-            OrderCardProductDateTransferDesigner = IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductDateTransferDesigner");
-            OrderCardProductQuantityAndCost = IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductQuantityAndCostChngeAfterSetToProd");
-            IsManager = !MainWindow.Userdata.IsAdmin && IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "ListManager");
+            MainWindow.statusBar.WriteStatus("Загрузка техкарт ...", Cursors.Wait);
+            try
+            {
+                foreach (EntityEntry entityEntry in _contextTechCard_.ChangeTracker.Entries().ToArray()) //для повторной загрузки из БД
+                {
+                    if (entityEntry.Entity != null)
+                    {
+                        entityEntry.State = EntityState.Detached;
+                    }
+                }
+                    //.Include(TechCard => TechCard.Product.Order.OrderEntered)
+                    //.Include(TechCard => TechCard.Product.Order.Client)
+                    //.Include(TechCard => TechCard.Product.Order.Manager)
+                    //.Include(TechCard => TechCard.Product.Designer)
+                _contextTechCard_.TechCards
+                    .Include(TechCard => TechCard.Product)
+                    .Include(TechCard => TechCard.Product.ProductType)
+                    .Include(TechCard => TechCard.Product.Order)
+                    .Include(TechCard => TechCard.WorkInTechCards)
+                    .Include(TechCard => TechCard.WorkInTechCards).ThenInclude(WorkInTechCard => WorkInTechCard.TypeOfActivity)
+                    .Include(TechCard => TechCard.WorkInTechCards).ThenInclude(WorkInTechCard => WorkInTechCard.OperationInWorks)
+                    .ThenInclude(OperationInWork => OperationInWork.Operation).ThenInclude(Operation => Operation.ProductionArea)
+                    .Where(TechCard => TechCard.Product.OrderID == CurrentOrder.ID).Load();
+                ListTechCard = _contextTechCard_.TechCards.Local.ToObservableCollection();
+                //Array array;
+                //foreach (TechCard techCard in ListTechCard)
+                //{
+                //    array = techCard.WorkInTechCards.OrderBy(w => w.ID).ToArray();
+                //    techCard.WorkInTechCards.Clear();
+                //    for (int ind = 0; ind < array.Length; ind++)
+                //    {
+                //        techCard.WorkInTechCards.Add((WorkInTechCard)array.GetValue(ind));
+                //    }
+                //    techCard.WorkInTechCards_ = null; //для инициализации ObservaleCollection()
+                //    foreach (WorkInTechCard workInTechCard in techCard.WorkInTechCards)
+                //    {
+                //        array = workInTechCard.OperationInWorks.OrderBy(o => o.ID).ToArray();
+                //        workInTechCard.OperationInWorks.Clear();
+                //        for (int ind = 0; ind < array.Length; ind++)
+                //        {
+                //            workInTechCard.OperationInWorks.Add((OperationInWork)array.GetValue(ind));
+                //        }
+                //        workInTechCard.OperationInWorks_ = null; //для инициализации ObservaleCollection()
+                //        foreach (OperationInWork operationInWork in workInTechCard.OperationInWorks)
+                //        {
+                //            GetOperationInWorkParameters(operationInWork); //сформировать список параметров
+                //            operationInWork.FilesToList(); //развернуть список файлов
+                //        }
+                //    }
+                //}
+                if (lShowMsg)
+                {
+                    _ = MessageBox.Show("   Все техкарты загружены успешно!   ", "Загрузка техкарт");
+                }
+            }
+            catch (Exception ex)
+            {
+                _ = MessageBox.Show(ex.Message + "\n" + ex?.InnerException?.Message, "Ошибка загрузки техкарт", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            finally
+            {
+                MainWindow.statusBar.ClearStatus();
+            }
+        }
+
+        private void GetOperationInWorkParameters(OperationInWork operationInWork)  //формирует список параметров для операции
+        {
+            operationInWork.OperationInWorkParameters = _contextTechCard_.ParameterInOperations
+                .Include(ParameterInOperation => ParameterInOperation.Unit)
+                .Where(ParameterInOperation => ParameterInOperation.OperationID == operationInWork.OperationID) //отбор параметров только для конкретной операции
+                .Select((ParameterInOperation) => new OperationInWorkParameter
+                {
+                    ID = ParameterInOperation.ID,
+                    Name = ParameterInOperation.Name,
+                    UnitName = ParameterInOperation.Unit.Name,
+                    ReferencebookID = ParameterInOperation.ReferencebookID,
+                    IsRefbookOnRequest = ParameterInOperation.IsRefbookOnRequest
+                })
+                .AsNoTracking().OrderBy(opinwp => opinwp.ID).ToList(); //этот запрос заполняет список OperationInWorkParameters пустым шаблоном 
+            operationInWork.ParametersToList(); //заполнить пустой шаблон значениями из строки Parameters
+            foreach (OperationInWorkParameter operationInWorkParameter in operationInWork.OperationInWorkParameters) //проходим по параметрам для дальнейшей инициализацц
+            {
+                if (operationInWorkParameter.IsRefbookOnRequest) //задан параметр "выбор справочника по запросу"
+                {
+                    long? typeOfActivityID = operationInWork.WorkInTechCard?.TypeOfActivityID ?? 0; //справочники будем брать только для конкретного КВД
+                    IEnumerable<ReferencebookApplicability> enumerable = ReferencebookApplicabilityList.Where(refApp => refApp.TypeOfActivityID == typeOfActivityID);
+                    operationInWorkParameter.ReferencebookList = ReferencebookList.FindAll(
+                        delegate (Referencebook referencebook)
+                        {
+                            return enumerable.Any(e => e.ReferencebookID == referencebook.ID); //найти в referencebooks все ID (справочники), которые применяются для TypeOfActivity
+                        }
+                        );
+                }
+                if (operationInWorkParameter.ReferencebookID > 0) //для параметра установлено брать значение из справочника
+                {
+                    operationInWorkParameter.ReferencebookParametersList = ReferencebookParameterList
+                        .Where(refbookParameters => refbookParameters.ReferencebookID == operationInWorkParameter.ReferencebookID).ToList();
+                    operationInWorkParameter.ParameterValue = ReferencebookParameterList.Find(rp => rp.ReferencebookID == operationInWorkParameter.ReferencebookID && rp.ID == operationInWorkParameter.ParameterID)?.Value ?? "";
+                }
+            }
+        }
+
+        private object GetParentTreeViewItem(object item, short nLevel = 1)
+        {
+            object oObject = null;
+            foreach (TechCard techCard in ListTechCard)
+            {
+                if (techCard.Equals(item))
+                {
+                    return techCard; //сам себе родитель
+                }
+                foreach (WorkInTechCard workInTechCard in techCard.WorkInTechCards)
+                {
+                    if (workInTechCard.Equals(item))
+                    {
+                        return techCard; //родитель с уровня "Техкарта"
+                    }
+                    foreach (OperationInWork operationInWork in workInTechCard.OperationInWorks)
+                    {
+                        if (operationInWork.Equals(item))
+                        {
+                            return nLevel == 0 ? techCard : (object)workInTechCard; 
+                        }
+                    }
+                }
+            }
+            return oObject;
         }
 
         private void AccountPrint(Account account, DateTime dateTime, bool withSignature)
@@ -1296,6 +1564,19 @@ namespace AdvertisementWpf.Models
             }
         }
 
+        private void SetModelAccess() //установить режимы доступа к элементам модели (интерфейса)
+        {
+            ProductCostAndCostsKVDCostsChange = IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductCostAndCostsKVDCostsChange");
+            OrderCardDateCompletion = IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardDateCompletion");
+            OrderCardPrintOrderForm = IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardPrintOrderForm");
+            OrderCardPrintOrderFormForDesigner = IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardPrintOrderFormForDesigner");
+            OrderCardProductDesigner = IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductDesigner");
+            OrderCardProductDateProductionLayout = IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductDateProductionLayout");
+            OrderCardProductDateTransferDesigner = IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductDateTransferDesigner");
+            OrderCardProductQuantityAndCost = IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductQuantityAndCostChngeAfterSetToProd");
+            IsManager = !MainWindow.Userdata.IsAdmin && IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "ListManager");
+        }
+
     }
 
     public class CostTemplateSelector : DataTemplateSelector
@@ -1335,5 +1616,72 @@ namespace AdvertisementWpf.Models
             return null;
         }
     }
+
+    public class VisibilitySelector : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (parameter.ToString() == "NoteTechCardStackPanel")
+            {
+                if (value != null && value is TechCard)
+                {
+                    return Visibility.Visible;
+                }
+            }
+            if (parameter.ToString() == "WorkInTechCardAttribute")
+            {
+                if (value != null && value is WorkInTechCard)
+                {
+                    return Visibility.Visible;
+                }
+            }
+            if (parameter.ToString() == "OperationInWorkAttribute")
+            {
+                if (value != null && value is OperationInWork)
+                {
+                    return Visibility.Visible;
+                }
+            }
+            if (parameter.ToString() == "WorkInTechCardTextAttribute")
+            {
+                if (value != null) //если есть определение операций
+                {
+                    return Visibility.Visible;
+                }
+            }
+            if (parameter.ToString() == "WorkInTechCardComboBoxAttribute")
+            {
+                if (value != null && value is WorkInTechCard workInTechCard && workInTechCard.OperationInWorks.Count == 0) //если еще нет определения операций
+                {
+                    return Visibility.Visible;
+                }
+            }
+            return Visibility.Collapsed;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return null;
+        }
+    }
+
+    public class TypeOfActivityList
+    {
+        private List<TypeOfActivity> _listTypeOfActivity = null;
+        public List<TypeOfActivity> ListTypeOfActivity      //список видов деятельности
+        {
+            get => _listTypeOfActivity ?? new List<TypeOfActivity> { };
+            set => _listTypeOfActivity = value;
+        }
+
+        public TypeOfActivityList()
+        {
+            using App.AppDbContext _context_ = CreateDbContext.CreateContext();
+            {
+                ListTypeOfActivity = _context_.TypeOfActivitys.AsNoTracking().ToList();
+            }
+        }
+    }
+
 }
 

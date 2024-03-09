@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Windows;
 
 #nullable disable
 
@@ -23,7 +20,7 @@ namespace AdvertisementWpf.Models
         public string Note { get; set; } = "";
 
         public virtual Product Product { get; set; }
-        public virtual ICollection<WorkInTechCard> WorkInTechCards { get; set; }
+        //public virtual ICollection<WorkInTechCard> WorkInTechCards { get; set; }
 
         private ObservableCollection<WorkInTechCard> workInTechCards_;
         [NotMapped]
@@ -36,6 +33,18 @@ namespace AdvertisementWpf.Models
                 NotifyPropertyChanged("WorkInTechCards_");
             }
         }
+
+        private ObservableCollection<WorkInTechCard> _workInTechCards { get; set; } = new ObservableCollection<WorkInTechCard> { };
+        public ICollection<WorkInTechCard> WorkInTechCards
+        {
+            get => _workInTechCards;
+            set
+            {
+                _workInTechCards = new ObservableCollection<WorkInTechCard>(value);
+                NotifyPropertyChanged("WorkInTechCards");
+            }
+        }
+
         [NotMapped]
         public decimal ProductCost => Product?.Cost ?? 0;
     }

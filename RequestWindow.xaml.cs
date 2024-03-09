@@ -254,5 +254,101 @@ namespace AdvertisementWpf
             _ = methodInfo?.Invoke(DataContext, new object[] { ListAccount.SelectedItem });
         }
 
+        private void TechCardTreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            //NewOperationListBox.Visibility = Visibility.Collapsed;
+            //NewOperationListBoxRow.Height = GridLength.Auto;
+        }
+
+        private void TechCardTreeView_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Delete)
+            {
+                //    if (TechCardTreeView.SelectedItem is TechCard techCard)
+                //    {
+                //        foreach (WorkInTechCard workInTechCard in techCard.WorkInTechCards)
+                //        {
+                //            foreach (OperationInWork operationInWork in workInTechCard.OperationInWorks)
+                //            {
+                //                _ = _context_.OperationInWorks.Remove(operationInWork);
+                //            }
+                //            _ = _context_.WorkInTechCards.Remove(workInTechCard);
+                //        }
+                //        techCard.Product.IsHasTechcard = false; //убрать признак наличия Техкарты
+                //        techCard.Product.DateTransferProduction = null; //убрать дату передачи в производство
+                //        techCard.Product.DateManufacture = null; //убрать дату Изготовления
+                //        _ = _context_.TechCards.Remove(techCard);
+                //        Product product = _context.Products.Local.First(Product => Product.ID == techCard.Product.ID); //найти изделие в контекте Заказа/ Если вдруг не нйдет, то будет ошибка!!!
+                //        product.IsHasTechcard = false;
+                //        product.DateTransferProduction = null; //убрать дату передачи в производство
+                //        product.DateManufacture = null; //убрать дату Изготовления
+                //    }
+                //    else if (TechCardTreeView.SelectedItem is WorkInTechCard workInTechCard1)
+                //    {
+                //        foreach (OperationInWork operationInWork in workInTechCard1.OperationInWorks)
+                //        {
+                //            _ = _context_.OperationInWorks.Remove(operationInWork);
+                //        }
+                //        TechCard tc = (TechCard)GetParentTreeViewItem(workInTechCard1, 0);
+                //        _ = _context_.WorkInTechCards.Remove(workInTechCard1);
+                //        _ = tc.WorkInTechCards.Remove(workInTechCard1);
+                //        tc.WorkInTechCards_ = null;
+                //        Product product = _context.Products.Local.First(Product => Product.ID == tc.Product.ID); //найти изделие в контекте Заказа/ Если вдруг не нйдет, то будет ошибка!!!
+                //        product.DateManufacture = null; //убрать дату Изготовления
+                //    }
+                //    else if (TechCardTreeView.SelectedItem is OperationInWork operationInWork1)
+                //    {
+                //        WorkInTechCard wTC = (WorkInTechCard)GetParentTreeViewItem(operationInWork1, 1);
+                //        _ = _context_.OperationInWorks.Remove(operationInWork1);
+                //        _ = wTC.OperationInWorks.Remove(operationInWork1);
+                //        wTC.OperationInWorks_ = null;
+                //    }
+            }
+        }
+
+        private void TechCardTreeView_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {            
+            MethodInfo methodInfo = DataContext.GetType().GetMethod("CheckTechCard");
+            e.Handled = (bool)methodInfo?.Invoke(DataContext, new object[] { (sender as TextBlock).DataContext });
+        }
+
+        private void WorkInTechCardTextBlock_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            MethodInfo methodInfo = DataContext.GetType().GetMethod("CheckWorkInTechCard");
+            e.Handled = (bool)methodInfo?.Invoke(DataContext, new object[] { sender, e.ClickCount });
+        }
+
+        private void WorkTypeOfActivityComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (sender is ComboBox comboBox && comboBox?.GetBindingExpression(System.Windows.Controls.Primitives.Selector.SelectedValueProperty).DataItem != null)
+            {
+                MethodInfo methodInfo = DataContext.GetType().GetMethod("WorkTypeOfActivityComboBoxSelectionChanged");
+                _ = methodInfo?.Invoke(DataContext, new object[] { comboBox.GetBindingExpression(System.Windows.Controls.Primitives.Selector.SelectedValueProperty).DataItem });
+            }
+        }
+
+        private void WorkTypeOfActivityComboBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            if (sender is ComboBox comboBox && comboBox?.GetBindingExpression(System.Windows.Controls.Primitives.Selector.SelectedValueProperty).DataItem != null)
+            {
+                MethodInfo methodInfo = DataContext.GetType().GetMethod("WorkTypeOfActivityComboBoxGotFocus");
+                _ = methodInfo?.Invoke(DataContext, new object[] { comboBox.GetBindingExpression(System.Windows.Controls.Primitives.Selector.SelectedValueProperty).DataItem });
+            }
+        }
+
+        private void WorkInTechCardComboBox_DropDownClosed(object sender, EventArgs e)
+        {
+            if (sender is ComboBox comboBox && comboBox?.GetBindingExpression(System.Windows.Controls.Primitives.Selector.SelectedValueProperty).DataItem != null)
+            {
+                comboBox.Visibility = Visibility.Collapsed; //скрыть самого себя
+                MethodInfo methodInfo = DataContext.GetType().GetMethod("WorkInTechCardComboBoxDropDownClosed");
+                _ = methodInfo?.Invoke(DataContext, new object[] { comboBox.GetBindingExpression(System.Windows.Controls.Primitives.Selector.SelectedValueProperty).DataItem });
+                object selectedItem = TechCardTreeView.SelectedItem;
+                TechCardTreeView.Items.Refresh();
+                methodInfo = DataContext.GetType().GetMethod("WorkInTechCardSetSelected");
+                _ = methodInfo?.Invoke(DataContext, new object[] { selectedItem });
+            }
+        }
+
     }
 }

@@ -12,7 +12,8 @@ namespace AdvertisementWpf.Models
     {
         public WorkInTechCard()
         {
-            OperationInWorks = new HashSet<OperationInWork>();
+            //OperationInWorks = new HashSet<OperationInWork>();
+            OperationInWorks = new List<OperationInWork> { };
         }
 
         public long ID { get; set; }
@@ -27,7 +28,7 @@ namespace AdvertisementWpf.Models
 
         public virtual TechCard TechCard { get; set; }
         public virtual TypeOfActivity TypeOfActivity { get; set; }
-        public virtual ICollection<OperationInWork> OperationInWorks { get; set; }
+        //public virtual ICollection<OperationInWork> OperationInWorks { get; set; }
 
         private ObservableCollection<OperationInWork> operationInWorks_;
         [NotMapped]
@@ -40,7 +41,21 @@ namespace AdvertisementWpf.Models
                 NotifyPropertyChanged("OperationInWorks_");
             }
         }
+
+        private ObservableCollection<OperationInWork> _operationInWorks;
+        public ICollection<OperationInWork> OperationInWorks
+        { 
+            get => _operationInWorks;
+            set
+            {
+                _operationInWorks = new ObservableCollection<OperationInWork>(value);
+                NotifyPropertyChanged("OperationInWorks");
+            }
+        }
+
         [NotMapped]
         public decimal ProductCost => TechCard?.ProductCost ?? 0;
+        [NotMapped]
+        public string TypeOfActivity_CodeName => TypeOfActivity?.CodeName ?? "";
     }
 }
