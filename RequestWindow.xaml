@@ -227,6 +227,7 @@
         <local:SumListViewDecimalConverter x:Key="SumListViewDecimalConverter"/>
         <local:MultiValueConverter x:Key="MultiValueConverter"/>
         <local:BoolNotBoolConverter x:Key="BoolNotBoolConverter"/>
+        <local:VisibilitySelector x:Key="VisibilitySelector"/>
         <Style x:Key="DropShadow" TargetType="{x:Type FrameworkElement}">
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
@@ -846,52 +847,52 @@
                                             <Separator/>
                                             <Border BorderThickness="0.7" BorderBrush="Black" Margin="2">
                                                 <WrapPanel Orientation="Horizontal">
-                                                    <Label Content=" Добавить " HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                                                    <TextBlock Text=" Добавить => " VerticalAlignment="Center"/>
                                                     <WrapPanel Orientation="Horizontal">
-                                                        <Button Name="AddTechCardButton" Style="{StaticResource ButtonOfOrder}" Command="{Binding NewTechCard}" 
-                                                            ToolTip="Техкарта">
+                                                        <Button Style="{StaticResource ButtonOfOrder}" Command="{Binding NewTechCard}" ToolTip="Техкарта">
                                                             <Image Source="\Images\free-icon-techcard.png" Width="25" Height="25"/>
                                                         </Button>
-                                                        <Button Name="AddTechCardWorkButton" Style="{StaticResource ButtonOfOrder}" Command="{Binding NewTechCardWork}" 
-                                                            ToolTip="Работа">
+                                                        <Button Style="{StaticResource ButtonOfOrder}" Command="{Binding NewTechCardWork}" CommandParameter="{Binding ElementName=TechCardTreeView, Path=SelectedItem}" ToolTip="Работа">
                                                             <Image Source="\Images\free-icon-techcard_work.png" Width="25" Height="25"/>
                                                         </Button>
-                                                        <Button Name="AddTechCardOperationButton" Style="{StaticResource ButtonOfOrder}" Command="{Binding NewTechCardWorkOperation}" 
-                                                            ToolTip="Операция">
+                                                        <Button Style="{StaticResource ButtonOfOrder}" Command="{Binding NewTechCardWorkOperation}" CommandParameter="{Binding ElementName=TechCardTreeView,Path=SelectedItem}" ToolTip="Операция (скрыть/отобразить список операций)">
                                                             <Image Source="\Images\free-icon-techcard_operation.png" Width="25" Height="25"/>
+                                                            <i:Interaction.Triggers>
+                                                                <i:EventTrigger EventName="Click">
+                                                                    <i:InvokeCommandAction Command="{Binding ShowHideFrameworkElement}" CommandParameter="{Binding ElementName=NewOperationListBox}"/>
+                                                                    <i:ChangePropertyAction TargetObject="{Binding ElementName=NewOperationListBoxRow}" PropertyName="Height" Value="Auto"/>
+                                                                </i:EventTrigger>
+                                                            </i:Interaction.Triggers>
                                                         </Button>
-                                                        <Button Name="HideNewOperationListBoxButton" Style="{StaticResource ButtonOfOrder}" Background="Transparent" BorderBrush="Transparent"
+                                                        <!--<Button Style="{StaticResource ButtonOfOrder}" Background="Transparent" BorderBrush="Transparent"
                                                                 ToolTip="Свернуть список операций" HorizontalAlignment="Right"                                                                 
                                                                 Visibility="{Binding ElementName=NewOperationListBox, Path=Visibility}">
                                                             <Image Source="/Images/free-icon-minus-button.png" Width="25" Height="25"/>
                                                             <i:Interaction.Triggers>
                                                                 <i:EventTrigger EventName="MouseLeftButtonClick">
                                                                     <i:InvokeCommandAction Command="{Binding ShowHideFrameworkElement}" CommandParameter="{Binding ElementName=NewOperationListBox}"/>
-                                                                    <i:ChangePropertyAction TargetObject="{Binding ElementName=NewOperationListBoxRow}" PropertyName="GridLength" Value="Auto"/>
+                                                                    <i:ChangePropertyAction TargetObject="{Binding ElementName=NewOperationListBoxRow}" PropertyName="Height" Value="Auto"/>
                                                                 </i:EventTrigger>
                                                             </i:Interaction.Triggers>
-                                                        </Button>
+                                                        </Button>-->
                                                     </WrapPanel>
                                                 </WrapPanel>
                                             </Border>
                                             <Separator/>
-                                            <Button Name="SendTechCardButton" Style="{StaticResource ButtonOfOrder}" Command="ApplicationCommands.New"
-                                                    ToolTip="Передать техкарту в производство">
+                                            <Button Style="{StaticResource ButtonOfOrder}" Command="ApplicationCommands.New" ToolTip="Передать техкарту в производство">
                                                 <StackPanel Orientation="Horizontal">
                                                     <Image Source="\Images\free-icon-factory.png" Width="25" Height="25"/>
                                                     <Label Content="В производство"/>
                                                 </StackPanel>
                                             </Button>
-                                            <Button Name="RecallTechCardButton" Style="{StaticResource ButtonOfOrder}" Command="ApplicationCommands.New" 
-                                                    ToolTip="Отозвать техкарту с производства">
+                                            <Button Style="{StaticResource ButtonOfOrder}" Command="ApplicationCommands.New" ToolTip="Отозвать техкарту с производства">
                                                 <StackPanel Orientation="Horizontal">
                                                     <Image Source="\Images\free-icon-back.png" Width="25" Height="25"/>
                                                     <Label Content="Отозвать"/>
                                                 </StackPanel>
                                             </Button>
                                             <Separator/>
-                                            <Button Name="PrintTechCardButton" Style="{StaticResource ButtonOfOrder}" 
-                                                    ToolTip="Печать техкарты или ее части" Command="ApplicationCommands.Print">
+                                            <Button Style="{StaticResource ButtonOfOrder}" ToolTip="Печать техкарты или ее части" Command="ApplicationCommands.Print">
                                                 <StackPanel Orientation="Horizontal">
                                                     <Image Source="\Images\free-icon-printer-techcard.png" Width="25" Height="25"/>
                                                     <Label Content="Печать"/>
@@ -904,7 +905,7 @@
                                         </WrapPanel>
                                         <TreeView Grid.Column="0" Grid.Row="1" Margin="2" Name="TechCardTreeView" BorderThickness="1" BorderBrush="DodgerBlue" 
                                                   ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto"
-                                                  ItemsSource="{Binding ListTechCard}" 
+                                                  ItemsSource="{Binding ListTechCard}"
                                                   SelectedItemChanged="TechCardTreeView_SelectedItemChanged">
                                             <TreeView.InputBindings>
                                                 <KeyBinding Key="Delete" Command="{Binding DeleteTechCard}" CommandParameter="{Binding ElementName=TechCardTreeView, Path=SelectedItem}"/>
@@ -964,41 +965,52 @@
                                                 <RowDefinition Height="Auto"/>
                                                 <RowDefinition Height="Auto"/>
                                             </Grid.RowDefinitions>
-                                            <!--<ListBox Grid.Column="0" Grid.Row="0" Grid.RowSpan="5" Name="NewOperationListBox" Visibility="Collapsed"
+                                            <ListBox Grid.Column="0" Grid.Row="0" Grid.RowSpan="5" Name="NewOperationListBox" Visibility="Collapsed"
                                                      ScrollViewer.VerticalScrollBarVisibility="Auto" IsSynchronizedWithCurrentItem="true"
-                                                     ItemsSource="{Binding Source={StaticResource operationsViewSource}, Mode=OneTime}"
-                                                     DisplayMemberPath="Name" MouseDoubleClick="NewOperationListBox_MouseDoubleClick"/>
+                                                     ItemsSource="{Binding OperationCollectionView, Mode=OneTime}"
+                                                     DisplayMemberPath="Name" ToolTip="Двойным кликом выбрать операцию">
+                                                <i:Interaction.Triggers>
+                                                    <i:EventTrigger EventName="MouseDoubleClick">
+                                                        <i:InvokeCommandAction Command="{Binding SelectNewOperation}" CommandParameter="{Binding ElementName=TechCardTreeView, Path=SelectedItem}"/>
+                                                        <i:InvokeCommandAction Command="{Binding ShowHideFrameworkElement}" CommandParameter="{Binding ElementName=NewOperationListBox}"/>
+                                                        <i:ChangePropertyAction TargetObject="{Binding ElementName=NewOperationListBoxRow}" PropertyName="Height" Value="Auto"/>
+                                                    </i:EventTrigger>
+                                                </i:Interaction.Triggers>
+                                            </ListBox>
                                             <StackPanel Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="2" Orientation="Vertical" ScrollViewer.CanContentScroll="True"
                                                         Visibility="{Binding ElementName=TechCardTreeView, Path=SelectedItem, Converter={StaticResource VisibilitySelector}, ConverterParameter=NoteTechCardStackPanel}">
-                                                <Label Content="Описание"/>
+                                                <TextBlock Text="Описание" VerticalAlignment="Center"/>
                                                 <TextBox MinHeight="70" BorderThickness="1" BorderBrush="Black" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto"
                                                          Text="{Binding ElementName=TechCardTreeView, Path=SelectedItem.Note, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                                                          AcceptsReturn="True" TextWrapping="Wrap" HorizontalContentAlignment="Left" VerticalContentAlignment="Top" />
                                             </StackPanel>
                                             <StackPanel Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2" Orientation="Vertical" 
                                                         Visibility="{Binding ElementName=TechCardTreeView, Path=SelectedItem, Converter={StaticResource VisibilitySelector}, ConverterParameter=WorkInTechCardAttribute}">
-                                                <Label Content="Название работы"/>
+                                                <TextBlock Text="Название работы" VerticalAlignment="Center"/>
                                                 <TextBox MinHeight="70" BorderThickness="1" BorderBrush="Black" Margin="0,0,2,0" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto"
                                                          Text="{Binding ElementName=TechCardTreeView, Path=SelectedItem.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                                                          AcceptsReturn="True" TextWrapping="Wrap" HorizontalContentAlignment="Left" VerticalContentAlignment="Top" />
                                             </StackPanel>
-                                            <Label Grid.Column="1" Grid.Row="2" Content="Дата планового завершения работы " Name="PlanCompletionDate" 
-                                                   Visibility="{Binding ElementName=TechCardTreeView, Path=SelectedItem, Converter={StaticResource VisibilitySelector}, ConverterParameter=WorkInTechCardAttribute}"
-                                                   Style="{StaticResource UnderlineLabel}" MouseLeftButtonDown="Label_MouseLeftButtonDown"/>
-                                            <DatePicker Grid.Column="2" Grid.Row="2" Name="DatePlanCompletionDate" 
+                                            <TextBlock Grid.Column="1" Grid.Row="2" Text=" Дата планового завершения работы: " Style="{StaticResource UnderlineTextBlock}" VerticalAlignment="Center"
+                                                       Visibility="{Binding ElementName=TechCardTreeView, Path=SelectedItem, Converter={StaticResource VisibilitySelector}, ConverterParameter=WorkInTechCardAttribute}">
+                                                <TextBlock.InputBindings>
+                                                    <MouseBinding Command="{Binding TextBlockMouseLeftClick}" CommandParameter="{Binding ElementName=DatePlanCompletion}" MouseAction="LeftClick"/>
+                                                </TextBlock.InputBindings>
+                                            </TextBlock>
+                                            <DatePicker Grid.Column="2" Grid.Row="2" Name="DatePlanCompletion" IsTodayHighlighted="True"
                                                         Visibility="{Binding ElementName=TechCardTreeView, Path=SelectedItem, Converter={StaticResource VisibilitySelector}, ConverterParameter=WorkInTechCardAttribute}" 
-                                                        SelectedDate="{Binding ElementName=TechCardTreeView, 
-                                                                        Path=SelectedItem.DatePlanCompletion, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, 
-                                                                        ValidatesOnExceptions=True, ValidatesOnNotifyDataErrors=True}" IsTodayHighlighted="True"/>
-                                            <Label Grid.Column="1" Grid.Row="3" Content="Дата фактического завершения работы " Name="FactCompletionDate" 
-                                                   Visibility="{Binding ElementName=TechCardTreeView, Path=SelectedItem, Converter={StaticResource VisibilitySelector}, ConverterParameter=WorkInTechCardAttribute}"
-                                                   Style="{StaticResource UnderlineLabel}" MouseLeftButtonDown="Label_MouseLeftButtonDown"/>
-                                            <DatePicker Grid.Column="2" Grid.Row="3" Name="DateFactCompletionDate" 
+                                                        SelectedDate="{Binding ElementName=TechCardTreeView, Path=SelectedItem.DatePlanCompletion, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                            <TextBlock Grid.Column="1" Grid.Row="3" Text=" Дата фактического завершения работы: " VerticalAlignment="Center" 
+                                                       Visibility="{Binding ElementName=TechCardTreeView, Path=SelectedItem, Converter={StaticResource VisibilitySelector}, ConverterParameter=WorkInTechCardAttribute}"
+                                                       Style="{StaticResource UnderlineTextBlock}">
+                                                <TextBlock.InputBindings>
+                                                    <MouseBinding Command="{Binding TextBlockMouseLeftClick}" CommandParameter="{Binding ElementName=DateFactCompletion}" MouseAction="LeftClick"/>
+                                                </TextBlock.InputBindings>
+                                            </TextBlock>
+                                            <DatePicker Grid.Column="2" Grid.Row="3" Name="DateFactCompletion" IsTodayHighlighted="True"
                                                         Visibility="{Binding ElementName=TechCardTreeView, Path=SelectedItem, Converter={StaticResource VisibilitySelector}, ConverterParameter=WorkInTechCardAttribute}" 
-                                                        SelectedDate="{Binding ElementName=TechCardTreeView, 
-                                                                        Path=SelectedItem.DateFactCompletion, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, 
-                                                                        ValidatesOnExceptions=True, ValidatesOnNotifyDataErrors=True, NotifyOnSourceUpdated=True}" IsTodayHighlighted="True" 
-                                                        SourceUpdated="DateFactCompletionDate_SourceUpdated"/>
+                                                        SelectedDate="{Binding ElementName=TechCardTreeView, Path=SelectedItem.DateFactCompletion, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  
+                                                        SourceUpdated="DateFactCompletion_SourceUpdated"/>
                                             <Grid Grid.Column="1" Grid.Row="4" Grid.ColumnSpan="2" Margin="2"
                                                   Visibility="{Binding ElementName=TechCardTreeView, Path=SelectedItem, Converter={StaticResource VisibilitySelector}, ConverterParameter=OperationInWorkAttribute}">
                                                 <Grid.ColumnDefinitions>
@@ -1012,36 +1024,39 @@
                                                     <RowDefinition Height="Auto"/>
                                                     <RowDefinition Height="*"/>
                                                 </Grid.RowDefinitions>
-                                                <TextBlock Grid.Row="0" Grid.Column="0" Text="Производственный участок  "/>
+                                                <TextBlock Grid.Row="0" Grid.Column="0" Text=" Производственный участок  "/>
                                                 <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding ElementName=TechCardTreeView, Path=SelectedItem.Operation.ProductionArea.Name}"/>
-                                                <TextBlock Grid.Row="1" Grid.Column="0" Text="Описание" Margin="0,5,0,0" VerticalAlignment="Center"/>
+                                                <TextBlock Grid.Row="1" Grid.Column="0" Text=" Описание" Margin="0,5,0,0" VerticalAlignment="Center"/>
                                                 <TextBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,5,0,0" 
                                                          BorderThickness="1" BorderBrush="Black" AcceptsReturn="True" TextWrapping="Wrap"
                                                          ScrollViewer.VerticalScrollBarVisibility="Auto" 
                                                          MaxHeight="180"
                                                          Text="{Binding ElementName=TechCardTreeView, Path=SelectedItem.Note, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                                                 <StackPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,5,0,0" Orientation="Horizontal" HorizontalAlignment="Left">
-                                                    <Label Content="Файлы и иллюстрации"/>
-                                                    <Button Name="NewOperationFileButton" Background="Transparent" BorderBrush="Transparent" 
-                                                                Style="{StaticResource ButtonOfOrder}" Command="ApplicationCommands.New"
+                                                    <TextBlock Text=" Файлы и иллюстрации" VerticalAlignment="Center"/>
+                                                    <Button Background="Transparent" BorderBrush="Transparent" 
+                                                                Style="{StaticResource ButtonOfOrder}" Command="{Binding NewOperationInWorkFile}"
                                                                 Margin="5,0,0,0" ToolTip="Добавить файл">
                                                         <Image Source="/Images/free-icon-add-button.png" Width="20" Height="20"/>
                                                     </Button>
-                                                    <Button Name="DeleteOperationInWorkFileButton" Background="Transparent" BorderBrush="Transparent" 
-                                                                Style="{StaticResource ButtonOfOrder}" Command="ApplicationCommands.Delete"
+                                                    <Button Background="Transparent" BorderBrush="Transparent" 
+                                                                Style="{StaticResource ButtonOfOrder}" Command="{Binding DeleteOperationInWorkFile}"
                                                                 ToolTip="Удалить файл из списка и отметить для удаления">
                                                         <Image Source="/Images/free-icon-bin-Recycler.png" Width="20" Height="20"/>
                                                     </Button>
                                                 </StackPanel>
                                                 <ListBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Name="OperationInWorkFilesListBox" BorderThickness="1" BorderBrush="Black"
                                                          ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                                                         IsSynchronizedWithCurrentItem="true" 
                                                          ToolTip="Двойной щелчок - открыть файл во внешней программе"
                                                          VerticalAlignment="Bottom" Height="90"
-                                                         ItemsSource="{Binding ElementName=TechCardTreeView, Path=SelectedItem.FilesList, Mode=OneWay}"
-                                                         MouseDoubleClick="OperationInWorkFilesListBox_MouseDoubleClick">
+                                                         ItemsSource="{Binding ElementName=TechCardTreeView, Path=SelectedItem.FilesList, Mode=OneWay}">
+                                                    <i:Interaction.Triggers>
+                                                        <i:EventTrigger EventName="MouseDoubleClick">
+                                                            <i:InvokeCommandAction Command="{Binding OpenOperationInWorkFile}" CommandParameter="{Binding ElementName=OperationInWorkFilesListBox, Path=SelectedItem}"/>
+                                                        </i:EventTrigger>
+                                                    </i:Interaction.Triggers>
                                                 </ListBox>
-                                            </Grid>-->
+                                            </Grid>
                                         </Grid>
                                         <!--<ListView Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="3" Name="ListOperationInWorkParameters" Margin="2" Padding="1" IsSynchronizedWithCurrentItem="True" 
                                                   ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto"                                                  

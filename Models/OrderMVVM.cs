@@ -167,7 +167,8 @@ namespace AdvertisementWpf.Models
         private RelayCommand saveRequest, textBlockMouseLeftClick, showHideFrameworkElement, selectNewProduct, deleteProduct, newFileToProduct, deleteFileFromProduct, 
                              openFolderWithFileProduct, openFileProductInShell, printOrderForm, printOrderFormForDesigner, newPayment, savePayment, loadAccount, saveAccount,  newAccount, newAct,
                              manualInputAccount, deleteAccount, deleteAccountDetail, deleteActDetail, printAccount, printAct, 
-                             loadTechCard, saveTechCard, deleteTechCard, newTechCard, newTechCardWork, newTechCardWorkOperation;
+                             loadTechCard, saveTechCard, deleteTechCard, newTechCard, newTechCardWork, newTechCardWorkOperation, selectNewOperation, sendTechCardToProduction, recallTechCardFromProduction,
+                             printTechCard, newOperationInWorkFile, deleteOperationInWorkFile, openOperationInWorkFile;
         private App.AppDbContext _contextOrder_ = CreateDbContext.CreateContext();              //контекст для заказа
         private App.AppDbContext _contextPayment_ = CreateDbContext.CreateContext();            //контекст для платежей Заказа
         private App.AppDbContext _contextAccount_ = CreateDbContext.CreateContext();            //контекст для ПУД Заказа
@@ -191,6 +192,16 @@ namespace AdvertisementWpf.Models
             {
                 _searchTypeOfProduct = value;
                 ProductTypeCollectionView.Refresh();
+            }
+        }
+        private WorkInTechCard _selectedWorkForNewOperation;
+        public WorkInTechCard SelectedWorkForNewOperation
+        {
+            get => _selectedWorkForNewOperation;
+            set
+            {
+                _selectedWorkForNewOperation = value;
+                OperationCollectionView.Refresh();
             }
         }
         public ICollectionView ClientCollectionView { get; set; }                               //крллеция "Киенты" AsNoTracking, с фильтрацией
@@ -234,9 +245,11 @@ namespace AdvertisementWpf.Models
                 NotifyPropertyChanged("ListContractor");
             }
         }                                               //список контрагентов для ПУДов
+        public ICollectionView OperationCollectionView { get; set; }                            //коллекция операций в работе техкарты AsNoTraking, с фильтрацией
         public Order CurrentOrder { get; set; }                                                 //текущий заказ
         public bool ViewMode { get; set; } = false;                                             //режим "просмотр" для карточки заказа
-        public int ErrorsCount = 0;
+        public int ErrorsCount = 0;                                                             //счетчик количества ошибок на форме карточки Заказа
+        private enum TechCardObjectType { TechCard, Work, Operation };                          //виды объектов техкарты (используется при добавлении новых обхектов в техкарту)
 
         //определяют доступ к элементам интерфейса
         public bool ProductCostAndCostsKVDCostsChange { get; set; }
@@ -339,6 +352,12 @@ namespace AdvertisementWpf.Models
         {
             ProductType productType = item as ProductType;
             return string.IsNullOrEmpty(_searchTypeOfProduct) || productType.Name.IndexOf(_searchTypeOfProduct, StringComparison.OrdinalIgnoreCase) >= 0;
+        }
+
+        private bool OperationFilter(object item)
+        {
+            Operation operation = item as Operation;
+            return (bool)operation?.TypeOfActivityInOperations?.Any(t => t.TypeOfActivityID.Equals(SelectedWorkForNewOperation?.TypeOfActivityID)); //если операция относится к КВД выбранной работы
         }
 
         private string GenerateNewOrderNumber(long Number)
@@ -581,61 +600,132 @@ namespace AdvertisementWpf.Models
 
         public RelayCommand SaveTechCard => saveTechCard ??= new RelayCommand((o) => //команда Загрузить техкарты
         {
-            MessageBox.Show("SAVE TECHCARD");
             //формируем номера для использования при печати техкарты
             //«номер заказа».«порядковый номер изделия в заказе».«КВД».«порядковый номер операции»
             short nTechCard = 1;
             short nOperationInWork = 1;
-            //foreach (TechCard techCard in techCardsViewSource.View)
-            //{
-            //    techCard.Number = $"{currentOrder.Number.TrimStart('0')}.{nTechCard++}";
-            //    foreach (WorkInTechCard workInTechCard in techCard.WorkInTechCards)
-            //    {
-            //        workInTechCard.Number = $"{techCard.Number}.{workInTechCard.TypeOfActivity.Code.Trim()}";
-            //        nOperationInWork = 1;
-            //        foreach (OperationInWork operationInWork in workInTechCard.OperationInWorks)
-            //        {
-            //            operationInWork.Number = $"{workInTechCard.Number}.{nOperationInWork++}";
-            //        }
-            //    }
-            //}
-            //_ = _contextTechCard_.SaveContext();
+            foreach (TechCard techCard in ListTechCard)
+            {
+                techCard.Number = $"{CurrentOrder.Number.TrimStart('0')}.{nTechCard++}";
+                foreach (WorkInTechCard workInTechCard in techCard.WorkInTechCards)
+                {
+                    workInTechCard.Number = $"{techCard.Number}.{workInTechCard.TypeOfActivity.Code.Trim()}";
+                    nOperationInWork = 1;
+                    foreach (OperationInWork operationInWork in workInTechCard.OperationInWorks)
+                    {
+                        operationInWork.Number = $"{workInTechCard.Number}.{nOperationInWork++}";
+                    }
+                }
+            }
+             _contextTechCard_.SaveContext();
         }, (o) => _contextTechCard_ != null && CurrentOrder?.ID > 0 && IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductTechCardNewChangeDelete"));
 
         public RelayCommand NewTechCard => newTechCard ??= new RelayCommand((o) => //команда Добавить техкарту
         {
-            MessageBox.Show("NEW TECHCARD");
+            AddNewObjectInTechCard(TechCardObjectType.TechCard, null);
         }, (o) => _contextTechCard_ != null && CurrentOrder?.ID > 0 && IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductTechCardNewChangeDelete"));
 
         public RelayCommand NewTechCardWork => newTechCardWork ??= new RelayCommand((o) => //команда Добавить работу в техкарту
         {
-            MessageBox.Show("NEW WORJ IN TECHCARD");
+            AddNewObjectInTechCard(TechCardObjectType.Work, o);
         }, (o) => _contextTechCard_ != null && CurrentOrder?.ID > 0 && IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductTechCardNewChangeDelete"));
 
         public RelayCommand NewTechCardWorkOperation => newTechCardWorkOperation ??= new RelayCommand((o) => //команда Добавить операцию в работу
         {
-            MessageBox.Show("NEW OPERATION IN WORK");
-        }, (o) => _contextTechCard_ != null && CurrentOrder?.ID > 0 && IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductTechCardNewChangeDelete"));
+            if (o is WorkInTechCard)
+            {
+                SelectedWorkForNewOperation = o as WorkInTechCard;
+            }
+            else
+            {
+                SelectedWorkForNewOperation = (WorkInTechCard)GetParentTreeViewItem(o, 1); //найти родителя на уровне "Работа"
+            } 
+        }, (o) => _contextTechCard_ != null && CurrentOrder?.ID > 0 && o != null && (o is WorkInTechCard || o is OperationInWork) && IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductTechCardNewChangeDelete"));
 
         public RelayCommand DeleteTechCard => deleteTechCard ??= new RelayCommand((o) => //команда Загрузить техкарты
         {
             if (o is TechCard techCard)
             {
-                //_ = ListTechCard.Remove(techCard);
-                //_contextTechCard_.DeleteFromContext(techCard);
-                MessageBox.Show("KILL TECHCARD");
+                foreach (WorkInTechCard workInTechCard in techCard.WorkInTechCards)                 //удаляем дочерние Работы для изделия
+                {
+                    foreach (OperationInWork operationInWork in workInTechCard.OperationInWorks)    //удаляем дочерние Операции для работы
+                    {
+                        _contextTechCard_.DeleteFromContext(operationInWork);                       //удалить Операцию из контекста
+                    }
+                    _contextTechCard_.DeleteFromContext(workInTechCard);                            //удалить Работу из контекста
+                }
+                techCard.Product.IsHasTechcard = false;                                             //убрать признак наличия Техкарты
+                techCard.Product.DateTransferProduction = null;                                     //убрать дату передачи в производство
+                techCard.Product.DateManufacture = null;                                            //убрать дату Изготовления
+                _ = ListTechCard.Remove(techCard);
+                _contextTechCard_.DeleteFromContext(techCard);                                      //удалить Техкарту из контекста
+                //далее внести аналогичные изменения в отдельные параметры Изделия
+                Product product = CurrentOrder.Products.First(product => product.ID == techCard.Product.ID); //найти изделие в контекте Заказа/ Если вдруг не нйдет, то будет ошибка!!!
+                product.IsHasTechcard = false;
+                product.DateTransferProduction = null;                                              //убрать дату передачи в производство
+                product.DateManufacture = null;                                                     //убрать дату Изготовления
             }
             else if (o is WorkInTechCard workInTechCard)
             {
-                MessageBox.Show("KILL WORKINTECHCARD");
-
+                foreach (OperationInWork operationInWork in workInTechCard.OperationInWorks)
+                {
+                    _contextTechCard_.DeleteFromContext(operationInWork);
+                }
+                TechCard tc = (TechCard)GetParentTreeViewItem(workInTechCard, 0);                   //найти родительскую Техкарту
+                _ = tc.WorkInTechCards.Remove(workInTechCard);                                      //удалить Работу из техкарты
+                 _contextTechCard_.DeleteFromContext(workInTechCard);                               //удалить Работу из контекста
+                //далее внести изменения в отдельные параметры Изделия
+                Product product = CurrentOrder.Products.First(product => product.ID == tc.Product.ID); //найти изделие в контекте Заказа/ Если вдруг не нйдет, то будет ошибка!!!
+                product.DateManufacture = null;                                                     //убрать дату Изготовления
             }
             else if (o is OperationInWork operationInWork)
             {
-                MessageBox.Show("KILL OPERATIONINWORK");
-
+                WorkInTechCard wTC = (WorkInTechCard)GetParentTreeViewItem(operationInWork, 1);
+                _ = wTC.OperationInWorks.Remove(operationInWork);
+                _contextTechCard_.DeleteFromContext(operationInWork);
             }
         }, (o) => _contextTechCard_ != null && CurrentOrder?.ID > 0 && IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductTechCardNewChangeDelete"));
+
+        public RelayCommand SelectNewOperation => selectNewOperation ??= new RelayCommand((o) => //команда Добавить операцию в работу
+        {
+            AddNewObjectInTechCard(TechCardObjectType.Operation, o);
+        }, (o) => _contextTechCard_ != null && CurrentOrder?.ID > 0 && IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductTechCardNewChangeDelete"));
+
+        public RelayCommand SendTechCardToProduction => sendTechCardToProduction ??= new RelayCommand((o) => //команда Передать техкарту в производство
+        {
+            MessageBox.Show("SEND TECHCARD TO PRODUCTION");
+            //SendTechCardToProduction();
+        }, (o) => _contextTechCard_ != null && CurrentOrder?.ID > 0 && IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductTechCardTransferToProduction"));
+
+        public RelayCommand RecallTechCardFromProduction => recallTechCardFromProduction ??= new RelayCommand((o) => //команда Отозвать техкарту с производства
+        {
+            MessageBox.Show("RECALL TECHCARD FROM PRODUCTION");
+            //RecallTechCardFromProduction();
+        }, (o) => _contextTechCard_ != null && CurrentOrder?.ID > 0 && IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductTechCardRecallFromProduction"));
+
+        public RelayCommand PrintTechCard => printTechCard ??= new RelayCommand((o) => //команда Печать техкарты или ее части
+        {
+            MessageBox.Show("PRINT TECHCARD");
+            //TechCardPrepeareToPrint();
+        }, (o) => _contextTechCard_ != null && CurrentOrder?.ID > 0);
+
+        public RelayCommand NewOperationInWorkFile => newOperationInWorkFile ??= new RelayCommand((o) => //команда Добавить новый файл с сописанием к операции
+        {
+            MessageBox.Show("NEW FILE TO OPERATIONINWORK");
+
+        }, (o) => _contextTechCard_ != null && CurrentOrder?.ID > 0);
+ 
+        public RelayCommand DeleteOperationInWorkFile => deleteOperationInWorkFile ??= new RelayCommand((o) => //команда Удалить файл с сописанием к операции
+        {
+            MessageBox.Show("DELETE FILE FROM OPERATIONINWORK");
+
+        }, (o) => _contextTechCard_ != null && CurrentOrder?.ID > 0 && o != null);
+
+        public RelayCommand OpenOperationInWorkFile => openOperationInWorkFile ??= new RelayCommand((o) => //команда Открыть файл с сописанием к операции во внещней проге
+        {
+            string fileName = o as string;
+            OpenFileInOSShell.OpenFile(fileName);
+        }, (o) => _contextTechCard_ != null && CurrentOrder?.ID > 0 && o != null);
 
         private void CopyFileToPathToFilesOfProduct(string[] aFullFileNames)
         {
@@ -811,14 +901,11 @@ namespace AdvertisementWpf.Models
             {
                 workInTechCard.IsSelected = true;
                 workInTechCard.NotifyPropertyChanged("TypeOfActivity_CodeName");
-            }
-        }
-
-        public void WorkInTechCardSetSelected(object sender)
-        {
-            if (sender is WorkInTechCard workInTechCard)
-            {
-                workInTechCard.IsSelected = true;
+                TechCard tc = (TechCard)GetParentTreeViewItem(workInTechCard, 0); //найти родителя
+                if (tc != null)
+                {
+                    CollectionViewSource.GetDefaultView(tc.WorkInTechCards).Refresh(); //обновить текущее представление узла
+                }
             }
         }
 
@@ -1324,32 +1411,35 @@ namespace AdvertisementWpf.Models
                     .ThenInclude(OperationInWork => OperationInWork.Operation).ThenInclude(Operation => Operation.ProductionArea)
                     .Where(TechCard => TechCard.Product.OrderID == CurrentOrder.ID).Load();
                 ListTechCard = _contextTechCard_.TechCards.Local.ToObservableCollection();
-                //Array array;
-                //foreach (TechCard techCard in ListTechCard)
-                //{
-                //    array = techCard.WorkInTechCards.OrderBy(w => w.ID).ToArray();
-                //    techCard.WorkInTechCards.Clear();
-                //    for (int ind = 0; ind < array.Length; ind++)
-                //    {
-                //        techCard.WorkInTechCards.Add((WorkInTechCard)array.GetValue(ind));
-                //    }
-                //    techCard.WorkInTechCards_ = null; //для инициализации ObservaleCollection()
-                //    foreach (WorkInTechCard workInTechCard in techCard.WorkInTechCards)
-                //    {
-                //        array = workInTechCard.OperationInWorks.OrderBy(o => o.ID).ToArray();
-                //        workInTechCard.OperationInWorks.Clear();
-                //        for (int ind = 0; ind < array.Length; ind++)
-                //        {
-                //            workInTechCard.OperationInWorks.Add((OperationInWork)array.GetValue(ind));
-                //        }
-                //        workInTechCard.OperationInWorks_ = null; //для инициализации ObservaleCollection()
-                //        foreach (OperationInWork operationInWork in workInTechCard.OperationInWorks)
-                //        {
-                //            GetOperationInWorkParameters(operationInWork); //сформировать список параметров
-                //            operationInWork.FilesToList(); //развернуть список файлов
-                //        }
-                //    }
-                //}
+                OperationCollectionView = CollectionViewSource.GetDefaultView(_contextTechCard_.Operations
+                                                                                .Include(Operation => Operation.ParameterInOperations)
+                                                                                .Include(Operation => Operation.TypeOfActivityInOperations)
+                                                                                .AsNoTracking().ToList());
+                OperationCollectionView.Filter = OperationFilter;
+                Array array;
+                foreach (TechCard techCard in ListTechCard)
+                {
+                    array = techCard.WorkInTechCards.OrderBy(w => w.ID).ToArray();              //для обеспечения принудительной сортировки
+                    techCard.WorkInTechCards.Clear();
+                    for (int ind = 0; ind < array.Length; ind++)
+                    {
+                        techCard.WorkInTechCards.Add((WorkInTechCard)array.GetValue(ind));
+                    }
+                    foreach (WorkInTechCard workInTechCard in techCard.WorkInTechCards)
+                    {
+                        array = workInTechCard.OperationInWorks.OrderBy(o => o.ID).ToArray();   //для обеспечения принудительной сортировки
+                        workInTechCard.OperationInWorks.Clear();
+                        for (int ind = 0; ind < array.Length; ind++)
+                        {
+                            workInTechCard.OperationInWorks.Add((OperationInWork)array.GetValue(ind));
+                        }
+                        foreach (OperationInWork operationInWork in workInTechCard.OperationInWorks)
+                        {
+                            GetOperationInWorkParameters(operationInWork);                      //сформировать список параметров
+                            operationInWork.FilesToList();                                      //развернуть список файлов
+                        }
+                    }
+                }
                 if (lShowMsg)
                 {
                     _ = MessageBox.Show("   Все техкарты загружены успешно!   ", "Загрузка техкарт");
@@ -1399,6 +1489,112 @@ namespace AdvertisementWpf.Models
                         .Where(refbookParameters => refbookParameters.ReferencebookID == operationInWorkParameter.ReferencebookID).ToList();
                     operationInWorkParameter.ParameterValue = ReferencebookParameterList.Find(rp => rp.ReferencebookID == operationInWorkParameter.ReferencebookID && rp.ID == operationInWorkParameter.ParameterID)?.Value ?? "";
                 }
+            }
+        }
+
+        private void AddNewObjectInTechCard(TechCardObjectType techCardObjectType, object senderObject)
+        {
+            try
+            {
+                MainWindow.statusBar.WriteStatus("Загрузка объектов в техкарту ...", Cursors.Wait);
+                if (techCardObjectType == TechCardObjectType.TechCard) //добавить "Техкарта(изделие)"
+                { //добавить все новые техкарты (изделия)                        
+                    List<long> ListProductID = _contextTechCard_.Products.Where(product => product.OrderID == CurrentOrder.ID && !ListTechCard.Select(tc => tc.ProductID).ToList().Contains(product.ID)).Select(p => p.ID).ToList();
+                    foreach (long nProductID in ListProductID)
+                    {
+                        TechCard techCard = new TechCard { Number = "", ProductID = nProductID };
+                        ListTechCard.Add(techCard);
+                        _contextTechCard_.AddToContext(techCard);
+                        _contextTechCard_.AddReferenceToContext(techCard, "Product");   //загрузить связанное Изделие по навигационному свойству
+                    }
+                    foreach (TechCard tc in ListTechCard)                               //загружаем связанные свойства навигации
+                    {
+                        Product pr = tc.Product;
+                        _contextTechCard_.AddReferenceToContext(pr, "ProductType");
+                        _contextTechCard_.AddReferenceToContext(pr, "Designer");
+                        _contextTechCard_.AddReferenceToContext(pr, "Order");
+                        Order order = pr.Order;
+                        _contextTechCard_.AddReferenceToContext(order, "Client");
+                        _contextTechCard_.AddReferenceToContext(order, "Manager");
+                        pr.IsHasTechcard = true;                                        //установить признак наличия Техкарты
+                        Product product = CurrentOrder.Products.First(product => product.ID == tc.Product.ID); //найти изделие в контекте Заказа/ Если вдруг не нйдет, то будет ошибка!!!
+                        product.IsHasTechcard = true;                                   //установить признак наличия техкарты в ранее загруженный экземпляр Изделия
+                    }
+                }
+                else if (techCardObjectType == TechCardObjectType.Work) //добавить "Работа"
+                {
+                    TechCard tc = senderObject as TechCard;
+                    if (tc is null) //добавление НЕ с уровня "Техкарта"
+                    {
+
+                        if (senderObject is WorkInTechCard) //добавление с уровня "Работа"
+                        {
+                            tc = (TechCard)GetParentTreeViewItem(senderObject, 0);
+                        }
+                        else if (senderObject is OperationInWork) //добавление с уровня "Операция"
+                        {
+                            tc = (TechCard)GetParentTreeViewItem(senderObject, 0);
+                        }
+                        if (tc is null)
+                        {
+                            return; //по неизвестной причине родитель "Техкарта" не определен. Соответственно ничего не делаем
+                        }
+                    }
+                    WorkInTechCard workInTechCard = new WorkInTechCard
+                    {
+                        TechCardID = tc.ID,
+                        TypeOfActivityID = new TypeOfActivityList().ListTypeOfActivity.FirstOrDefault().ID,
+                        DatePlanCompletion = CurrentOrder.DateCompletion
+                    };
+                    tc.WorkInTechCards.Add(workInTechCard);
+                    _contextTechCard_.WorkInTechCards.Add(workInTechCard);
+                    tc.IsExpanded = true;
+                    _contextTechCard_.AddReferenceToContext(workInTechCard, "TypeOfActivity");  //загружаем связанное свойство навигации
+                    _contextTechCard_.AddReferenceToContext(workInTechCard, "TechCard");        //загружаем связанное свойство навигации
+                    workInTechCard.IsSelected = true;                                           //установить добавленную Работу тактивной
+                }
+                else if (techCardObjectType == TechCardObjectType.Operation && (senderObject is WorkInTechCard || senderObject is OperationInWork)) //добавить "Операция"
+                {
+                    WorkInTechCard workInTechCard = senderObject as WorkInTechCard;
+                    if (workInTechCard is null) //добавление НЕ с уровня "Работа"
+                    {
+                        if (senderObject is OperationInWork) //добавление с уровня "Операция"
+                        {
+                            workInTechCard = (WorkInTechCard)GetParentTreeViewItem(senderObject, 1);
+                        }
+                        if (workInTechCard is null)
+                        {
+                            return; //по неизвестной причине родитель "Работа" не определен. Соответственно ничего не делаем
+                        }
+                    }
+                    OperationInWork operationInWork = new OperationInWork
+                    {
+                        WorkInTechCardID = workInTechCard.ID,
+                        OperationID = (OperationCollectionView.CurrentItem as Operation).ID,    //выбор в коллекции пользователем по двойному клику
+                        Note = "",
+                        Parameters = "",
+                        Files = ""
+                    };
+                    workInTechCard.OperationInWorks.Add(operationInWork);
+                    _contextTechCard_.AddToContext(operationInWork);
+                    workInTechCard.IsExpanded = true;
+                    operationInWork.IsSelected = true;
+                    _contextTechCard_.AddReferenceToContext(workInTechCard, "TypeOfActivity");  //загружаем связанное свойство навигации
+                    _contextTechCard_.AddReferenceToContext(operationInWork, "Operation");      //загружаем связанное свойство навигации
+                    _contextTechCard_.AddReferenceToContext(operationInWork, "WorkInTechCard"); //загружаем связанное свойство навигации
+                    Operation operation = operationInWork.Operation;
+                    _contextTechCard_.AddReferenceToContext(operation, "ProductionArea");       //загружаем связанное свойство навигации
+                    GetOperationInWorkParameters(operationInWork);
+                    operationInWork.FilesToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                _ = MessageBox.Show(ex.Message + "\n" + ex?.InnerException?.Message, "Ошибка добавления объекта в техкарту", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            finally
+            {
+                MainWindow.statusBar.ClearStatus();
             }
         }
 

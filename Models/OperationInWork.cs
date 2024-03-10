@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Windows;
@@ -21,8 +22,18 @@ namespace AdvertisementWpf.Models
         public virtual Operation Operation { get; set; }
         public virtual WorkInTechCard WorkInTechCard { get; set; }
 
+        private ObservableCollection<string> _filesList { get; set; } = new ObservableCollection<string>();
+        [NotMapped]
+#if NEWORDER
+        public ICollection<string> FilesList
+        {
+            get => _filesList;
+            set => _filesList = new ObservableCollection<string>(value);
+        }
+#else
         [NotMapped]
         public List<string> FilesList { get; set; } = new List<string> { };
+#endif
 
         [NotMapped]
         public List<OperationInWorkParameter> OperationInWorkParameters { get; set; } //заполняется внешними методами. В него разворачивается строка Parameters

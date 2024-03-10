@@ -256,58 +256,12 @@ namespace AdvertisementWpf
 
         private void TechCardTreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
-            //NewOperationListBox.Visibility = Visibility.Collapsed;
-            //NewOperationListBoxRow.Height = GridLength.Auto;
-        }
-
-        private void TechCardTreeView_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Delete)
-            {
-                //    if (TechCardTreeView.SelectedItem is TechCard techCard)
-                //    {
-                //        foreach (WorkInTechCard workInTechCard in techCard.WorkInTechCards)
-                //        {
-                //            foreach (OperationInWork operationInWork in workInTechCard.OperationInWorks)
-                //            {
-                //                _ = _context_.OperationInWorks.Remove(operationInWork);
-                //            }
-                //            _ = _context_.WorkInTechCards.Remove(workInTechCard);
-                //        }
-                //        techCard.Product.IsHasTechcard = false; //убрать признак наличия Техкарты
-                //        techCard.Product.DateTransferProduction = null; //убрать дату передачи в производство
-                //        techCard.Product.DateManufacture = null; //убрать дату Изготовления
-                //        _ = _context_.TechCards.Remove(techCard);
-                //        Product product = _context.Products.Local.First(Product => Product.ID == techCard.Product.ID); //найти изделие в контекте Заказа/ Если вдруг не нйдет, то будет ошибка!!!
-                //        product.IsHasTechcard = false;
-                //        product.DateTransferProduction = null; //убрать дату передачи в производство
-                //        product.DateManufacture = null; //убрать дату Изготовления
-                //    }
-                //    else if (TechCardTreeView.SelectedItem is WorkInTechCard workInTechCard1)
-                //    {
-                //        foreach (OperationInWork operationInWork in workInTechCard1.OperationInWorks)
-                //        {
-                //            _ = _context_.OperationInWorks.Remove(operationInWork);
-                //        }
-                //        TechCard tc = (TechCard)GetParentTreeViewItem(workInTechCard1, 0);
-                //        _ = _context_.WorkInTechCards.Remove(workInTechCard1);
-                //        _ = tc.WorkInTechCards.Remove(workInTechCard1);
-                //        tc.WorkInTechCards_ = null;
-                //        Product product = _context.Products.Local.First(Product => Product.ID == tc.Product.ID); //найти изделие в контекте Заказа/ Если вдруг не нйдет, то будет ошибка!!!
-                //        product.DateManufacture = null; //убрать дату Изготовления
-                //    }
-                //    else if (TechCardTreeView.SelectedItem is OperationInWork operationInWork1)
-                //    {
-                //        WorkInTechCard wTC = (WorkInTechCard)GetParentTreeViewItem(operationInWork1, 1);
-                //        _ = _context_.OperationInWorks.Remove(operationInWork1);
-                //        _ = wTC.OperationInWorks.Remove(operationInWork1);
-                //        wTC.OperationInWorks_ = null;
-                //    }
-            }
+            NewOperationListBox.Visibility = Visibility.Collapsed;
+            NewOperationListBoxRow.Height = GridLength.Auto;
         }
 
         private void TechCardTreeView_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {            
+        {
             MethodInfo methodInfo = DataContext.GetType().GetMethod("CheckTechCard");
             e.Handled = (bool)methodInfo?.Invoke(DataContext, new object[] { (sender as TextBlock).DataContext });
         }
@@ -343,12 +297,53 @@ namespace AdvertisementWpf
                 comboBox.Visibility = Visibility.Collapsed; //скрыть самого себя
                 MethodInfo methodInfo = DataContext.GetType().GetMethod("WorkInTechCardComboBoxDropDownClosed");
                 _ = methodInfo?.Invoke(DataContext, new object[] { comboBox.GetBindingExpression(System.Windows.Controls.Primitives.Selector.SelectedValueProperty).DataItem });
-                object selectedItem = TechCardTreeView.SelectedItem;
-                TechCardTreeView.Items.Refresh();
-                methodInfo = DataContext.GetType().GetMethod("WorkInTechCardSetSelected");
-                _ = methodInfo?.Invoke(DataContext, new object[] { selectedItem });
             }
         }
 
+        private void DateFactCompletion_SourceUpdated(object sender, DataTransferEventArgs e)
+        {
+            //if (techCardsViewSource?.View != null)
+            //{
+            //    if (TechCardTreeView?.SelectedItem != null)
+            //    {
+            //        try
+            //        {
+            //            TechCard techCard = (TechCard)GetParentTreeViewItem(TechCardTreeView.SelectedItem, 0); //ищем корневого родителя на уровне TechCard
+            //            if (techCard != null)
+            //            {
+            //                foreach (WorkInTechCard workInTechCard in techCard.WorkInTechCards) //проходим по всем работам текущей техкарты
+            //                {
+            //                    if (!workInTechCard.DateFactCompletion.HasValue) //если нашли хоть одну незаполненную дату, то ничего не делаем
+            //                    {
+            //                        techCard.Product.DateManufacture = null; //на всякий случай обнуляем дату
+            //                        foreach (Product product in productsViewSource.View) //найти изделие в контекте Заказа
+            //                        {
+            //                            if (product.ID == techCard.Product.ID)
+            //                            {
+            //                                product.DateManufacture = null;
+            //                                return;
+            //                            }
+            //                        }
+            //                        return;
+            //                    }
+            //                }
+            //                techCard.Product.DateManufacture = (TechCardTreeView.SelectedItem as WorkInTechCard).DateFactCompletion; //DateTime.Now; //фиксируем дату изготовления по изделию
+            //                foreach (Product product in productsViewSource.View) //найти изделие в контекте Заказа
+            //                {
+            //                    if (product.ID == techCard.Product.ID)
+            //                    {
+            //                        product.DateManufacture = techCard.Product.DateManufacture;
+            //                        break;
+            //                    }
+            //                }
+            //            }
+            //        }
+            //        catch (Exception ex)
+            //        {
+            //            _ = MessageBox.Show(ex.Message + "\n" + ex?.InnerException?.Message, "Ошибка простановки даты изготоления", MessageBoxButton.OK, MessageBoxImage.Error);
+            //        }
+            //    }
+            //}
+        }
     }
 }
