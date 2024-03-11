@@ -1359,11 +1359,19 @@ namespace AdvertisementWpf
         private static RelayCommand newOrder;
         public static RelayCommand NewOrder => newOrder ??= new RelayCommand((o) =>
         {
+#if NEWORDER
+            RequestWindow requestWindow = new RequestWindow();
+            _ = requestWindow.ShowDialog();
+            object btn = Application.Current.MainWindow.FindName("RefreshOrderButton");
+            _ = typeof(ButtonBase).GetMethod("OnClick", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(btn, new object[0]);
+        }, null);
+#else
             OrderWindow order = new OrderWindow(NewOrder: true) { };
             _ = order.ShowDialog();
             object btn = Application.Current.MainWindow.FindName("RefreshOrderButton");
             _ = typeof(ButtonBase).GetMethod("OnClick", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(btn, new object[0]);
         }, null);
+#endif
     }
 
     public class SumListViewDecimalConverter : IValueConverter

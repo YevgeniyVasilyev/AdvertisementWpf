@@ -3008,6 +3008,29 @@ namespace AdvertisementWpf
         }
     }
 
+    public class IsCanDeleteAfterSendToProdToBoolConverter : IMultiValueConverter
+    {
+        public object Convert(object[] value, Type targetType, object parameter, CultureInfo culture)
+        {
+            bool SendToProduction = value[0] is bool && (bool)value[0];
+            bool HasAccess = value[1] is bool && (bool)value[1];
+            if (SendToProduction && HasAccess) //если дата установлена и есть доступ
+            {
+                return true;
+            }
+            else if (SendToProduction && !HasAccess) //если дата установлена и НЕТ доступа
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public object[] ConvertBack(object value, Type[] targetType, object parameter, CultureInfo culture)
+        {
+            return null;
+        }
+    }
+
     public class ViewModel
     {
         public List<User> DesignerList { get; set; }
@@ -3020,6 +3043,7 @@ namespace AdvertisementWpf
         public bool OrderCardProductDateProductionLayout { get; set; }
         public bool OrderCardProductDateTransferDesigner { get; set; }
         public bool OrderCardProductQuantityAndCost { get; set; }
+        public bool OrderCardProductDeleteAfterSetToProd { get; set; }
         public bool IsManager { get; set; }
 
         public ViewModel()
@@ -3033,7 +3057,8 @@ namespace AdvertisementWpf
             OrderCardProductDesigner = IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductDesigner");
             OrderCardProductDateProductionLayout = IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductDateProductionLayout");
             OrderCardProductDateTransferDesigner = IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductDateTransferDesigner");
-            OrderCardProductQuantityAndCost = IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductQuantityAndCostChngeAfterSetToProd"); 
+            OrderCardProductQuantityAndCost = IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductQuantityAndCostChngeAfterSetToProd");
+            OrderCardProductDeleteAfterSetToProd = IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductDeleteAfterSetToProd"); 
             IsManager = !MainWindow.Userdata.IsAdmin && IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "ListManager");
         }
     }

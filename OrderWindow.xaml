@@ -243,6 +243,7 @@
         <local:ObservableCollectionConverter x:Key="ObservableCollectionConverter"/>
         <local:VisibilitySelector x:Key="VisibilitySelector"/>
         <local:IsCanEditAfterSendToProdToBoolConverter x:Key="IsCanEditAfterSendToProdToBoolConverter"/>
+        <local:IsCanDeleteAfterSendToProdToBoolConverter x:Key="IsCanDeleteAfterSendToProdToBoolConverter"/>
         <local:ViewModel x:Key="ViewModel"/>
         <local:SumListViewDecimalConverter x:Key="SumListViewDecimalConverter"/>
         <DataTemplate x:Key="ListViewHeaderTemplate">
@@ -519,9 +520,15 @@
                                     <Image Source="/Images/free-icon-minus-button.png" Width="20" Height="20"/>
                                 </Button>
                                 <Button Name="DeleteProductButton" Background="Transparent" BorderBrush="Transparent" 
-                                        Style="{StaticResource ButtonOfOrder}" Command="ApplicationCommands.Delete"
+                                        Style="{StaticResource ButtonOfOrder}" Command="ApplicationCommands.Delete"                                        
                                         Margin="0,0,0,0" ToolTip="Отметить изделие для удаления">
                                     <Image Source="/Images/free-icon-bin-Recycler.png" Width="20" Height="20"/>
+                                    <Button.IsEnabled>
+                                        <MultiBinding Converter="{StaticResource IsCanDeleteAfterSendToProdToBoolConverter}">
+                                            <Binding Source="{StaticResource productsViewSource}" Path="DateTransferProduction" Converter="{StaticResource NullDateTimeToBoolConverter}"/>
+                                            <Binding RelativeSource="{RelativeSource AncestorType=local:OrderWindow}" Path="DataContext.OrderCardProductDeleteAfterSetToProd"/>
+                                        </MultiBinding>
+                                    </Button.IsEnabled>
                                 </Button>
                             </StackPanel>
                             <Grid Grid.Row="1" Name="NewProductGrid" Margin="5,0,5,0" Visibility="Collapsed">

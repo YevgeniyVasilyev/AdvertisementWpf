@@ -302,48 +302,45 @@ namespace AdvertisementWpf
 
         private void DateFactCompletion_SourceUpdated(object sender, DataTransferEventArgs e)
         {
-            //if (techCardsViewSource?.View != null)
-            //{
-            //    if (TechCardTreeView?.SelectedItem != null)
-            //    {
-            //        try
-            //        {
-            //            TechCard techCard = (TechCard)GetParentTreeViewItem(TechCardTreeView.SelectedItem, 0); //ищем корневого родителя на уровне TechCard
-            //            if (techCard != null)
-            //            {
-            //                foreach (WorkInTechCard workInTechCard in techCard.WorkInTechCards) //проходим по всем работам текущей техкарты
-            //                {
-            //                    if (!workInTechCard.DateFactCompletion.HasValue) //если нашли хоть одну незаполненную дату, то ничего не делаем
-            //                    {
-            //                        techCard.Product.DateManufacture = null; //на всякий случай обнуляем дату
-            //                        foreach (Product product in productsViewSource.View) //найти изделие в контекте Заказа
-            //                        {
-            //                            if (product.ID == techCard.Product.ID)
-            //                            {
-            //                                product.DateManufacture = null;
-            //                                return;
-            //                            }
-            //                        }
-            //                        return;
-            //                    }
-            //                }
-            //                techCard.Product.DateManufacture = (TechCardTreeView.SelectedItem as WorkInTechCard).DateFactCompletion; //DateTime.Now; //фиксируем дату изготовления по изделию
-            //                foreach (Product product in productsViewSource.View) //найти изделие в контекте Заказа
-            //                {
-            //                    if (product.ID == techCard.Product.ID)
-            //                    {
-            //                        product.DateManufacture = techCard.Product.DateManufacture;
-            //                        break;
-            //                    }
-            //                }
-            //            }
-            //        }
-            //        catch (Exception ex)
-            //        {
-            //            _ = MessageBox.Show(ex.Message + "\n" + ex?.InnerException?.Message, "Ошибка простановки даты изготоления", MessageBoxButton.OK, MessageBoxImage.Error);
-            //        }
-            //    }
-            //}
+            MethodInfo methodInfo = DataContext.GetType().GetMethod("DateFactCompletionSourceUpdated");
+            _ = methodInfo?.Invoke(DataContext, new object[] { TechCardTreeView?.SelectedItem });
         }
+
+        private void OperationParameterTextBox_SourceUpdated(object sender, DataTransferEventArgs e)
+        {
+            MethodInfo methodInfo = DataContext.GetType().GetMethod("OperationParameterTextBoxSourceUpdated");
+            _ = methodInfo?.Invoke(DataContext, new object[] { TechCardTreeView?.SelectedItem });
+        }
+
+        private void OperationParameterValueComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (sender is ComboBox comboBox && comboBox != null)
+            {
+                MethodInfo methodInfo = DataContext.GetType().GetMethod("OperationParameterValueComboBoxSelectionChanged");
+                _ = methodInfo?.Invoke(DataContext, new object[] { comboBox.GetBindingExpression(System.Windows.Controls.Primitives.Selector.SelectedValueProperty).DataItem});
+            }
+        }
+
+        private void OperationParameterComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (sender is ComboBox comboBox && comboBox != null)
+            {
+                MethodInfo methodInfo = DataContext.GetType().GetMethod("OperationParameterComboBoxSelectionChanged");
+                _ = methodInfo?.Invoke(DataContext, new object[] { comboBox.GetBindingExpression(System.Windows.Controls.Primitives.Selector.SelectedValueProperty).DataItem, comboBox.SelectedItem });
+            }
+        }
+
+        private void OperationParameterTextBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            if (sender is ComboBox comboBox && comboBox != null && comboBox.GetBindingExpression(System.Windows.Controls.Primitives.Selector.SelectedValueProperty).DataItem != null)
+            {
+                ListOperationInWorkParameters.SelectedItem = comboBox.GetBindingExpression(System.Windows.Controls.Primitives.Selector.SelectedValueProperty).DataItem;
+            }
+            else if (sender is TextBox textBox && textBox != null && textBox.GetBindingExpression(TextBox.TextProperty).DataItem != null)
+            {
+                ListOperationInWorkParameters.SelectedItem = textBox.GetBindingExpression(TextBox.TextProperty).DataItem;
+            }
+        }
+
     }
 }

@@ -223,6 +223,7 @@
             <BooleanToVisibilityConverter/>
         </local:ValueConverterGroup>
         <local:IsCanEditAfterSendToProdToBoolConverter x:Key="IsCanEditAfterSendToProdToBoolConverter"/>
+        <local:IsCanDeleteAfterSendToProdToBoolConverter x:Key="IsCanDeleteAfterSendToProdToBoolConverter"/>
         <local:NullDateTimeToBoolConverter x:Key="NullDateTimeToBoolConverter"/>
         <local:SumListViewDecimalConverter x:Key="SumListViewDecimalConverter"/>
         <local:MultiValueConverter x:Key="MultiValueConverter"/>
@@ -287,7 +288,7 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
-        <model:TypeOfActivityList x:Key="TypeOfActivity"/>
+        <model:CommonList x:Key="CommonList"/>
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -429,6 +430,12 @@
                                         Style="{StaticResource ButtonOfOrder}" Command="{Binding DeleteProduct}" CommandParameter="{Binding ElementName=ListProduct, Path=SelectedItem}"
                                         Margin="0,0,0,0" ToolTip="Отметить изделие для удаления">
                                     <Image Source="/Images/free-icon-bin-Recycler.png" Width="20" Height="20"/>
+                                    <Button.IsEnabled>
+                                        <MultiBinding Converter="{StaticResource IsCanDeleteAfterSendToProdToBoolConverter}">
+                                            <Binding Path="DateTransferProduction" Converter="{StaticResource NullDateTimeToBoolConverter}"/>
+                                            <Binding RelativeSource="{RelativeSource AncestorType=local:RequestWindow}" Path="DataContext.OrderCardProductDeleteAfterSetToProd"/>
+                                        </MultiBinding>
+                                    </Button.IsEnabled>
                                 </Button>
                             </StackPanel>
                             <Grid Grid.Row="1" Name="NewProductGrid" Margin="5,0,5,0" Visibility="Collapsed">
@@ -879,20 +886,20 @@
                                                 </WrapPanel>
                                             </Border>
                                             <Separator/>
-                                            <Button Style="{StaticResource ButtonOfOrder}" Command="ApplicationCommands.New" ToolTip="Передать техкарту в производство">
+                                            <Button Style="{StaticResource ButtonOfOrder}" Command="{Binding SendTechCardToProduction}" CommandParameter="{Binding ElementName=TechCardTreeView, Path=SelectedItem}" ToolTip="Передать техкарту в производство">
                                                 <StackPanel Orientation="Horizontal">
                                                     <Image Source="\Images\free-icon-factory.png" Width="25" Height="25"/>
                                                     <Label Content="В производство"/>
                                                 </StackPanel>
                                             </Button>
-                                            <Button Style="{StaticResource ButtonOfOrder}" Command="ApplicationCommands.New" ToolTip="Отозвать техкарту с производства">
+                                            <Button Style="{StaticResource ButtonOfOrder}" Command="{Binding RecallTechCardFromProduction}" CommandParameter="{Binding ElementName=TechCardTreeView, Path=SelectedItem}" ToolTip="Отозвать техкарту с производства">
                                                 <StackPanel Orientation="Horizontal">
                                                     <Image Source="\Images\free-icon-back.png" Width="25" Height="25"/>
                                                     <Label Content="Отозвать"/>
                                                 </StackPanel>
                                             </Button>
                                             <Separator/>
-                                            <Button Style="{StaticResource ButtonOfOrder}" ToolTip="Печать техкарты или ее части" Command="ApplicationCommands.Print">
+                                            <Button Name="SendTechCardToPrint" Style="{StaticResource ButtonOfOrder}" Command="{Binding PrintTechCard}" ToolTip="Печать техкарты или ее части">
                                                 <StackPanel Orientation="Horizontal">
                                                     <Image Source="\Images\free-icon-printer-techcard.png" Width="25" Height="25"/>
                                                     <Label Content="Печать"/>
@@ -901,6 +908,12 @@
                                                     <ContextMenu Visibility="Hidden">
                                                     </ContextMenu>
                                                 </Button.ContextMenu>
+                                                <Button.CommandParameter>
+                                                    <MultiBinding Converter="{StaticResource MultiValueConverter}">
+                                                        <Binding ElementName="SendTechCardToPrint"/>
+                                                        <Binding ElementName="TechCardTreeView" Path="SelectedItem"/>
+                                                    </MultiBinding>
+                                                </Button.CommandParameter>
                                             </Button>
                                         </WrapPanel>
                                         <TreeView Grid.Column="0" Grid.Row="1" Margin="2" Name="TechCardTreeView" BorderThickness="1" BorderBrush="DodgerBlue" 
@@ -927,7 +940,7 @@
                                                                        Visibility="{Binding ElementName=WorkInTechCardComboBox, Path=IsVisible, Converter={StaticResource BoolToVisibilityConverter}, UpdateSourceTrigger=PropertyChanged}"
                                                                        VerticalAlignment="Center" MouseLeftButtonDown="WorkInTechCardTextBlock_MouseLeftButtonDown">
                                                             </TextBlock>
-                                                            <ComboBox Padding="2" Name="WorkInTechCardComboBox" ItemsSource="{Binding Source={StaticResource TypeOfActivity}, Path=ListTypeOfActivity}" 
+                                                            <ComboBox Padding="2" Name="WorkInTechCardComboBox" ItemsSource="{Binding Source={StaticResource CommonList}, Path=ListTypeOfActivity}" 
                                                                       VerticalAlignment="Center" ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto"
                                                                       Visibility="{Binding ElementName=WorkInTechCardTextBlock, Path=IsVisible, Converter={StaticResource BoolToVisibilityConverter}, UpdateSourceTrigger=PropertyChanged}"
                                                                       SelectedValuePath="ID" DisplayMemberPath="CodeName"
@@ -971,9 +984,9 @@
                                                      DisplayMemberPath="Name" ToolTip="Двойным кликом выбрать операцию">
                                                 <i:Interaction.Triggers>
                                                     <i:EventTrigger EventName="MouseDoubleClick">
-                                                        <i:InvokeCommandAction Command="{Binding SelectNewOperation}" CommandParameter="{Binding ElementName=TechCardTreeView, Path=SelectedItem}"/>
                                                         <i:InvokeCommandAction Command="{Binding ShowHideFrameworkElement}" CommandParameter="{Binding ElementName=NewOperationListBox}"/>
                                                         <i:ChangePropertyAction TargetObject="{Binding ElementName=NewOperationListBoxRow}" PropertyName="Height" Value="Auto"/>
+                                                        <i:InvokeCommandAction Command="{Binding SelectNewOperation}" CommandParameter="{Binding ElementName=TechCardTreeView, Path=SelectedItem}"/>
                                                     </i:EventTrigger>
                                                 </i:Interaction.Triggers>
                                             </ListBox>
@@ -1009,7 +1022,7 @@
                                             </TextBlock>
                                             <DatePicker Grid.Column="2" Grid.Row="3" Name="DateFactCompletion" IsTodayHighlighted="True"
                                                         Visibility="{Binding ElementName=TechCardTreeView, Path=SelectedItem, Converter={StaticResource VisibilitySelector}, ConverterParameter=WorkInTechCardAttribute}" 
-                                                        SelectedDate="{Binding ElementName=TechCardTreeView, Path=SelectedItem.DateFactCompletion, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  
+                                                        SelectedDate="{Binding ElementName=TechCardTreeView, Path=SelectedItem.DateFactCompletion, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnSourceUpdated=True}"  
                                                         SourceUpdated="DateFactCompletion_SourceUpdated"/>
                                             <Grid Grid.Column="1" Grid.Row="4" Grid.ColumnSpan="2" Margin="2"
                                                   Visibility="{Binding ElementName=TechCardTreeView, Path=SelectedItem, Converter={StaticResource VisibilitySelector}, ConverterParameter=OperationInWorkAttribute}">
@@ -1035,7 +1048,7 @@
                                                 <StackPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,5,0,0" Orientation="Horizontal" HorizontalAlignment="Left">
                                                     <TextBlock Text=" Файлы и иллюстрации" VerticalAlignment="Center"/>
                                                     <Button Background="Transparent" BorderBrush="Transparent" 
-                                                                Style="{StaticResource ButtonOfOrder}" Command="{Binding NewOperationInWorkFile}"
+                                                                Style="{StaticResource ButtonOfOrder}" Command="{Binding NewOperationInWorkFile}" CommandParameter="{Binding ElementName=TechCardTreeView, Path=SelectedItem}"
                                                                 Margin="5,0,0,0" ToolTip="Добавить файл">
                                                         <Image Source="/Images/free-icon-add-button.png" Width="20" Height="20"/>
                                                     </Button>
@@ -1043,6 +1056,12 @@
                                                                 Style="{StaticResource ButtonOfOrder}" Command="{Binding DeleteOperationInWorkFile}"
                                                                 ToolTip="Удалить файл из списка и отметить для удаления">
                                                         <Image Source="/Images/free-icon-bin-Recycler.png" Width="20" Height="20"/>
+                                                        <Button.CommandParameter>
+                                                            <MultiBinding Converter="{StaticResource MultiValueConverter}">
+                                                                <Binding ElementName="TechCardTreeView" Path="SelectedItem"/>
+                                                                <Binding ElementName="OperationInWorkFilesListBox" Path="SelectedItem"/>
+                                                            </MultiBinding>
+                                                        </Button.CommandParameter>
                                                     </Button>
                                                 </StackPanel>
                                                 <ListBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Name="OperationInWorkFilesListBox" BorderThickness="1" BorderBrush="Black"
@@ -1058,7 +1077,7 @@
                                                 </ListBox>
                                             </Grid>
                                         </Grid>
-                                        <!--<ListView Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="3" Name="ListOperationInWorkParameters" Margin="2" Padding="1" IsSynchronizedWithCurrentItem="True" 
+                                        <ListView Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="3" Name="ListOperationInWorkParameters" Margin="2" Padding="1"
                                                   ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto"                                                  
                                                   Visibility="{Binding ElementName=TechCardTreeView, Path=SelectedItem, Converter={StaticResource VisibilitySelector}, ConverterParameter=OperationInWorkAttribute}"
                                                   ItemsSource="{Binding ElementName=TechCardTreeView, Path=SelectedItem.OperationInWorkParameters}">
@@ -1066,21 +1085,18 @@
                                                 <DataTemplate x:Key="CommonTextBox">
                                                     <TextBox Name="ValueTextBox" HorizontalContentAlignment="Right" Width="90" Language="ru-ru"    
                                                              Text="{Binding Path=ParameterValue, Mode=TwoWay, 
-                                                                    UpdateSourceTrigger=PropertyChanged, 
-                                                                    NotifyOnSourceUpdated=True, 
-                                                                    ValidatesOnExceptions=True, ValidatesOnNotifyDataErrors=True}" 
+                                                                    UpdateSourceTrigger=PropertyChanged, NotifyOnSourceUpdated=True}" 
                                                              SourceUpdated="OperationParameterTextBox_SourceUpdated" 
                                                              GotFocus="OperationParameterTextBox_GotFocus">
                                                     </TextBox>
                                                 </DataTemplate>
                                                 <DataTemplate x:Key="ComboboxTextBox">
                                                     <ComboBox ItemsSource="{Binding Path=ReferencebookParametersList}"
-                                                          SelectedValue="{Binding Path=ParameterID, Mode=TwoWay, 
-                                                                          UpdateSourceTrigger=PropertyChanged, NotifyOnSourceUpdated=True}" 
-                                                          SelectedValuePath="ID" DisplayMemberPath="Value" 
-                                                          SourceUpdated="OperationParameterTextBox_SourceUpdated"
-                                                          SelectionChanged="OperationParameterValueComboBox_SelectionChanged"
-                                                          GotFocus="OperationParameterTextBox_GotFocus" MinWidth="90">
+                                                              SelectedValue="{Binding Path=ParameterID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnSourceUpdated=True}" 
+                                                              SelectedValuePath="ID" DisplayMemberPath="Value" 
+                                                              SourceUpdated="OperationParameterTextBox_SourceUpdated"
+                                                              SelectionChanged="OperationParameterValueComboBox_SelectionChanged"
+                                                              GotFocus="OperationParameterTextBox_GotFocus" MinWidth="90">
                                                     </ComboBox>
                                                 </DataTemplate>
                                                 <DataTemplate x:Key="CommonTextBlock">
@@ -1088,12 +1104,11 @@
                                                 </DataTemplate>
                                                 <DataTemplate x:Key="ComboboxRefbookRequestTextBox">
                                                     <ComboBox ItemsSource="{Binding Path=ReferencebookList}" ToolTip="Справочник по выбору"
-                                                          SelectedValue="{Binding Path=ReferencebookID, Mode=TwoWay, 
-                                                                          UpdateSourceTrigger=PropertyChanged, NotifyOnSourceUpdated=True}" 
-                                                          SelectedValuePath="ID" DisplayMemberPath="Name" 
-                                                          SourceUpdated="OperationParameterTextBox_SourceUpdated" 
-                                                          SelectionChanged="OperationParameterComboBox_SelectionChanged"
-                                                          GotFocus="OperationParameterTextBox_GotFocus" Width="90">
+                                                              SelectedValue="{Binding Path=ReferencebookID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnSourceUpdated=True}" 
+                                                              SelectedValuePath="ID" DisplayMemberPath="Name" 
+                                                              SelectionChanged="OperationParameterComboBox_SelectionChanged"
+                                                              SourceUpdated="OperationParameterTextBox_SourceUpdated" 
+                                                              GotFocus="OperationParameterTextBox_GotFocus" Width="90">
                                                     </ComboBox>
                                                 </DataTemplate>
                                             </ListView.Resources>
@@ -1122,7 +1137,7 @@
                                                     </GridView.Columns>
                                                 </GridView>
                                             </ListView.View>
-                                        </ListView>-->
+                                        </ListView>
                                     </Grid>
                                 </Border>
                             </TabItem>
