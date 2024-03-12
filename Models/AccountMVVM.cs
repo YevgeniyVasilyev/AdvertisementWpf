@@ -49,7 +49,7 @@ namespace AdvertisementWpf.Models
             }
         }
 #else
-        private List<AccountDetail> _detailsList { get; set; }
+        private List<AccountDetail> _detailsList { get; set; } = new List<AccountDetail> { };
         [NotMapped]
         public List<AccountDetail> DetailsList
         {

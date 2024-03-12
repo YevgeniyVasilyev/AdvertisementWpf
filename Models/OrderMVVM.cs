@@ -285,19 +285,11 @@ namespace AdvertisementWpf.Models
             {
                 MainWindow.statusBar.WriteStatus("Загрузка данных по заказу ...", Cursors.Wait);
                 ViewMode = lViewMode;
-                LoadOrderContext(nOrderID);  //загрузить данные в контекст
-                SetModelAccess();       //установить режимы доступа к элементам интерфейса
-                if (CurrentOrder is null) //новый
+                LoadOrderContext(nOrderID);     //загрузить данные в контекст
+                SetModelAccess();               //установить режимы доступа к элементам интерфейса
+                if (CurrentOrder is null)       //будет новый
                 {
-                    IsNewOrder = true;
-                    CurrentOrder = new Order
-                    {
-                        ClientID = (ClientCollectionView?.CurrentItem as Client)?.ID ?? 0,
-                        DateAdmission = DateTime.Today,
-                        OrderEnteredID = MainWindow.Userdata.ID,
-                        ManagerID = MainWindow.Userdata.ID,
-                    };
-                    _contextOrder_.AddToContext(CurrentOrder);
+                    CreateNewOrder();           //создать новый заказа
                 }
                 foreach (Product product in CurrentOrder.Products)                                                                                  //инициализация изделий
                 {
@@ -361,6 +353,18 @@ namespace AdvertisementWpf.Models
             return (bool)operation.TypeOfActivityInOperations.Any(t => t.TypeOfActivityID.Equals(SelectedWorkForNewOperation?.TypeOfActivityID)); //если операция относится к КВД выбранной работы
         }
 
+        private void CreateNewOrder()
+        {
+            IsNewOrder = true;
+            CurrentOrder = new Order
+            {
+                //ClientID = (ClientCollectionView?.CurrentItem as Client)?.ID ?? 0,  //УБРАТЬ !!! сделать не заполняемым
+                DateAdmission = DateTime.Today,
+                OrderEnteredID = MainWindow.Userdata.ID,
+                ManagerID = MainWindow.Userdata.ID,
+            };
+            _contextOrder_.AddToContext(CurrentOrder);
+        }
         private string GenerateNewOrderNumber(long Number)
         {
             return Number.ToString().Trim().PadLeft(10, '0');
@@ -522,7 +526,7 @@ namespace AdvertisementWpf.Models
         public RelayCommand SaveAccount => saveAccount ??= new RelayCommand((o) => //команда сохранения ПУД
         {
             _contextAccount_.SaveContext();
-        }, (o) => _contextAccount_ != null && CurrentOrder?.ID > 0 && ListPAD?.Count > 0 && IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductPADNewChangeDelete"));
+        }, (o) => _contextAccount_ != null && CurrentOrder?.ID > 0 && ListPAD != null && IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductPADNewChangeDelete"));
 
         public RelayCommand NewAccount => newAccount ??= new RelayCommand((o) => //команда создания нового Счета
         {
@@ -538,7 +542,10 @@ namespace AdvertisementWpf.Models
         {
             Account account = o as Account;
             _ = ListPAD.Remove(account);
-            _contextAccount_.DeleteFromContext(account);
+            if (account?.ID > 0)
+            {
+                _contextAccount_.DeleteFromContext(account);
+            }
         }, (o) => _contextAccount_ != null && CurrentOrder?.ID > 0 && IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductPADNewChangeDelete"));
 
         public RelayCommand DeleteAccountDetail => deleteAccountDetail ??= new RelayCommand((o) => //команда удалить детализацию Счета
@@ -695,12 +702,12 @@ namespace AdvertisementWpf.Models
         public RelayCommand SendTechCardToProduction => sendTechCardToProduction ??= new RelayCommand((o) => //команда Передать техкарту в производство
         {
             ToProduction(o);
-        }, (o) => _contextTechCard_ != null && CurrentOrder?.ID > 0 && IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductTechCardTransferToProduction"));
+        }, (o) => _contextTechCard_ != null && CurrentOrder?.ID > 0 && CanSendToProduction(o));
 
         public RelayCommand RecallTechCardFromProduction => recallTechCardFromProduction ??= new RelayCommand((o) => //команда Отозвать техкарту с производства
         {
             FromProduction(o);
-        }, (o) => _contextTechCard_ != null && CurrentOrder?.ID > 0 && IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductTechCardRecallFromProduction"));
+        }, (o) => _contextTechCard_ != null && CurrentOrder?.ID > 0 && CanRecallFromProduction(o));
 
         public RelayCommand PrintTechCard => printTechCard ??= new RelayCommand((o) => //команда Печать техкарты или ее части
         {
@@ -790,7 +797,7 @@ namespace AdvertisementWpf.Models
 
         private bool CanSaveOrder()
         {
-            bool CanSaveOrder = _contextOrder_ != null && ErrorsCount == 0 && !CurrentOrder.Products.Any(p => p.HasError);
+            bool CanSaveOrder = _contextOrder_ != null && ErrorsCount == 0 && !CurrentOrder.Products.Any(p => p.HasError) && CurrentOrder.ClientID > 0;
             foreach (Product product in CurrentOrder?.Products)
             {
                 foreach (ProductParameters productParameter in product?.ProductParameter)                                           //проход по параметра каждого продукта
@@ -809,6 +816,28 @@ namespace AdvertisementWpf.Models
                 }
             }
             return CanSaveOrder;
+        }
+
+        private bool CanSendToProduction(object sender)
+        {
+            bool CanSendToProduction = IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductTechCardTransferToProduction");
+            TechCard techCard = (TechCard)GetParentTreeViewItem(sender, 0);                     //ищем корневого родителя на уровне TechCard
+            if (techCard != null)
+            {
+                CanSendToProduction &= !techCard.Product.DateTransferProduction.HasValue;       //дата передачи в производство еще не установлена
+            }
+            return CanSendToProduction;
+        }
+
+        private bool CanRecallFromProduction(object sender)
+        {
+            bool CanRecallFromProduction = IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductTechCardRecallFromProduction");
+            TechCard techCard = (TechCard)GetParentTreeViewItem(sender, 0);                     //ищем корневого родителя на уровне TechCard
+            if (techCard != null)
+            {
+                CanRecallFromProduction &= techCard.Product.DateTransferProduction.HasValue;    //дата передачи в производство установлена
+            }
+            return CanRecallFromProduction;
         }
 
         public void ReferencebookListSelectionChanged(object sender)
@@ -1198,7 +1227,8 @@ namespace AdvertisementWpf.Models
         public void LoadOrderContext(long nOrderID)
         {
             _pathToFilesOfProduct = _contextOrder_.Setting.AsNoTracking().Where(Setting => Setting.SettingParameterName == "PathToFilesOfProduct").FirstOrDefault().SettingParameterValue;
-            ClientCollectionView = CollectionViewSource.GetDefaultView(_contextOrder_.Clients.AsNoTracking().ToList());                         //инициализация коллекции "Клиенты"
+            ClientCollectionView = CollectionViewSource.GetDefaultView(_contextOrder_.Clients
+                .AsNoTracking().ToList().OrderBy(c => c.Name, StringComparer.CurrentCultureIgnoreCase));                                        //инициализация коллекции "Клиенты"
             ClientCollectionView.Filter = ClientFilter;                                                                                         //установка обработчика для фильтрации
             ClientCollectionView.MoveCurrentToFirst();                                                                                          //переход на первую запись в коллекции
             UserList = _contextOrder_.Users.AsNoTracking().ToList();                                                                            //список пользователей 
@@ -2272,19 +2302,12 @@ namespace AdvertisementWpf.Models
             get => _listTypeOfActivity ?? new List<TypeOfActivity> { };
             set => _listTypeOfActivity = value;
         }
-        private List<Referencebook> _referencebookList = null;
-        public List<Referencebook> ListReferencebook        //список справочников
-        {
-            get => _referencebookList ?? new List<Referencebook> { };
-            set => _referencebookList = value;
-        }
 
         public CommonList()
         {
             using App.AppDbContext _context_ = CreateDbContext.CreateContext();
             {
                 ListTypeOfActivity = _context_.TypeOfActivitys.AsNoTracking().ToList();
-                ListReferencebook = _context_.Referencebook.AsNoTracking().ToList();
             }
         }
     }

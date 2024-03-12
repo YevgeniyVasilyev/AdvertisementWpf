@@ -357,7 +357,8 @@
                     <TextBlock Grid.Column="3" Grid.Row="0" Text=" Заказчик: " VerticalAlignment="Center"/>
                     <ComboBox  Grid.Column="4" Grid.Row="0" Name="ClientComboBox" VerticalAlignment="Center" IsEditable="False"
                                ItemsSource="{Binding ClientCollectionView}"
-                               SelectedValue="{Binding Path=CurrentOrder.ClientID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  
+                               SelectedValue="{Binding Path=CurrentOrder.ClientID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged,NotifyOnValidationError=True}"  
+                               Validation.Error="TextBoxError"
                                SelectedValuePath="ID" DisplayMemberPath="ShortName">
                     </ComboBox>
                     <TextBlock  Grid.Column="5" Grid.Row="0" Text=" Поиск: " VerticalAlignment="Center"/>
