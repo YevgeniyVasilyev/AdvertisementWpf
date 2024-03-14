@@ -252,7 +252,7 @@ namespace AdvertisementWpf
                             sDateName = "DateProductionLayout";
                             break;
                     }
-                    sDateCondition = $"{sDateName} >= '{dStartDate.Date}' AND {sDateName} <= '{dEndDate.Date}'";
+                    sDateCondition = $"{sDateName} >= '{dStartDate}' AND {sDateName} <= '{dEndDate}'";
                 }
                 //обработка условия "Клиент"
                 foreach (object client in ClientsListBox.Items)
@@ -428,6 +428,9 @@ namespace AdvertisementWpf
                     dStartDate = pStartDate.SelectedDate.Value;
                     dEndDate = pEndDate.SelectedDate.Value;
                 }
+
+                dEndDate = new DateTime(dEndDate.Year, dEndDate.Month, dEndDate.Day, 23, 59, 59); //добавить минуты конца дня
+
                 if (!(bool)pNoDate.IsChecked)
                 {
                     switch (pDateName.SelectedIndex)
@@ -456,16 +459,14 @@ namespace AdvertisementWpf
                     }
                     if (pDateName.SelectedIndex > 0) //для дат изделия. Дата заказа обрабатывается в MainWindow
                     {
-                        sDateCondition = $"{sDateName} >= '{dStartDate.Date}' AND {sDateName} <= '{dEndDate.Date}'";
+                        sDateCondition = $"{sDateName} >= '{dStartDate}' AND {sDateName} <= '{dEndDate}'";
                     }
                     else if (pDateName.SelectedIndex == 0)
                     {
-                        MainWindow.dStartDate = dStartDate.Date;
-                        MainWindow.dEndDate = dEndDate.Date;
+                        MainWindow.dStartDate = dStartDate;
+                        MainWindow.dEndDate = dEndDate;
                     }
                 }
-
-                dEndDate = new DateTime(dEndDate.Year, dEndDate.Month, dEndDate.Day, 23, 59, 59); //добавить минуты конца дня
 
                 //обработка условия "Изделия в категории" 
                 foreach (object productType in ProductTypesListBox.Items)

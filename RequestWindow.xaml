@@ -433,7 +433,7 @@
                                     <Image Source="/Images/free-icon-bin-Recycler.png" Width="20" Height="20"/>
                                     <Button.IsEnabled>
                                         <MultiBinding Converter="{StaticResource IsCanDeleteAfterSendToProdToBoolConverter}">
-                                            <Binding Path="DateTransferProduction" Converter="{StaticResource NullDateTimeToBoolConverter}"/>
+                                            <Binding ElementName="ListProduct" Path="SelectedItem.DateTransferProduction" Converter="{StaticResource NullDateTimeToBoolConverter}"/>
                                             <Binding RelativeSource="{RelativeSource AncestorType=local:RequestWindow}" Path="DataContext.OrderCardProductDeleteAfterSetToProd"/>
                                         </MultiBinding>
                                     </Button.IsEnabled>
@@ -868,7 +868,7 @@
                                                             <i:Interaction.Triggers>
                                                                 <i:EventTrigger EventName="Click">
                                                                     <i:InvokeCommandAction Command="{Binding ShowHideFrameworkElement}" CommandParameter="{Binding ElementName=NewOperationListBox}"/>
-                                                                    <i:ChangePropertyAction TargetObject="{Binding ElementName=NewOperationListBoxRow}" PropertyName="Height" Value="Auto"/>
+                                                                    <i:ChangePropertyAction TargetObject="{Binding ElementName=NewOperationListBoxRow}" PropertyName="Height" Value="*"/>
                                                                 </i:EventTrigger>
                                                             </i:Interaction.Triggers>
                                                         </Button>
@@ -1150,8 +1150,7 @@
                 <Border Margin="2" BorderThickness="1" BorderBrush="DarkBlue">
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="305*"/>
-                            <ColumnDefinition Width="731*"/>
+                            <ColumnDefinition Width="*"/>
                             <!--список платежей-->
                             <ColumnDefinition Width="Auto"/>
                             <!--поля для редактирования-->
@@ -1180,9 +1179,9 @@
                                 </StackPanel>
                             </Button>
                         </WrapPanel>
-                        <ListView Grid.Column="0" Grid.Row="1" Name="ListPayments" Margin="3,3,3,3" Padding="2"
+                        <ListView Grid.Column="0" Grid.Row="1" Name="ListPayments" Margin="3,3,3,3" Padding="2" SelectedIndex="{Binding SelectedPaymentIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                   ItemsSource="{Binding ListPayment, UpdateSourceTrigger=PropertyChanged}" KeyDown="ListPayments_KeyDown"
-                                  ScrollViewer.VerticalScrollBarVisibility="Auto" HorizontalContentAlignment="Stretch" Grid.ColumnSpan="2">
+                                  ScrollViewer.VerticalScrollBarVisibility="Auto" HorizontalContentAlignment="Stretch" Grid.ColumnSpan="3">
                             <ListView.View>
                                 <GridView>
                                     <GridViewColumn x:Name="_paycol0" Header=" Счёт " DisplayMemberBinding="{Binding Path=Account.AccountNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
@@ -1201,7 +1200,7 @@
                                 </GridView>
                             </ListView.View>
                         </ListView>
-                        <Border Grid.Column="0" Grid.Row="2" Margin="3,3,3,3" BorderBrush="Black" BorderThickness="0.5" Grid.ColumnSpan="2">
+                        <Border Grid.Column="0" Grid.Row="2" Margin="3,3,3,3" BorderBrush="Black" BorderThickness="0.5" Grid.ColumnSpan="3">
                             <Grid >
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="{Binding ElementName=_paycol0, Path=ActualWidth}"/>
@@ -1228,6 +1227,16 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
+                            <Grid.Style>
+                                <Style TargetType="Grid">
+                                    <Setter Property="IsEnabled" Value="True"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding SelectedIndex,ElementName=ListPayments}" Value="-1">
+                                            <Setter Property="IsEnabled" Value="False"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Grid.Style>
                             <TextBlock Grid.Column="0" Grid.Row="1" Text="Платеж по счету: " VerticalAlignment="Center"/>
                             <ComboBox  Grid.Column="1" Grid.Row="1" Margin="2" Name="AccountsListComboBox" Width="200"
                                        ItemsSource="{Binding AccountForPayment}" SelectionChanged="AccountsListComboBox_SelectionChanged"
@@ -1355,7 +1364,7 @@
                                 <!--итого по счету-->
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
-                            <ListView Grid.Row="0" Margin="2" Name="ListAccount"
+                            <ListView Grid.Row="0" Margin="2" Name="ListAccount" SelectedIndex="{Binding SelectedAccountIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                       ItemsSource="{Binding ListPAD, UpdateSourceTrigger=PropertyChanged}" 
                                       ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto">
                                 <ListView.InputBindings>
@@ -1537,7 +1546,7 @@
                                 <!--список детализации акта-->
                                 <RowDefinition Height="0,5*"/>
                             </Grid.RowDefinitions>
-                            <ListView Grid.Row="0" Name="ListAct" 
+                            <ListView Grid.Row="0" Name="ListAct" SelectedIndex="{Binding SelectedActIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                       ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto"
                                       ItemsSource="{Binding ElementName=ListAccount, Path=SelectedItem.Acts}" KeyDown="ListAct_KeyDown">
                                 <ListView.View>

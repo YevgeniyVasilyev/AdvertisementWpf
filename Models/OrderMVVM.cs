@@ -273,6 +273,34 @@ namespace AdvertisementWpf.Models
             }
         }
 
+        private int _selectedAccountIndex { get; set; } = 0;
+        public int SelectedAccountIndex
+        {
+            get => _selectedAccountIndex; 
+            set
+            {
+                SelectedActIndex = 0;
+                _selectedAccountIndex = value;
+                //NotifyPropertyChanged("SelectedAccountIndex");
+            }
+        }
+        private int _selectedActIndex { get; set; } = 0;
+        public int SelectedActIndex
+        { 
+            get => _selectedActIndex;
+            set
+            {
+                _selectedActIndex = value;
+                NotifyPropertyChanged("SelectedActIndex");
+            }
+        }
+        private int _selectedPaymentIndex { get; set; } = 0;
+        public int SelectedPaymentIndex
+        {
+            get => _selectedPaymentIndex;
+            set => _selectedPaymentIndex = value;
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
         protected void NotifyPropertyChanged(string propertyName)
         {
@@ -1420,6 +1448,7 @@ namespace AdvertisementWpf.Models
                     }
                 }
                 ListContractor = _contextAccount_.Contractors.AsNoTracking().ToList();                  //список пордрядчиков
+                SelectedAccountIndex = 0;
                 if (lShowMessage)
                 {
                     _ = MessageBox.Show("   Все счета загружены успешно!   ", "Загрузка счетов");
