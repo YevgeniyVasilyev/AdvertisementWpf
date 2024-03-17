@@ -35,7 +35,6 @@ namespace AdvertisementWpf.Models
             }
         }
 
-#if NEWORDER
         private ObservableCollection<AccountDetail> _detailsList = new ObservableCollection<AccountDetail>();
         [NotMapped]
         public ObservableCollection<AccountDetail> DetailsList
@@ -48,29 +47,30 @@ namespace AdvertisementWpf.Models
                 NotifyPropertyChanged("TotalCost");
             }
         }
+#if NEWORDER
 #else
-        private List<AccountDetail> _detailsList { get; set; } = new List<AccountDetail> { };
-        [NotMapped]
-        public List<AccountDetail> DetailsList
-        {
-            get => _detailsList;
-            set
-            {
-                _detailsList = value;
-                NotifyPropertyChanged("DetailsList"); 
-                NotifyPropertyChanged("TotalCost");
-            }
-        }
+        //private List<AccountDetail> _detailsList { get; set; } = new List<AccountDetail> { };
+        //[NotMapped]
+        //public List<AccountDetail> DetailsList
+        //{
+        //    get => _detailsList;
+        //    set
+        //    {
+        //        _detailsList = value;
+        //        NotifyPropertyChanged("DetailsList"); 
+        //        NotifyPropertyChanged("TotalCost");
+        //    }
+        //}
 #endif
 
         private string _contractorName = "";
         [NotMapped]
         public string ContractorName
         {
-#if NEWORDER
             get => Contractor?.Name;
+#if NEWORDER
 #else
-            get => Contractor != null && Contractor.ID == ContractorID ? Contractor.Name : _contractorName;
+            //get => Contractor != null && Contractor.ID == ContractorID ? Contractor.Name : _contractorName;
 #endif
             set
             {
@@ -119,10 +119,10 @@ namespace AdvertisementWpf.Models
                 }
             }
 #if !NEWORDER
-            DetailsList = detailLst;
+            //DetailsList = detailLst;
 #else
-            DetailsList = detailList;
 #endif
+            DetailsList = detailList;
         }
 
         public void ListToDetails()

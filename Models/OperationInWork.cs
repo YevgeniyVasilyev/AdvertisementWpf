@@ -23,18 +23,17 @@ namespace AdvertisementWpf.Models
         public virtual WorkInTechCard WorkInTechCard { get; set; }
 
         private ObservableCollection<string> _filesList { get; set; } = new ObservableCollection<string>();
-#if NEWORDER
         [NotMapped]
         public ICollection<string> FilesList
         {
             get => _filesList;
             set => _filesList = new ObservableCollection<string>(value);
         }
-#else
-        [NotMapped]
-        public List<string> FilesList { get; set; } = new List<string> { };
-#endif
 #if NEWORDER
+#else
+        //[NotMapped]
+        //public List<string> FilesList { get; set; } = new List<string> { };
+#endif
         private ObservableCollection<OperationInWorkParameter> _operationInWorkParameters { get; set; } = new ObservableCollection<OperationInWorkParameter>();
         [NotMapped]
         public ICollection<OperationInWorkParameter> OperationInWorkParameters
@@ -42,9 +41,10 @@ namespace AdvertisementWpf.Models
             get => _operationInWorkParameters;
             set => _operationInWorkParameters = new ObservableCollection<OperationInWorkParameter>(value);
         } //заполняется внешними методами. В него разворачивается строка Parameters
+#if NEWORDER
 #else
-        [NotMapped]
-        public List<OperationInWorkParameter> OperationInWorkParameters { get; set; } //заполняется внешними методами. В него разворачивается строка Parameters
+        //[NotMapped]
+        //public List<OperationInWorkParameter> OperationInWorkParameters { get; set; } //заполняется внешними методами. В него разворачивается строка Parameters
 #endif
 
         public void ListToParameters() //сворачивает список в строку Parameters
@@ -79,7 +79,6 @@ namespace AdvertisementWpf.Models
             foreach (string aP in aParameters)
             {
                 string[] pP = aP.Split('#');
-#if NEWORDER
                 long nID = Convert.ToInt64(pP[0]);
                 foreach (OperationInWorkParameter operationInWorkParameter in OperationInWorkParameters)
                 {
@@ -100,27 +99,28 @@ namespace AdvertisementWpf.Models
                         }
                     }
                 }
+#if NEWORDER
 #else
-                for (short idx = 0; idx < OperationInWorkParameters.Count; idx++)
-                {
-                    long nID = Convert.ToInt64(pP[0]);
-                    if (nID == OperationInWorkParameters[idx].ID) //нашли требуемый параметр
-                    {
-                        if (OperationInWorkParameters[idx].IsRefbookOnRequest) //для параметра установлен признак "выбор справочника по запросу"
-                        {
-                            //установить ID "справочника по запросу" либо оставить то значение которое идет из конструктора изделий, если выбора еще не было
-                            OperationInWorkParameters[idx].ReferencebookID = long.TryParse(pP[2], out nID) ? nID : OperationInWorkParameters[idx].ReferencebookID;
-                        }
-                        if (OperationInWorkParameters[idx].ReferencebookID > 0) //для параметра установлен выбор из справочника
-                        {
-                            OperationInWorkParameters[idx].ParameterID = long.TryParse(pP[1], out nID) ? nID : 0;
-                        }
-                        else
-                        {
-                            OperationInWorkParameters[idx].ParameterValue = pP[1]; //просто произвольное текстовое значение заполняемое ручками
-                        }
-                    }
-                }
+                //for (short idx = 0; idx < OperationInWorkParameters.Count; idx++)
+                //{
+                //    long nID = Convert.ToInt64(pP[0]);
+                //    if (nID == OperationInWorkParameters[idx].ID) //нашли требуемый параметр
+                //    {
+                //        if (OperationInWorkParameters[idx].IsRefbookOnRequest) //для параметра установлен признак "выбор справочника по запросу"
+                //        {
+                //            //установить ID "справочника по запросу" либо оставить то значение которое идет из конструктора изделий, если выбора еще не было
+                //            OperationInWorkParameters[idx].ReferencebookID = long.TryParse(pP[2], out nID) ? nID : OperationInWorkParameters[idx].ReferencebookID;
+                //        }
+                //        if (OperationInWorkParameters[idx].ReferencebookID > 0) //для параметра установлен выбор из справочника
+                //        {
+                //            OperationInWorkParameters[idx].ParameterID = long.TryParse(pP[1], out nID) ? nID : 0;
+                //        }
+                //        else
+                //        {
+                //            OperationInWorkParameters[idx].ParameterValue = pP[1]; //просто произвольное текстовое значение заполняемое ручками
+                //        }
+                //    }
+                //}
 #endif
             }
         }

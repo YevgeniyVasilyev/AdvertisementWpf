@@ -425,12 +425,12 @@ namespace AdvertisementWpf
             {
                 if (btn == NewOrderButton || btn == NewOrderButton1)
                 {
-#if NEWORDER
                     RequestWindow request = new RequestWindow() { };
                     request.ShowDialog();
+#if NEWORDER
 #else
-                    OrderWindow order = new OrderWindow(NewOrder: true) { };
-                    _ = order.ShowDialog();
+                    //OrderWindow order = new OrderWindow(NewOrder: true) { };
+                    //_ = order.ShowDialog();
 #endif
                     _ = typeof(ButtonBase).GetMethod("OnClick", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(RefreshOrderButton, new object[0]);
                 }
@@ -449,12 +449,12 @@ namespace AdvertisementWpf
                     {
                         nOrderID = workInTechCard.TechCard.Product.OrderID;
                     }
-#if NEWORDER
                     RequestWindow request = new RequestWindow(ViewMode: btn == ViewOrderButton, nOrderID: nOrderID) { };
                     request.ShowDialog();
+#if NEWORDER
 #else
-                    OrderWindow order = new OrderWindow(NewOrder: false, EditMode: btn == EditOrderButton, nOrderID: nOrderID) { };
-                    _ = order.ShowDialog();
+                    //OrderWindow order = new OrderWindow(NewOrder: false, EditMode: btn == EditOrderButton, nOrderID: nOrderID) { };
+                    //_ = order.ShowDialog();
 #endif
                     _ = typeof(ButtonBase).GetMethod("OnClick", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(RefreshOrderButton, new object[0]);
                 }
@@ -1359,18 +1359,18 @@ namespace AdvertisementWpf
         private static RelayCommand newOrder;
         public static RelayCommand NewOrder => newOrder ??= new RelayCommand((o) =>
         {
-#if NEWORDER
             RequestWindow requestWindow = new RequestWindow();
             _ = requestWindow.ShowDialog();
             object btn = Application.Current.MainWindow.FindName("RefreshOrderButton");
             _ = typeof(ButtonBase).GetMethod("OnClick", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(btn, new object[0]);
         }, null);
+#if NEWORDER
 #else
-            OrderWindow order = new OrderWindow(NewOrder: true) { };
-            _ = order.ShowDialog();
-            object btn = Application.Current.MainWindow.FindName("RefreshOrderButton");
-            _ = typeof(ButtonBase).GetMethod("OnClick", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(btn, new object[0]);
-        }, null);
+        //    OrderWindow order = new OrderWindow(NewOrder: true) { };
+        //    _ = order.ShowDialog();
+        //    object btn = Application.Current.MainWindow.FindName("RefreshOrderButton");
+        //    _ = typeof(ButtonBase).GetMethod("OnClick", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(btn, new object[0]);
+        //}, null);
 #endif
     }
 

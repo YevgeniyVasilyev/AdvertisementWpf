@@ -15,7 +15,7 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <DefineConstants>NEWORDER</DefineConstants>
+    <DefineConstants></DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -51,6 +51,7 @@
 
   <ItemGroup>
     <Compile Remove="Models\_СategoryOfProduct.cs" />
+    <Compile Remove="OrderWindow.xaml.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -155,6 +156,10 @@
     <None Remove="УПД А4 гориз.распол.xls" />
     <None Remove="УПД бланк.pdf" />
     <None Remove="Этапы и доработки.xlsx" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Remove="OrderWindow.xaml" />
   </ItemGroup>
 
   <ItemGroup>

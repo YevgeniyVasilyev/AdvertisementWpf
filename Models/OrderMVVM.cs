@@ -72,10 +72,10 @@ namespace AdvertisementWpf.Models
         [NotMapped]
         public string State
         {
-#if NEWORDER
             get => Products != null ? OrderState(Products) : _state;
+#if NEWORDER
 #else
-            get => Products != null && string.IsNullOrWhiteSpace(_state) ? OrderState(Products) : _state;
+            //get => Products != null && string.IsNullOrWhiteSpace(_state) ? OrderState(Products) : _state;
 #endif
             set
             {
@@ -341,26 +341,17 @@ namespace AdvertisementWpf.Models
 
         ~OrderViewModel()
         {
-            if (_contextOrder_ != null)
-            {
-                _contextOrder_.Dispose();
-                _contextOrder_ = null;
-            }
-            if (_contextPayment_ != null)
-            {
-                _contextPayment_.Dispose();
-                _contextPayment_ = null;
-            }
-            if (_contextAccount_ != null)
-            {
-                _contextAccount_.Dispose();
-                _contextAccount_ = null;
-            }
-            if (_contextTechCard_ != null)
-            {
-                _contextTechCard_.Dispose();
-                _contextTechCard_ = null;
-            }
+            _contextOrder_?.Dispose();
+            _contextOrder_ = null;
+
+            _contextPayment_?.Dispose();
+            _contextPayment_ = null;
+
+            _contextAccount_?.Dispose();
+            _contextAccount_ = null;
+
+            _contextTechCard_?.Dispose();
+            _contextTechCard_ = null;
         }
 
         private bool ClientFilter(object item) //поиск(фильтрация) клиентов
@@ -604,8 +595,8 @@ namespace AdvertisementWpf.Models
         public RelayCommand ManualInputAccount => manualInputAccount ??= new RelayCommand((o) => //команда приустановке признака "ручной ввод счета"
         {
             Account account = o as Account;
-#if NEWORDER
             account.DetailsList = CreateNewAccountDetails(account);
+#if NEWORDER
 #endif
             account.ListToDetails(); //свернуть детали счета
         }, (o) => _contextAccount_ != null && CurrentOrder?.ID > 0);
@@ -1041,8 +1032,8 @@ namespace AdvertisementWpf.Models
                 {
                     _contextAccount_.AddReferenceToContext(product, "ProductType"); //загрузить св-во навигации ProductType
                 }
-#if NEWORDER
                 account.DetailsList = CreateNewAccountDetails(account);
+#if NEWORDER
 #endif
                 account.ListToDetails();
             }

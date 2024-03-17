@@ -222,13 +222,13 @@
             <local:BoolNotBoolConverter/>
             <BooleanToVisibilityConverter/>
         </local:ValueConverterGroup>
-        <local:IsCanEditAfterSendToProdToBoolConverter x:Key="IsCanEditAfterSendToProdToBoolConverter"/>
-        <local:IsCanDeleteAfterSendToProdToBoolConverter x:Key="IsCanDeleteAfterSendToProdToBoolConverter"/>
-        <local:NullDateTimeToBoolConverter x:Key="NullDateTimeToBoolConverter"/>
+        <model:IsCanEditAfterSendToProdToBoolConverter x:Key="IsCanEditAfterSendToProdToBoolConverter"/>
+        <model:IsCanDeleteAfterSendToProdToBoolConverter x:Key="IsCanDeleteAfterSendToProdToBoolConverter"/>
+        <model:NullDateTimeToBoolConverter x:Key="NullDateTimeToBoolConverter"/>
         <local:SumListViewDecimalConverter x:Key="SumListViewDecimalConverter"/>
         <local:MultiValueConverter x:Key="MultiValueConverter"/>
         <local:BoolNotBoolConverter x:Key="BoolNotBoolConverter"/>
-        <local:VisibilitySelector x:Key="VisibilitySelector"/>
+        <model:VisibilitySelector x:Key="VisibilitySelector"/>
         <Style x:Key="DropShadow" TargetType="{x:Type FrameworkElement}">
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
@@ -691,14 +691,14 @@
                                                         <GridViewColumn Header=" параметр " Width="250" DisplayMemberBinding="{Binding Path=Name}" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"/>
                                                         <GridViewColumn Header="">
                                                             <GridViewColumn.CellTemplateSelector>
-                                                                <local:ReferencebookTemplateSelector
+                                                                <model:ReferencebookTemplateSelector
                                                                     CommonTextBlock="{StaticResource CommonTextBlock}" 
                                                                     ComboboxRefbookRequestTextBox="{StaticResource ComboboxRefbookRequestTextBox}"/>
                                                             </GridViewColumn.CellTemplateSelector>
                                                         </GridViewColumn>
                                                         <GridViewColumn Header=" значение " Width="100" HeaderTemplate="{StaticResource ListViewHeaderTemplate}">
                                                             <GridViewColumn.CellTemplateSelector>
-                                                                <local:CostTemplateSelector 
+                                                                <model:CostTemplateSelector 
                                                                     CommonTextBox="{StaticResource CommonTextBox}" 
                                                                     ComboboxTextBox="{StaticResource ComboboxTextBox}"/>
                                                             </GridViewColumn.CellTemplateSelector>
@@ -1120,14 +1120,14 @@
                                                                         HeaderTemplate="{StaticResource ListViewHeaderTemplate}"/>
                                                         <GridViewColumn Header="">
                                                             <GridViewColumn.CellTemplateSelector>
-                                                                <local:ReferencebookTemplateSelector
+                                                                <model:ReferencebookTemplateSelector
                                                                 CommonTextBlock="{StaticResource CommonTextBlock}" 
                                                                 ComboboxRefbookRequestTextBox="{StaticResource ComboboxRefbookRequestTextBox}"/>
                                                             </GridViewColumn.CellTemplateSelector>
                                                         </GridViewColumn>
                                                         <GridViewColumn Header=" значение " Width="100" HeaderTemplate="{StaticResource ListViewHeaderTemplate}">
                                                             <GridViewColumn.CellTemplateSelector>
-                                                                <local:CostTemplateSelector 
+                                                                <model:CostTemplateSelector 
                                                                 CommonTextBox="{StaticResource CommonTextBox}" 
                                                                 ComboboxTextBox="{StaticResource ComboboxTextBox}"/>
                                                             </GridViewColumn.CellTemplateSelector>

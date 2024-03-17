@@ -22,7 +22,7 @@ namespace AdvertisementWpf.Models
 
         [NotMapped]
         public List<long> ListProductInAct { get; set; } = new List<long> { };
-#if NEWORDER
+
         private ObservableCollection<AccountDetail> _detailsList = new ObservableCollection<AccountDetail>();
         [NotMapped]
         public ObservableCollection<AccountDetail> DetailsList
@@ -34,18 +34,19 @@ namespace AdvertisementWpf.Models
                 NotifyPropertyChanged("DetailsList");
             }
         }
+#if NEWORDER
 #else
-        private List<AccountDetail> _detailsList = new List<AccountDetail> { };
-        [NotMapped]
-        public List<AccountDetail> DetailsList
-        { 
-            get => _detailsList;
-            set
-            {
-                _detailsList = value;
-                NotifyPropertyChanged("DetailsList"); //???????
-            }
-        }
+        //private List<AccountDetail> _detailsList = new List<AccountDetail> { };
+        //[NotMapped]
+        //public List<AccountDetail> DetailsList
+        //{ 
+        //    get => _detailsList;
+        //    set
+        //    {
+        //        _detailsList = value;
+        //        NotifyPropertyChanged("DetailsList"); //???????
+        //    }
+        //}
 #endif
         [NotMapped]
         public string UPDState { get; set; } = "2";
@@ -92,10 +93,10 @@ namespace AdvertisementWpf.Models
             {
                 if (account.IsManual) //для ручного счета
                 {
-#if NEWORDER
                     detailLst = account.DetailsList; //добавить единственную детализацию
+#if NEWORDER
 #else
-                    detailList = account.DetailsList; //добавить единственную детализацию
+                    //detailList = account.DetailsList; //добавить единственную детализацию
 #endif
                 }
                 else
@@ -104,16 +105,16 @@ namespace AdvertisementWpf.Models
                     {
                         if (ListProductInAct.Contains(accountDetail.ProductID)) //да, продукт включен в акт
                         {
-                            detailList.Add(accountDetail);
+                            //detailList.Add(accountDetail);
                             detailLst.Add(accountDetail);
                         }
                     }
                 }
             }
-#if NEWORDER
             DetailsList = detailLst;
+#if NEWORDER
 #else
-            DetailsList = detailList;
+            //DetailsList = detailList;
 #endif
         }
 

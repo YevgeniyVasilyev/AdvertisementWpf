@@ -181,14 +181,14 @@ namespace AdvertisementWpf.Models
 
         private ObservableCollection<string> _filesList { get; set; } = new ObservableCollection<string>();
         [NotMapped]
-#if NEWORDER
         public ICollection<string> FilesList
         {
             get => _filesList;
             set => _filesList = new ObservableCollection<string>(value);
         }
+#if NEWORDER
 #else
-        public List<string> FilesList { get; set; }
+        //public List<string> FilesList { get; set; }
 #endif
 
         private List<ProductParameters> _productParameter { get; set; } = new List<ProductParameters>();
