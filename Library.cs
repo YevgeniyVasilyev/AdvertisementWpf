@@ -15,11 +15,13 @@ using System.Text.Unicode;
 using Microsoft.Win32;
 using System.Diagnostics;
 using System.Windows.Input;
-using FastReport.Export.PdfSimple;
 using System.Collections;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using FastReport;
+using FastReport.Utils;
+using FastReport.Preview;
 
 namespace AdvertisementWpf
 {
@@ -428,7 +430,7 @@ namespace AdvertisementWpf
 
         public static void RunReport()
         {
-            using FastReport.Report report = new FastReport.Report();
+            FastReport.Report report = new FastReport.Report();
             try
             {
                 MainWindow.statusBar.WriteStatus("Подготовка отчета ...", Cursors.Wait);
@@ -612,36 +614,10 @@ namespace AdvertisementWpf
                 {
                     ReadyReportFileName = $"{Path.GetFileNameWithoutExtension(ReportFileName)}.pdf";
                 }
-                _ = report.Prepare();
-                MainWindow.statusBar.WriteStatus("Экспорт отчета ...", Cursors.Wait);
-                PDFSimpleExport pdfExport = new PDFSimpleExport
-                {
-                    ExportAllTabs = true,
-                    OpenAfterExport = true
-                };
-                report.Export(pdfExport, ReadyReportFileName);
-
-
-
-                //if (File.Exists($"{Path.GetFileNameWithoutExtension(ReportFileName)}.txt"))
-                //{
-                //    File.Delete($"{Path.GetFileNameWithoutExtension(ReportFileName)}.txt");
-                //}
-                //using FileStream fs = new FileStream($"{Path.GetFileNameWithoutExtension(ReportFileName)}.txt", FileMode.OpenOrCreate);
-                //using MemoryStream ms = new MemoryStream();
-                //report.Report.Export(pdfExport, ms);
-                //fs.Write(ms.ToArray());
-
-                //FastReport.Export.Html.HTMLExport export = new FastReport.Export.Html.HTMLExport
-                //{
-                //    AllowOpenAfter = true,
-                //    HasMultipleFiles = false,
-                //    Navigator = false,
-                //    OpenAfterExport = true,
-                //    SinglePage = true,
-                //    SubFolder = false
-                //};
-                //export.Export(report, $"{Path.GetFileNameWithoutExtension(ReportFileName)}.html");
+                Config.ReportSettings.ShowProgress = true;
+                Config.PreviewSettings.ShowInTaskbar = true;
+                report.Prepare(append: true);
+                report.ShowAsync();
             }
             catch (Exception ex)
             {
@@ -649,10 +625,7 @@ namespace AdvertisementWpf
             }
             finally
             {
-                if (report != null)
-                {
-                    report.Dispose();
-                }
+                report?.Dispose();
                 MainWindow.statusBar.ClearStatus();
             }
         }

@@ -96,6 +96,8 @@
                 <MenuItem Header="Изделия" Name="ProductDesigner_Item" Click="ProductDesigner_Item_Click"/>
                 <MenuItem Header="Операции" Name="OperationDesigner_Item" Click="OperationDesigner_Item_Click"/>
                 <MenuItem Header="Параметры изделий и операций" Name="ReferencebookDesigner_Item" Click="ReferencebookDesigner_Item_Click"/>
+                <Separator/>
+                <MenuItem Header="Дизайнер отчетов FastReport" Name="FastReportDesigner_Item" Click="FastReportDesigner_Item_Click"/>
             </MenuItem>
             <Separator></Separator>
             <MenuItem Name="SettingItem" Header="Настройки" Style="{StaticResource MainMenu}" Command="{x:Static local:CustomCommands.Setting}">

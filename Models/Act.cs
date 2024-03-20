@@ -13,7 +13,16 @@ namespace AdvertisementWpf.Models
     {
         public long ID { get; set; }
         public long AccountID { get; set; }
-        public string ActNumber { get; set; } = "";
+        private string _actNumber { get; set; } = "";
+        public string ActNumber
+        { 
+            get => _actNumber;
+            set
+            {
+                _actNumber = value;
+                NotifyPropertyChanged("ActNumber");
+            }
+        }
         [Column(TypeName = "datetime")]
         public DateTime? ActDate { get; set; } = DateTime.Now;
         public string ProductInAct { get; set; } = "";

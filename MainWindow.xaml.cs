@@ -16,6 +16,7 @@ using System.Windows.Controls.Primitives;
 using System.Reflection;
 using System.Windows.Documents;
 using System.Collections;
+using System.Threading.Tasks;
 
 namespace AdvertisementWpf
 {
@@ -1110,6 +1111,16 @@ namespace AdvertisementWpf
             ew.Show();
         }
 
+        private void FastReportDesigner_Item_Click(object sender, RoutedEventArgs e)
+        {
+            if (Userdata.IsAdmin)
+            {
+                using FastReport.Report report = new FastReport.Report();
+                {
+                    _ = report.Design();
+                }
+            }
+        }
     }
 
     public class SortAdorner : Adorner
