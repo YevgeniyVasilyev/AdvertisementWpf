@@ -257,7 +257,6 @@ namespace AdvertisementWpf
         private void TechCardTreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
             NewOperationListBox.Visibility = Visibility.Collapsed;
-            NewOperationListBoxRow.Height = GridLength.Auto;
         }
 
         private void TechCardTreeView_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)

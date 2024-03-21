@@ -1117,6 +1117,7 @@ namespace AdvertisementWpf
             {
                 using FastReport.Report report = new FastReport.Report();
                 {
+                    FastReport.Utils.Res.LoadLocale(@"Localization\Russian.frl");
                     _ = report.Design();
                 }
             }

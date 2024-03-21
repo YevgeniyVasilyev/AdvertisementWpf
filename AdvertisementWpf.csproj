@@ -246,15 +246,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Reports\OrderListView.frx">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\ProductionProductListView.frx">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\ProductListView.frx">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    <None Update="Localization\Russian.frl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-
 </Project>

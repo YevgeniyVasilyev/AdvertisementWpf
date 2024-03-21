@@ -21,7 +21,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using FastReport;
 using FastReport.Utils;
-using FastReport.Preview;
 
 namespace AdvertisementWpf
 {
@@ -616,8 +615,9 @@ namespace AdvertisementWpf
                 }
                 Config.ReportSettings.ShowProgress = true;
                 Config.PreviewSettings.ShowInTaskbar = true;
-                report.Prepare(append: true);
+                Res.LoadLocale(@"Localization\Russian.frl");
                 report.ShowAsync();
+
             }
             catch (Exception ex)
             {
