@@ -505,6 +505,11 @@ namespace AdvertisementWpf
                         Reports.EndPeriod = endPeriod;
                         lCanMakeReport = Reports.OrderDataSet.Count > 0;
                     }
+                    else if (report.Code == "TEST")
+                    {
+                        Reports.ReportMode = report.Code;
+                        lCanMakeReport = true;
+                    }
                     if (lCanMakeReport)
                     {
                         Reports.RunReport();

@@ -16,7 +16,6 @@ using System.Windows.Controls.Primitives;
 using System.Reflection;
 using System.Windows.Documents;
 using System.Collections;
-using System.Threading.Tasks;
 
 namespace AdvertisementWpf
 {
@@ -1115,6 +1114,8 @@ namespace AdvertisementWpf
         {
             if (Userdata.IsAdmin)
             {
+                //ReportDesignerWindow reportDesignerWindow = new ReportDesignerWindow();
+                //_ = reportDesignerWindow.ShowDialog();
                 using FastReport.Report report = new FastReport.Report();
                 {
                     FastReport.Utils.Res.LoadLocale(@"Localization\Russian.frl");

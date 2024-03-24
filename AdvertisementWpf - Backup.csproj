@@ -190,6 +190,7 @@
     <PackageReference Include="Microsoft.WindowsAPICodePack-Core" Version="1.1.0.2" />
     <PackageReference Include="Microsoft.WindowsAPICodePack-Shell" Version="1.1.0" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.77" />
+    <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -248,7 +249,7 @@
     <Resource Include="Images\premium-icon-refresh.png" />
     <Resource Include="Images\premium-icon-view.png" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <None Update="Localization\Russian.frl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

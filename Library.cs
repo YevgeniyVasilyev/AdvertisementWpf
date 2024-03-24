@@ -19,7 +19,6 @@ using System.Collections;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
-using FastReport;
 using FastReport.Utils;
 
 namespace AdvertisementWpf
@@ -608,20 +607,22 @@ namespace AdvertisementWpf
                     report.RegisterData(ClientsDataSet, "Clients", 2);
                     ReportMode = "ReportForm";
                 }
-
-                if (ReportMode == "ReportForm")
+                else
                 {
-                    ReadyReportFileName = $"{Path.GetFileNameWithoutExtension(ReportFileName)}.pdf";
+                    report.Load(ReportFileName);
+                    report.RegisterData(OrderDataSet, "Order", 3);
                 }
                 Config.ReportSettings.ShowProgress = true;
                 Config.PreviewSettings.ShowInTaskbar = true;
                 Res.LoadLocale(@"Localization\Russian.frl");
-                report.ShowAsync();
-
+                report.Prepare();
+                report.ShowPrepared();
+                //ReportViewWindow reportViewWindow = new ReportViewWindow(report);
+                //_ = reportViewWindow.ShowDialog();
             }
             catch (Exception ex)
             {
-                _ = MessageBox.Show(ex.Message + "\n" + ex?.InnerException?.Message ?? "", "Ошибка отображения отчета", MessageBoxButton.OK, MessageBoxImage.Error);
+                _ = MessageBox.Show(ex.Message + "\n" + ex?.InnerException?.Message ?? "", "Ошибка формирования отчета", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             finally
             {
