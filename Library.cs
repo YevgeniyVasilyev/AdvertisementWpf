@@ -617,8 +617,6 @@ namespace AdvertisementWpf
                 Res.LoadLocale(@"Localization\Russian.frl");
                 report.Prepare();
                 report.ShowPrepared();
-                //ReportViewWindow reportViewWindow = new ReportViewWindow(report);
-                //_ = reportViewWindow.ShowDialog();
             }
             catch (Exception ex)
             {

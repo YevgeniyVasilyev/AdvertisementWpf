@@ -49,8 +49,6 @@
   <ItemGroup>
     <Compile Remove="Models\_СategoryOfProduct.cs" />
     <Compile Remove="OrderWindow.xaml.cs" />
-    <Compile Remove="ReportDesignerWindow.xaml.cs" />
-    <Compile Remove="ReportViewWindow.xaml.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -95,6 +93,7 @@
     <None Remove="Images\premium-icon-payment.png" />
     <None Remove="Images\premium-icon-refresh.png" />
     <None Remove="Images\premium-icon-view.png" />
+    <None Remove="Localization\Russian.frl" />
     <None Remove="OnDeploy.txt" />
     <None Remove="Reports\Act — копия.frx" />
     <None Remove="Reports\Act_data.frx" />
@@ -159,8 +158,6 @@
 
   <ItemGroup>
     <Page Remove="OrderWindow.xaml" />
-    <Page Remove="ReportDesignerWindow.xaml" />
-    <Page Remove="ReportViewWindow.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -196,10 +193,6 @@
     <EmbeddedResource Include="free-icon-device-2844994.ico">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
-    <None Include="ReportDesignerWindow.xaml" />
-    <None Include="ReportDesignerWindow.xaml.cs" />
-    <None Include="ReportViewWindow.xaml" />
-    <None Include="ReportViewWindow.xaml.cs" />
     <Resource Include="Images\BlueUI-новый-заказ-40.png" />
     <Resource Include="Images\BlueUI-обновить-40.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
@@ -248,10 +241,10 @@
     <Resource Include="Images\premium-icon-refresh.png" />
     <Resource Include="Images\premium-icon-view.png" />
   </ItemGroup>
-  
+
   <ItemGroup>
-    <None Update="Localization\Russian.frl">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <Content Include="Localization\Russian.frl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 </Project>

@@ -1114,8 +1114,6 @@ namespace AdvertisementWpf
         {
             if (Userdata.IsAdmin)
             {
-                //ReportDesignerWindow reportDesignerWindow = new ReportDesignerWindow();
-                //_ = reportDesignerWindow.ShowDialog();
                 using FastReport.Report report = new FastReport.Report();
                 {
                     FastReport.Utils.Res.LoadLocale(@"Localization\Russian.frl");

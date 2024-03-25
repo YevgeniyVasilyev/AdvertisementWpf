@@ -988,6 +988,7 @@
                                                         <RowDefinition Height="Auto"/>
                                                         <RowDefinition Height="Auto"/>
                                                         <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
                                                     </Grid.RowDefinitions>
                                                     <StackPanel Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Orientation="Vertical" ScrollViewer.CanContentScroll="True"
                                                                 Visibility="{Binding ElementName=TechCardTreeView, Path=SelectedItem, Converter={StaticResource VisibilitySelector}, ConverterParameter=NoteTechCardStackPanel}">
@@ -1012,7 +1013,7 @@
                                                     <DatePicker Grid.Column="1" Grid.Row="2" Name="DatePlanCompletion" IsTodayHighlighted="True"
                                                                 Visibility="{Binding ElementName=TechCardTreeView, Path=SelectedItem, Converter={StaticResource VisibilitySelector}, ConverterParameter=WorkInTechCardAttribute}" 
                                                                 SelectedDate="{Binding ElementName=TechCardTreeView, Path=SelectedItem.DatePlanCompletion, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                                                    <TextBlock Grid.Column="1" Grid.Row="3" Text=" Дата фактического завершения работы: " VerticalAlignment="Center" 
+                                                    <TextBlock Grid.Column="0" Grid.Row="3" Text=" Дата фактического завершения работы: " VerticalAlignment="Center" 
                                                                Visibility="{Binding ElementName=TechCardTreeView, Path=SelectedItem, Converter={StaticResource VisibilitySelector}, ConverterParameter=WorkInTechCardAttribute}"
                                                                Style="{StaticResource UnderlineTextBlock}">
                                                         <TextBlock.InputBindings>
@@ -1024,7 +1025,7 @@
                                                                 SelectedDate="{Binding ElementName=TechCardTreeView, Path=SelectedItem.DateFactCompletion, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnSourceUpdated=True}"  
                                                                 SourceUpdated="DateFactCompletion_SourceUpdated"/>
                                                     <Grid Grid.Column="0" Grid.Row="4" Grid.ColumnSpan="2" Margin="2"
-                                                      Visibility="{Binding ElementName=TechCardTreeView, Path=SelectedItem, Converter={StaticResource VisibilitySelector}, ConverterParameter=OperationInWorkAttribute}">
+                                                                Visibility="{Binding ElementName=TechCardTreeView, Path=SelectedItem, Converter={StaticResource VisibilitySelector}, ConverterParameter=OperationInWorkAttribute}">
                                                         <Grid.ColumnDefinitions>
                                                             <ColumnDefinition Width="Auto"/>
                                                             <ColumnDefinition Width="*"/>
@@ -1036,15 +1037,15 @@
                                                             <RowDefinition Height="Auto"/>
                                                             <RowDefinition Height="*"/>
                                                         </Grid.RowDefinitions>
-                                                        <TextBlock Grid.Row="0" Grid.Column="0" Text=" Производственный участок  "/>
-                                                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding ElementName=TechCardTreeView, Path=SelectedItem.Operation.ProductionArea.Name}"/>
-                                                        <TextBlock Grid.Row="1" Grid.Column="0" Text=" Описание" Margin="0,5,0,0" VerticalAlignment="Center"/>
-                                                        <TextBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,5,0,0" 
+                                                        <TextBlock Grid.Column="0" Grid.Row="0" Text=" Производственный участок  "/>
+                                                        <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding ElementName=TechCardTreeView, Path=SelectedItem.Operation.ProductionArea.Name}"/>
+                                                        <TextBlock Grid.Column="0" Grid.Row="1" Text=" Описание" Margin="0,5,0,0" VerticalAlignment="Center"/>
+                                                        <TextBox   Grid.Column="0" Grid.Row="2"  Grid.ColumnSpan="2" Margin="0,5,0,0" 
                                                                  BorderThickness="1" BorderBrush="Black" AcceptsReturn="True" TextWrapping="Wrap"
                                                                  ScrollViewer.VerticalScrollBarVisibility="Auto" 
                                                                  MaxHeight="180"
                                                                  Text="{Binding ElementName=TechCardTreeView, Path=SelectedItem.Note, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                                                        <StackPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,5,0,0" Orientation="Horizontal" HorizontalAlignment="Left">
+                                                        <StackPanel Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2" Margin="0,5,0,0" Orientation="Horizontal" HorizontalAlignment="Left">
                                                             <TextBlock Text=" Файлы и иллюстрации" VerticalAlignment="Center"/>
                                                             <Button Background="Transparent" BorderBrush="Transparent" 
                                                                     Style="{StaticResource ButtonOfOrder}" Command="{Binding NewOperationInWorkFile}" CommandParameter="{Binding ElementName=TechCardTreeView, Path=SelectedItem}"
@@ -1063,7 +1064,7 @@
                                                                 </Button.CommandParameter>
                                                             </Button>
                                                         </StackPanel>
-                                                        <ListBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Name="OperationInWorkFilesListBox" BorderThickness="1" BorderBrush="Black"
+                                                        <ListBox Grid.Column="0" Grid.Row="4" Grid.ColumnSpan="2" Name="OperationInWorkFilesListBox" BorderThickness="1" BorderBrush="Black"
                                                                  ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto"
                                                                  ToolTip="Двойной щелчок - открыть файл во внешней программе"
                                                                  VerticalAlignment="Bottom" Height="90"
