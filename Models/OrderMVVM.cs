@@ -14,7 +14,6 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Diagnostics;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using System.Collections;
 using System.Text.RegularExpressions;
 using System.Text;
 using System.Globalization;
@@ -73,7 +72,7 @@ namespace AdvertisementWpf.Models
         public string State
         {
             get => Products != null ? OrderState(Products) : _state;
-#if NEWORDER
+#if  NEWORDER
 #else
             //get => Products != null && string.IsNullOrWhiteSpace(_state) ? OrderState(Products) : _state;
 #endif
@@ -202,6 +201,7 @@ namespace AdvertisementWpf.Models
             {
                 _selectedWorkForNewOperation = value;
                 OperationCollectionView.Refresh();
+                NotifyPropertyChanged("OperationCollectionView");
             }
         }
         public ICollectionView ClientCollectionView { get; set; }                               //крллеция "Киенты" AsNoTracking, с фильтрацией
@@ -369,7 +369,8 @@ namespace AdvertisementWpf.Models
         private bool OperationFilter(object item)
         {
             Operation operation = item as Operation;
-            return (bool)operation.TypeOfActivityInOperations.Any(t => t.TypeOfActivityID.Equals(SelectedWorkForNewOperation?.TypeOfActivityID)); //если операция относится к КВД выбранной работы
+            //return operation.TypeOfActivityInOperations.Any(t => t.TypeOfActivityID.Equals(SelectedWorkForNewOperation?.TypeOfActivityID)); //если операция относится к КВД выбранной работы
+            return operation.TypeOfActivityInOperations.Any(t => t.TypeOfActivityID == SelectedWorkForNewOperation?.TypeOfActivityID); //если операция относится к КВД выбранной работы
         }
 
         private void CreateNewOrder()
@@ -596,8 +597,6 @@ namespace AdvertisementWpf.Models
         {
             Account account = o as Account;
             account.DetailsList = CreateNewAccountDetails(account);
-#if NEWORDER
-#endif
             account.ListToDetails(); //свернуть детали счета
         }, (o) => _contextAccount_ != null && CurrentOrder?.ID > 0);
 
@@ -655,7 +654,7 @@ namespace AdvertisementWpf.Models
         public RelayCommand NewTechCardWork => newTechCardWork ??= new RelayCommand((o) => //команда Добавить работу в техкарту
         {
             AddNewObjectInTechCard(TechCardObjectType.Work, o);
-        }, (o) => _contextTechCard_ != null && CurrentOrder?.ID > 0 && IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductTechCardNewChangeDelete"));
+        }, (o) => _contextTechCard_ != null && CurrentOrder?.ID > 0 && o != null && IGrantAccess.CheckGrantAccess(MainWindow.userIAccessMatrix, MainWindow.Userdata.RoleID, "OrderCardProductTechCardNewChangeDelete"));
 
         public RelayCommand NewTechCardWorkOperation => newTechCardWorkOperation ??= new RelayCommand((o) => //команда Добавить операцию в работу
         {
@@ -1033,8 +1032,6 @@ namespace AdvertisementWpf.Models
                     _contextAccount_.AddReferenceToContext(product, "ProductType"); //загрузить св-во навигации ProductType
                 }
                 account.DetailsList = CreateNewAccountDetails(account);
-#if NEWORDER
-#endif
                 account.ListToDetails();
             }
             catch (Exception ex)
@@ -1460,11 +1457,21 @@ namespace AdvertisementWpf.Models
             MainWindow.statusBar.WriteStatus("Загрузка техкарт ...", Cursors.Wait);
             try
             {
-                foreach (EntityEntry entityEntry in _contextTechCard_.ChangeTracker.Entries().ToArray()) //для повторной загрузки из БД
+                //foreach (EntityEntry entityEntry in _contextTechCard_.ChangeTracker.Entries().ToArray()) //для повторной загрузки из БД
+                //{
+                //    if (entityEntry.Entity != null)
+                //    {
+                //        entityEntry.State = EntityState.Detached;
+                //    }
+                //}
+                if (ListTechCard != null)
                 {
-                    if (entityEntry.Entity != null)
+                    foreach (TechCard techCard in ListTechCard)
                     {
-                        entityEntry.State = EntityState.Detached;
+                        if (_contextTechCard_.Entry(techCard).State != null)
+                        {
+                            _contextTechCard_.Entry(techCard).State = EntityState.Detached;
+                        }
                     }
                 }
                 _contextTechCard_.TechCards

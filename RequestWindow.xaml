@@ -967,9 +967,9 @@
                                         </TreeView>
                                         <ScrollViewer Grid.Column="1" Grid.Row="1" VerticalScrollBarVisibility="Auto">
                                             <DockPanel ScrollViewer.VerticalScrollBarVisibility="Auto">
-                                                <ListBox DockPanel.Dock="Left" Name="NewOperationListBox" Margin="2" Visibility="Collapsed"
-                                                         ScrollViewer.VerticalScrollBarVisibility="Auto" IsSynchronizedWithCurrentItem="true"
-                                                         ItemsSource="{Binding OperationCollectionView, Mode=OneTime}"
+                                                <ListBox DockPanel.Dock="Left" Name="NewOperationListBox" Margin="2" Visibility="{Binding NewOperationListBoxVisibility, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                         ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                                         ItemsSource="{Binding OperationCollectionView}" IsSynchronizedWithCurrentItem="True"
                                                          DisplayMemberPath="Name" ToolTip="Двойным кликом выбрать операцию">
                                                     <i:Interaction.Triggers>
                                                         <i:EventTrigger EventName="MouseDoubleClick">
