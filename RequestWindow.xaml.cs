@@ -1,5 +1,6 @@
 ﻿using AdvertisementWpf.Models;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
@@ -257,6 +258,18 @@ namespace AdvertisementWpf
         private void TechCardTreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
             NewOperationListBox.Visibility = Visibility.Collapsed;
+            if (TechCardTreeView.SelectedItem is TechCard techCard)
+            {
+                IEnumerator enumerator = ListProduct.Items.SourceCollection.GetEnumerator();
+                while (enumerator.MoveNext())
+                {
+                    if ((enumerator.Current as Product).ID == techCard.Product.ID)
+                    {
+                        _ = ListProduct.SelectedItem = enumerator.Current as Product;
+                        break;
+                    }
+                }
+            }
         }
 
         private void TechCardTreeView_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
