@@ -462,6 +462,7 @@ namespace AdvertisementWpf
                     report.RegisterData(ActDataSet, "Act", 3);
                     report.SetParameterValue("ReportDate", ReportDate);
                     report.SetParameterValue("AmountInWords", AmountInWords);
+                    report.SetParameterValue("WithSignature", WithSignature);
                     ReadyReportFileName = "Act.pdf";
                 }
                 else if (ReportMode == "SFForm")
@@ -615,8 +616,8 @@ namespace AdvertisementWpf
                 Config.ReportSettings.ShowProgress = true;
                 Config.PreviewSettings.ShowInTaskbar = true;
                 Res.LoadLocale(@"Localization\Russian.frl");
-                report.Prepare();
-                report.ShowPrepared();
+                //report.Prepare();
+                report.Show();
             }
             catch (Exception ex)
             {

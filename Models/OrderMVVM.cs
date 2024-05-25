@@ -616,7 +616,8 @@ namespace AdvertisementWpf.Models
             bool templateAct = (bool)((object[])o)[3];
             bool templateSFTN = (bool)((object[])o)[4];
             bool templateUPD = (bool)((object[])o)[5];
-            ActPrint(account, act, dateTime, templateAct, templateSFTN, templateUPD);
+            bool withSignature = (bool)((object[])o)[6];
+            ActPrint(account, act, dateTime, templateAct, templateSFTN, templateUPD, withSignature);
         }, (o) => _contextAccount_ != null && CurrentOrder?.ID > 0 && o != null && (((object[])o)[1] as Act)?.ID > 0);
 
         public RelayCommand LoadTechCard => loadTechCard ??= new RelayCommand((o) => //команда Загрузить техкарты
@@ -1718,14 +1719,15 @@ namespace AdvertisementWpf.Models
                                     if (product.ID == techCard.Product.ID)
                                     {
                                         product.DateManufacture = null;                         //сбросить дату изготовления
+                                        product.DateShipment = null;                            //сбросить дату отгрузки
                                         return;
                                     }
                                 }
                                 return;
                             }
                         }
-                        techCard.Product.DateManufacture = (sender as WorkInTechCard).DateFactCompletion; //DateTime.Now; //фиксируем дату изготовления по изделию
-                        foreach (Product product in CurrentOrder.Products)                      //найти изделие в контекте Заказа
+                        techCard.Product.DateManufacture = (sender as WorkInTechCard).DateFactCompletion;   //DateTime.Now; //фиксируем дату изготовления по изделию
+                        foreach (Product product in CurrentOrder.Products)                                  //найти изделие в контекте Заказа
                         {
                             if (product.ID == techCard.Product.ID)
                             {
@@ -2061,7 +2063,7 @@ namespace AdvertisementWpf.Models
             }
         }
 
-        private void ActPrint(Account account, Act act, DateTime dateTime, bool templateAct, bool templateSFTN, bool templateUPD)
+        private void ActPrint(Account account, Act act, DateTime dateTime, bool templateAct, bool templateSFTN, bool templateUPD, bool withSignature)
         {
             using App.AppDbContext _reportcontext = new App.AppDbContext(MainWindow.Connectiondata.Connectionstring);
             {
@@ -2084,6 +2086,7 @@ namespace AdvertisementWpf.Models
                         {
                             Reports.ReportFileName = Path.Combine(_pathToReportTemplate, "Act.frx");
                             Reports.ReportMode = "ActForm";
+                            Reports.WithSignature = withSignature;
                             Reports.RunReport();
                         }
                         else
