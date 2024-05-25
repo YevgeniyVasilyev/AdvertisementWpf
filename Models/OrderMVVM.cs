@@ -2070,6 +2070,7 @@ namespace AdvertisementWpf.Models
                 try
                 {
                     MainWindow.statusBar.WriteStatus("Получение данных ...", Cursors.Wait);
+                    string ActFileTemplate = account.Contractor?.ActFileTemplate ?? "";
                     string _pathToReportTemplate = _reportcontext.Setting.FirstOrDefault(setting => setting.SettingParameterName == "PathToReportTemplate").SettingParameterValue;
                     List<Account> accounts = new List<Account> { account };
                     Reports.AccountDataSet = accounts;
@@ -2082,9 +2083,9 @@ namespace AdvertisementWpf.Models
                     Reports.ReportDate = dateTime;
                     if (templateAct)
                     {
-                        if (File.Exists(Path.Combine(_pathToReportTemplate, "Act.frx")))
+                        if (File.Exists(Path.Combine(_pathToReportTemplate, ActFileTemplate)))
                         {
-                            Reports.ReportFileName = Path.Combine(_pathToReportTemplate, "Act.frx");
+                            Reports.ReportFileName = Path.Combine(_pathToReportTemplate, ActFileTemplate);
                             Reports.ReportMode = "ActForm";
                             Reports.WithSignature = withSignature;
                             Reports.RunReport();

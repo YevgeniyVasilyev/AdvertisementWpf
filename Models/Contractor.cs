@@ -45,7 +45,16 @@ namespace AdvertisementWpf.Models
                 NotifyPropertyChanged("AccountFileTemplate");
             }
         }
-
+        private string _ActFileTemplate { get; set; } = "";
+        public string ActFileTemplate
+        {
+            get => _ActFileTemplate;
+            set
+            {
+                _ActFileTemplate = value;
+                NotifyPropertyChanged("ActFileTemplate");
+            }
+        }
         public virtual Bank Bank { get; set; }
         public virtual ICollection<Account> Accounts { get; set; }
 

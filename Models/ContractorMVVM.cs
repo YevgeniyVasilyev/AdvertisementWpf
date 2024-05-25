@@ -183,11 +183,17 @@ namespace AdvertisementWpf.Models
                 };
                 if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
                 {
-                    Contractor contractor = o as Contractor;
-                    contractor.AccountFileTemplate = System.IO.Path.GetFileName(dialog.FileName);
-                    //AccountFileTemplateTextBlock.Text = System.IO.Path.GetFileName(dialog.FileName);
+                    Contractor contractor = ((object[])o)[0] as Contractor;
+                    string mode = ((object[])o)[1] as string;
+                    if (mode.ToLower() == "account")
+                    {
+                        contractor.AccountFileTemplate = System.IO.Path.GetFileName(dialog.FileName);
+                    }
+                    else if (mode.ToLower() == "act")
+                    {
+                        contractor.ActFileTemplate = System.IO.Path.GetFileName(dialog.FileName);
+                    }
                 }
-                //_ = Activate();
             }
             catch (Exception ex)
             {

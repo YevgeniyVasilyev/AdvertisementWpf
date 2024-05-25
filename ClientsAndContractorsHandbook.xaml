@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AdvertisementWpf" 
         xmlns:model="clr-namespace:AdvertisementWpf.Models" 
+        xmlns:System="clr-namespace:System;assembly=mscorlib"        
         mc:Ignorable="d"
         FocusManager.FocusedElement="{Binding ElementName=Clients_Tab}"
         Title="Клиенты и подрядчики" WindowState="Maximized" MinHeight="800" MinWidth="1200" WindowStartupLocation="CenterOwner" 
@@ -726,6 +727,8 @@
                             <!--Аббревиатура для счета-->
                             <RowDefinition Height="Auto"/>
                             <!--бланк счета на оплату-->
+                            <RowDefinition Height="Auto"/>
+                            <!--бланк акта -->
                             <RowDefinition Height="*"/>
                             <!--пусто-->
                             <RowDefinition Height="Auto"/>
@@ -844,18 +847,38 @@
                         <StackPanel Grid.Row="16" Grid.Column="1" Orientation="Horizontal">
                             <TextBlock Name="AccountFileTemplateTextBlock" Text="{Binding ElementName=ContractorsGrid, Path=SelectedItem.AccountFileTemplate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                                        VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
-                            <Button Name="OpenDialogButton" Background="Transparent" BorderBrush="Transparent" 
-                                    Command="{Binding OpenFileDialog}" CommandParameter="{Binding ElementName=ContractorsGrid, Path=SelectedItem, UpdateSourceTrigger=PropertyChanged}" ToolTip="Открыть диалог для выбора файла">
+                            <Button Name="OpenDialogButton" Background="Transparent" BorderBrush="Transparent"  ToolTip="Открыть диалог для выбора файла"
+                                    Command="{Binding OpenFileDialog}">
                                 <Image Source="\Images\free-icon-folder_open.png" Width="20" Height="20"/>
+                                <Button.CommandParameter>
+                                    <MultiBinding Converter="{StaticResource MultiValueConverter}">
+                                        <Binding ElementName="ContractorsGrid" Path="SelectedItem"/>
+                                        <Binding Source="Account"/>
+                                    </MultiBinding>
+                                </Button.CommandParameter>
                             </Button>
                         </StackPanel>
-                        <Grid Grid.Row="18" Grid.ColumnSpan="2">
+                        <Label Content="Шаблон акта: " Grid.Row="17" Grid.Column="0"/>
+                        <StackPanel Grid.Row="17" Grid.Column="1" Orientation="Horizontal">
+                            <TextBlock Text="{Binding ElementName=ContractorsGrid, Path=SelectedItem.ActFileTemplate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                       VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+                            <Button Background="Transparent" BorderBrush="Transparent" ToolTip="Открыть диалог для выбора файла"
+                                    Command="{Binding OpenFileDialog}">
+                                <Image Source="\Images\free-icon-folder_open.png" Width="20" Height="20"/>
+                                <Button.CommandParameter>
+                                    <MultiBinding Converter="{StaticResource MultiValueConverter}">
+                                        <Binding ElementName="ContractorsGrid" Path="SelectedItem"/>
+                                        <Binding Source="Act"/>
+                                    </MultiBinding>
+                                </Button.CommandParameter>
+                            </Button>
+                        </StackPanel>
+                        <Grid Grid.Row="19" Grid.ColumnSpan="2">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition/>
                                 <ColumnDefinition/>
                                 <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
-                            <!--Command="ApplicationCommands.Save"-->
                             <Button x:Name="SaveContractors_Button" Grid.Column="1" Grid.Row="0" Command="{Binding SaveCommand}" ToolTip="Сохранить изменения в базе данных">
                                 <StackPanel>
                                     <Image Source="/Images/BlueUI-сохранить-40.png" Width="30" Height="30"/>
