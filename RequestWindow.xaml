@@ -1690,15 +1690,13 @@
                                         </StackPanel>
                                     </Button>
                                 </StackPanel>
-                                <StackPanel Grid.Column="1" Grid.Row="8" Orientation="Horizontal" Margin="3,0,0,0">
-                                    <RadioButton GroupName="ActTemplate" Name="TemplateAct" IsChecked="True" VerticalContentAlignment="Center">
-                                        <StackPanel Orientation="Horizontal">
-                                            <TextBlock Text=" Акт"/>
-                                            <CheckBox Margin="5,0,15,0" Content="с подписью и печатью" Name="ActWithSignature" VerticalAlignment="Center"/>
-                                        </StackPanel>
-                                    </RadioButton>
-                                    <RadioButton GroupName="ActTemplate" Name="TemplateSFTN" Margin="3,0,0,0" Content=" СФ и ТН" VerticalContentAlignment="Center" />
-                                    <RadioButton GroupName="ActTemplate" Name="TemplateUPD" Margin="3,0,0,0" Content=" УПД" VerticalContentAlignment="Center" />
+                                <StackPanel Grid.Column="1" Grid.Row="8" Orientation="Vertical" Margin="3,0,0,0" VerticalAlignment="Center">
+                                    <StackPanel Orientation="Horizontal">
+                                        <RadioButton GroupName="ActTemplate" Name="TemplateAct" Content=" Акт " IsChecked="True" VerticalContentAlignment="Center"/>
+                                        <RadioButton GroupName="ActTemplate" Name="TemplateSFTN" Margin="3,0,0,0" Content=" СФ и ТН" VerticalContentAlignment="Center" />
+                                        <RadioButton GroupName="ActTemplate" Name="TemplateUPD" Margin="3,0,0,0" Content=" УПД" VerticalContentAlignment="Center" />
+                                    </StackPanel>
+                                    <CheckBox Margin="0,5,0,0" Content="с подписью и печатью" Name="ActWithSignature" HorizontalAlignment="Left"/>
                                 </StackPanel>
                             </Grid>
                         </ScrollViewer>

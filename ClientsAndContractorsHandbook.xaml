@@ -729,6 +729,12 @@
                             <!--бланк счета на оплату-->
                             <RowDefinition Height="Auto"/>
                             <!--бланк акта -->
+                            <RowDefinition Height="Auto"/>
+                            <!--бланк счет-фактуры -->
+                            <RowDefinition Height="Auto"/>
+                            <!--бланк товарной накладной -->
+                            <RowDefinition Height="Auto"/>
+                            <!--бланк УПД -->
                             <RowDefinition Height="*"/>
                             <!--пусто-->
                             <RowDefinition Height="Auto"/>
@@ -873,7 +879,52 @@
                                 </Button.CommandParameter>
                             </Button>
                         </StackPanel>
-                        <Grid Grid.Row="19" Grid.ColumnSpan="2">
+                        <Label Content="Шаблон счет-фактуры: " Grid.Row="18" Grid.Column="0"/>
+                        <StackPanel Grid.Row="18" Grid.Column="1" Orientation="Horizontal">
+                            <TextBlock Text="{Binding ElementName=ContractorsGrid, Path=SelectedItem.SFFileTemplate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                       VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+                            <Button Background="Transparent" BorderBrush="Transparent" ToolTip="Открыть диалог для выбора файла"
+                                    Command="{Binding OpenFileDialog}">
+                                <Image Source="\Images\free-icon-folder_open.png" Width="20" Height="20"/>
+                                <Button.CommandParameter>
+                                    <MultiBinding Converter="{StaticResource MultiValueConverter}">
+                                        <Binding ElementName="ContractorsGrid" Path="SelectedItem"/>
+                                        <Binding Source="SF"/>
+                                    </MultiBinding>
+                                </Button.CommandParameter>
+                            </Button>
+                        </StackPanel>
+                        <Label Content="Шаблон товарной накладной: " Grid.Row="19" Grid.Column="0"/>
+                        <StackPanel Grid.Row="19" Grid.Column="1" Orientation="Horizontal">
+                            <TextBlock Text="{Binding ElementName=ContractorsGrid, Path=SelectedItem.TNFileTemplate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                       VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+                            <Button Background="Transparent" BorderBrush="Transparent" ToolTip="Открыть диалог для выбора файла"
+                                    Command="{Binding OpenFileDialog}">
+                                <Image Source="\Images\free-icon-folder_open.png" Width="20" Height="20"/>
+                                <Button.CommandParameter>
+                                    <MultiBinding Converter="{StaticResource MultiValueConverter}">
+                                        <Binding ElementName="ContractorsGrid" Path="SelectedItem"/>
+                                        <Binding Source="TN"/>
+                                    </MultiBinding>
+                                </Button.CommandParameter>
+                            </Button>
+                        </StackPanel>
+                        <Label Content="Шаблон УПД: " Grid.Row="20" Grid.Column="0"/>
+                        <StackPanel Grid.Row="20" Grid.Column="1" Orientation="Horizontal">
+                            <TextBlock Text="{Binding ElementName=ContractorsGrid, Path=SelectedItem.UPDFileTemplate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                       VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+                            <Button Background="Transparent" BorderBrush="Transparent" ToolTip="Открыть диалог для выбора файла"
+                                    Command="{Binding OpenFileDialog}">
+                                <Image Source="\Images\free-icon-folder_open.png" Width="20" Height="20"/>
+                                <Button.CommandParameter>
+                                    <MultiBinding Converter="{StaticResource MultiValueConverter}">
+                                        <Binding ElementName="ContractorsGrid" Path="SelectedItem"/>
+                                        <Binding Source="UPD"/>
+                                    </MultiBinding>
+                                </Button.CommandParameter>
+                            </Button>
+                        </StackPanel>
+                        <Grid Grid.Row="22" Grid.ColumnSpan="2">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition/>
                                 <ColumnDefinition/>

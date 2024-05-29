@@ -472,6 +472,7 @@ namespace AdvertisementWpf
                     report.SetParameterValue("ReportDate", ReportDate);
                     report.SetParameterValue("DateInWords", ReportDateInWords);
                     report.SetParameterValue("AmountInWords", AmountInWords);
+                    report.SetParameterValue("WithSignature", WithSignature);
                     ReadyReportFileName = "SF.pdf";
                 }
                 else if (ReportMode == "TNForm")
@@ -486,6 +487,7 @@ namespace AdvertisementWpf
                     report.SetParameterValue("freeString1", FreeValue[0]);
                     report.SetParameterValue("freeString2", FreeValue[1]);
                     report.SetParameterValue("DateInWords", ReportDateInWords);
+                    report.SetParameterValue("WithSignature", WithSignature);
                     ReadyReportFileName = "TN.pdf";
                 }
                 else if (ReportMode == "UPDForm")
@@ -498,6 +500,7 @@ namespace AdvertisementWpf
                     report.SetParameterValue("MonthInWords", MonthInWords);
                     report.SetParameterValue("CargoReleasePostName", CargoReleasePostName);
                     report.SetParameterValue("CargoReleaseName", CargoReleaseName);
+                    report.SetParameterValue("WithSignature", WithSignature);
                     ReadyReportFileName = "UPD.pdf";
                 }
                 else if (ReportMode == "OrderListViewForm")

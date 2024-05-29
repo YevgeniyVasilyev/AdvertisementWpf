@@ -55,6 +55,36 @@ namespace AdvertisementWpf.Models
                 NotifyPropertyChanged("ActFileTemplate");
             }
         }
+        private string _SFFileTemplate { get; set; } = "";
+        public string SFFileTemplate
+        {
+            get => _SFFileTemplate;
+            set
+            {
+                _SFFileTemplate = value;
+                NotifyPropertyChanged("SFFileTemplate");
+            }
+        }
+        private string _TNFileTemplate { get; set; } = "";
+        public string TNFileTemplate
+        {
+            get => _TNFileTemplate;
+            set
+            {
+                _TNFileTemplate = value;
+                NotifyPropertyChanged("TNFileTemplate");
+            }
+        }
+        private string _UPDFileTemplate { get; set; } = "";
+        public string UPDFileTemplate
+        {
+            get => _UPDFileTemplate;
+            set
+            {
+                _UPDFileTemplate = value;
+                NotifyPropertyChanged("UPDFileTemplate");
+            }
+        }
         public virtual Bank Bank { get; set; }
         public virtual ICollection<Account> Accounts { get; set; }
 

@@ -7,7 +7,6 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.ComponentModel;
 using System.Windows.Data;
-using System.Collections.ObjectModel;
 using System.Reflection;
 using System.Collections.Generic;
 

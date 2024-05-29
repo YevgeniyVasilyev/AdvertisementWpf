@@ -193,6 +193,18 @@ namespace AdvertisementWpf.Models
                     {
                         contractor.ActFileTemplate = System.IO.Path.GetFileName(dialog.FileName);
                     }
+                    else if (mode.ToLower() == "sf")
+                    {
+                        contractor.SFFileTemplate = System.IO.Path.GetFileName(dialog.FileName);
+                    }
+                    else if (mode.ToLower() == "tn")
+                    {
+                        contractor.TNFileTemplate = System.IO.Path.GetFileName(dialog.FileName);
+                    }
+                    else if (mode.ToLower() == "upd")
+                    {
+                        contractor.UPDFileTemplate = System.IO.Path.GetFileName(dialog.FileName);
+                    }
                 }
             }
             catch (Exception ex)

@@ -2071,6 +2071,9 @@ namespace AdvertisementWpf.Models
                 {
                     MainWindow.statusBar.WriteStatus("Получение данных ...", Cursors.Wait);
                     string ActFileTemplate = account.Contractor?.ActFileTemplate ?? "";
+                    string SFFileTemplate = account.Contractor?.SFFileTemplate ?? "";
+                    string TNFileTemplate = account.Contractor?.TNFileTemplate ?? "";
+                    string UPDFileTemplate = account.Contractor?.UPDFileTemplate ?? "";
                     string _pathToReportTemplate = _reportcontext.Setting.FirstOrDefault(setting => setting.SettingParameterName == "PathToReportTemplate").SettingParameterValue;
                     List<Account> accounts = new List<Account> { account };
                     Reports.AccountDataSet = accounts;
@@ -2092,26 +2095,28 @@ namespace AdvertisementWpf.Models
                         }
                         else
                         {
-                            _ = MessageBox.Show("Не найден файл Act.frx !", "Ошибка формирования акта", MessageBoxButton.OK, MessageBoxImage.Error);
+                            _ = MessageBox.Show($"Не найден файл {ActFileTemplate} !", "Ошибка формирования акта", MessageBoxButton.OK, MessageBoxImage.Error);
                         }
                     }
                     else if (templateSFTN)
                     {
-                        if (File.Exists(Path.Combine(_pathToReportTemplate, "SF.frx")))
+                        if (File.Exists(Path.Combine(_pathToReportTemplate, SFFileTemplate)))
                         {
-                            Reports.ReportFileName = Path.Combine(_pathToReportTemplate, "SF.frx");
+                            Reports.ReportFileName = Path.Combine(_pathToReportTemplate, SFFileTemplate);
                             Reports.ReportDateInWords = InWords.Date(dateTime);
                             Reports.ReportMode = "SFForm";
+                            Reports.WithSignature = withSignature;
                             Reports.RunReport();
                         }
                         else
                         {
-                            _ = MessageBox.Show("Не найден файл SF.frx !", "Ошибка формирования СФ", MessageBoxButton.OK, MessageBoxImage.Error);
+                            _ = MessageBox.Show($"Не найден файл {SFFileTemplate} !", "Ошибка формирования СФ", MessageBoxButton.OK, MessageBoxImage.Error);
                         }
-                        if (File.Exists(Path.Combine(_pathToReportTemplate, "TN.frx")))
+                        if (File.Exists(Path.Combine(_pathToReportTemplate, TNFileTemplate)))
                         {
-                            Reports.ReportFileName = Path.Combine(_pathToReportTemplate, "TN.frx");
+                            Reports.ReportFileName = Path.Combine(_pathToReportTemplate, TNFileTemplate);
                             Reports.ReportMode = "TNForm";
+                            Reports.WithSignature = withSignature;
                             Reports.NumberInWords = InWords.Number(Reports.ActDataSet[0].DetailsList.Count);
                             Reports.CargoReleasePostName = MainWindow.Userdata.PostName;
                             Reports.CargoReleaseName = MainWindow.Userdata.ShortUserName;
@@ -2132,15 +2137,16 @@ namespace AdvertisementWpf.Models
                         }
                         else
                         {
-                            _ = MessageBox.Show("Не найден файл TN.frx !", "Ошибка формирования ТН", MessageBoxButton.OK, MessageBoxImage.Error);
+                            _ = MessageBox.Show($"Не найден файл {TNFileTemplate} !", "Ошибка формирования ТН", MessageBoxButton.OK, MessageBoxImage.Error);
                         }
                     }
                     else if (templateUPD)
                     {
-                        if (File.Exists(Path.Combine(_pathToReportTemplate, "UPD.frx")))
+                        if (File.Exists(Path.Combine(_pathToReportTemplate, UPDFileTemplate)))
                         {
-                            Reports.ReportFileName = Path.Combine(_pathToReportTemplate, "UPD.frx");
+                            Reports.ReportFileName = Path.Combine(_pathToReportTemplate, UPDFileTemplate);
                             Reports.ReportMode = "UPDForm";
+                            Reports.WithSignature = withSignature;
                             Reports.MonthInWords = InWords.Month(dateTime);
                             Reports.CargoReleasePostName = MainWindow.Userdata.PostName;
                             Reports.CargoReleaseName = MainWindow.Userdata.ShortUserName;
@@ -2149,7 +2155,7 @@ namespace AdvertisementWpf.Models
                         }
                         else
                         {
-                            _ = MessageBox.Show("Не найден файл UPD.frx !", "Ошибка формирования УПД", MessageBoxButton.OK, MessageBoxImage.Error);
+                            _ = MessageBox.Show($"Не найден файл {UPDFileTemplate} !", "Ошибка формирования УПД", MessageBoxButton.OK, MessageBoxImage.Error);
                         }
                     }
                 }
