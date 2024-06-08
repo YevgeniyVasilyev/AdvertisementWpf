@@ -24,7 +24,6 @@ namespace AdvertisementWpf.Models
     {
         public Order()
         {
-            //Products = new HashSet<Product>();
             Products = new List<Product> { };
             Payments = new List<Payment> { };
             Accounts = new List<Account> { };
@@ -2122,6 +2121,7 @@ namespace AdvertisementWpf.Models
                             Reports.CargoReleaseName = MainWindow.Userdata.ShortUserName;
                             Reports.ReportDateInWords = InWords.Date(dateTime);
                             Reports.FreeValue = new List<string> { "", "" };
+                            //разбор строки "основание для оплаты" для вычленения номера и даты счета
                             MatchCollection matchCollection = Regex.Matches(account.Footing, @"(№|N)?(\s*\w*-?\w*\s*)от(\s*\d{2}.\d{2}.\d{2,4})", RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.CultureInvariant, TimeSpan.FromMilliseconds(200));
                             if (matchCollection.Count > 0)
                             {

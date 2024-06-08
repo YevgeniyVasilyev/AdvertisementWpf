@@ -347,7 +347,8 @@
                         <ColumnDefinition Width="0.3*"/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="30"/>
+                        <!--<RowDefinition Height="30"/>-->
+                        <RowDefinition Height="*"/>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="30"/>
                         <RowDefinition Height="30"/>
@@ -355,6 +356,15 @@
                     <TextBlock Grid.Column="0" Grid.Row="0" Text=" Номер заказа: " VerticalAlignment="Center"/>
                     <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Path=CurrentOrder.Number}" FontWeight="Bold" VerticalAlignment="Center"/>
                     <TextBlock Grid.Column="3" Grid.Row="0" Text=" Заказчик: " VerticalAlignment="Center"/>
+                    <!--<StackPanel Grid.Column="4" Grid.Row="0" Orientation="Vertical">
+                        <ComboBox Name="ClientComboBox" VerticalAlignment="Center" IsEditable="False"
+                               ItemsSource="{Binding ClientCollectionView}"
+                               SelectedValue="{Binding Path=CurrentOrder.ClientID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged,NotifyOnValidationError=True}"  
+                               Validation.Error="TextBoxError"
+                               SelectedValuePath="ID" DisplayMemberPath="ShortName">
+                        </ComboBox>
+                        <TextBlock Text="{Binding ElementName=ClientComboBox, Path=SelectedItem.Name}" TextWrapping="Wrap"/>
+                    </StackPanel>-->
                     <ComboBox  Grid.Column="4" Grid.Row="0" Name="ClientComboBox" VerticalAlignment="Center" IsEditable="False"
                                ItemsSource="{Binding ClientCollectionView}"
                                SelectedValue="{Binding Path=CurrentOrder.ClientID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged,NotifyOnValidationError=True}"  

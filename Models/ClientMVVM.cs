@@ -17,6 +17,16 @@ namespace AdvertisementWpf.Models
 {
     public partial class Client : INotifyPropertyChanged
     {
+        private string _name { get; set; }
+        public string Name
+        { 
+            get => _name;
+            set
+            {
+                _name = value;
+                NotifyPropertyChanged("Name");
+            }
+        }
         private string _clientInfoForAccount = "";
         [NotMapped]
         public string ClientInfoForAccount
@@ -166,7 +176,7 @@ namespace AdvertisementWpf.Models
         private RelayCommand saveCommand, newCommand, deleteCommand, printCommand;
         public App.AppDbContext _context = new App.AppDbContext(MainWindow.Connectiondata.Connectionstring);
 
-        private ObservableCollection<Client> _Clients { get; set; }
+        public ObservableCollection<Client> _Clients { get; set; }
         public ICollectionView Clients { get; set; }
         public List<string> PropertyFormNames { get; set; }
 

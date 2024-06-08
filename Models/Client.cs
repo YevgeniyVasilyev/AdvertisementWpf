@@ -14,7 +14,7 @@ namespace AdvertisementWpf.Models
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long ID { get; set; }
-        public string Name { get; set; }
+        //public string Name { get; set; }
         public string ShortName { get; set; }
         public string Profile { get; set; } = "";
         private byte _formProperty = 1;
