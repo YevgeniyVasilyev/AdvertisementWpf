@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Report ScriptLanguage="CSharp" ReportInfo.Created="07/06/2022 20:44:22" ReportInfo.Modified="09/13/2023 19:43:03" ReportInfo.CreatorVersion="2023.1.0.0">
+<Report ScriptLanguage="CSharp" ReportInfo.Created="07/06/2022 20:44:22" ReportInfo.Modified="07/28/2024 12:51:26" ReportInfo.CreatorVersion="2024.1.3.0">
   <ScriptText>using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -72,18 +72,18 @@ namespace FastReport
 }
 </ScriptText>
   <Dictionary>
-    <BusinessObjectDataSource Name="Order" ReferenceName="Order" DataType="null" Enabled="true">
+    <BusinessObjectDataSource Name="Order" ReferenceName="Order" DataType="System.Int32" Enabled="true">
       <Column Name="ID" DataType="System.Int64"/>
       <Column Name="Number" DataType="System.String"/>
       <Column Name="ClientID" DataType="System.Int64"/>
       <Column Name="Note" DataType="System.String"/>
-      <Column Name="DateAdmission" DataType="null"/>
-      <Column Name="DateCompletion" DataType="null"/>
-      <Column Name="DateProductionLayout" DataType="null"/>
+      <Column Name="DateAdmission" DataType="System.Int32"/>
+      <Column Name="DateCompletion" DataType="System.Int32"/>
+      <Column Name="DateProductionLayout" DataType="System.Int32"/>
       <Column Name="OrderEnteredID" DataType="System.Int64"/>
-      <Column Name="ManagerID" DataType="null"/>
-      <Column Name="DesignerID" DataType="null"/>
-      <Column Name="Client" DataType="null">
+      <Column Name="ManagerID" DataType="System.Int32"/>
+      <Column Name="DesignerID" DataType="System.Int32"/>
+      <Column Name="Client" DataType="System.Int32">
         <Column Name="ID" DataType="System.Int64"/>
         <Column Name="Name" DataType="System.String"/>
         <Column Name="Profile" DataType="System.String"/>
@@ -96,14 +96,14 @@ namespace FastReport
         <Column Name="INN" DataType="System.String"/>
         <Column Name="KPP" DataType="System.String"/>
         <Column Name="BankAccount" DataType="System.String"/>
-        <Column Name="BankID" DataType="null"/>
+        <Column Name="BankID" DataType="System.Int32"/>
         <Column Name="IsActive" DataType="System.Boolean" BindableControl="CheckBox"/>
         <Column Name="Note" DataType="System.Byte[]" BindableControl="Picture"/>
         <Column Name="UserID" DataType="System.Int64"/>
         <Column Name="MobilePhone" DataType="System.String"/>
         <Column Name="WorkPhone" DataType="System.String"/>
         <Column Name="Email" DataType="System.String"/>
-        <Column Name="Bank" DataType="null">
+        <Column Name="Bank" DataType="System.Int32">
           <Column Name="ID" DataType="System.Int64"/>
           <Column Name="Name" DataType="System.String"/>
           <Column Name="LocalitiesID" DataType="System.Int64"/>
@@ -111,11 +111,11 @@ namespace FastReport
           <Column Name="BIK" DataType="System.String"/>
           <Column Name="OKPO" DataType="System.String"/>
           <Column Name="OKONX" DataType="System.String"/>
-          <Column Name="Localities" DataType="null"/>
-          <BusinessObjectDataSource Name="Clients" Enabled="false" DataType="null"/>
-          <BusinessObjectDataSource Name="Contractors" Enabled="false" DataType="null"/>
+          <Column Name="Localities" DataType="System.Int32"/>
+          <BusinessObjectDataSource Name="Clients" Enabled="false" DataType="System.Int32"/>
+          <BusinessObjectDataSource Name="Contractors" Enabled="false" DataType="System.Int32"/>
         </Column>
-        <Column Name="User" DataType="null">
+        <Column Name="User" DataType="System.Int32">
           <Column Name="ID" DataType="System.Int64"/>
           <Column Name="FirstName" DataType="System.String"/>
           <Column Name="LastName" DataType="System.String"/>
@@ -129,36 +129,36 @@ namespace FastReport
           <Column Name="Phone" DataType="System.String"/>
           <Column Name="Email" DataType="System.String"/>
           <Column Name="CardNumber" DataType="System.String"/>
-          <Column Name="Role" DataType="null"/>
-          <BusinessObjectDataSource Name="Clients1" Alias="Clients" Enabled="false" DataType="null" PropName="Clients"/>
-          <BusinessObjectDataSource Name="OrderDesigners" Enabled="false" DataType="null"/>
-          <BusinessObjectDataSource Name="OrderManagers" Enabled="false" DataType="null"/>
-          <BusinessObjectDataSource Name="OrderOrderEntereds" Enabled="false" DataType="null"/>
+          <Column Name="Role" DataType="System.Int32"/>
+          <BusinessObjectDataSource Name="Clients1" Alias="Clients" Enabled="false" DataType="System.Int32" PropName="Clients"/>
+          <BusinessObjectDataSource Name="OrderDesigners" Enabled="false" DataType="System.Int32"/>
+          <BusinessObjectDataSource Name="OrderManagers" Enabled="false" DataType="System.Int32"/>
+          <BusinessObjectDataSource Name="OrderOrderEntereds" Enabled="false" DataType="System.Int32"/>
           <Column Name="FullUserName" DataType="System.String"/>
           <Column Name="ShortUserName" DataType="System.String"/>
         </Column>
-        <BusinessObjectDataSource Name="Orders" DataType="null" Enabled="true">
+        <BusinessObjectDataSource Name="Orders" DataType="System.Int32" Enabled="true">
           <Column Name="ID" DataType="System.Int64"/>
           <Column Name="Number" DataType="System.String"/>
           <Column Name="ClientID" DataType="System.Int64"/>
           <Column Name="Note" DataType="System.String"/>
-          <Column Name="DateAdmission" DataType="null"/>
-          <Column Name="DateCompletion" DataType="null"/>
-          <Column Name="DateProductionLayout" DataType="null"/>
+          <Column Name="DateAdmission" DataType="System.Int32"/>
+          <Column Name="DateCompletion" DataType="System.Int32"/>
+          <Column Name="DateProductionLayout" DataType="System.Int32"/>
           <Column Name="OrderEnteredID" DataType="System.Int64"/>
-          <Column Name="ManagerID" DataType="null"/>
-          <Column Name="DesignerID" DataType="null"/>
-          <Column Name="Client" DataType="null"/>
-          <Column Name="Designer" DataType="null"/>
-          <Column Name="Manager" DataType="null"/>
-          <Column Name="OrderEntered" DataType="null"/>
-          <BusinessObjectDataSource Name="Products" Enabled="false" DataType="null"/>
+          <Column Name="ManagerID" DataType="System.Int32"/>
+          <Column Name="DesignerID" DataType="System.Int32"/>
+          <Column Name="Client" DataType="System.Int32"/>
+          <Column Name="Designer" DataType="System.Int32"/>
+          <Column Name="Manager" DataType="System.Int32"/>
+          <Column Name="OrderEntered" DataType="System.Int32"/>
+          <BusinessObjectDataSource Name="Products" Enabled="false" DataType="System.Int32"/>
           <Column Name="OrderCost" DataType="System.Decimal"/>
           <Column Name="CountProduct" DataType="System.Int16"/>
           <Column Name="State" DataType="System.String"/>
         </BusinessObjectDataSource>
       </Column>
-      <Column Name="Designer" DataType="null">
+      <Column Name="Designer" DataType="System.Int32">
         <Column Name="ID" DataType="System.Int64"/>
         <Column Name="FirstName" DataType="System.String"/>
         <Column Name="LastName" DataType="System.String"/>
@@ -172,12 +172,12 @@ namespace FastReport
         <Column Name="Phone" DataType="System.String"/>
         <Column Name="Email" DataType="System.String"/>
         <Column Name="CardNumber" DataType="System.String"/>
-        <Column Name="Role" DataType="null">
+        <Column Name="Role" DataType="System.Int32">
           <Column Name="ID" DataType="System.Int64"/>
           <Column Name="RoleName" DataType="System.String"/>
-          <BusinessObjectDataSource Name="Users" Enabled="false" DataType="null"/>
+          <BusinessObjectDataSource Name="Users" Enabled="false" DataType="System.Int32"/>
         </Column>
-        <BusinessObjectDataSource Name="Clients2" Alias="Clients" DataType="null" PropName="Clients" Enabled="true">
+        <BusinessObjectDataSource Name="Clients2" Alias="Clients" DataType="System.Int32" PropName="Clients" Enabled="true">
           <Column Name="ID" DataType="System.Int64"/>
           <Column Name="Name" DataType="System.String"/>
           <Column Name="Profile" DataType="System.String"/>
@@ -190,73 +190,73 @@ namespace FastReport
           <Column Name="INN" DataType="System.String"/>
           <Column Name="KPP" DataType="System.String"/>
           <Column Name="BankAccount" DataType="System.String"/>
-          <Column Name="BankID" DataType="null"/>
+          <Column Name="BankID" DataType="System.Int32"/>
           <Column Name="IsActive" DataType="System.Boolean" BindableControl="CheckBox"/>
           <Column Name="Note" DataType="System.Byte[]" BindableControl="Picture"/>
           <Column Name="UserID" DataType="System.Int64"/>
           <Column Name="MobilePhone" DataType="System.String"/>
           <Column Name="WorkPhone" DataType="System.String"/>
           <Column Name="Email" DataType="System.String"/>
-          <Column Name="Bank" DataType="null"/>
-          <Column Name="User" DataType="null"/>
-          <BusinessObjectDataSource Name="Orders1" Alias="Orders" Enabled="false" DataType="null" PropName="Orders"/>
+          <Column Name="Bank" DataType="System.Int32"/>
+          <Column Name="User" DataType="System.Int32"/>
+          <BusinessObjectDataSource Name="Orders1" Alias="Orders" Enabled="false" DataType="System.Int32" PropName="Orders"/>
         </BusinessObjectDataSource>
-        <BusinessObjectDataSource Name="OrderDesigners1" Alias="OrderDesigners" DataType="null" PropName="OrderDesigners" Enabled="true">
+        <BusinessObjectDataSource Name="OrderDesigners1" Alias="OrderDesigners" DataType="System.Int32" PropName="OrderDesigners" Enabled="true">
           <Column Name="ID" DataType="System.Int64"/>
           <Column Name="Number" DataType="System.String"/>
           <Column Name="ClientID" DataType="System.Int64"/>
           <Column Name="Note" DataType="System.String"/>
-          <Column Name="DateAdmission" DataType="null"/>
-          <Column Name="DateCompletion" DataType="null"/>
-          <Column Name="DateProductionLayout" DataType="null"/>
+          <Column Name="DateAdmission" DataType="System.Int32"/>
+          <Column Name="DateCompletion" DataType="System.Int32"/>
+          <Column Name="DateProductionLayout" DataType="System.Int32"/>
           <Column Name="OrderEnteredID" DataType="System.Int64"/>
-          <Column Name="ManagerID" DataType="null"/>
-          <Column Name="DesignerID" DataType="null"/>
-          <Column Name="Client" DataType="null"/>
-          <Column Name="Designer" DataType="null"/>
-          <Column Name="Manager" DataType="null"/>
-          <Column Name="OrderEntered" DataType="null"/>
-          <BusinessObjectDataSource Name="Products1" Alias="Products" Enabled="false" DataType="null" PropName="Products"/>
+          <Column Name="ManagerID" DataType="System.Int32"/>
+          <Column Name="DesignerID" DataType="System.Int32"/>
+          <Column Name="Client" DataType="System.Int32"/>
+          <Column Name="Designer" DataType="System.Int32"/>
+          <Column Name="Manager" DataType="System.Int32"/>
+          <Column Name="OrderEntered" DataType="System.Int32"/>
+          <BusinessObjectDataSource Name="Products1" Alias="Products" Enabled="false" DataType="System.Int32" PropName="Products"/>
           <Column Name="OrderCost" DataType="System.Decimal"/>
           <Column Name="CountProduct" DataType="System.Int16"/>
           <Column Name="State" DataType="System.String"/>
         </BusinessObjectDataSource>
-        <BusinessObjectDataSource Name="OrderManagers1" Alias="OrderManagers" DataType="null" PropName="OrderManagers" Enabled="true">
+        <BusinessObjectDataSource Name="OrderManagers1" Alias="OrderManagers" DataType="System.Int32" PropName="OrderManagers" Enabled="true">
           <Column Name="ID" DataType="System.Int64"/>
           <Column Name="Number" DataType="System.String"/>
           <Column Name="ClientID" DataType="System.Int64"/>
           <Column Name="Note" DataType="System.String"/>
-          <Column Name="DateAdmission" DataType="null"/>
-          <Column Name="DateCompletion" DataType="null"/>
-          <Column Name="DateProductionLayout" DataType="null"/>
+          <Column Name="DateAdmission" DataType="System.Int32"/>
+          <Column Name="DateCompletion" DataType="System.Int32"/>
+          <Column Name="DateProductionLayout" DataType="System.Int32"/>
           <Column Name="OrderEnteredID" DataType="System.Int64"/>
-          <Column Name="ManagerID" DataType="null"/>
-          <Column Name="DesignerID" DataType="null"/>
-          <Column Name="Client" DataType="null"/>
-          <Column Name="Designer" DataType="null"/>
-          <Column Name="Manager" DataType="null"/>
-          <Column Name="OrderEntered" DataType="null"/>
-          <BusinessObjectDataSource Name="Products2" Alias="Products" Enabled="false" DataType="null" PropName="Products"/>
+          <Column Name="ManagerID" DataType="System.Int32"/>
+          <Column Name="DesignerID" DataType="System.Int32"/>
+          <Column Name="Client" DataType="System.Int32"/>
+          <Column Name="Designer" DataType="System.Int32"/>
+          <Column Name="Manager" DataType="System.Int32"/>
+          <Column Name="OrderEntered" DataType="System.Int32"/>
+          <BusinessObjectDataSource Name="Products2" Alias="Products" Enabled="false" DataType="System.Int32" PropName="Products"/>
           <Column Name="OrderCost" DataType="System.Decimal"/>
           <Column Name="CountProduct" DataType="System.Int16"/>
           <Column Name="State" DataType="System.String"/>
         </BusinessObjectDataSource>
-        <BusinessObjectDataSource Name="OrderOrderEntereds1" Alias="OrderOrderEntereds" DataType="null" PropName="OrderOrderEntereds" Enabled="true">
+        <BusinessObjectDataSource Name="OrderOrderEntereds1" Alias="OrderOrderEntereds" DataType="System.Int32" PropName="OrderOrderEntereds" Enabled="true">
           <Column Name="ID" DataType="System.Int64"/>
           <Column Name="Number" DataType="System.String"/>
           <Column Name="ClientID" DataType="System.Int64"/>
           <Column Name="Note" DataType="System.String"/>
-          <Column Name="DateAdmission" DataType="null"/>
-          <Column Name="DateCompletion" DataType="null"/>
-          <Column Name="DateProductionLayout" DataType="null"/>
+          <Column Name="DateAdmission" DataType="System.Int32"/>
+          <Column Name="DateCompletion" DataType="System.Int32"/>
+          <Column Name="DateProductionLayout" DataType="System.Int32"/>
           <Column Name="OrderEnteredID" DataType="System.Int64"/>
-          <Column Name="ManagerID" DataType="null"/>
-          <Column Name="DesignerID" DataType="null"/>
-          <Column Name="Client" DataType="null"/>
-          <Column Name="Designer" DataType="null"/>
-          <Column Name="Manager" DataType="null"/>
-          <Column Name="OrderEntered" DataType="null"/>
-          <BusinessObjectDataSource Name="Products3" Alias="Products" Enabled="false" DataType="null" PropName="Products"/>
+          <Column Name="ManagerID" DataType="System.Int32"/>
+          <Column Name="DesignerID" DataType="System.Int32"/>
+          <Column Name="Client" DataType="System.Int32"/>
+          <Column Name="Designer" DataType="System.Int32"/>
+          <Column Name="Manager" DataType="System.Int32"/>
+          <Column Name="OrderEntered" DataType="System.Int32"/>
+          <BusinessObjectDataSource Name="Products3" Alias="Products" Enabled="false" DataType="System.Int32" PropName="Products"/>
           <Column Name="OrderCost" DataType="System.Decimal"/>
           <Column Name="CountProduct" DataType="System.Int16"/>
           <Column Name="State" DataType="System.String"/>
@@ -264,7 +264,7 @@ namespace FastReport
         <Column Name="FullUserName" DataType="System.String"/>
         <Column Name="ShortUserName" DataType="System.String"/>
       </Column>
-      <Column Name="Manager" DataType="null">
+      <Column Name="Manager" DataType="System.Int32">
         <Column Name="ID" DataType="System.Int64"/>
         <Column Name="FirstName" DataType="System.String"/>
         <Column Name="LastName" DataType="System.String"/>
@@ -278,12 +278,12 @@ namespace FastReport
         <Column Name="Phone" DataType="System.String"/>
         <Column Name="Email" DataType="System.String"/>
         <Column Name="CardNumber" DataType="System.String"/>
-        <Column Name="Role" DataType="null">
+        <Column Name="Role" DataType="System.Int32">
           <Column Name="ID" DataType="System.Int64"/>
           <Column Name="RoleName" DataType="System.String"/>
-          <BusinessObjectDataSource Name="Users1" Alias="Users" Enabled="false" DataType="null" PropName="Users"/>
+          <BusinessObjectDataSource Name="Users1" Alias="Users" Enabled="false" DataType="System.Int32" PropName="Users"/>
         </Column>
-        <BusinessObjectDataSource Name="Clients3" Alias="Clients" DataType="null" PropName="Clients" Enabled="true">
+        <BusinessObjectDataSource Name="Clients3" Alias="Clients" DataType="System.Int32" PropName="Clients" Enabled="true">
           <Column Name="ID" DataType="System.Int64"/>
           <Column Name="Name" DataType="System.String"/>
           <Column Name="Profile" DataType="System.String"/>
@@ -296,73 +296,73 @@ namespace FastReport
           <Column Name="INN" DataType="System.String"/>
           <Column Name="KPP" DataType="System.String"/>
           <Column Name="BankAccount" DataType="System.String"/>
-          <Column Name="BankID" DataType="null"/>
+          <Column Name="BankID" DataType="System.Int32"/>
           <Column Name="IsActive" DataType="System.Boolean" BindableControl="CheckBox"/>
           <Column Name="Note" DataType="System.Byte[]" BindableControl="Picture"/>
           <Column Name="UserID" DataType="System.Int64"/>
           <Column Name="MobilePhone" DataType="System.String"/>
           <Column Name="WorkPhone" DataType="System.String"/>
           <Column Name="Email" DataType="System.String"/>
-          <Column Name="Bank" DataType="null"/>
-          <Column Name="User" DataType="null"/>
-          <BusinessObjectDataSource Name="Orders2" Alias="Orders" Enabled="false" DataType="null" PropName="Orders"/>
+          <Column Name="Bank" DataType="System.Int32"/>
+          <Column Name="User" DataType="System.Int32"/>
+          <BusinessObjectDataSource Name="Orders2" Alias="Orders" Enabled="false" DataType="System.Int32" PropName="Orders"/>
         </BusinessObjectDataSource>
-        <BusinessObjectDataSource Name="OrderDesigners2" Alias="OrderDesigners" DataType="null" PropName="OrderDesigners" Enabled="true">
+        <BusinessObjectDataSource Name="OrderDesigners2" Alias="OrderDesigners" DataType="System.Int32" PropName="OrderDesigners" Enabled="true">
           <Column Name="ID" DataType="System.Int64"/>
           <Column Name="Number" DataType="System.String"/>
           <Column Name="ClientID" DataType="System.Int64"/>
           <Column Name="Note" DataType="System.String"/>
-          <Column Name="DateAdmission" DataType="null"/>
-          <Column Name="DateCompletion" DataType="null"/>
-          <Column Name="DateProductionLayout" DataType="null"/>
+          <Column Name="DateAdmission" DataType="System.Int32"/>
+          <Column Name="DateCompletion" DataType="System.Int32"/>
+          <Column Name="DateProductionLayout" DataType="System.Int32"/>
           <Column Name="OrderEnteredID" DataType="System.Int64"/>
-          <Column Name="ManagerID" DataType="null"/>
-          <Column Name="DesignerID" DataType="null"/>
-          <Column Name="Client" DataType="null"/>
-          <Column Name="Designer" DataType="null"/>
-          <Column Name="Manager" DataType="null"/>
-          <Column Name="OrderEntered" DataType="null"/>
-          <BusinessObjectDataSource Name="Products4" Alias="Products" Enabled="false" DataType="null" PropName="Products"/>
+          <Column Name="ManagerID" DataType="System.Int32"/>
+          <Column Name="DesignerID" DataType="System.Int32"/>
+          <Column Name="Client" DataType="System.Int32"/>
+          <Column Name="Designer" DataType="System.Int32"/>
+          <Column Name="Manager" DataType="System.Int32"/>
+          <Column Name="OrderEntered" DataType="System.Int32"/>
+          <BusinessObjectDataSource Name="Products4" Alias="Products" Enabled="false" DataType="System.Int32" PropName="Products"/>
           <Column Name="OrderCost" DataType="System.Decimal"/>
           <Column Name="CountProduct" DataType="System.Int16"/>
           <Column Name="State" DataType="System.String"/>
         </BusinessObjectDataSource>
-        <BusinessObjectDataSource Name="OrderManagers2" Alias="OrderManagers" DataType="null" PropName="OrderManagers" Enabled="true">
+        <BusinessObjectDataSource Name="OrderManagers2" Alias="OrderManagers" DataType="System.Int32" PropName="OrderManagers" Enabled="true">
           <Column Name="ID" DataType="System.Int64"/>
           <Column Name="Number" DataType="System.String"/>
           <Column Name="ClientID" DataType="System.Int64"/>
           <Column Name="Note" DataType="System.String"/>
-          <Column Name="DateAdmission" DataType="null"/>
-          <Column Name="DateCompletion" DataType="null"/>
-          <Column Name="DateProductionLayout" DataType="null"/>
+          <Column Name="DateAdmission" DataType="System.Int32"/>
+          <Column Name="DateCompletion" DataType="System.Int32"/>
+          <Column Name="DateProductionLayout" DataType="System.Int32"/>
           <Column Name="OrderEnteredID" DataType="System.Int64"/>
-          <Column Name="ManagerID" DataType="null"/>
-          <Column Name="DesignerID" DataType="null"/>
-          <Column Name="Client" DataType="null"/>
-          <Column Name="Designer" DataType="null"/>
-          <Column Name="Manager" DataType="null"/>
-          <Column Name="OrderEntered" DataType="null"/>
-          <BusinessObjectDataSource Name="Products5" Alias="Products" Enabled="false" DataType="null" PropName="Products"/>
+          <Column Name="ManagerID" DataType="System.Int32"/>
+          <Column Name="DesignerID" DataType="System.Int32"/>
+          <Column Name="Client" DataType="System.Int32"/>
+          <Column Name="Designer" DataType="System.Int32"/>
+          <Column Name="Manager" DataType="System.Int32"/>
+          <Column Name="OrderEntered" DataType="System.Int32"/>
+          <BusinessObjectDataSource Name="Products5" Alias="Products" Enabled="false" DataType="System.Int32" PropName="Products"/>
           <Column Name="OrderCost" DataType="System.Decimal"/>
           <Column Name="CountProduct" DataType="System.Int16"/>
           <Column Name="State" DataType="System.String"/>
         </BusinessObjectDataSource>
-        <BusinessObjectDataSource Name="OrderOrderEntereds2" Alias="OrderOrderEntereds" DataType="null" PropName="OrderOrderEntereds" Enabled="true">
+        <BusinessObjectDataSource Name="OrderOrderEntereds2" Alias="OrderOrderEntereds" DataType="System.Int32" PropName="OrderOrderEntereds" Enabled="true">
           <Column Name="ID" DataType="System.Int64"/>
           <Column Name="Number" DataType="System.String"/>
           <Column Name="ClientID" DataType="System.Int64"/>
           <Column Name="Note" DataType="System.String"/>
-          <Column Name="DateAdmission" DataType="null"/>
-          <Column Name="DateCompletion" DataType="null"/>
-          <Column Name="DateProductionLayout" DataType="null"/>
+          <Column Name="DateAdmission" DataType="System.Int32"/>
+          <Column Name="DateCompletion" DataType="System.Int32"/>
+          <Column Name="DateProductionLayout" DataType="System.Int32"/>
           <Column Name="OrderEnteredID" DataType="System.Int64"/>
-          <Column Name="ManagerID" DataType="null"/>
-          <Column Name="DesignerID" DataType="null"/>
-          <Column Name="Client" DataType="null"/>
-          <Column Name="Designer" DataType="null"/>
-          <Column Name="Manager" DataType="null"/>
-          <Column Name="OrderEntered" DataType="null"/>
-          <BusinessObjectDataSource Name="Products6" Alias="Products" Enabled="false" DataType="null" PropName="Products"/>
+          <Column Name="ManagerID" DataType="System.Int32"/>
+          <Column Name="DesignerID" DataType="System.Int32"/>
+          <Column Name="Client" DataType="System.Int32"/>
+          <Column Name="Designer" DataType="System.Int32"/>
+          <Column Name="Manager" DataType="System.Int32"/>
+          <Column Name="OrderEntered" DataType="System.Int32"/>
+          <BusinessObjectDataSource Name="Products6" Alias="Products" Enabled="false" DataType="System.Int32" PropName="Products"/>
           <Column Name="OrderCost" DataType="System.Decimal"/>
           <Column Name="CountProduct" DataType="System.Int16"/>
           <Column Name="State" DataType="System.String"/>
@@ -370,7 +370,7 @@ namespace FastReport
         <Column Name="FullUserName" DataType="System.String"/>
         <Column Name="ShortUserName" DataType="System.String"/>
       </Column>
-      <Column Name="OrderEntered" DataType="null">
+      <Column Name="OrderEntered" DataType="System.Int32">
         <Column Name="ID" DataType="System.Int64"/>
         <Column Name="FirstName" DataType="System.String"/>
         <Column Name="LastName" DataType="System.String"/>
@@ -384,12 +384,12 @@ namespace FastReport
         <Column Name="Phone" DataType="System.String"/>
         <Column Name="Email" DataType="System.String"/>
         <Column Name="CardNumber" DataType="System.String"/>
-        <Column Name="Role" DataType="null">
+        <Column Name="Role" DataType="System.Int32">
           <Column Name="ID" DataType="System.Int64"/>
           <Column Name="RoleName" DataType="System.String"/>
-          <BusinessObjectDataSource Name="Users2" Alias="Users" Enabled="false" DataType="null" PropName="Users"/>
+          <BusinessObjectDataSource Name="Users2" Alias="Users" Enabled="false" DataType="System.Int32" PropName="Users"/>
         </Column>
-        <BusinessObjectDataSource Name="Clients4" Alias="Clients" DataType="null" PropName="Clients" Enabled="true">
+        <BusinessObjectDataSource Name="Clients4" Alias="Clients" DataType="System.Int32" PropName="Clients" Enabled="true">
           <Column Name="ID" DataType="System.Int64"/>
           <Column Name="Name" DataType="System.String"/>
           <Column Name="Profile" DataType="System.String"/>
@@ -402,73 +402,73 @@ namespace FastReport
           <Column Name="INN" DataType="System.String"/>
           <Column Name="KPP" DataType="System.String"/>
           <Column Name="BankAccount" DataType="System.String"/>
-          <Column Name="BankID" DataType="null"/>
+          <Column Name="BankID" DataType="System.Int32"/>
           <Column Name="IsActive" DataType="System.Boolean" BindableControl="CheckBox"/>
           <Column Name="Note" DataType="System.Byte[]" BindableControl="Picture"/>
           <Column Name="UserID" DataType="System.Int64"/>
           <Column Name="MobilePhone" DataType="System.String"/>
           <Column Name="WorkPhone" DataType="System.String"/>
           <Column Name="Email" DataType="System.String"/>
-          <Column Name="Bank" DataType="null"/>
-          <Column Name="User" DataType="null"/>
-          <BusinessObjectDataSource Name="Orders3" Alias="Orders" Enabled="false" DataType="null" PropName="Orders"/>
+          <Column Name="Bank" DataType="System.Int32"/>
+          <Column Name="User" DataType="System.Int32"/>
+          <BusinessObjectDataSource Name="Orders3" Alias="Orders" Enabled="false" DataType="System.Int32" PropName="Orders"/>
         </BusinessObjectDataSource>
-        <BusinessObjectDataSource Name="OrderDesigners3" Alias="OrderDesigners" DataType="null" PropName="OrderDesigners" Enabled="true">
+        <BusinessObjectDataSource Name="OrderDesigners3" Alias="OrderDesigners" DataType="System.Int32" PropName="OrderDesigners" Enabled="true">
           <Column Name="ID" DataType="System.Int64"/>
           <Column Name="Number" DataType="System.String"/>
           <Column Name="ClientID" DataType="System.Int64"/>
           <Column Name="Note" DataType="System.String"/>
-          <Column Name="DateAdmission" DataType="null"/>
-          <Column Name="DateCompletion" DataType="null"/>
-          <Column Name="DateProductionLayout" DataType="null"/>
+          <Column Name="DateAdmission" DataType="System.Int32"/>
+          <Column Name="DateCompletion" DataType="System.Int32"/>
+          <Column Name="DateProductionLayout" DataType="System.Int32"/>
           <Column Name="OrderEnteredID" DataType="System.Int64"/>
-          <Column Name="ManagerID" DataType="null"/>
-          <Column Name="DesignerID" DataType="null"/>
-          <Column Name="Client" DataType="null"/>
-          <Column Name="Designer" DataType="null"/>
-          <Column Name="Manager" DataType="null"/>
-          <Column Name="OrderEntered" DataType="null"/>
-          <BusinessObjectDataSource Name="Products7" Alias="Products" Enabled="false" DataType="null" PropName="Products"/>
+          <Column Name="ManagerID" DataType="System.Int32"/>
+          <Column Name="DesignerID" DataType="System.Int32"/>
+          <Column Name="Client" DataType="System.Int32"/>
+          <Column Name="Designer" DataType="System.Int32"/>
+          <Column Name="Manager" DataType="System.Int32"/>
+          <Column Name="OrderEntered" DataType="System.Int32"/>
+          <BusinessObjectDataSource Name="Products7" Alias="Products" Enabled="false" DataType="System.Int32" PropName="Products"/>
           <Column Name="OrderCost" DataType="System.Decimal"/>
           <Column Name="CountProduct" DataType="System.Int16"/>
           <Column Name="State" DataType="System.String"/>
         </BusinessObjectDataSource>
-        <BusinessObjectDataSource Name="OrderManagers3" Alias="OrderManagers" DataType="null" PropName="OrderManagers" Enabled="true">
+        <BusinessObjectDataSource Name="OrderManagers3" Alias="OrderManagers" DataType="System.Int32" PropName="OrderManagers" Enabled="true">
           <Column Name="ID" DataType="System.Int64"/>
           <Column Name="Number" DataType="System.String"/>
           <Column Name="ClientID" DataType="System.Int64"/>
           <Column Name="Note" DataType="System.String"/>
-          <Column Name="DateAdmission" DataType="null"/>
-          <Column Name="DateCompletion" DataType="null"/>
-          <Column Name="DateProductionLayout" DataType="null"/>
+          <Column Name="DateAdmission" DataType="System.Int32"/>
+          <Column Name="DateCompletion" DataType="System.Int32"/>
+          <Column Name="DateProductionLayout" DataType="System.Int32"/>
           <Column Name="OrderEnteredID" DataType="System.Int64"/>
-          <Column Name="ManagerID" DataType="null"/>
-          <Column Name="DesignerID" DataType="null"/>
-          <Column Name="Client" DataType="null"/>
-          <Column Name="Designer" DataType="null"/>
-          <Column Name="Manager" DataType="null"/>
-          <Column Name="OrderEntered" DataType="null"/>
-          <BusinessObjectDataSource Name="Products8" Alias="Products" Enabled="false" DataType="null" PropName="Products"/>
+          <Column Name="ManagerID" DataType="System.Int32"/>
+          <Column Name="DesignerID" DataType="System.Int32"/>
+          <Column Name="Client" DataType="System.Int32"/>
+          <Column Name="Designer" DataType="System.Int32"/>
+          <Column Name="Manager" DataType="System.Int32"/>
+          <Column Name="OrderEntered" DataType="System.Int32"/>
+          <BusinessObjectDataSource Name="Products8" Alias="Products" Enabled="false" DataType="System.Int32" PropName="Products"/>
           <Column Name="OrderCost" DataType="System.Decimal"/>
           <Column Name="CountProduct" DataType="System.Int16"/>
           <Column Name="State" DataType="System.String"/>
         </BusinessObjectDataSource>
-        <BusinessObjectDataSource Name="OrderOrderEntereds3" Alias="OrderOrderEntereds" DataType="null" PropName="OrderOrderEntereds" Enabled="true">
+        <BusinessObjectDataSource Name="OrderOrderEntereds3" Alias="OrderOrderEntereds" DataType="System.Int32" PropName="OrderOrderEntereds" Enabled="true">
           <Column Name="ID" DataType="System.Int64"/>
           <Column Name="Number" DataType="System.String"/>
           <Column Name="ClientID" DataType="System.Int64"/>
           <Column Name="Note" DataType="System.String"/>
-          <Column Name="DateAdmission" DataType="null"/>
-          <Column Name="DateCompletion" DataType="null"/>
-          <Column Name="DateProductionLayout" DataType="null"/>
+          <Column Name="DateAdmission" DataType="System.Int32"/>
+          <Column Name="DateCompletion" DataType="System.Int32"/>
+          <Column Name="DateProductionLayout" DataType="System.Int32"/>
           <Column Name="OrderEnteredID" DataType="System.Int64"/>
-          <Column Name="ManagerID" DataType="null"/>
-          <Column Name="DesignerID" DataType="null"/>
-          <Column Name="Client" DataType="null"/>
-          <Column Name="Designer" DataType="null"/>
-          <Column Name="Manager" DataType="null"/>
-          <Column Name="OrderEntered" DataType="null"/>
-          <BusinessObjectDataSource Name="Products9" Alias="Products" Enabled="false" DataType="null" PropName="Products"/>
+          <Column Name="ManagerID" DataType="System.Int32"/>
+          <Column Name="DesignerID" DataType="System.Int32"/>
+          <Column Name="Client" DataType="System.Int32"/>
+          <Column Name="Designer" DataType="System.Int32"/>
+          <Column Name="Manager" DataType="System.Int32"/>
+          <Column Name="OrderEntered" DataType="System.Int32"/>
+          <BusinessObjectDataSource Name="Products9" Alias="Products" Enabled="false" DataType="System.Int32" PropName="Products"/>
           <Column Name="OrderCost" DataType="System.Decimal"/>
           <Column Name="CountProduct" DataType="System.Int16"/>
           <Column Name="State" DataType="System.String"/>
@@ -476,72 +476,72 @@ namespace FastReport
         <Column Name="FullUserName" DataType="System.String"/>
         <Column Name="ShortUserName" DataType="System.String"/>
       </Column>
-      <BusinessObjectDataSource Name="Products10" Alias="Products" DataType="null" PropName="Products" Enabled="true">
+      <BusinessObjectDataSource Name="Products10" Alias="Products" DataType="System.Int32" PropName="Products" Enabled="true">
         <Column Name="ID" DataType="System.Int64"/>
         <Column Name="OrderID" DataType="System.Int64"/>
         <Column Name="ProductTypeID" DataType="System.Int64"/>
         <Column Name="Parameters" DataType="System.String"/>
         <Column Name="Cost" DataType="System.Decimal"/>
-        <Column Name="DateTransferDesigner" DataType="null"/>
-        <Column Name="DateTransferApproval" DataType="null"/>
-        <Column Name="DateApproval" DataType="null"/>
-        <Column Name="DateTransferProduction" DataType="null"/>
-        <Column Name="DateManufacture" DataType="null"/>
-        <Column Name="DateShipment" DataType="null"/>
+        <Column Name="DateTransferDesigner" DataType="System.Int32"/>
+        <Column Name="DateTransferApproval" DataType="System.Int32"/>
+        <Column Name="DateApproval" DataType="System.Int32"/>
+        <Column Name="DateTransferProduction" DataType="System.Int32"/>
+        <Column Name="DateManufacture" DataType="System.Int32"/>
+        <Column Name="DateShipment" DataType="System.Int32"/>
         <Column Name="Note" DataType="System.String"/>
         <Column Name="Files" DataType="System.String"/>
         <Column Name="Quantity" DataType="System.Int16"/>
-        <Column Name="Order" DataType="null">
+        <Column Name="Order" DataType="System.Int32">
           <Column Name="ID" DataType="System.Int64"/>
           <Column Name="Number" DataType="System.String"/>
           <Column Name="ClientID" DataType="System.Int64"/>
           <Column Name="Note" DataType="System.String"/>
-          <Column Name="DateAdmission" DataType="null"/>
-          <Column Name="DateCompletion" DataType="null"/>
-          <Column Name="DateProductionLayout" DataType="null"/>
+          <Column Name="DateAdmission" DataType="System.Int32"/>
+          <Column Name="DateCompletion" DataType="System.Int32"/>
+          <Column Name="DateProductionLayout" DataType="System.Int32"/>
           <Column Name="OrderEnteredID" DataType="System.Int64"/>
-          <Column Name="ManagerID" DataType="null"/>
-          <Column Name="DesignerID" DataType="null"/>
-          <Column Name="Client" DataType="null"/>
-          <Column Name="Designer" DataType="null"/>
-          <Column Name="Manager" DataType="null"/>
-          <Column Name="OrderEntered" DataType="null"/>
-          <BusinessObjectDataSource Name="Products11" Alias="Products" Enabled="false" DataType="null" PropName="Products"/>
+          <Column Name="ManagerID" DataType="System.Int32"/>
+          <Column Name="DesignerID" DataType="System.Int32"/>
+          <Column Name="Client" DataType="System.Int32"/>
+          <Column Name="Designer" DataType="System.Int32"/>
+          <Column Name="Manager" DataType="System.Int32"/>
+          <Column Name="OrderEntered" DataType="System.Int32"/>
+          <BusinessObjectDataSource Name="Products11" Alias="Products" Enabled="false" DataType="System.Int32" PropName="Products"/>
           <Column Name="OrderCost" DataType="System.Decimal"/>
           <Column Name="CountProduct" DataType="System.Int16"/>
           <Column Name="State" DataType="System.String"/>
         </Column>
-        <Column Name="ProductType" DataType="null">
+        <Column Name="ProductType" DataType="System.Int32">
           <Column Name="ID" DataType="System.Int64"/>
           <Column Name="Name" DataType="System.String"/>
-          <Column Name="CategoryOfProductID" DataType="null"/>
-          <Column Name="CategoryOfProduct" DataType="null"/>
-          <BusinessObjectDataSource Name="ParametersInProductType" Enabled="false" DataType="null"/>
-          <BusinessObjectDataSource Name="TypeOfActivitysInProduct" Enabled="false" DataType="null"/>
+          <Column Name="CategoryOfProductID" DataType="System.Int32"/>
+          <Column Name="CategoryOfProduct" DataType="System.Int32"/>
+          <BusinessObjectDataSource Name="ParametersInProductType" Enabled="false" DataType="System.Int32"/>
+          <BusinessObjectDataSource Name="TypeOfActivitysInProduct" Enabled="false" DataType="System.Int32"/>
         </Column>
         <Column Name="ProductTypeName" DataType="System.String"/>
-        <BusinessObjectDataSource Name="Costs" DataType="null" Enabled="true">
+        <BusinessObjectDataSource Name="Costs" DataType="System.Int32" Enabled="true">
           <Column Name="ID" DataType="System.Int64"/>
           <Column Name="ProductID" DataType="System.Int64"/>
           <Column Name="TypeOfActivityID" DataType="System.Int64"/>
           <Column Name="Cost" DataType="System.Decimal"/>
-          <Column Name="Product" DataType="null"/>
-          <Column Name="TypeOfActivity" DataType="null"/>
+          <Column Name="Product" DataType="System.Int32"/>
+          <Column Name="TypeOfActivity" DataType="System.Int32"/>
           <Column Name="Code" DataType="System.String"/>
           <Column Name="Name" DataType="System.String"/>
         </BusinessObjectDataSource>
-        <BusinessObjectDataSource Name="FilesList" DataType="null" Enabled="true">
+        <BusinessObjectDataSource Name="FilesList" DataType="System.Int32" Enabled="true">
           <Column Name="Length" DataType="System.Int32"/>
         </BusinessObjectDataSource>
-        <BusinessObjectDataSource Name="ProductParameter" DataType="null" Enabled="true">
+        <BusinessObjectDataSource Name="ProductParameter" DataType="System.Int32" Enabled="true">
           <Column Name="ID" DataType="System.Int64"/>
           <Column Name="Name" DataType="System.String"/>
           <Column Name="ParameterValue" DataType="System.String"/>
           <Column Name="UnitName" DataType="System.String"/>
-          <Column Name="ReferencebookID" DataType="null"/>
-          <Column Name="ParameterID" DataType="null"/>
-          <BusinessObjectDataSource Name="ReferencebookParametersList" Enabled="false" DataType="null"/>
-          <BusinessObjectDataSource Name="ReferencebookList" Enabled="false" DataType="null"/>
+          <Column Name="ReferencebookID" DataType="System.Int32"/>
+          <Column Name="ParameterID" DataType="System.Int32"/>
+          <BusinessObjectDataSource Name="ReferencebookParametersList" Enabled="false" DataType="System.Int32"/>
+          <BusinessObjectDataSource Name="ReferencebookList" Enabled="false" DataType="System.Int32"/>
           <Column Name="IsRefbookOnRequest" DataType="System.Boolean" BindableControl="CheckBox"/>
           <Column Name="IsRequired" DataType="System.Boolean" BindableControl="CheckBox"/>
         </BusinessObjectDataSource>
@@ -561,9 +561,14 @@ namespace FastReport
       <TextObject Name="Text4" Left="510.3" Width="207.9" Height="18.9" Fill.Color="Gainsboro" BeforePrintEvent="Text4_BeforePrint" Text="Менеджер: [Order.Manager.ShortUserName]" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt"/>
       <TextObject Name="Text15" Top="18.9" Width="75.6" Height="18.9" Border.Color="224, 224, 224" Border.Width="0.25" Fill.Color="White" Text="Заказчик:" VertAlign="Center" Font="Arial, 10pt"/>
       <TextObject Name="Text17" Top="37.8" Width="510.3" Height="18.9" Border.Color="224, 224, 224" Border.Width="0.25" Fill.Color="White" CanGrow="true" CanShrink="true" Text="Плановая дата окончания работ: [FormatDateTime(ToDateTime([Order.DateCompletion]), &quot;Short Date&quot;)]" HideZeros="true" VertAlign="Center" Font="Arial, 10pt"/>
-      <TextObject Name="Text19" Left="66.15" Top="18.9" Width="652.05" Height="18.9" VisibleExpression="[DesignerID] == 0" Border.Color="224, 224, 224" Border.Width="0.25" Fill.Color="White" CanGrow="true" Text="[Order.Client.Name]" VertAlign="Center" Font="Arial, 10pt"/>
+      <TextObject Name="Text19" Left="66.15" Top="18.9" Width="652.05" Height="18.9" VisibleExpression="[DesignerID] == 0" Border.Color="224, 224, 224" Border.Width="0.25" Fill.Color="White" CanGrow="true" Text="[Order.Client.ShortName]" VertAlign="Center" Font="Arial, 10pt">
+        <Formats>
+          <GeneralFormat/>
+          <GeneralFormat/>
+        </Formats>
+      </TextObject>
     </ReportTitleBand>
-    <DataBand Name="Data1" Top="58.99" Width="718.2" Height="85.05" CanGrow="true" CanBreak="true" DataSource="Products10" Filter="IIf([DesignerID] &gt; 0, [Order.Products.DesignerID] == [DesignerID], true)">
+    <DataBand Name="Data1" Top="59.9" Width="718.2" Height="85.05" CanGrow="true" CanBreak="true" DataSource="Products10" Filter="IIf([DesignerID] &gt; 0, [Order.Products.DesignerID] == [DesignerID], true)">
       <TextObject Name="Text7" Width="718.2" Height="18.9" Fill.Color="Gainsboro" Text="ИЗДЕЛИЕ: [Order.Products.ProductType.Name]" VertAlign="Center" Font="Arial, 10pt"/>
       <TextObject Name="Text8" Left="406.35" Width="311.85" Height="18.9" Border.Color="224, 224, 224" Fill.Color="Gainsboro" Text="КОЛИЧЕСТВО: [Order.Products.Quantity]" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt"/>
       <TextObject Name="Text23" Top="18.9" Width="718.2" Height="18.9" Fill.Color="Gainsboro" CanGrow="true" GrowToBottom="true" Font="Arial, 10pt"/>
@@ -571,12 +576,12 @@ namespace FastReport
       <TextObject Name="Text16" Top="37.8" Width="406.35" Height="18.9" Border.Color="224, 224, 224" Border.Width="0.25" Fill.Color="Gainsboro" CanGrow="true" GrowToBottom="true" Text="Дизайнер: [Order.Products.Designer.FullUserName]" VertAlign="Center" Font="Arial, 10pt"/>
       <TextObject Name="Text24" Left="406.35" Top="18.9" Width="311.85" Height="18.9" Text="Дата изготовления изделия: [FormatDateTime(ToDateTime([Order.Products.DateDeliveryPlan]), &quot;Short Date&quot;)]" HideZeros="true" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt"/>
       <TextObject Name="Text25" Top="18.9" Width="406.35" Height="18.9" Text="КВД: [Order.Products.KVDForReport]" Font="Arial, 10pt"/>
-      <DataBand Name="Data2" Top="146.32" Width="718.2" Height="18.9" CanGrow="true" BeforePrintEvent="Data2_BeforePrint" CanBreak="true" Guides="0" DataSource="ProductParameter">
+      <DataBand Name="Data2" Top="148.15" Width="718.2" Height="18.9" CanGrow="true" BeforePrintEvent="Data2_BeforePrint" CanBreak="true" Guides="0" DataSource="ProductParameter">
         <TextObject Name="Text6" Width="368.55" Height="18.9" Border.Lines="All" Border.Width="0.25" CanGrow="true" CanShrink="true" GrowToBottom="true" Text="[Order.Products.ProductParameter.Name]" VertAlign="Center" Font="Arial, 10pt"/>
         <TextObject Name="Text9" Left="368.55" Width="226.8" Height="18.9" Border.Lines="All" Border.Width="0.25" CanGrow="true" CanShrink="true" GrowToBottom="true" Text="[Order.Products.ProductParameter.ParameterValue]" HideZeros="true" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt"/>
         <TextObject Name="Text10" Left="595.35" Width="122.85" Height="18.9" Border.Lines="All" Border.Width="0.25" Text="[Order.Products.ProductParameter.UnitName]" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt"/>
       </DataBand>
-      <DataBand Name="Data3" Top="167.51" Width="718.2" Height="340.2" CanGrow="true" CanShrink="true" CanBreak="true">
+      <DataBand Name="Data3" Top="170.25" Width="718.2" Height="340.2" CanGrow="true" CanShrink="true" CanBreak="true">
         <TextObject Name="Text11" Width="718.2" Height="18.9" Border.Lines="All" Border.Color="224, 224, 224" Fill.Color="Gainsboro" CanShrink="true" BeforePrintEvent="Text11_BeforePrint" CanBreak="false" Text="Описание" HideZeros="true" VertAlign="Center" Font="Arial, 10pt" Wysiwyg="true"/>
         <TextObject Name="Text12" Top="18.9" Width="718.2" Height="18.9" Border.Lines="All" Border.Color="224, 224, 224" Fill.Color="White" CanGrow="true" CanShrink="true" Text="[Order.Products.Note]" HideZeros="true" VertAlign="Center" Font="Arial, 10pt"/>
         <TextObject Name="Text14" Top="37.8" Width="718.2" Height="18.9" Border.Lines="All" Border.Color="224, 224, 224" Fill.Color="Gainsboro" CanGrow="true" CanShrink="true" BeforePrintEvent="Text14_BeforePrint" Text="Файлы" HideZeros="true" VertAlign="Center" Font="Arial, 10pt"/>

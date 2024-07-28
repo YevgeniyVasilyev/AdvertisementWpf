@@ -136,7 +136,7 @@
                             </Grid.RowDefinitions>
                             <ListBox Name="ClientsListBox" Grid.Row="0" ItemsSource="{Binding Source={StaticResource clientsDataSource}}" 
                                  ScrollViewer.VerticalScrollBarVisibility="Auto" 
-                                 DisplayMemberPath="Name" Style="{StaticResource CheckBoxListStyle}">
+                                 DisplayMemberPath="ShortName" Style="{StaticResource CheckBoxListStyle}">
                             </ListBox>
                             <DockPanel Grid.Row="1" Margin="10,10,10,10">
                                 <TextBlock Text="Фильтр по клиенту(поиск): " DockPanel.Dock="Left"/>
@@ -288,7 +288,7 @@
                             </Grid.RowDefinitions>
                             <ListBox Name="pClientsListBox" ItemsSource="{Binding Source={StaticResource clientsDataSource}}" 
                                  ScrollViewer.VerticalScrollBarVisibility="Auto" 
-                                 DisplayMemberPath="Name" Style="{StaticResource CheckBoxListStyle}">
+                                 DisplayMemberPath="ShortName" Style="{StaticResource CheckBoxListStyle}">
                             </ListBox>
                             <DockPanel Grid.Row="1" Margin="10,10,10,10">
                                 <TextBlock Text="Фильтр по клиенту(поиск): " DockPanel.Dock="Left"/>

@@ -12,6 +12,7 @@
         <CollectionViewSource x:Key="reportsViewSource"/>
         <CollectionViewSource x:Key="usersViewSource"/>
         <CollectionViewSource x:Key="clientsViewSource"/>
+        <CollectionViewSource x:Key="kVDViewSource"/>
         <local:EnableConverter x:Key="EnableConverter"/>
         <Style x:Key="DropShadow" TargetType="{x:Type FrameworkElement}">
             <Style.Triggers>
@@ -84,7 +85,8 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
+                <RowDefinition Height="0.5*"/>
+                <RowDefinition Height="0.5*"/>
             </Grid.RowDefinitions>
             <GroupBox Grid.Row="0" Name="PeriodGroupBox" Header="Период" Margin="2" 
                       IsEnabled="{Binding ElementName=ReportListBox, Path=SelectedItem, Converter={StaticResource EnableConverter}, ConverterParameter=P}">
@@ -160,6 +162,14 @@
                         <TextBox Text="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=FilterString, UpdateSourceTrigger=PropertyChanged}" Width="250" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Grid>
+            </GroupBox>
+            <GroupBox Grid.Row="3" Name="KVDGroupBox" Header="КВД" Margin="2" 
+                      IsEnabled="{Binding ElementName=ReportListBox, Path=SelectedItem, Converter={StaticResource EnableConverter}, ConverterParameter=PK}">
+                <ListBox Name="KVDListBox" ItemsSource="{Binding Source={StaticResource kVDViewSource}}" 
+                         ScrollViewer.VerticalScrollBarVisibility="Auto" 
+                         DisplayMemberPath="CodeName" Style="{StaticResource CheckBoxListStyle}">
+                </ListBox>
+
             </GroupBox>
         </Grid>
         <Border Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="2" BorderThickness="1" BorderBrush="DeepSkyBlue">

@@ -373,6 +373,7 @@
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <Button Name="NewClients_Button" Grid.Column="0" HorizontalAlignment="Left" HorizontalContentAlignment="Center"
                                 Command="{Binding NewCommand}"
@@ -400,6 +401,13 @@
                             <StackPanel>
                                 <Image Source="/Images/free-icon-printer1.png" Width="{x:Static SystemParameters.IconWidth}" Height="{x:Static SystemParameters.IconHeight}"/>
                                 <TextBlock Text=" Печать " Width="120" TextAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+                        <Button Name="CopyClient_Button" Grid.Column="3" HorizontalAlignment="Left" HorizontalContentAlignment="Center"
+                                Command="{Binding CopyCommand}" CommandParameter="{Binding ElementName=ClientsGrid, Path=SelectedItem}" ToolTip="Создать копию текущего клиента">
+                            <StackPanel>
+                                <Image Source="/Images/free-icon-copy.png" Width="{x:Static SystemParameters.IconWidth}" Height="{x:Static SystemParameters.IconHeight}"/>
+                                <TextBlock Text=" Копировать " Width="120" TextAlignment="Center"/>
                             </StackPanel>
                         </Button>
                     </Grid>

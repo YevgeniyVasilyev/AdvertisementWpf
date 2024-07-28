@@ -15,7 +15,7 @@ using System.Windows.Input;
 
 namespace AdvertisementWpf.Models
 {
-    public partial class Client : INotifyPropertyChanged
+    public partial class Client : INotifyPropertyChanged, ICloneable
     {
         private string _name { get; set; }
         public string Name
@@ -169,11 +169,13 @@ namespace AdvertisementWpf.Models
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+
+        public object Clone() => MemberwiseClone();        
     }
 
     public class ClientViewModel
     {
-        private RelayCommand saveCommand, newCommand, deleteCommand, printCommand;
+        private RelayCommand saveCommand, newCommand, deleteCommand, printCommand, copyCommand;
         public App.AppDbContext _context = new App.AppDbContext(MainWindow.Connectiondata.Connectionstring);
 
         public ObservableCollection<Client> _Clients { get; set; }
@@ -336,6 +338,30 @@ namespace AdvertisementWpf.Models
             catch (Exception ex)
             {
                 _ = MessageBox.Show(ex.Message + "\n" + ex?.InnerException?.Message, "Ошибка печати данных", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            finally
+            {
+                MainWindow.statusBar.ClearStatus();
+            }
+        }, null);
+
+        public RelayCommand CopyCommand => copyCommand ??= new RelayCommand((o) =>
+        {
+            try
+            {
+                if (o is Client currentClient)
+                {
+                    FilterString = ""; //очистить фильтр, иначе добавленную строку может быть не видно
+                    Client newClient = new Client { };
+                    newClient = (Client)currentClient.Clone();
+                    newClient.ID = 0;
+                    _context.Clients.Add(newClient);
+                    _ = Clients.MoveCurrentTo(newClient);
+                }
+            }
+            catch (Exception ex)
+            {
+                _ = MessageBox.Show(ex.Message + "\n" + ex?.InnerException?.Message, "Ошибка копирования данных", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             finally
             {

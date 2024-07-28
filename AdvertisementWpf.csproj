@@ -66,6 +66,7 @@
     <None Remove="Images\free-icon-add-button.png" />
     <None Remove="Images\free-icon-back.png" />
     <None Remove="Images\free-icon-bin-Recycler.png" />
+    <None Remove="Images\free-icon-copy.png" />
     <None Remove="Images\free-icon-cross.png" />
     <None Remove="Images\free-icon-delete-button.png" />
     <None Remove="Images\free-icon-device-2844994.ico" />
@@ -125,6 +126,7 @@
     <None Remove="Бланки ПУД.zip" />
     <None Remove="Бухгалтерия.doc" />
     <None Remove="Бухгалтерия_правки1.doc" />
+    <None Remove="Выпуск по квд по изделиям.xls" />
     <None Remove="выручка по сотрудникам и видам платежей.xls" />
     <None Remove="Дебиторка.xlsx" />
     <None Remove="Доработка ПУД.doc" />
@@ -211,6 +213,7 @@
     <Resource Include="Images\free-icon-add-button.png" />
     <Resource Include="Images\free-icon-back.png" />
     <Resource Include="Images\free-icon-bin-Recycler.png" />
+    <Resource Include="Images\free-icon-copy.png" />
     <Resource Include="Images\free-icon-cross.png" />
     <Resource Include="Images\free-icon-delete-button.png" />
     <Resource Include="Images\free-icon-device-2844994.ico">

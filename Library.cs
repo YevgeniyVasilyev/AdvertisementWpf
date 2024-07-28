@@ -580,7 +580,7 @@ namespace AdvertisementWpf
                     report.SetParameterValue("EndPeriod", EndPeriod);
                     ReportMode = "ReportForm";
                 }
-                else if (ReportMode == "RORWRP")
+                else if (ReportMode == "RORWRP" || ReportMode == "RORTWK")
                 {
                     //report.Dictionary.RegisterBusinessObject(OrderDataSet, "Order", 4, true);
                     //report.Save($"{Path.GetFileNameWithoutExtension(ReportFileName)}_data.frx");
