@@ -535,7 +535,7 @@ namespace AdvertisementWpf
                             order.Products = order.Products.Where(product => product.DateManufacture >= beginPeriod && product.DateManufacture <= endPeriod).ToArray();
                             foreach (Product p in order.Products)
                             {
-                                p.ProductCosts = p.ProductCosts.Where(pc => pc.TypeOfActivity.ID == kvdID.ID).ToArray();
+                                p.ProductCosts = p.ProductCosts.Where(pc => pc.TypeOfActivity.ID == kvdID.ID && pc.Cost > 0).ToArray();
                             }
                             order.Products = order.Products.Where(product => product.ProductCosts.Count > 0).ToArray();
                         }
