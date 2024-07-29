@@ -502,7 +502,6 @@ namespace AdvertisementWpf
                     }
                     else if (report.Code == "RORWRP")
                     {
-                        Reports.ReportMode = report.Code;
                         Reports.OrderDataSet = _report.Orders
                             .Include(Order => Order.Products).ThenInclude(Product => Product.ProductCosts)
                             .Include(Order => Order.Products).ThenInclude(Product => Product.ProductCosts).ThenInclude(ProductCost => ProductCost.TypeOfActivity)
@@ -516,13 +515,13 @@ namespace AdvertisementWpf
                             order.Products = order.Products.Where(product => product.DateManufacture >= beginPeriod && product.DateManufacture <= endPeriod).ToArray();
                         }
 
+                        Reports.ReportMode = report.Code;
                         Reports.BeginPeriod = beginPeriod;
                         Reports.EndPeriod = endPeriod;
                         lCanMakeReport = Reports.OrderDataSet.Count > 0;
                     }
                     else if (report.Code == "RORTWK" && kvdID != null)
                     {
-                        Reports.ReportMode = report.Code;
                         Reports.OrderDataSet = _report.Orders
                             .Include(Order => Order.Products).ThenInclude(Product => Product.ProductCosts)
                             .Include(Order => Order.Products).ThenInclude(Product => Product.ProductCosts).ThenInclude(ProductCost => ProductCost.TypeOfActivity)
@@ -533,12 +532,15 @@ namespace AdvertisementWpf
                             .ToList();
                         foreach (Order order in Reports.OrderDataSet)
                         {
-                            order.Products = order.Products.Where(product => product.DateManufacture >= beginPeriod && product.DateManufacture <= endPeriod && product.ProductCosts.Any(pc => pc.TypeOfActivity.ID == kvdID.ID)).ToArray();
+                            order.Products = order.Products.Where(product => product.DateManufacture >= beginPeriod && product.DateManufacture <= endPeriod).ToArray();
                             foreach (Product p in order.Products)
                             {
                                 p.ProductCosts = p.ProductCosts.Where(pc => pc.TypeOfActivity.ID == kvdID.ID).ToArray();
                             }
-                         }
+                            order.Products = order.Products.Where(product => product.ProductCosts.Count > 0).ToArray();
+                        }
+
+                        Reports.ReportMode = report.Code;
                         Reports.BeginPeriod = beginPeriod;
                         Reports.EndPeriod = endPeriod;
                         lCanMakeReport = Reports.OrderDataSet.Count > 0;

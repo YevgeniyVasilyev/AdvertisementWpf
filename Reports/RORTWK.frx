@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Report ScriptLanguage="CSharp" ReportInfo.Created="01/10/2024 20:10:29" ReportInfo.Modified="07/13/2024 16:06:28" ReportInfo.CreatorVersion="2024.1.3.0">
+<Report ScriptLanguage="CSharp" ReportInfo.Created="01/10/2024 20:10:29" ReportInfo.Modified="07/29/2024 13:17:37" ReportInfo.CreatorVersion="2024.1.3.0">
   <Dictionary>
     <BusinessObjectDataSource Name="Order" ReferenceName="Order" DataType="System.Int32" Enabled="true">
       <Column Name="ID" DataType="System.Int64"/>
@@ -1508,8 +1508,10 @@
       <Column Name="CountProduct" DataType="System.Int16"/>
       <Column Name="State" DataType="System.String"/>
     </BusinessObjectDataSource>
-    <Total Name="TotalCost" Expression="[Order.Products.ProductCosts.Cost]" Evaluator="Data2" PrintOn="ReportSummary1"/>
-    <Total Name="TotalOutlay" Expression="[Order.Products.ProductCosts.Outlay]" Evaluator="Data2" PrintOn="ReportSummary1"/>
+    <Total Name="TotalCost" Expression="[Order.Products.ProductCosts.Cost]" Evaluator="Data4" PrintOn="ReportSummary1"/>
+    <Total Name="TotalOutlay" Expression="[Order.Products.ProductCosts.Outlay]" Evaluator="Data4" PrintOn="ReportSummary1"/>
+    <Total Name="TotalCost1" Expression="[Order.Products.ProductCosts.Cost]" Evaluator="Data4" PrintOn="DataFooter1"/>
+    <Total Name="TotalOutlay1" Expression="[Order.Products.ProductCosts.Outlay]" Evaluator="Data4" PrintOn="DataFooter1"/>
   </Dictionary>
   <ReportPage Name="Page1" Landscape="true" PaperWidth="297" PaperHeight="210" RawPaperSize="9" Watermark.Font="Arial, 60pt">
     <ReportTitleBand Name="ReportTitle1" Width="1047.06" Height="37.8">
@@ -1518,56 +1520,54 @@
     </ReportTitleBand>
     <PageHeaderBand Name="PageHeader1" Top="41" Width="1047.06" Height="47.25">
       <TextObject Name="Text6" Left="56.7" Width="85.05" Height="47.25" Border.Lines="All" Border.Width="0.5" Text="№ заказа" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt"/>
-      <TextObject Name="Text7" Left="141.75" Width="321.3" Height="47.25" Border.Lines="All" Border.Width="0.5" Text="Изделие" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt"/>
-      <TextObject Name="Text8" Left="463.05" Width="103.95" Height="47.25" Border.Lines="All" Border.Width="0.5" Text="Дата фактического изготовления" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt"/>
-      <TextObject Name="Text10" Left="567" Width="66.15" Height="47.25" Border.Lines="All" Border.Width="0.5" Text="Кол-во" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt"/>
+      <TextObject Name="Text7" Left="141.75" Width="453.6" Height="47.25" Border.Lines="All" Border.Width="0.5" Text="Изделие" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt"/>
+      <TextObject Name="Text8" Left="595.35" Width="103.95" Height="47.25" Border.Lines="All" Border.Width="0.5" Text="Дата фактического изготовления" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt"/>
+      <TextObject Name="Text10" Left="699.3" Width="66.15" Height="47.25" Border.Lines="All" Border.Width="0.5" Text="Кол-во" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt"/>
       <TextObject Name="Text11" Left="765.45" Width="94.5" Height="47.25" Border.Lines="All" Border.Width="0.5" Text="Стоимость по КВД" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt"/>
       <TextObject Name="Text12" Left="859.95" Width="94.5" Height="47.25" Border.Lines="All" Border.Width="0.5" Text="Затраты по КВД" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt"/>
       <TextObject Name="Text14" Left="954.45" Width="92.61" Height="47.25" Border.Lines="All" Border.Width="0.5" Text="Маржа" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt"/>
-      <TextObject Name="Text13" Left="633.15" Width="132.3" Height="47.25" Border.Lines="All" Border.Width="0.5" Text="КВД" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt"/>
-      <TextObject Name="Text34" Width="56.7" Height="47.25" Border.Lines="All" Text="№ п/п" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
+      <TextObject Name="Text34" Width="56.7" Height="47.25" Border.Lines="All" Text="№&#13;&#10;п/п" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt"/>
     </PageHeaderBand>
     <DataBand Name="Data1" Top="91.45" Width="1047.06" DataSource="Order">
       <DataBand Name="Data2" Top="94.65" Width="1047.06" Height="18.9" CanGrow="true" DataSource="Products5">
         <TextObject Name="Text15" Left="56.7" Width="85.05" Height="18.9" Border.Lines="All" CanGrow="true" CanShrink="true" GrowToBottom="true" Text="[Order.Number]" Duplicates="Merge" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
-        <TextObject Name="Text16" Left="141.75" Width="321.3" Height="18.9" Border.Lines="All" CanGrow="true" GrowToBottom="true" Text="[Order.Products.ProductType.Name]" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
-        <TextObject Name="Text17" Left="463.05" Width="103.95" Height="18.9" Border.Lines="All" CanGrow="true" GrowToBottom="true" Text="[Order.Products.DateManufacture]" HideZeros="true" Format="Date" Format.Format="dd.MM.yyyy" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
-        <TextObject Name="Text19" Left="567" Width="66.15" Height="18.9" Border.Lines="All" CanGrow="true" GrowToBottom="true" Text="[Order.Products.Quantity]" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
-        <TextObject Name="Text30" Left="633.15" Width="132.3" Height="18.9" Border.Lines="All" CanGrow="true" GrowToBottom="true" Text="[Order.Products.ProductCosts.TypeOfActivity.Name]" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt">
-          <Formats>
-            <GeneralFormat/>
-            <GeneralFormat/>
-          </Formats>
-        </TextObject>
-        <TextObject Name="Text31" Left="765.45" Width="94.5" Height="18.9" Border.Lines="All" CanGrow="true" GrowToBottom="true" Text="[Order.Products.ProductCosts.Cost]" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt">
-          <Formats>
-            <CurrencyFormat/>
-            <GeneralFormat/>
-          </Formats>
-        </TextObject>
-        <TextObject Name="Text32" Left="859.95" Width="94.5" Height="18.9" Border.Lines="All" CanGrow="true" GrowToBottom="true" Text="[Order.Products.ProductCosts.Outlay]" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt">
-          <Formats>
-            <CurrencyFormat/>
-            <GeneralFormat/>
-          </Formats>
-        </TextObject>
-        <TextObject Name="Text33" Left="954.45" Width="94.5" Height="18.9" Border.Lines="All" CanGrow="true" GrowToBottom="true" Text="[[Order.Products.ProductCosts.Cost] - [Order.Products.ProductCosts.Outlay]]" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt">
-          <Formats>
-            <CurrencyFormat/>
-            <GeneralFormat/>
-          </Formats>
-        </TextObject>
-        <TextObject Name="Text35" Width="56.7" Height="18.9" Border.Lines="All" Text="[AbsRow#]" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
+        <TextObject Name="Text16" Left="141.75" Width="453.6" Height="18.9" Border.Lines="All" CanGrow="true" GrowToBottom="true" Text="[Order.Products.ProductType.Name]" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
+        <TextObject Name="Text17" Left="595.35" Width="103.95" Height="18.9" Border.Lines="All" CanGrow="true" GrowToBottom="true" Text="[Order.Products.DateManufacture]" HideZeros="true" Format="Date" Format.Format="dd.MM.yyyy" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
+        <TextObject Name="Text19" Left="699.3" Width="66.15" Height="18.9" Border.Lines="All" CanGrow="true" GrowToBottom="true" Text="[Order.Products.Quantity]" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
+        <SubreportObject Name="Subreport1" Left="765.45" Width="283.5" Height="18.9" GroupIndex="1" ReportPage="Page2" PrintOnParent="true"/>
+        <TextObject Name="Text35" Width="56.7" Height="18.9" Border.Lines="All" CanGrow="true" CanShrink="true" GrowToBottom="true" Text="[AbsRow#]" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt"/>
         <Sort>
           <Sort Expression="[Order.Products.DateManufacture]"/>
         </Sort>
       </DataBand>
     </DataBand>
     <ReportSummaryBand Name="ReportSummary1" Top="116.75" Width="1047.06" Height="18.9">
-      <TextObject Name="Text25" Left="765.45" Width="94.5" Height="18.9" Border.Lines="All" Fill.Color="Gainsboro" Text="[TotalCost]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt, style=Bold"/>
-      <TextObject Name="Text26" Left="859.95" Width="94.5" Height="18.9" Border.Lines="All" Fill.Color="Gainsboro" Text="[TotalOutlay]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt, style=Bold"/>
-      <TextObject Name="Text28" Left="954.45" Width="94.5" Height="18.9" Border.Lines="All" Fill.Color="Gainsboro" Text="[[TotalCost] - [TotalOutlay]]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt, style=Bold"/>
-      <TextObject Name="Text27" Width="765.45" Height="18.9" Border.Lines="All" Fill.Color="Gainsboro" Text="Итого по отчету" Format="Percent" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt, style=Bold"/>
+      <TextObject Name="Text25" Left="765.45" Width="94.5" Height="18.9" Border.Lines="All" Fill.Color="Gainsboro" Text="[TotalCost]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
+      <TextObject Name="Text26" Left="859.95" Width="94.5" Height="18.9" Border.Lines="All" Fill.Color="Gainsboro" Text="[TotalOutlay]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
+      <TextObject Name="Text28" Left="954.45" Width="92.61" Height="18.9" Border.Lines="All" Fill.Color="Gainsboro" Text="[[TotalCost] - [TotalOutlay]]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
+      <TextObject Name="Text27" Width="765.45" Height="18.9" Border.Lines="All" Fill.Color="Gainsboro" Text="Итого" Format="Percent" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt"/>
     </ReportSummaryBand>
+  </ReportPage>
+  <ReportPage Name="Page2" Watermark.Font="Arial, 60pt">
+    <DataBand Name="Data4" Width="718.2" Height="28.35" DataSource="ProductCosts5">
+      <TextObject Name="Text31" Width="94.5" Height="28.35" Border.Lines="All" CanGrow="true" GrowToBottom="true" Text="[Order.Products.ProductCosts.Cost]" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt">
+        <Formats>
+          <CurrencyFormat/>
+          <GeneralFormat/>
+        </Formats>
+      </TextObject>
+      <TextObject Name="Text32" Left="94.5" Width="94.5" Height="28.35" Border.Lines="All" CanGrow="true" GrowToBottom="true" Text="[Order.Products.ProductCosts.Outlay]" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt">
+        <Formats>
+          <CurrencyFormat/>
+          <GeneralFormat/>
+        </Formats>
+      </TextObject>
+      <TextObject Name="Text33" Left="189" Width="92.61" Height="28.35" Border.Lines="All" CanGrow="true" GrowToBottom="true" Text="[[Order.Products.ProductCosts.Cost] - [Order.Products.ProductCosts.Outlay]]" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt">
+        <Formats>
+          <CurrencyFormat/>
+          <GeneralFormat/>
+        </Formats>
+      </TextObject>
+    </DataBand>
   </ReportPage>
 </Report>
