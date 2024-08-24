@@ -438,9 +438,15 @@
                                     <Image Source="/Images/free-icon-minus-button.png" Width="20" Height="20"/>
                                 </Button>
                                 <Button Background="Transparent" BorderBrush="Transparent" 
-                                        Style="{StaticResource ButtonOfOrder}" Command="{Binding DeleteProduct}" CommandParameter="{Binding ElementName=ListProduct, Path=SelectedItem}"
+                                        Style="{StaticResource ButtonOfOrder}" Command="{Binding DeleteProduct}"
                                         Margin="0,0,0,0" ToolTip="Отметить изделие для удаления">
                                     <Image Source="/Images/free-icon-bin-Recycler.png" Width="20" Height="20"/>
+                                    <Button.CommandParameter>
+                                        <MultiBinding Converter="{StaticResource MultiValueConverter}">
+                                            <Binding ElementName="ListProduct" Path="SelectedItem"/>
+                                            <Binding ElementName="OrderTotalCosts"/>
+                                        </MultiBinding>
+                                    </Button.CommandParameter>
                                     <Button.IsEnabled>
                                         <MultiBinding Converter="{StaticResource IsCanDeleteAfterSendToProdToBoolConverter}">
                                             <Binding ElementName="ListProduct" Path="SelectedItem.DateTransferProduction" Converter="{StaticResource NullDateTimeToBoolConverter}"/>
@@ -572,8 +578,8 @@
                                         <ColumnDefinition Width="{Binding ElementName=column3, Path=Width}"/>
                                     </Grid.ColumnDefinitions>
                                     <TextBlock Grid.Column="0" Margin="10,0,0,0" Text="ИТОГО:" FontWeight="Bold" Grid.ColumnSpan="2"/>
-                                    <TextBlock Grid.Column="1" Margin="0,0,5,0"  Text="{Binding ElementName=ListProduct,Path=Items.Count, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Right" FontWeight="Bold"/>
-                                    <TextBlock Grid.Column="2" Margin="7,0,0,0"  Text="{Binding ElementName=ListProduct, Path=ItemsSource, Converter={StaticResource SumListViewDecimalConverter}, ConverterParameter=Cost, StringFormat={}{0:C}, ConverterCulture='ru-RU', UpdateSourceTrigger=PropertyChanged}" 
+                                    <TextBlock Grid.Column="1" Margin="0,0,5,0"  Text="{Binding ElementName=ListProduct,Path=Items.Count, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Right" FontWeight="Bold"/>
+                                    <TextBlock Grid.Column="2" Margin="7,0,0,0"  Text="{Binding Path=CurrentOrder.Products, Mode=OneWay, Converter={StaticResource SumListViewDecimalConverter}, ConverterParameter=Cost, StringFormat={}{0:C}, ConverterCulture='ru-RU', UpdateSourceTrigger=PropertyChanged}" 
                                                Name="OrderTotalCosts" HorizontalAlignment="Left" FontWeight="Bold"/>
                                 </Grid>
                             </Border>

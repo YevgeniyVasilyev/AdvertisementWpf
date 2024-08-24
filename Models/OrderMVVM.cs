@@ -417,9 +417,15 @@ namespace AdvertisementWpf.Models
 
         public RelayCommand DeleteProduct => deleteProduct ??= new RelayCommand((o) => //команда "отметить изделие для удаления"
         {
-            if (o is Product product)
+            Product product = ((object[])o)[0] as Product;
+            TextBlock textBlock = (TextBlock)((object[])o)[1];
+            if (product != null)
             {
                 _ = CurrentOrder.Products.Remove(product);
+                if (textBlock != null)
+                {
+                    BindingOperations.GetBindingExpression(textBlock, TextBlock.TextProperty).UpdateTarget();   //обновить итог в ListProduct
+                }
             };
         }, (o) => _contextOrder_ != null && CurrentOrder?.Products?.Count > 0);
 
@@ -1045,8 +1051,17 @@ namespace AdvertisementWpf.Models
             ObservableCollection<AccountDetail> accountDetails = new ObservableCollection<AccountDetail> { };
             if (account.IsManual) //ручной ввод деталей счета
             {
-                accountDetails.Add(new AccountDetail { ProductID = 0, ProductInfoForAccount = "Оплата по договору № ...", Quantity = 1, UnitName = "шт.", Cost = account.Order?.OrderCost ?? 
-                                   account.Order.Products.Sum(p => p.Cost) });
+                decimal detailCost = account.DetailsList?.Count > 0                         //если детали заказа уже были сформированы
+                    ? account.DetailsList.Sum(c => c.Cost)                                  //то берем сумму сформированных деталей
+                    : account.Order?.OrderCost ?? account.Order.Products.Sum(p => p.Cost);  //иначе берем всю сумму заказа
+                accountDetails.Add(new AccountDetail
+                {
+                    ProductID = 0,
+                    ProductInfoForAccount = "Оплата по договору № ...",
+                    Quantity = 1,
+                    UnitName = "шт.",
+                    Cost = detailCost
+                });
             }
             else //загрузка из номенклатуры изделий заказа. Грузим только не включенные в другой счет
             {
