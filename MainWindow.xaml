@@ -483,12 +483,6 @@
                                 <GridViewColumnHeader Content=" Изделие " Tag="TechCard.Product.ProductType.Name" Click="GridViewColumnHeader_Click"/>
                             </GridViewColumn.Header>
                         </GridViewColumn>
-                        <!--<GridViewColumn Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}"
-                                        DisplayMemberBinding="{Binding Path=TypeOfActivity.Code}">
-                            <GridViewColumn.Header>
-                                <GridViewColumnHeader Content=" Код " Tag="TypeOfActivity.Code" Click="GridViewColumnHeader_Click"/>
-                            </GridViewColumn.Header>
-                        </GridViewColumn>-->
                         <GridViewColumn Width="Auto" HeaderTemplate="{StaticResource ListViewHeaderTemplate}">
                             <GridViewColumn.Header>
                                 <GridViewColumnHeader Content=" Работа " Tag="TypeOfActivity.Code" Click="GridViewColumnHeader_Click"/>
@@ -534,7 +528,7 @@
                 </Grid.ColumnDefinitions>
                 <StackPanel Grid.Column="0" Orientation="Horizontal">
                     <TextBlock Margin="10,0,0,0" Text="{Binding ElementName=ProductionProductListView, Path=Items.Count, UpdateSourceTrigger=PropertyChanged, StringFormat=Отобрано изделий: {0}}" FontWeight="Bold"/>
-                    <TextBlock Margin="10,0,0,0" Text="{Binding ElementName=ProductionProductListView, Path=ItemsSource, Converter={StaticResource SumListViewDecimalConverter}, ConverterParameter=ProductCost, StringFormat=К оплате: {0:C}, ConverterCulture='ru-RU'}" HorizontalAlignment="Right" FontWeight="Bold"/>
+                    <!--<TextBlock Margin="10,0,0,0" Text="{Binding ElementName=ProductionProductListView, Path=ItemsSource, Converter={StaticResource SumListViewDecimalConverter}, ConverterParameter=ProductCost, StringFormat=К оплате: {0:C}, ConverterCulture='ru-RU'}" HorizontalAlignment="Right" FontWeight="Bold"/>-->
                 </StackPanel>
             </Grid>
         </Border>

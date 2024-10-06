@@ -52,6 +52,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove=".~lock.Суммы в производстве по КВД.xlsx#" />
     <None Remove="AccessMatrix.xlsx" />
     <None Remove="AdvertisementWpf_TemporaryKey.pfx" />
     <None Remove="appsetting.json" />
@@ -117,6 +118,7 @@
     <None Remove="~%24AccessMatrix.xlsx" />
     <None Remove="~%24военно дизайнером сводный.doc" />
     <None Remove="~%24Дебиторка.xlsx" />
+    <None Remove="~%24Суммы в производстве по КВД.xlsx" />
     <None Remove="~%24хгалтерия_правки1.doc" />
     <None Remove="~WRL0001.tmp" />
     <None Remove="АКТ  А4 вертик.распол..xls" />
@@ -127,6 +129,7 @@
     <None Remove="Бухгалтерия.doc" />
     <None Remove="Бухгалтерия_правки1.doc" />
     <None Remove="Выпуск по квд по изделиям.xls" />
+    <None Remove="Выпуск по квд по изделиям.xlsx" />
     <None Remove="выручка по сотрудникам и видам платежей.xls" />
     <None Remove="Дебиторка.xlsx" />
     <None Remove="Доработка ПУД.doc" />
@@ -142,6 +145,7 @@
     <None Remove="Отбор в производстве правка 1.xlsx" />
     <None Remove="Отбор данных.doc" />
     <None Remove="Отбор данных.docx" />
+    <None Remove="Суммы в производстве по КВД.xlsx" />
     <None Remove="счет А4 вертик.распол..xls" />
     <None Remove="Счет на оплату от РТ.xls" />
     <None Remove="счет фактура бланк.xls" />

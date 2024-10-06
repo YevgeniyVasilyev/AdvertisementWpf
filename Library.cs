@@ -424,6 +424,7 @@ namespace AdvertisementWpf
         public static string CargoReleasePostName = "";
         public static string CargoReleaseName = "";
         public static List<string> FreeValue = null;
+        public static string FreeString = "";
         private static string ReadyReportFileName = "";
 
         public static void RunReport()
@@ -580,7 +581,7 @@ namespace AdvertisementWpf
                     report.SetParameterValue("EndPeriod", EndPeriod);
                     ReportMode = "ReportForm";
                 }
-                else if (ReportMode == "RORWRP" || ReportMode == "RORTWK")
+                else if (ReportMode == "RORWRP" || ReportMode == "RORTWK" || ReportMode == "RTCPINPK")
                 {
                     //report.Dictionary.RegisterBusinessObject(OrderDataSet, "Order", 4, true);
                     //report.Save($"{Path.GetFileNameWithoutExtension(ReportFileName)}_data.frx");
@@ -589,6 +590,7 @@ namespace AdvertisementWpf
                     report.RegisterData(OrderDataSet, "Order", 3);
                     report.SetParameterValue("BeginPeriod", BeginPeriod);
                     report.SetParameterValue("EndPeriod", EndPeriod);
+                    report.SetParameterValue("KVD", FreeString);
                     ReportMode = "ReportForm";
                 }
                 else if (ReportMode == "BCAFPD" || ReportMode == "__AR")

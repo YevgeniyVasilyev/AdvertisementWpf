@@ -160,6 +160,7 @@ namespace AdvertisementWpf
                     List<User> userList = new List<User> { };
                     List<long> clientsIDList = new List<long> { };
                     TypeOfActivity kvdID = null;
+                    List<TypeOfActivity> kvdList = new List<TypeOfActivity> { };
                     try
                     {
                         if (PeriodGroupBox.IsEnabled) //обработка условия "Дата"
@@ -243,8 +244,15 @@ namespace AdvertisementWpf
                                 ListBoxItem listBoxitem = (ListBoxItem)KVDListBox.ItemContainerGenerator.ContainerFromItem(c);
                                 if (listBoxitem != null && listBoxitem.IsSelected)
                                 {
-                                    kvdID = (TypeOfActivity)c;
-                                    break; //берем первую отмеченную запись
+                                    if (report.Code == "RTCPINPK") //берем все выделенные КВД
+                                    {
+                                        kvdList.Add((TypeOfActivity)c);
+                                    }
+                                    else
+                                    {
+                                        kvdID = (TypeOfActivity)c;
+                                        break; //берем первую отмеченную запись (один КВД)
+                                    }
                                 }
                             }
                         }
@@ -256,7 +264,7 @@ namespace AdvertisementWpf
                     finally
                     {
                         MainWindow.statusBar.ClearStatus();
-                        MakeReport(ref report, dBeginPeriod, dEndPeriod, userList, clientsIDList, kvdID);
+                        MakeReport(ref report, dBeginPeriod, dEndPeriod, userList, clientsIDList, kvdID, kvdList);
                     }
                 }
             }
@@ -273,7 +281,7 @@ namespace AdvertisementWpf
             }
         }
 
-        private void MakeReport(ref Report report, DateTime beginPeriod, DateTime endPeriod, List<User> usersList, List<long> cliensIDtList, TypeOfActivity kvdID)
+        private void MakeReport(ref Report report, DateTime beginPeriod, DateTime endPeriod, List<User> usersList, List<long> cliensIDtList, TypeOfActivity kvdID, List<TypeOfActivity> kvdList)
         {
             endPeriod = new DateTime(endPeriod.Year, endPeriod.Month, endPeriod.Day, 23, 59, 59); //добавить минуты конца дня
             using App.AppDbContext _reportcontext = new App.AppDbContext(MainWindow.Connectiondata.Connectionstring);
@@ -545,6 +553,31 @@ namespace AdvertisementWpf
                         Reports.EndPeriod = endPeriod;
                         lCanMakeReport = Reports.OrderDataSet.Count > 0;
                     }
+                    else if (report.Code == "RTCPINPK" && kvdList.Count > 0)
+                    {
+                        Reports.OrderDataSet = _report.Orders
+                            .Include(Order => Order.Products).ThenInclude(Product => Product.ProductCosts)
+                            .Include(Order => Order.Products).ThenInclude(Product => Product.ProductCosts).ThenInclude(ProductCost => ProductCost.TypeOfActivity)
+                            .Include(Order => Order.Products).ThenInclude(Product => Product.ProductType)
+                            .Where(Order => Order.Products.Any(Product => Product.DateManufacture.HasValue))
+                            .AsNoTracking()
+                            .OrderBy(Order => Order.ID)
+                            .ToList();                
+                        foreach (Order order in Reports.OrderDataSet)
+                        {
+                            foreach (Product p in order.Products)
+                            {
+                                p.ProductCosts = p.ProductCosts.Where(pc => kvdList.Select(kvd => kvd.ID).ToList().Contains(pc.TypeOfActivity.ID)).ToArray();
+                            }
+                            order.Products = order.Products.Where(product => product.ProductCosts.Count > 0).ToArray();
+                        }
+
+                        Reports.ReportMode = report.Code;
+                        Reports.BeginPeriod = beginPeriod;
+                        Reports.EndPeriod = endPeriod;
+                        Reports.FreeString = string.Join(", ", kvdList.Select(p => p.CodeName));
+                        lCanMakeReport = Reports.OrderDataSet.Count > 0;
+                    }
                     if (lCanMakeReport)
                     {
                         Reports.RunReport();
@@ -597,7 +630,7 @@ namespace AdvertisementWpf
             }
             else if (report != null && (string)parameter == "PK") //K - KVD
             {
-                return report.Parameters.Contains("P") && report.Parameters.Contains("K");
+                return report.Parameters.Contains("P") && report.Parameters.Contains("K") || report.Parameters.Equals("K");
             }
             return false;
         }
