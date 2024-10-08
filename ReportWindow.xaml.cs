@@ -559,7 +559,7 @@ namespace AdvertisementWpf
                             .Include(Order => Order.Products).ThenInclude(Product => Product.ProductCosts)
                             .Include(Order => Order.Products).ThenInclude(Product => Product.ProductCosts).ThenInclude(ProductCost => ProductCost.TypeOfActivity)
                             .Include(Order => Order.Products).ThenInclude(Product => Product.ProductType)
-                            .Where(Order => Order.Products.Any(Product => Product.DateManufacture.HasValue))
+                            .Where(Order => Order.Products.Any(Product => Product.DateTransferProduction.HasValue && !Product.DateManufacture.HasValue))
                             .AsNoTracking()
                             .OrderBy(Order => Order.ID)
                             .ToList();                
