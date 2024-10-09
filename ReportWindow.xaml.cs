@@ -565,6 +565,7 @@ namespace AdvertisementWpf
                             .ToList();                
                         foreach (Order order in Reports.OrderDataSet)
                         {
+                            order.Products = order.Products.Where(product => product.DateTransferProduction.HasValue && !product.DateManufacture.HasValue).ToArray();
                             foreach (Product p in order.Products)
                             {
                                 p.ProductCosts = p.ProductCosts.Where(pc => kvdList.Select(kvd => kvd.ID).ToList().Contains(pc.TypeOfActivity.ID)).ToArray();
