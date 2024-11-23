@@ -42,7 +42,7 @@ namespace AdvertisementWpf.Models
             {
                 if (string.IsNullOrWhiteSpace(_contractorInfoForAct))
                 {
-                    _contractorInfoForAct = $"{Name ?? ""}, ИНН {INN ?? ""}, {BusinessAddress ?? ""}, р/с {BankAccount ?? ""}, в банке {Bank?.Name ?? ""}, БИК {Bank?.BIK ?? ""}, к/с {Bank?.CorrAccount ?? ""}";
+                    _contractorInfoForAct = $"{Name ?? ""}, ИНН {INN ?? ""}, КПП {KPP ?? ""}, {BusinessAddress ?? ""}, р/с {BankAccount ?? ""}, в банке {Bank?.Name ?? ""}, БИК {Bank?.BIK ?? ""}, к/с {Bank?.CorrAccount ?? ""}";
                     NotifyPropertyChanged("ContractorInfoForAct");
                 }
                 return _contractorInfoForAct;

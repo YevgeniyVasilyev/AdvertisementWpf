@@ -68,13 +68,17 @@ namespace AdvertisementWpf.Models
                     {
                         _clientInfoForAct = $"{Name ?? ""}, {BusinessAddress ?? ""}, тел. {WorkPhone ?? ""}";
                     }
-                    else if (IsLegal || IsIndividual)
+                    else if (IsIndividual)
                     {
                         _clientInfoForAct = $"{Name ?? ""}, ИНН {INN ?? ""}, {BusinessAddress ?? ""}, тел. {WorkPhone ?? ""}, р/с {BankAccount ?? ""}, в банке {Bank?.Name ?? ""}, БИК {Bank?.BIK ?? ""}, к/с {Bank?.CorrAccount ?? ""}";
                     }
+                    else if (IsLegal)
+                    {
+                        _clientInfoForAct = $"{Name ?? ""}, ИНН {INN ?? ""}, КПП {KPP ?? ""}, {BusinessAddress ?? ""}, тел. {WorkPhone ?? ""}, р/с {BankAccount ?? ""}, в банке {Bank?.Name ?? ""}, БИК {Bank?.BIK ?? ""}, к/с {Bank?.CorrAccount ?? ""}";
+                    }
                     else if (IsBudget)
                     {
-                        _clientInfoForAct = $"{Name ?? ""}, ИНН {INN ?? ""}, {BusinessAddress ?? ""}, тел. {WorkPhone ?? ""} {(PersonalAccount != null ? ", л/с " + PersonalAccount : "")}, казн.счет {BankAccount ?? ""}, в банке {Bank?.Name ?? ""}, БИК ТОФК {Bank?.BIK ?? ""}, ЕКС {Bank?.CorrAccount ?? ""}";
+                        _clientInfoForAct = $"{Name ?? ""}, ИНН {INN ?? ""}, КПП {KPP ?? ""}, {BusinessAddress ?? ""}, тел. {WorkPhone ?? ""} {(PersonalAccount != null ? ", л/с " + PersonalAccount : "")}, казн.счет {BankAccount ?? ""}, в банке {Bank?.Name ?? ""}, БИК ТОФК {Bank?.BIK ?? ""}, ЕКС {Bank?.CorrAccount ?? ""}";
                     }
                     NotifyPropertyChanged("ClientInfoForAct");
                 }

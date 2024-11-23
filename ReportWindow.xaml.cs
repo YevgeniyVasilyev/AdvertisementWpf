@@ -568,7 +568,7 @@ namespace AdvertisementWpf
                             order.Products = order.Products.Where(product => product.DateTransferProduction.HasValue && !product.DateManufacture.HasValue).ToArray();
                             foreach (Product p in order.Products)
                             {
-                                p.ProductCosts = p.ProductCosts.Where(pc => kvdList.Select(kvd => kvd.ID).ToList().Contains(pc.TypeOfActivity.ID)).ToArray();
+                                p.ProductCosts = p.ProductCosts.Where(pc => kvdList.Select(kvd => kvd.ID).ToList().Contains(pc.TypeOfActivity.ID) && pc.Cost > 0).ToArray();
                             }
                             order.Products = order.Products.Where(product => product.ProductCosts.Count > 0).ToArray();
                         }
