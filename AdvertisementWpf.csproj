@@ -37,12 +37,16 @@
 
   <ItemGroup>
     <Compile Remove="OnDeploy\**" />
+    <Compile Remove="Reports\НДС\**" />
     <Compile Remove="_Models\**" />
     <EmbeddedResource Remove="OnDeploy\**" />
+    <EmbeddedResource Remove="Reports\НДС\**" />
     <EmbeddedResource Remove="_Models\**" />
     <None Remove="OnDeploy\**" />
+    <None Remove="Reports\НДС\**" />
     <None Remove="_Models\**" />
     <Page Remove="OnDeploy\**" />
+    <Page Remove="Reports\НДС\**" />
     <Page Remove="_Models\**" />
   </ItemGroup>
 
@@ -107,6 +111,10 @@
     <None Remove="Reports\ProductListView_data.frx" />
     <None Remove="Reports\VMP_data.frx" />
     <None Remove="Reports\_Account.frx" />
+    <None Remove="Reports\_Act.frx" />
+    <None Remove="Reports\_OrderListView.frx" />
+    <None Remove="Reports\_RORW.frx" />
+    <None Remove="Reports\_UPD.frx" />
     <None Remove="SignRT.png" />
     <None Remove="StampRT.gif" />
     <None Remove="StampRT.jpg" />

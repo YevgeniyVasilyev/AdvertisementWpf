@@ -85,6 +85,26 @@ namespace AdvertisementWpf.Models
                 NotifyPropertyChanged("UPDFileTemplate");
             }
         }
+        private bool _isVATpayer = false;
+        public bool IsVATpayer
+        { 
+            get => _isVATpayer;
+            set
+            {
+                _isVATpayer = value;
+                NotifyPropertyChanged("IsVATpayer");
+            }
+        }
+        private byte _VATrate = 0;
+        public byte VATrate
+        {
+            get => _VATrate;
+            set
+            {
+                _VATrate = value;
+                NotifyPropertyChanged("VATrate");
+            }
+        }
         public virtual Bank Bank { get; set; }
         public virtual ICollection<Account> Accounts { get; set; }
 

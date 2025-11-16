@@ -419,8 +419,8 @@
                 </TabItem.Header>
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="47*"/>
-                        <ColumnDefinition Width="597*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
                         <!--грид подрядчиков-->
                         <ColumnDefinition Width="550"/>
                         <!--правка одного-->
@@ -481,6 +481,8 @@
                             <!--ИНН КПП-->
                             <RowDefinition Height="Auto"/>
                             <!--ОКПО ОГРН-->
+                            <RowDefinition Height="Auto"/>
+                            <!--платедбщик НДС-->
                             <RowDefinition Height="Auto"/>
                             <!--юр. адрес-->
                             <RowDefinition Height="Auto"/>
@@ -592,29 +594,41 @@
                                 NotifyOnValidationError=true, ValidatesOnExceptions=true}" 
                                 VerticalAlignment="Center"  Width="110"/>
                         </StackPanel>
-                        <Label Content="Юридический адрес: " Grid.Row="12" Grid.Column="0"/>
-                        <TextBox Grid.Row="12" Grid.Column="1" Text="{Binding ElementName=ContractorsGrid, 
+                        <StackPanel Orientation="Horizontal" Grid.Row="12" Grid.Column="0">
+                            <Label Content="Плательщик НДС "/>
+                            <CheckBox IsChecked="{Binding ElementName=ContractorsGrid, Path=SelectedItem.IsVATpayer, 
+                                                UpdateSourceTrigger=PropertyChanged, Mode=TwoWay,
+                                                NotifyOnValidationError=true, ValidatesOnExceptions=true}" 
+                                      VerticalAlignment="Center"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Grid.Row="12" Grid.Column="1">
+                            <Label Content="Ставка НДС: "/>
+                            <TextBox Name="VATrate" IsEnabled="{Binding ElementName=ContractorsGrid, Path=SelectedItem.IsVATpayer}" Text="{Binding ElementName=ContractorsGrid, Path=SelectedItem.VATrate, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay,
+                                            NotifyOnValidationError=true, ValidatesOnExceptions=true}" Width="30" VerticalAlignment="Center"/>
+                        </StackPanel>
+                        <Label Content="Юридический адрес: " Grid.Row="13" Grid.Column="0"/>
+                        <TextBox Grid.Row="13" Grid.Column="1" Text="{Binding ElementName=ContractorsGrid, 
                                 Path=SelectedItem.BusinessAddress, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged,
                                 NotifyOnValidationError=true, ValidatesOnExceptions=true}"
                                 VerticalAlignment="Center"/>
-                        <Label Content="Расчетный счет: " Grid.Row="13" Grid.Column="0"/>
-                        <TextBox Grid.Row="13" Grid.Column="1" Text="{Binding ElementName=ContractorsGrid, 
+                        <Label Content="Расчетный счет: " Grid.Row="14" Grid.Column="0"/>
+                        <TextBox Grid.Row="14" Grid.Column="1" Text="{Binding ElementName=ContractorsGrid, 
                                 Path=SelectedItem.BankAccount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged,
                                 NotifyOnValidationError=true, ValidatesOnExceptions=true}" 
                                 VerticalAlignment="Center"/>
-                        <Label Content="Банк: " Grid.Row="14" Grid.Column="0"/>
-                        <ComboBox Grid.Row="14" Grid.Column="1" ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=local:ClientsAndContractorsHandbook}, Path=DataContext.BankList}" 
+                        <Label Content="Банк: " Grid.Row="15" Grid.Column="0"/>
+                        <ComboBox Grid.Row="15" Grid.Column="1" ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=local:ClientsAndContractorsHandbook}, Path=DataContext.BankList}" 
                                   SelectedValue="{Binding ElementName=ContractorsGrid, Path=SelectedItem.BankID, Mode=TwoWay, 
                                   UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=true, ValidatesOnExceptions=true}" 
                                   SelectedValuePath="ID" DisplayMemberPath="Name"
                                   VerticalAlignment="Center"/>
-                        <Label Content="Аббревиатура для счета: " Grid.Row="15" Grid.Column="0"/>
-                        <TextBox Grid.Row="15" Grid.Column="1" Text="{Binding ElementName=ContractorsGrid, 
+                        <Label Content="Аббревиатура для счета: " Grid.Row="16" Grid.Column="0"/>
+                        <TextBox Grid.Row="16" Grid.Column="1" Text="{Binding ElementName=ContractorsGrid, 
                                 Path=SelectedItem.AbbrForAcc, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged,
                                 NotifyOnValidationError=true, ValidatesOnExceptions=true}" 
                                 VerticalAlignment="Center"/>
-                        <Label Content="Шаблон счета на оплату: " Grid.Row="16" Grid.Column="0"/>
-                        <StackPanel Grid.Row="16" Grid.Column="1" Orientation="Horizontal">
+                        <Label Content="Шаблон счета на оплату: " Grid.Row="17" Grid.Column="0"/>
+                        <StackPanel Grid.Row="17" Grid.Column="1" Orientation="Horizontal">
                             <TextBlock Name="AccountFileTemplateTextBlock" Text="{Binding ElementName=ContractorsGrid, Path=SelectedItem.AccountFileTemplate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                                        VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
                             <Button Name="OpenDialogButton" Background="Transparent" BorderBrush="Transparent"  ToolTip="Открыть диалог для выбора файла"
@@ -628,8 +642,8 @@
                                 </Button.CommandParameter>
                             </Button>
                         </StackPanel>
-                        <Label Content="Шаблон акта: " Grid.Row="17" Grid.Column="0"/>
-                        <StackPanel Grid.Row="17" Grid.Column="1" Orientation="Horizontal">
+                        <Label Content="Шаблон акта: " Grid.Row="18" Grid.Column="0"/>
+                        <StackPanel Grid.Row="18" Grid.Column="1" Orientation="Horizontal">
                             <TextBlock Text="{Binding ElementName=ContractorsGrid, Path=SelectedItem.ActFileTemplate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                                        VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
                             <Button Background="Transparent" BorderBrush="Transparent" ToolTip="Открыть диалог для выбора файла"
@@ -643,8 +657,8 @@
                                 </Button.CommandParameter>
                             </Button>
                         </StackPanel>
-                        <Label Content="Шаблон счет-фактуры: " Grid.Row="18" Grid.Column="0"/>
-                        <StackPanel Grid.Row="18" Grid.Column="1" Orientation="Horizontal">
+                        <Label Content="Шаблон счет-фактуры: " Grid.Row="19" Grid.Column="0"/>
+                        <StackPanel Grid.Row="19" Grid.Column="1" Orientation="Horizontal">
                             <TextBlock Text="{Binding ElementName=ContractorsGrid, Path=SelectedItem.SFFileTemplate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                                        VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
                             <Button Background="Transparent" BorderBrush="Transparent" ToolTip="Открыть диалог для выбора файла"
@@ -658,8 +672,8 @@
                                 </Button.CommandParameter>
                             </Button>
                         </StackPanel>
-                        <Label Content="Шаблон товарной накладной: " Grid.Row="19" Grid.Column="0"/>
-                        <StackPanel Grid.Row="19" Grid.Column="1" Orientation="Horizontal">
+                        <Label Content="Шаблон товарной накладной: " Grid.Row="20" Grid.Column="0"/>
+                        <StackPanel Grid.Row="20" Grid.Column="1" Orientation="Horizontal">
                             <TextBlock Text="{Binding ElementName=ContractorsGrid, Path=SelectedItem.TNFileTemplate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                                        VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
                             <Button Background="Transparent" BorderBrush="Transparent" ToolTip="Открыть диалог для выбора файла"
@@ -673,8 +687,8 @@
                                 </Button.CommandParameter>
                             </Button>
                         </StackPanel>
-                        <Label Content="Шаблон УПД: " Grid.Row="20" Grid.Column="0"/>
-                        <StackPanel Grid.Row="20" Grid.Column="1" Orientation="Horizontal">
+                        <Label Content="Шаблон УПД: " Grid.Row="21" Grid.Column="0"/>
+                        <StackPanel Grid.Row="21" Grid.Column="1" Orientation="Horizontal">
                             <TextBlock Text="{Binding ElementName=ContractorsGrid, Path=SelectedItem.UPDFileTemplate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                                        VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
                             <Button Background="Transparent" BorderBrush="Transparent" ToolTip="Открыть диалог для выбора файла"
@@ -688,7 +702,7 @@
                                 </Button.CommandParameter>
                             </Button>
                         </StackPanel>
-                        <Grid Grid.Row="22" Grid.ColumnSpan="2">
+                        <Grid Grid.Row="23" Grid.ColumnSpan="2">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition/>
                                 <ColumnDefinition/>
@@ -703,6 +717,7 @@
                                     <MultiBinding Converter="{StaticResource MultiValueConverter}">
                                         <Binding ElementName="ContractorsGrid"/>
                                         <Binding ElementName="INN"/>
+                                        <Binding ElementName="VATrate"/>
                                     </MultiBinding>
                                 </Button.CommandParameter>
                             </Button>
