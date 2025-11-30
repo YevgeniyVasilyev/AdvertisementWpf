@@ -769,7 +769,7 @@ namespace AdvertisementWpf
                     sSumInWords += sLowWords[EndOfTriad(ref nSumOfLow)];
                 }
             }
-            return sSumInWords.Substring(0, 1).ToUpper() + sSumInWords.Substring(1).Trim();
+            return sSumInWords.Substring(0, 1).ToUpper() + sSumInWords.Substring(1).Trim(); //можно упростить sSumInWords.Substring(1) -> sSumInWords[1..]
         }
 
         private static string TriadaInWords(ref decimal nSumOfTriad, ref ushort nNumberOfTriad)

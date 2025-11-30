@@ -100,7 +100,7 @@ namespace AdvertisementWpf.Models
         public void DetailsToList()
         {
             ObservableCollection<AccountDetail> detailList = new ObservableCollection<AccountDetail> { };
-            List<AccountDetail> detailLst = new List<AccountDetail> { };
+            //List<AccountDetail> detailLst = new List<AccountDetail> { };
             if (Details != null)
             {
                 string[] aDetails = Details.Split('&', StringSplitOptions.RemoveEmptyEntries);
@@ -114,7 +114,7 @@ namespace AdvertisementWpf.Models
                     //else
                     //{
                     //}
-                    detailLst.Add(new AccountDetail { ProductID = Convert.ToInt64(pD[0]), ProductInfoForAccount = pD[1], Quantity = Convert.ToInt16(pD[2]), UnitName = pD[3], Cost = Convert.ToDecimal(pD[4]) });
+                    //detailLst.Add(new AccountDetail { ProductID = Convert.ToInt64(pD[0]), ProductInfoForAccount = pD[1], Quantity = Convert.ToInt16(pD[2]), UnitName = pD[3], Cost = Convert.ToDecimal(pD[4]) });
                     detailList.Add(new AccountDetail { ProductID = Convert.ToInt64(pD[0]), ProductInfoForAccount = pD[1], Quantity = Convert.ToInt16(pD[2]), UnitName = pD[3], Cost = Convert.ToDecimal(pD[4]) });
                 }
             }

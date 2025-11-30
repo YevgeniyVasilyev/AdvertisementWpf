@@ -763,9 +763,7 @@ namespace AdvertisementWpf.Models
  
         public RelayCommand DeleteOperationInWorkFile => deleteOperationInWorkFile ??= new RelayCommand((o) => //команда Удалить файл с сописанием к операции
         {
-            OperationInWork operationInWork = ((object[])o)[0] as OperationInWork;
-            string fileName = ((object[])o)[1] as string;
-            if (operationInWork != null && fileName != null)
+            if (((object[])o)[0] is OperationInWork operationInWork && ((object[])o)[1] is string fileName)
             {
                 _ = operationInWork.FilesList.Remove(fileName);
                 operationInWork.ListToFiles();
@@ -1020,7 +1018,8 @@ namespace AdvertisementWpf.Models
                     ContractorID = contractor.ID,
                     ContractorInfoForAccount = contractor.ContractorInfoForAccount,
                     ContractorName = contractor.Name,
-                    AccountNumber = ""
+                    AccountNumber = "",
+                    VATrate = contractor.VATrate
                 };
                 _contextAccount_.AddToContext(account);
                 _contextAccount_.AddReferenceToContext(account, "Contractor");
@@ -1185,10 +1184,10 @@ namespace AdvertisementWpf.Models
         public void ComntactorNameComboBoxSelectionChanged(object sender1, object sender2)
         {
             Contractor contractor = sender1 as Contractor;
-            Account account = sender2 as Account;
-            if (account != null)
+            if (sender2 is Account account)
             {
                 account.Contractor = _contextAccount_.AddSingleToContext(account.Contractor, delegate (Contractor c) { return c.ID == account.ContractorID; }); //добавить св-во навигации Contractor
+                account.VATrate = contractor.VATrate; //ставка НДС выбранного подрядчика
                 contractor.Bank = _contextAccount_.AddSingleToContext(contractor.Bank, delegate (Bank b) { return b.ID == contractor.BankID; }); //добавить св-во навигации Bank
                 account.NotifyPropertyChanged("ContractorName");
                 if (account.AccountNumber.Count(c => c == '/') > 1) //наименование счета нового формата

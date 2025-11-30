@@ -23,6 +23,7 @@ namespace AdvertisementWpf.Models
         public string Details { get; set; } = "";
         [Column(TypeName = "datetime")]
         public DateTime? PayBeforeDate { get; set; }
+        public byte VATrate { get; set; }
 
         public virtual Order Order { get; set; }
         public virtual Contractor Contractor { get; set; }

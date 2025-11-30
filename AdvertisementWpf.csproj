@@ -38,15 +38,23 @@
   <ItemGroup>
     <Compile Remove="OnDeploy\**" />
     <Compile Remove="Reports\НДС\**" />
+    <Compile Remove="Reports\ПУДы мои\**" />
+    <Compile Remove="Reports\ПУДы от Троцкого\**" />
     <Compile Remove="_Models\**" />
     <EmbeddedResource Remove="OnDeploy\**" />
     <EmbeddedResource Remove="Reports\НДС\**" />
+    <EmbeddedResource Remove="Reports\ПУДы мои\**" />
+    <EmbeddedResource Remove="Reports\ПУДы от Троцкого\**" />
     <EmbeddedResource Remove="_Models\**" />
     <None Remove="OnDeploy\**" />
     <None Remove="Reports\НДС\**" />
+    <None Remove="Reports\ПУДы мои\**" />
+    <None Remove="Reports\ПУДы от Троцкого\**" />
     <None Remove="_Models\**" />
     <Page Remove="OnDeploy\**" />
     <Page Remove="Reports\НДС\**" />
+    <Page Remove="Reports\ПУДы мои\**" />
+    <Page Remove="Reports\ПУДы от Троцкого\**" />
     <Page Remove="_Models\**" />
   </ItemGroup>
 
@@ -101,7 +109,13 @@
     <None Remove="Images\premium-icon-view.png" />
     <None Remove="Localization\Russian.frl" />
     <None Remove="OnDeploy.txt" />
+    <None Remove="Reports\AccountIA.frx" />
+    <None Remove="Reports\AccountIA1.frx" />
+    <None Remove="Reports\AccountRT.frx" />
     <None Remove="Reports\Act — копия.frx" />
+    <None Remove="Reports\ActIA.frx" />
+    <None Remove="Reports\ActIA1.frx" />
+    <None Remove="Reports\ActRT.frx" />
     <None Remove="Reports\Act_data.frx" />
     <None Remove="Reports\Dictionary.frd" />
     <None Remove="Reports\Dictionary_Act.frd" />
@@ -109,6 +123,17 @@
     <None Remove="Reports\Dictionary_VMP_dataset.frd" />
     <None Remove="Reports\OrderListView_data.frx" />
     <None Remove="Reports\ProductListView_data.frx" />
+    <None Remove="Reports\SFIA.frx" />
+    <None Remove="Reports\SFIA1.frx" />
+    <None Remove="Reports\SFRT.frx" />
+    <None Remove="Reports\Test.frx" />
+    <None Remove="Reports\TNIA.frx" />
+    <None Remove="Reports\TNIA1.frx" />
+    <None Remove="Reports\TNRT.frx" />
+    <None Remove="Reports\UPD_N_IA.frx" />
+    <None Remove="Reports\UPD_N_IA1.frx" />
+    <None Remove="Reports\UPD_N_RT.frx" />
+    <None Remove="Reports\UPD_original.frx" />
     <None Remove="Reports\VMP_data.frx" />
     <None Remove="Reports\_Account.frx" />
     <None Remove="Reports\_Act.frx" />
@@ -181,7 +206,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Extended.Wpf.Toolkit" Version="4.5.1" />
+    <PackageReference Include="Extended.Wpf.Toolkit" Version="5.0.0" />
     <PackageReference Include="FastReport.Net.Pro" Version="2024.1.7" />
     <PackageReference Include="MailKit" Version="4.3.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.17" />
