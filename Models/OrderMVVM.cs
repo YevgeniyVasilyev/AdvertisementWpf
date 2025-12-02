@@ -1183,11 +1183,15 @@ namespace AdvertisementWpf.Models
 
         public void ComntactorNameComboBoxSelectionChanged(object sender1, object sender2)
         {
-            Contractor contractor = sender1 as Contractor;
+            Contractor contractor = sender1 as Contractor; //текущий выбранный в списке подрядчик
             if (sender2 is Account account)
             {
-                account.Contractor = _contextAccount_.AddSingleToContext(account.Contractor, delegate (Contractor c) { return c.ID == account.ContractorID; }); //добавить св-во навигации Contractor
-                account.VATrate = contractor.VATrate; //ставка НДС выбранного подрядчика
+                Contractor oldAccountContractor = account.Contractor; //текущий установленный для счета подрядчик
+                account.Contractor = _contextAccount_.AddSingleToContext(account.Contractor, delegate (Contractor c) { return c.ID == account.ContractorID; }); //добавить св-во навигации Contractor (смена подрядчика)
+                if (oldAccountContractor != null && oldAccountContractor.ID != account.Contractor.ID) //действительно произошла смена подрядчика (не просто вернули предыдущего!)
+                {
+                    account.VATrate = account.Contractor.VATrate; //ставка НДС выбранного подрядчика
+                }
                 contractor.Bank = _contextAccount_.AddSingleToContext(contractor.Bank, delegate (Bank b) { return b.ID == contractor.BankID; }); //добавить св-во навигации Bank
                 account.NotifyPropertyChanged("ContractorName");
                 if (account.AccountNumber.Count(c => c == '/') > 1) //наименование счета нового формата
